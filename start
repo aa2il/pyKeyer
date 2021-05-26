@@ -1,0 +1,176 @@
+#! /usr/bin/tcsh
+############################################################################################
+
+# Start - J.B.Attili - 2018
+
+# Script showing how to start the keyer for various contests and practice
+
+############################################################################################
+
+set WPM=25
+set MASTER="-master"
+set HINTS="-nohints"
+
+set RIG_TYPE="FTdx3000"
+#set RIG_TYPE="FT991a"
+set BAUD = 38400
+set PORT = 4532
+
+#set MASTER=""
+
+set PRACTICE="-prac"
+set PRACTICE="-prac -nano"
+#set PRACTICE=""
+
+set RIG="NONE"
+#set RIG="DIRECT"
+#set RIG="HAMLIB"
+
+set CONTEST="CWops"
+#set CONTEST="sst"
+
+#set CONTEST="fd"
+#set CONTEST="vhf"
+#set CONTEST="cqp"
+#set CONTEST="WPX"
+#set CONTEST="ss"
+#set CONTEST="cqww"
+#set CONTEST="arrl_10m"
+
+#set CAPTURE="-capture -sidetone"
+#set CAPTURE="-capture"
+#set CAPTURE=""
+
+########################################################################
+
+# Settings for NAQP contest, Jan 2019
+if( $CONTEST == "naqp" )then
+    #set CONTEST="-naqp"
+    #set WPM=22
+    #set HINTS=""
+
+else if( $CONTEST == "sst" )then
+    set WPM=25
+    set HINTS="-master"
+
+# Settings for NCCC CW Sprints
+else if( $CONTEST == "sprint" )then
+    set WPM=25
+    set CONTEST="-sprint"
+    set HINTS=""
+
+# Setting for CQ WPX (or any contest that requires rst + serial number)
+else if( $CONTEST == "wpx" )then
+    set WPM=20
+    set HINTS=""
+
+# Setting for CQ World Wide
+else if( $CONTEST == "cqww" )then
+    set WPM=25
+    set PRACTICE="-prac"
+    set HINTS=""
+
+# Settings for field day
+else if( $CONTEST == "fd" )then
+    set WPM=30
+    #set PRACTICE="-prac"
+    set HINTS="-nohints"
+
+# Settings for CW Ops mini tests
+else if( $CONTEST == "CWops" )then
+    set WPM=30
+    set MASTER=""
+    set HINTS="-nohints -adjust"
+    #set HINTS="-master -adjust"
+
+# Settings for IARU HF Champs
+else if( $CONTEST == "iaru" )then
+    #set WPM=30
+    #set PRACTICE="-prac"
+
+# Settings for CA QSO Party
+else if( $CONTEST == "cqp" )then
+    #set MASTER=""
+    set MASTER="-master -ca_only"
+    #set WPM=25
+    #set HINTS=""
+
+# Settings for ARRL VHF
+else if( $CONTEST == "vhf" )then
+    set WPM=25
+
+# Settings for ARRL 10m
+else if( $CONTEST == "arrl_10m" )then
+    set WPM=25
+    set HINTS=""
+
+# Settings for ARRL Sweepstakes
+else if( $CONTEST == "ss" )then
+    set WPM=25
+    set HINTS=""
+
+else
+    echo Unknown Contest:- $CONTEST-
+    exit
+endif
+
+########################################################################
+
+# Setup for Hamlib
+if( $RIG_TYPE == "FTdx3000" )then
+    set DEVICE="/dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_AH046H3M120067-if00-port0"
+    set MODEL = 129
+else if( $RIG_TYPE == "FT991a" )then
+   set DEVICE = "/dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_00A50791-if00-port0"
+   set MODEL = 135 
+else
+   echo " "
+   echo Error configuring HAMLIB - Unknown rig model $MODEL
+   echo " "
+   exit
+endif 
+
+# Start hamlib
+if( $RIG == "HAMLIB" )then
+    pkill rigctl
+    pkill rigctld
+    
+    set a=`ls -l $DEVICE`
+    echo -$a-
+    set b=`echo $a | cut -f 2 -d '>'`
+    echo -$b-
+    set c=`echo $b | cut -f 3 -d '/'`
+    echo -$c-
+    
+    set EXE_DIR="~/hamlib-3.3/tests"
+    #~/hamlib-3.0.1/tests/rigctld -m $MODEL -r /dev/$c >&/tmp/HAMLIB &
+    $EXE_DIR/rigctld -m $MODEL -r /dev/$c >&/tmp/HAMLIB &
+    sleep 1
+    
+    echo "Rigctl daemon started."
+    ps -A u | fgrep -i rigctl
+
+    #exit
+endif 
+
+################################################################################
+
+pkill pyKeyer
+if( "$PRACTICE" == "-prac" )then
+    set RIG="NONE"
+    set CAPTURE=""
+else
+    set CAPTURE="-capture"
+    pkill wclock
+    pushd ../wclock
+    #wclock.py >& /tmp/WCLOCK &
+    popd
+endif
+
+set OPTS="-wpm ${WPM} $PRACTICE -${CONTEST} -rig $RIG $MASTER $HINTS $CAPTURE"
+
+cd ~/Python/pyKeyer
+echo pyKeyer.py $OPTS 
+pyKeyer.py $OPTS &
+
+

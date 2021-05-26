@@ -1,0 +1,30 @@
+#! /bin/tcsh
+###############################################################################
+
+# Sending Practice - J.B.Attili - 2012
+
+# Script to start monitor sending practice with nano IO interface
+
+###############################################################################
+
+set BAUD  = 38400 
+
+###############################################################################
+
+# Open list of anagrams
+xreader ~/Desktop/CW/1-sending.pdf &
+
+# Locate arduino device
+echo " "
+set DEVICE="/dev/serial/by-id/usb-1a86_USB2.0-Ser_-if00-port0"
+echo DEVICE=$DEVICE
+
+# Start monitor so we can adjust speed, etc.
+echo "\n******************************************************************"
+echo "\nStarting miniterm - Use Ctrl-] to exit ..."
+echo "\nUse ~~ to view list of keyer command, ~? to see current settings ...\n"
+echo "^ increases speed in incr, \| decreases speed"
+set CMD="miniterm $DEVICE $BAUD"
+echo CMD=$CMD
+$CMD
+
