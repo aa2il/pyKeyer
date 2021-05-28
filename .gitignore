@@ -3,3 +3,6 @@
 /AA2IL_6.*
 /OLD/*
 /state.pcl
+/__pycache__
+/capture_*.wav
+/DIFFS

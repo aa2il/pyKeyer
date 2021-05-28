@@ -797,10 +797,11 @@ class GUI():
             cntr = self.sock.get_serial_out()
             if cntr==0 or cntr=='':
                 cntr=self.P.MY_CNTR
-            #print 'cntr=',cntr
-            self.cntr = cw_keyer.cut_numbers(cntr,self.ndigits)
+            #print('KEYER_GUI: cntr=',cntr,'\tndigits=',self.ndigits)
+            self.cntr = cw_keyer.cut_numbers(cntr,ndigits=self.ndigits)
             txt = txt.replace('[SERIAL]',self.cntr)
             self.serial_out = self.cntr
+            #print('KEYER_GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
 
         # This should have already been handled when we loaded the macros
         #txt = self.Patch_Macro(txt)
@@ -1080,7 +1081,7 @@ class GUI():
             # Specific contest exchange for CQ WPX
             self.contest=True
             self.hide_all()
-            self.ndigits=-3
+            self.ndigits=3
 
             self.rst_lab.grid(columnspan=1,column=4,sticky=E+W)
             self.rst.grid(column=4,columnspan=1)

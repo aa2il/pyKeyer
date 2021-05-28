@@ -11,7 +11,7 @@
 
 import pyaudio
 import numpy as np
-from cw_keyer import morse,cut_numbers
+from cw_keyer import morse
 import sys
 import time
 import sig_proc as dsp

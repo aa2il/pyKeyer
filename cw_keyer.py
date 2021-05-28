@@ -117,8 +117,10 @@ def cut_numbers(n,ndigits=-3):
                 ndigits=2
         
         txt = '{:,d}'.format(n)
+        #print('Cut Numbers: n=',n,'\tndigits=',ndigits,'\ttxt=',txt,'\tlen=',len(txt))
         while len(txt)<ndigits:
             txt = 'T'+txt
+        #print('Cut Numbers: n=',n,'\tndigits=',ndigits,'\ttxt=',txt,'\tlen=',len(txt))
         
     return txt
     
