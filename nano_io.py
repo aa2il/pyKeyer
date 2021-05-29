@@ -1,9 +1,22 @@
 ############################################################################################
-
-# Nano IO - J.B.Attili - 2021
-
+#
+# nano_io.py - Rev 1.0
+# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+#
 # Functions related to the nano IO interface
-
+#
+############################################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 ############################################################################################
 
 import sys
@@ -13,6 +26,7 @@ import time
 
 ############################################################################################
 
+# Read responses from the nano IO
 def nano_read(ser,echo=True):
     while ser.in_waiting>0:
         txt = ser.read(256).decode("utf-8")
@@ -20,27 +34,15 @@ def nano_read(ser,echo=True):
             print('Nano:',txt)
     return txt
 
+# Send chars/commands to the nano IO
 def nano_write(ser,txt):
     ser.write(bytes(txt, 'utf-8'))
 
-def open_nano(baud=28400):
+# Open up comms to nano IO
+def open_nano(baud=38400):
 
     # Open port
-    if True:
-        ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
-    else:
-        # Try to open port without reset - no luck yet
-        #ser = serial.serial_for_url(port, 
-        ser = serial.serial_for_url(SERIAL_NANO_IO,
-                                    baud,
-                                    do_not_open=True)
-        #timeout=0.1,
-        #dsrdtr=False,
-        #new_serial.applySettingsDict(settings)
-        #ser.rts = False
-        ser.dtr = False
-        ser.open()
-        #    new_serial.break_condition = self.serial.break_condition
+    ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
  
     # Wait for nano to wwake up
     print('Waiting for Nano IO to start-up ...')
@@ -51,7 +53,8 @@ def open_nano(baud=28400):
     #nano_write(ser,"Test")
     #sys.exit(0)
     return ser
-            
+
+# Command nano to change WPM
 def nano_set_wpm(ser,wpm):
     txt='~S'+str(wpm).zfill(3)+'s'
     #print('txt=',txt)

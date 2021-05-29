@@ -1,10 +1,23 @@
 ############################################################################################
-
-# CW keyer object - J.B.Attili - 2019
-
+#
+# cw_keyer.py - Rev 1.0
+# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+#
 # Routines for translating keyboard strokes into CW chars.  The rig can be keyed
 # via the DTR line or, more reliably, via a nanoIO ardunino-based interface.
-
+#
+############################################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 ############################################################################################
 
 import time

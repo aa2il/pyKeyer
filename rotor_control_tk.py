@@ -1,9 +1,24 @@
 ############################################################################################
-
-# Rotor Control - J.B.Attili - 2020
-
-# Portion of GUI related to rotor controls - Tk version
-
+#
+# Rotor Control GUI - Tk version - Rev 1.0
+# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+#
+# Portion of GUI related to rig controls - Tk version
+#
+# To Do:  This should be part of a library
+#
+############################################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 ############################################################################################
 
 import sys

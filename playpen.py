@@ -1,12 +1,25 @@
 #!/usr/bin/python
 ############################################################################################
-
-# Playpen - J.B.Attili - 2019
-
+#
+# playpen.py - Rev 1.0
+# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+#
 # Work area to get various components up and running.
-
-# To Do - test if this works under python3
-
+#
+# To Do - test if this still works under python3
+#
+############################################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 ############################################################################################
 
 import sys

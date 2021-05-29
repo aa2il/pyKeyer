@@ -1,11 +1,25 @@
 ############################################################################################
-
-# FT Keypad - J.B.Attili - 2020
-
+#
+# ft_keypad.py - Rev 1.0
+# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+#
 # Functions related to programming the Yaesu keypad
-
-# To do - there are other version of this same thing floating around, combine them.
-
+#
+# To do - there are other version of this same thing floating around in
+# this mess, combine them.
+#
+############################################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 ############################################################################################
 
 import sys

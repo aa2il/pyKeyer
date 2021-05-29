@@ -1,8 +1,9 @@
 #! /usr/bin/python3
-############################################################################################
-
-# pyKeyer.py - J.B.Attili - 2019
-
+################################################################################
+#
+# pyKeyer.py - Rev 1.0
+# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+#
 #    Main program for CW Keyer and server.
 
 # Notes:
@@ -13,7 +14,19 @@
 # TO DO:
 #    - Add a way to correct log on the fly
 #    - Check if FLLOG works with the keyer
-
+#
+################################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 ################################################################################
 
 import sys

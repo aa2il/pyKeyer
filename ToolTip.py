@@ -1,7 +1,7 @@
 #! /usr/bin/python
 ############################################################################################
 
-# Tool tip - J.B.Attili - 2019
+# Tool tip - J.B.Attili - 2019, aa2il AT arrl DOT net
 
 # I am not sure where the original for this came from.  If you recognize this code,
 # please email me so I can give proper attribution.  Not even sure why this is even here now?!
@@ -11,7 +11,7 @@
 # may be useful for some purposes in (or almost in ;) the current project scope
 # Ideas gleaned from PySol
 
-# To Do - do we really need this anymore?
+# To Do - do we really need this anymore?  If we do, it should be in a library.
 
 ############################################################################################
 
