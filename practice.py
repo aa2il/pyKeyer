@@ -32,7 +32,7 @@ if sys.version_info[0]==3:
 else:
     from Tkinter import END
 from load_history import *
-from rig_io.ft_tables import MY_CALL
+#from rig_io.ft_tables import MY_CALL
 from sidetone import *
 from nano_io import nano_write
 
@@ -101,6 +101,7 @@ class CODE_PRACTICE():
         HIST  = self.HIST
         keyer = P.keyer
         lock  = P.lock1
+        MY_CALL = P.SETTINGS['MY_CALL']
     
         # Pick a call at random
         print('\nPRACTICE_QSO: Waiting 0 - Picking call ...')

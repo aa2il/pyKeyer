@@ -138,6 +138,8 @@ class GUI():
         self.prefill=False
         self.cntr=0
 
+        MY_CALL = P.SETTINGS['MY_CALL']
+
         # Open simple log file & read its contents
         self.fp_log = open(MY_CALL.replace('/','_')+".LOG","r+")
 
@@ -703,40 +705,40 @@ class GUI():
 
     # Routine to substitute various keyer commands in macro text
     def Patch_Macro(self,txt):
-        txt = txt.replace('[MYCALL]',MY_CALL )
+        txt = txt.replace('[MYCALL]',self.P.SETTINGS['MY_CALL'] )
         if '[MYSTATE]' in txt:
-            txt = txt.replace('[MYSTATE]',MY_STATE )
-            self.qth_out = MY_STATE
+            self.qth_out = self.P.SETTINGS['MY_STATE']
+            txt = txt.replace('[MYSTATE]',self.qth_out)
         if '[MYNAME]' in txt:
-            txt = txt.replace('[MYNAME]',MY_NAME )
-            self.name_out = MY_NAME
+            self.name_out = self.P.SETTINGS['MY_NAME']
+            txt = txt.replace('[MYNAME]', self.name_out)
         if '[MYQTH]' in txt:
-            txt = txt.replace('[MYQTH]',MY_QTH )
-            self.qth_out = MY_QTH
+            self.qth_out = self.P.SETTINGS['MY_QTH']
+            txt = txt.replace('[MYQTH]',self.qth_out)
         if '[MYSEC]' in txt:
-            txt = txt.replace('[MYSEC]',MY_SEC )
-            self.qth_out = MY_SEC
+            self.qth_out = self.P.SETTINGS['MY_SEC'] 
+            txt = txt.replace('[MYSEC]',self.qth_out)
         if '[MYGRID]' in txt:
-            txt = txt.replace('[MYGRID]',MY_GRID )
-            self.qth_out = MY_GRID
+            self.qth_out = self.P.SETTINGS['MY_GRID']
+            txt = txt.replace('[MYGRID]',self.qth_out)
         if '[MYITUZ]' in txt:
-            txt = txt.replace('[MYITUZ]',MY_ITU_ZONE )
-            self.qth_out = MY_ITU_ZONE
+            self.qth_out = self.P.SETTINGS['MY_ITU_ZONE'] 
+            txt = txt.replace('[MYITUZ]', self.qth_out)
         if '[MYPREC]' in txt:
-            txt = txt.replace('[MYPREC]',MY_PREC )
-            self.prec_out = MY_PREC
+            self.prec_out = self.P.SETTINGS['MY_PREC']
+            txt = txt.replace('[MYPREC]',self.prec_out)
         if '[MYCHECK]' in txt:
-            txt = txt.replace('[MYCHECK]',MY_CHECK )
-            self.check_out = MY_CHECK
+            self.check_out = self.P.SETTINGS['MY_CHECK']
+            txt = txt.replace('[MYCHECK]', self.check_out)
         if '[MYCQZ]' in txt:
-            txt = txt.replace('[MYCQZ]',MY_CQ_ZONE )
-            self.qth_out = MY_CQ_ZONE
+            self.qth_out = self.P.SETTINGS['MY_CQ_ZONE']
+            txt = txt.replace('[MYCQZ]', self.qth_out )
         if '[MYCAT]' in txt:
-            txt = txt.replace('[MYCAT]',MY_CAT )
-            self.check_out = MY_CAT
+            self.check_out = self.P.SETTINGS['MY_CAT'] 
+            txt = txt.replace('[MYCAT]', self.check_out)
         if '[MYCOUNTY]' in txt:
-            txt = txt.replace('[MYCOUNTY]',MY_COUNTY )
-            self.qth_out = MY_COUNTY
+            self.qth_out = self.P.SETTINGS['MY_COUNTY'] 
+            txt = txt.replace('[MYCOUNTY]', self.qth_out)
         if '[GDAY]' in txt:
             hour = datetime.now().hour
             if hour<12:
@@ -886,6 +888,8 @@ class GUI():
         
     # Callback for Macro list spinner
     def set_macros(self,val):
+        MY_CALL = self.P.SETTINGS['MY_CALL']
+        
         print('SET_MACROS: val=',val,' - ',val[0:4])
         self.macros = self.MACROS[val]
         for i in range(12):
@@ -893,14 +897,16 @@ class GUI():
                 print(i,i in self.macros,i+12 in self.macros)
                 print(self.macros[i]["Label"])
                 print(self.macros[i+12]["Label"])
-            self.btns1[i].configure( text=self.macros[i]["Label"] )
+            lab = self.macros[i]["Label"].replace('[MYCALL]',MY_CALL )
+            self.btns1[i].configure( text=lab )
 
             txt = self.Patch_Macro( self.macros[i]["Text"] )
             self.macros[i]["Text"] = txt
             tip = ToolTip(self.btns1[i], ' '+txt+' ' )
 
             if i+12 in self.macros:
-                self.btns2[i].configure( text=self.macros[i+12]["Label"] )
+                lab = self.macros[i+12]["Label"].replace('[MYCALL]',MY_CALL )
+                self.btns2[i].configure( text=lab )
                 txt = self.Patch_Macro( self.macros[i+12]["Text"] )
                 self.macros[i+12]["Text"] = txt
                 tip = ToolTip(self.btns2[i], ' '+txt+' ' )
@@ -1402,6 +1408,17 @@ class GUI():
         qth =self.get_qth().upper()
         print('LOG_QSO:',call,name,qth)
         serial=0
+
+        MY_CALL     = self.P.SETTINGS['MY_CALL']
+        MY_NAME     = self.P.SETTINGS['MY_NAME']
+        MY_STATE    = self.P.SETTINGS['MY_STATE']
+        MY_SEC      = self.P.SETTINGS['MY_SEC']
+        MY_PREC     = self.P.SETTINGS['MY_PREC']
+        MY_CHECK    = self.P.SETTINGS['MY_CHECK']
+        MY_COUNTY   = self.P.SETTINGS['MY_COUNTY']
+        MY_CQ_ZONE  = self.P.SETTINGS['MY_CQ_ZONE']
+        MY_ITU_ZONE = self.P.SETTINGS['MY_ITU_ZONE']
+        MY_GRID     = self.P.SETTINGS['MY_GRID']
         
         if self.contest:
             rst='599'

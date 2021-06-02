@@ -50,6 +50,7 @@ from sidetone import *
 from audio_io import WaveRecorder
 import time
 import os
+from settings import *
 
 ################################################################################
 
@@ -182,7 +183,26 @@ class PARAMS:
 
         self.ROTOR_CONNECTION = args.rotor
         self.PORT2            = args.port2
-            
+
+        # Read config file
+        self.RCFILE=os.path.expanduser("~/.keyerrc")
+        self.SETTINGS=None
+        try:
+            with open(self.RCFILE) as json_data_file:
+                self.SETTINGS = json.load(json_data_file)
+        except:
+            print(self.RCFILE,' not found - need call!\n')
+            s=SETTINGS(None,self)
+            while not self.SETTINGS:
+                try:
+                    s.win.update()
+                except:
+                    pass
+                time.sleep(.01)
+            print('Settings:',self.SETTINGS)
+
+        #sys,exit(0)
+
 ################################################################################
 
 # Set up separate process that actualy does the keying.
