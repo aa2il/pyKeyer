@@ -89,6 +89,15 @@ class SETTINGS():
             pass
 
         row+=1
+        Label(self.win, text='My City:').grid(row=row, column=0)
+        self.city = Entry(self.win)
+        self.city.grid(row=row,column=1,sticky=E+W)
+        try:
+            self.city.insert(0,P.MY_CITY)
+        except:
+            pass
+
+        row+=1
         Label(self.win, text='My County:').grid(row=row, column=0)
         self.county = Entry(self.win)
         self.county.grid(row=row,column=1,sticky=E+W)
@@ -155,6 +164,7 @@ class SETTINGS():
                            'MY_NAME'     : self.name.get().upper(),   \
                            'MY_STATE'    : self.state.get().upper(),  \
                            'MY_GRID'     : self.gridsq.get().upper(), \
+                           'MY_CITY'     : self.city.get().upper(), \
                            'MY_COUNTY'   : self.county.get().upper(), \
                            'MY_SEC'      : self.sec.get().upper(),    \
                            'MY_PREC'     : self.prec.get().upper(),   \

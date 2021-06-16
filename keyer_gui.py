@@ -141,7 +141,11 @@ class GUI():
         MY_CALL = P.SETTINGS['MY_CALL']
 
         # Open simple log file & read its contents
-        self.fp_log = open(MY_CALL.replace('/','_')+".LOG","r+")
+        fname = MY_CALL.replace('/','_')+".LOG"
+        try:
+            self.fp_log = open(fname,"r+")
+        except:
+            self.fp_log = open(fname,"w")
 
         if False:
             with self.fp_log as csvfile:
@@ -162,17 +166,20 @@ class GUI():
             self.fp_log.flush()
 
         self.log_book = []
-        for line in csvReader:
-            #print 'line=',line
-            qso = dict(list(zip(hdrs, line)))
-            #print 'qso=',qso
-            if P.USE_LOG_HISTORY:
-                self.log_book.append(qso)
-            elif P.USE_MASTER:
-                call=qso['CALL']
-                if not call in P.calls:
-                    print('Call not in Master list:',call,'\t- Adding it')
+        try:
+            for line in csvReader:
+                #print 'line=',line
+                qso = dict(list(zip(hdrs, line)))
+                #print 'qso=',qso
+                if P.USE_LOG_HISTORY:
                     self.log_book.append(qso)
+                elif P.USE_MASTER:
+                    call=qso['CALL']
+                    if not call in P.calls:
+                        print('Call not in Master list:',call,'\t- Adding it')
+                        self.log_book.append(qso)
+        except:
+            pass
 
         self.nqsos_start = len(self.log_book)
         #print self.log_book
@@ -1596,7 +1603,7 @@ class GUI():
             if not self.P.PRACTICE_MODE:
                 qso2 =  {key.upper(): val for key, val in list(qso.items())}
                 print("KEYER_GUI: ADIF writing QSO=",qso2)
-                write_adif_record(self.fp_adif,qso2,self.P.contest_name)
+                write_adif_record(self.fp_adif,qso2,self.P)
 
             # Clobber any presets that have this call
             idx=0
