@@ -174,7 +174,7 @@ class PARAMS:
             #self.HISTORY = HIST_DIR+'hist_ca2017.csv'
             self.HISTORY = HIST_DIR+'CQP-CH-N1MM-05Oct2018.txt'
         elif self.ARRL_FD:
-            self.HISTORY = HIST_DIR+'FD.txt'
+            self.HISTORY = HIST_DIR+'FD_2020.txt'
         elif self.ARRL_VHF:
             self.HISTORY = HIST_DIR+'ARRLVHFJAN.txt'
         else:

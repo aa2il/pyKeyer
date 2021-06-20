@@ -102,6 +102,7 @@ class CODE_PRACTICE():
         keyer = P.keyer
         lock  = P.lock1
         MY_CALL = P.SETTINGS['MY_CALL']
+        #print('HIST=',HIST)
     
         # Pick a call at random
         print('\nPRACTICE_QSO: Waiting 0 - Picking call ...')
@@ -255,7 +256,8 @@ class CODE_PRACTICE():
             lock.release()
 
             # Wait for op to answer
-            print('\nCODE PRACTICE: Waiting 2a - Answer ...',P.gui.macro_label,'... evt=',keyer.evt.isSet())
+            print('\nCODE PRACTICE: Waiting 2a - Answer ...', \
+                  P.gui.macro_label,'... evt=',keyer.evt.isSet())
             time.sleep(0.1)
             while ('Reply' not in P.gui.macro_label) and ('?' not in P.gui.macro_label) and \
                   (MY_CALL not in P.gui.macro_label) and not self.P.Stopper.isSet():

@@ -1420,6 +1420,7 @@ class GUI():
         MY_NAME     = self.P.SETTINGS['MY_NAME']
         MY_STATE    = self.P.SETTINGS['MY_STATE']
         MY_SEC      = self.P.SETTINGS['MY_SEC']
+        MY_CAT      = self.P.SETTINGS['MY_CAT']
         MY_PREC     = self.P.SETTINGS['MY_PREC']
         MY_CHECK    = self.P.SETTINGS['MY_CHECK']
         MY_COUNTY   = self.P.SETTINGS['MY_COUNTY']

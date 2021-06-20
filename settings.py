@@ -125,6 +125,15 @@ class SETTINGS():
             pass
 
         row+=1
+        Label(self.win, text='My Category:').grid(row=row, column=0)
+        self.cat = Entry(self.win)
+        self.cat.grid(row=row,column=1,sticky=E+W)
+        try:
+            self.cat.insert(0,P.MY_CAT)
+        except:
+            pass
+
+        row+=1
         Label(self.win, text='My Prec:').grid(row=row, column=0)
         self.prec = Entry(self.win)
         self.prec.grid(row=row,column=1,sticky=E+W)
@@ -167,6 +176,7 @@ class SETTINGS():
                            'MY_CITY'     : self.city.get().upper(), \
                            'MY_COUNTY'   : self.county.get().upper(), \
                            'MY_SEC'      : self.sec.get().upper(),    \
+                           'MY_CAT'      : self.cat.get().upper(),    \
                            'MY_PREC'     : self.prec.get().upper(),   \
                            'MY_CHECK'    : self.check.get().upper(),  \
                            'MY_CQ_ZONE'  : self.cqz.get().upper(),    \

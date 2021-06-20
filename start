@@ -29,7 +29,7 @@ set RIG="NONE"
 set CONTEST="CWops"
 #set CONTEST="sst"
 
-#set CONTEST="fd"
+set CONTEST="fd"
 #set CONTEST="vhf"
 #set CONTEST="cqp"
 #set CONTEST="WPX"
@@ -72,9 +72,9 @@ else if( $CONTEST == "cqww" )then
 
 # Settings for field day
 else if( $CONTEST == "fd" )then
-    set WPM=30
-    #set PRACTICE="-prac"
-    set HINTS="-nohints"
+    set WPM=25
+    #set HINTS="-nohints"
+    set HINTS="-nohints -adjust"
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "CWops" )then
