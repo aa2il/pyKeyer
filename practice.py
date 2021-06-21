@@ -102,7 +102,6 @@ class CODE_PRACTICE():
         keyer = P.keyer
         lock  = P.lock1
         MY_CALL = P.SETTINGS['MY_CALL']
-        #print('HIST=',HIST)
     
         # Pick a call at random
         print('\nPRACTICE_QSO: Waiting 0 - Picking call ...')
