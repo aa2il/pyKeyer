@@ -14,16 +14,18 @@ set ROOT="/media/${USER}/marconi"
 # Add path down to old version
 set N=`echo $HOME | wc -c`
 echo N=$N
-set PTH=`pwd | cut -c ${N}-`
+#set PTH=`pwd | cut -c ${N}-`
+set PTH=`pwd | sed 's;/home2;;g' | cut -c ${N}-`
 echo PTH=$PTH
 set old=${ROOT}${PTH}
 echo OLD=$old
+#exit
 
 # Overide if necessary
 #set OLD="work2"
 
 rm -f DIFFS
-foreach i (*.py AA2IL.* start*)
+foreach i (*.py AA2IL.adif start*)
     echo $i
     set n=`diff -w $old/$i $i | wc -l`
     if( $n>0 ) then

@@ -29,7 +29,7 @@ set RIG="NONE"
 set CONTEST="CWops"
 #set CONTEST="sst"
 
-set CONTEST="fd"
+#set CONTEST="fd"
 #set CONTEST="vhf"
 #set CONTEST="cqp"
 #set CONTEST="WPX"

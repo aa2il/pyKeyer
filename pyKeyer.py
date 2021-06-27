@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /usr/bin/python3 -u
 ################################################################################
 #
 # pyKeyer.py - Rev 1.0
@@ -127,6 +127,7 @@ class PARAMS:
         self.ARRL_FD       = args.fd
         self.ARRL_VHF      = args.vhf
         self.CAPTURE       = args.capture
+        self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force
         self.TEST_MODE     = args.test
         self.NANO_IO       = args.nano
@@ -291,6 +292,7 @@ def WatchDog(P):
     if P.SHUTDOWN:
         if P.CAPTURE:
             P.rec.stop_recording()
+            P.rec.close()
         if P.Timer:
             print('WatchDog - Cancelling timer ...')
             P.Timer.cancel()
@@ -615,37 +617,6 @@ worker2 = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' 
 worker2.setDaemon(True)
 worker2.start()
 P.threads.append(worker2)
-
-# Record audio from radio
-if P.CAPTURE:
-    s=time.strftime("_%Y%m%d_%H%M%S", time.gmtime())      # UTC
-    dirname=''
-    P.wave_file = dirname+'capture'+s+'.wav'
-    print('\nOpening',P.wave_file,'...')
-    
-    P.rec = WaveRecorder(P.wave_file, 'wb',channels=1,wav_rate=8000,rb2=P.osc.rb2)
-    idx   = P.rec.list_input_devices('USB Audio CODEC')
-    P.rec.start_recording(idx)
-
-    # Capture system audio also - this provides what I send.
-    # Also, would like to combine both wave files on the fly but for now,
-    # here is the system command that does it - and makes it much smaller!:
-    #
-    # sox capture_20200625_183249.wav sidetone_20200625_183249.wav --channels 2 --combine merge stereo.ogg
-    #
-    # To get this to work properly, open up pavucontrol -> Input Devices
-    # -> Monitor for Built-In Audio Analog Stereo   - Click the checkmark (make fallback)
-    # -> Built-In Audio Analog Stereo               - Un-Checkk the checkmark (not fallback)
-    #
-    # This is obsolete now since we're creating a 2-channel wave file
-    #if True:
-    if P.SIDETONE and not P.PRACTICE_MODE and False:
-        P.wave_file2 = dirname+'sidetone'+s+'.wav'
-        print('\nOpening',P.wave_file2,'...')
-    
-        P.rec2 = WaveRecorder(P.wave_file2, 'wb',channels=1,wav_rate=8000)
-        idx2   = P.rec.list_input_devices('default')
-        P.rec2.start_recording(idx2)
 
 # WatchDog - runs in its own thread
 P.WATCHDOG = True

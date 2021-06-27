@@ -173,7 +173,7 @@ class SETTINGS():
                            'MY_NAME'     : self.name.get().upper(),   \
                            'MY_STATE'    : self.state.get().upper(),  \
                            'MY_GRID'     : self.gridsq.get().upper(), \
-                           'MY_CITY'     : self.city.get().upper(), \
+                           'MY_CITY'     : self.city.get().upper(),   \
                            'MY_COUNTY'   : self.county.get().upper(), \
                            'MY_SEC'      : self.sec.get().upper(),    \
                            'MY_CAT'      : self.cat.get().upper(),    \
@@ -181,6 +181,9 @@ class SETTINGS():
                            'MY_CHECK'    : self.check.get().upper(),  \
                            'MY_CQ_ZONE'  : self.cqz.get().upper(),    \
                            'MY_ITU_ZONE' : self.ituz.get().upper()    }
+
+        self.P.SETTINGS['MY_QTH'] = self.P.SETTINGS['MY_CITY']+', '+ \
+            self.P.SETTINGS['MY_STATE']
                            
         with open(self.P.RCFILE, "w") as outfile:
             json.dump(self.P.SETTINGS, outfile)

@@ -27,7 +27,7 @@ import time
 ############################################################################################
 
 # Read responses from the nano IO
-def nano_read(ser,echo=True):
+def nano_read(ser,echo=False):
     while ser.in_waiting>0:
         txt = ser.read(256).decode("utf-8")
         if echo:
@@ -44,7 +44,7 @@ def open_nano(baud=38400):
     # Open port
     ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
  
-    # Wait for nano to wwake up
+    # Wait for nano to wake up
     print('Waiting for Nano IO to start-up ...')
     while ser.in_waiting==0:
         time.sleep(.1)

@@ -45,6 +45,7 @@ from ToolTip import *
 import pickle
 from fileio import *
 from threading import enumerate
+from audio_io import WaveRecorder
 
 ############################################################################################
 
@@ -460,6 +461,12 @@ class GUI():
             btn = Button(self.root, text='Reset',command=self.Reset_Defaults ) 
             btn.grid(row=row,column=col,sticky=E+W)
             tip = ToolTip(btn, ' Reset to Default Params ' )
+
+        # Catpure
+        self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
+        self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
+        tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
+        self.CaptureAudioCB(-1)
         
         # Save state button
         col += 1
@@ -1206,6 +1213,40 @@ class GUI():
         WPM=self.keyer.get_wpm()
         self.WPM_TXT.set(str(WPM))
 
+    # Callback to toggle audio recording on & off
+    def CaptureAudioCB(self,iopt=None):
+        P=self.P
+        print("============================================== Capture Audio ...",iopt,P.CAPTURE)
+        if iopt==-1:
+            iopt=None
+            P.CAPTURE = not P.CAPTURE
+        if (iopt==None and not P.CAPTURE) or iopt==1:
+            if not P.CAPTURE:
+                self.CaptureBtn['text']='Stop Capture'
+                self.CaptureBtn.configure(background='red',highlightbackground= 'red')
+                P.CAPTURE = True
+                print('Capture rig audio started ...')
+
+                s=time.strftime("_%Y%m%d_%H%M%S", time.gmtime())      # UTC
+                dirname=''
+                P.wave_file = dirname+'capture'+s+'.wav'
+                print('\nOpening',P.wave_file,'...')
+    
+                P.rec = WaveRecorder(P.wave_file, 'wb',channels=1,wav_rate=8000,rb2=P.osc.rb2)
+                if not P.RIG_AUDIO_IDX:
+                    P.RIG_AUDIO_IDX = P.rec.list_input_devices('USB Audio CODEC')
+                P.rec.start_recording(P.RIG_AUDIO_IDX)
+                
+        else:
+            if P.CAPTURE:
+                self.CaptureBtn['text']='Capture'
+                self.CaptureBtn.configure(background='green',highlightbackground= 'green')
+                if P.RIG_AUDIO_IDX:
+                    P.rec.stop_recording()
+                    P.rec.close()
+                P.CAPTURE = False
+                print('Capture rig audio stopped ...')
+
     # Read counter from the entry box
     def update_counter(self):
         cntr = self.counter.get()
@@ -1847,7 +1888,7 @@ class GUI():
         ch    = event.char
         state = event.state
 
-        print("Key Press:",key) #,ch,len(key),num
+        #print("Key Press:",key) #,ch,len(key),num
 
         # Modfiers
         shift     = ((state & 0x0001) != 0)

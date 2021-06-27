@@ -455,7 +455,7 @@ class Keyer():
                     self.send_cw(""+ch)
                     txt2+=ch
 
-        print('SEND_MSG: Setting evt...')
+        #print('SEND_MSG: Setting evt...')
         self.evt.set()
         return txt2
 
