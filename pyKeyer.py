@@ -104,6 +104,9 @@ class PARAMS:
         arg_proc.add_argument("-port", help="Connection Port",
                               type=int,default=0)
         arg_proc.add_argument('-nano', action='store_true',help="Use Nano IO Interface")
+        arg_proc.add_argument("-mode", help="Rig Mode",
+                      type=str,default=None,
+                      choices=[None,'CW','SSB'])
         arg_proc.add_argument("-rotor", help="Rotor connection Type",
                       type=str,default="NONE",
                       choices=['HAMLIB','NONE'])
@@ -138,6 +141,7 @@ class PARAMS:
         self.CA_ONLY       = args.ca_only
         #self.DIRECT_CONNECT = args.direct
         self.WPM           = args.wpm
+        self.INIT_MODE     = args.mode
         
         self.connection    = args.rig[0]
         if len(args.rig)>=2:
@@ -481,7 +485,6 @@ else:
             ser.setDTR(False)
             ser.setRTS(False)                       # Digi mode uses this for PTT?
 
-            #buf=P.sock.set_mode('CW')              # Put rig into CW mode
             if P.sock.connection=='DIRECT' or True:
                 # This type of command doesn't work for most versions of hamlib
                 cmd = 'BY;EX0603;EX0561;'               # Set DTR keying and full QSK
@@ -519,9 +522,14 @@ else:
         ser=serial_dummy()
 
 
-# Put rig and FLDIGI into CW mode
-#if self.sock.connection=='FLDIGI' and not self.P.PRACTICE_MODE:
-#    P.sock.set_mode('CW')
+# Put rig and FLDIGI into initial mode
+if not P.PRACTICE_MODE:
+    print('Initial mode=',P.INIT_MODE)
+    P.sock.set_mode(P.INIT_MODE,VFO='A')
+    split = P.sock.split_mode(-1)
+    if split:
+        P.sock.set_mode(P.INIT_MODE,VFO='B')
+    #sys.exit(0)
 
 # Open connection to rotor
 P.sock2 = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT2,0,'ROTOR')

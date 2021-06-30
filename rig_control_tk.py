@@ -234,7 +234,10 @@ class RIG_CONTROL():
         
         col=0
         Label(self.vfowin, text='Satellites:').grid(row=row,column=col)
-        for mode in ['FM','USB-INV','USB','LSB-INV','LSB','CW','CW/USB','PKT-INV','PKT-USB','PKT-FM']:
+        for mode in ['FM','USB-INV','USB','LSB-INV','LSB','CW','CW-INV','CW/USB', \
+                     'PKT-INV','PKT-USB','PKT-FM']:
+
+            # Align buttons according to voice, CW and packet modes
             if mode=='FM' or mode=='CW' or mode=='PKT-INV':
                 row+=1
                 col=0
@@ -249,30 +252,62 @@ class RIG_CONTROL():
         # Init
         print("\nRIG_CONTROL_TK: Set Sat Mode ...",mode)
 
+        # Set Split mode
+        self.sock.split_mode(1)
+
+        mode1=mode
         if mode=='FM':
-            cmd='rigctl -m 2 -r localhost:4532 M FM 0 X FM 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M FM 0 X FM 0'
+            mode2='FM'
         elif mode=='USB-INV':
-            cmd='rigctl -m 2 -r localhost:4532 M USB 0 X LSB 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M USB 0 X LSB 0'
+            mode1='USB'
+            mode2='LSB'
         elif mode=='USB':
-            cmd='rigctl -m 2 -r localhost:4532 M USB 0 X USB 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M USB 0 X USB 0'
+            mode2='USB'
         elif mode=='LSB':
-            cmd='rigctl -m 2 -r localhost:4532 M LSB 0 X LSB 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M LSB 0 X LSB 0'
+            mode2='LSB'
         elif mode=='LSB-INV':
-            cmd='rigctl -m 2 -r localhost:4532 M LSB 0 X USB 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M LSB 0 X USB 0'
+            mode1='LSB'
+            mode2='USB'
         elif mode=='CW':
-            cmd='rigctl -m 2 -r localhost:4532 M CW 0 X CW 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M CW 0 X CW 0'
+            mode2='CW'
+        elif mode=='CW-INV':
+            #cmd='rigctl -m 2 -r localhost:4532 M CW 0 X CW 0'
+            mode1='CW'
+            mode2='CW-R'
         elif mode=='CW/USB':
-            cmd='rigctl -m 2 -r localhost:4532 M USB 0 X CW 0'
+            # Not sure what this all about?
+            #cmd='rigctl -m 2 -r localhost:4532 M USB 0 X CW 0'
+            mode1='USB'
+            mode2='CW'
         elif mode=='PKT-INV':
-            cmd='rigctl -m 2 -r localhost:4532 M PKTUSB 0 X PKTLSB 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M PKTUSB 0 X PKTLSB 0'
+            mode1='PKTUSB'
+            mode2='PKTLSB'
         elif mode=='PKT-USB':
-            cmd='rigctl -m 2 -r localhost:4532 M PKTUSB 0 X PKTUSB 0'
+            #cmd='rigctl -m 2 -r localhost:4532 M PKTUSB 0 X PKTUSB 0'
+            mode1='PKTUSB'
+            mode2='PKTUSB'
         elif mode=='PKT-FM':
             cmd='rigctl -m 2 -r localhost:4532 M PKTFM 0 X PKTFM 0'
-        print('Set_Sat_mode: cmd=',cmd)
+            mode1='PKTFM'
+            mode2='PKTFM'
+        else:
+            print('SET SAT MODE: Unknwon mode',mode)
+            return
 
-        system(cmd)
-        
+        #print('Set_Sat_mode: cmd=',cmd)
+        #system(cmd)
+        self.sock.set_mode(mode1,VFO='A')
+        self.SB_A_TXT.set(mode1)
+        self.sock.set_mode(mode2,VFO='B')
+        self.SB_B_TXT.set(mode2)
+
     ############################################################################################
 
     def ManageVFOs(self,vfowin):
@@ -293,7 +328,7 @@ class RIG_CONTROL():
         # Set up a spin boxes to control select macro set
         row=0
         col=0
-        self.MODE_LIST = ['FM','USB','LSB','CWUSB','CWLSB','PKTUSB','PKTLSB','AM']
+        self.MODE_LIST = ['FM','USB','LSB','CW','CW-R','PKTUSB','PKTLSB','AM']
         print('MODES:',self.MODE_LIST)
 
         Label(self.vfowin, text='VFO A:').grid(row=row,column=col,sticky=E+W)
