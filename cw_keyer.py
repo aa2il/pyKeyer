@@ -184,6 +184,7 @@ class Keyer():
 
         # If using nano IO interface, send the char & let the nano do the rest
         if self.P.NANO_IO:
+            #print('send_cw: msg=',msg)
             nano_write(ser,msg)
             return
 
@@ -280,6 +281,7 @@ class Keyer():
         Udp=False
         txt2=''
         for ch in msg:
+            #print('ch=',ch)
 
             self.stop = self.stop or P.Stopper.isSet()
             if self.stop:
@@ -451,7 +453,7 @@ class Keyer():
 
                 else:
                     # Nothing special - key tranmitter
-                    #print "Sending ",ch
+                    #print("Sending ",ch)
                     self.send_cw(""+ch)
                     txt2+=ch
 

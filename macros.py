@@ -49,6 +49,34 @@ MACROS[Key][10] = {'Label' : 'V    '   , 'Text' : 'V'}
 MACROS[Key][11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV[-10] VVV'}
 CONTEST[Key]=False
 
+Key='Satellite_QSO'
+MACROS[Key] = OrderedDict()
+MACROS[Key][0]  = {'Label'    : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
+MACROS[Key][0+12]  = {'Label' : 'QRS '        , 'Text' : 'QRS PSE QRS '}
+MACROS[Key][1]     = {'Label' : 'Reply'       , 'Text' : '[CALL] TU [RST] [MYGRID] [MYGRID] BK'}
+MACROS[Key][1+12]  = {'Label' : 'Long'        , 'Text' : '[CALL] TU FER THE CALL [RST] [MYGRID] [MYGRID] OP [MYNAME] [MYNAME] BK'}
+MACROS[Key][2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] R73 QRZ? [MYCALL] [LOG]'}
+MACROS[Key][2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] MNY TNX FER QSO ES 73 QRZ? [MYCALL] [LOG]'}
+MACROS[Key][3]     = {'Label' : 'Call?'       , 'Text' : '[CALL]? '}
+MACROS[Key][3+12] = {'Label' : 'CALL? '       , 'Text' : 'CALL? '}
+
+MACROS[Key][4]     = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] DE [MYCALL] {MYCALL]'}
+MACROS[Key][4+12]  = {'Label' : '[MYCALL]'    , 'Text' : '[CALL] '}
+MACROS[Key][5]     = {'Label' : 'S&P Reply'   , 'Text' : 'RR TU [RST] [MYGRID] [MYGRID] BK'}
+MACROS[Key][5+12]  = {'Label' : 'S&P 2x'      , 'Text' : 'R TU FER RPRT UR [RST} IN [MYGRID] [MYGRID] OP {MYNAME] [MYNAME] BK'}
+MACROS[Key][6]     = {'Label' : 'AGN?'        , 'Text' : 'AGN? '}
+MACROS[Key][6+12]  = {'Label' : '? '          , 'Text' : '? '}
+MACROS[Key][7]     = {'Label' : 'Log QSO'     , 'Text' : '[LOG] '}
+
+MACROS[Key][8]     = {'Label' : 'OP'          , 'Text' : 'OP [MYNAME] [MYNAME] '}
+MACROS[Key][9]     = {'Label' : 'QTH'         , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
+MACROS[Key][10]    = {'Label' : '73'          , 'Text' : '73 GL'}
+MACROS[Key][10+1]  = {'Label' : '73'          , 'Text' : 'MNY TNX FER FB QSO 73 HPE CU AGAN '}
+MACROS[Key][11]    = {'Label' : '73'          , 'Text' : '73 GL'}
+MACROS[Key][12]    = {'Label' : 'BK'          , 'Text' : 'BK '}
+
+CONTEST[Key]=False
+
 Key='Regular_QSO'
 MACROS[Key] = OrderedDict()
 MACROS[Key][0]  = {'Label'   : 'CQ'       , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
@@ -167,7 +195,7 @@ MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [N
 MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
 MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
 
-MACROS[Key][4]     = {'Label' : '[MYCALL]'     , 'Text' : '[MYCALL] '}
+MACROS[Key][4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
 MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
 MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
 MACROS[Key][5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
@@ -237,7 +265,7 @@ MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCA
 MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
 MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
 
-MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+MACROS[Key][4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
 MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
 MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYITUZ]'}
 MACROS[Key][5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYITUZ] [MYITUZ]'}
@@ -245,10 +273,10 @@ MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
 MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
 MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
 
-MACROS[Key][8]     = {'Label' : 'Zone 2x' , 'Text' : '[MYITUZ] [MYITUZ] '}
-MACROS[Key][9]     = {'Label' : 'NR?'       , 'Text' : 'NR? '}
-MACROS[Key][10]    = {'Label' : '-'         , 'Text' : ' '}
-MACROS[Key][11]    = {'Label' : '-'         , 'Text' : ' '}
+MACROS[Key][8]     = {'Label' : 'Zone 2x'   , 'Text' : '[MYITUZ] [MYITUZ] '}
+MACROS[Key][9]     = {'Label' : 'Zone 2x'   , 'Text' : '[MYITUZ] [MYITUZ] '}
+MACROS[Key][10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+MACROS[Key][11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
 CONTEST[Key]=True
 
 Key='Sprint'

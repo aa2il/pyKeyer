@@ -36,6 +36,7 @@ set CONTEST="CWops"
 #set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="arrl_10m"
+set CONTEST="iaru"
 
 #set CAPTURE="-capture -sidetone"
 #set CAPTURE="-capture"
@@ -67,7 +68,6 @@ else if( $CONTEST == "wpx" )then
 # Setting for CQ World Wide
 else if( $CONTEST == "cqww" )then
     set WPM=25
-    set PRACTICE="-prac"
     set HINTS=""
 
 # Settings for field day
@@ -85,8 +85,8 @@ else if( $CONTEST == "CWops" )then
 
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then
-    #set WPM=30
-    #set PRACTICE="-prac"
+    set WPM=30
+    set HINTS=" -adjust"
 
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then

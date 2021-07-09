@@ -75,6 +75,9 @@ def master(P,call,dx_station=None):
                 sec   = P.MASTER[call]['FDsec']
                 state=arrl_sec2state(sec)
             return state
+        elif P.IARU:
+            qth  = P.MASTER[call]['ITUz']
+            return qth
         else:
             print('HINT.MASTER: No hints available for this contest')
             return None

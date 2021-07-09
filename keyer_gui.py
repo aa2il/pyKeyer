@@ -50,7 +50,7 @@ from audio_io import WaveRecorder
 ############################################################################################
 
 UTC = pytz.utc
-MAX_AGE_HOURS=48
+MAX_AGE_HOURS=24*7          # Was 48=2 days
 WPM_STEP = 2
 
 ############################################################################################
@@ -1136,21 +1136,27 @@ class GUI():
             self.hide_all()
             self.ndigits=-3
 
-            self.rst_lab.grid(columnspan=1,column=4,sticky=E+W)
-            self.rst.grid(column=4,columnspan=1)
+            col=4
+            cspan=1
+            self.rst_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+            self.rst.grid(column=col,columnspan=cspan)
             self.rst.delete(0,END)
             self.rst.insert(0,'5NN')
             
-            self.qth_lab.grid(columnspan=1,column=5,sticky=E+W)
-            self.qth.grid(column=5,columnspan=1)
+            col+=cspan
+            cspan=3
+            self.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+            self.qth.grid(column=col,columnspan=cspan)
 
             self.boxes=[self.call]
             self.boxes.append(self.rst)
             self.boxes.append(self.qth)
 
             if not self.P.NO_HINTS:
-                self.hint_lab.grid(columnspan=3,column=6,sticky=E+W)
-                self.hint.grid(column=6,columnspan=3)
+                col+=cspan
+                cspan=3
+                self.hint_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+                self.hint.grid(column=col,columnspan=cspan)
                 self.boxes.append(self.hint)
             
         elif self.P.SPRINT:
