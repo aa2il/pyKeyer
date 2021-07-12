@@ -167,6 +167,7 @@ class GUI():
             self.fp_log.flush()
 
         self.log_book = []
+
         try:
             for line in csvReader:
                 #print 'line=',line
@@ -1597,9 +1598,11 @@ class GUI():
                             exch,self.exch_out,name,qth,str(serial),str(self.cntr),satellite] )))
                         
             if self.P.sock3.connection=='FLLOG':
+                print('KEYER_GUI: =============== via FLLOG ...')
                 self.P.sock3.Add_QSO(qso)
 
-            elif self.sock.connection=='FLDIGI' and not self.P.PRACTICE_MODE:
+            elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE:
+                print('KEYER_GUI: =============== via FLDIGI ...')
                 fields = {'Call':call,'Name':name,'RST_out':rst,'QTH':qth,'Exchange':exch}
                 self.sock.set_log_fields(fields)
                 self.sock.set_mode('CW')
