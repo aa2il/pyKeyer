@@ -130,6 +130,7 @@ class GUI():
 
         self.last_call=''
         self.last_shift_key=''
+        self.last_hint=''
 
         self.sock = P.sock
         self.q = P.q
@@ -180,6 +181,7 @@ class GUI():
                     if not call in P.calls:
                         print('Call not in Master list:',call,'\t- Adding it')
                         self.log_book.append(qso)
+                        P.calls.append(call)
         except:
             pass
 
@@ -463,7 +465,7 @@ class GUI():
             btn.grid(row=row,column=col,sticky=E+W)
             tip = ToolTip(btn, ' Reset to Default Params ' )
 
-        # Catpure
+        # Capture
         self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
         self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
         tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
@@ -1310,10 +1312,12 @@ class GUI():
     def get_check(self):
         return self.check.get()
 
-    # Get a hint
+    # Get a clue
     def get_hint(self,call):
+        #print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! call=',call)
 
-        if len(call)>=3 and not self.P.NO_HINTS:
+        #if len(call)>=3 and not self.P.NO_HINTS:
+        if len(call)>=3:
             self.dx_station = Station(call)
             #pprint(vars(self.dx_station))
             h = hint.master(self.P,call,self.dx_station)
@@ -1325,6 +1329,8 @@ class GUI():
         self.hint.delete(0, END)
         if h:
             self.hint.insert(0,h)
+        self.last_hint=h
+        #print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! h=',h)
 
 
     # Save program state

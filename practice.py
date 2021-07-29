@@ -117,7 +117,7 @@ class CODE_PRACTICE():
                 done = len(name)>0 and len(qth)>0
             elif P.CWops:
                 name  = HIST[call]['name']
-                num   = HIST[call]['CWops']
+                num   = HIST[call]['cwops']
                 qth   = HIST[call]['state']
                 done = len(name)>0 and len(num)+len(qth)>0
             elif P.CAL_QP:
@@ -174,7 +174,7 @@ class CODE_PRACTICE():
                 elif P.CWops:
                     name  = HIST[call]['name'].split(' ')
                     name  = name[0]
-                    qth   = HIST[call]['CWops']
+                    qth   = HIST[call]['cwops']
                     if len(qth)==0:
                         qth   = HIST[call]['state']
                     txt2  = ' '+name+' '+qth
@@ -184,8 +184,8 @@ class CODE_PRACTICE():
                     print('exch2=',exch2)
                     
                 elif P.ARRL_FD:
-                    cat   = HIST[call]['FDcat']             # Category
-                    sec   = HIST[call]['FDsec']             # Section
+                    cat   = HIST[call]['fdcat']             # Category
+                    sec   = HIST[call]['fdsec']             # Section
                     txt2  = ' '+cat+' '+sec
                     exch2 = txt2
                 elif P.ARRL_VHF:
@@ -222,12 +222,12 @@ class CODE_PRACTICE():
                     exch2 = txt2
                     exch  = '5NN,'+serial
                 elif P.IARU:
-                    qth   = HIST[call]['ITUz']
+                    qth   = HIST[call]['ituz']
                     txt2  = ' 5NN '+qth
                     exch2 = txt2
                     exch  = '5NN,'+qth
                 elif P.CQ_WW:
-                    qth   = HIST[call]['CQz']
+                    qth   = HIST[call]['cqz']
                     txt2  = ' 5NN '+qth
                     exch2 = txt2
                     exch  = '5NN,'+qth

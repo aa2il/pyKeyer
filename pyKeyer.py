@@ -163,25 +163,26 @@ class PARAMS:
 
         self.contest_name  = get_contest_name(self)
 
-        if self.NAQP or self.SPRINT:
-            #self.HISTORY = HIST_DIR+'NAQP_Call_History_Aug2018.txt'
+        if self.USE_MASTER:
+            self.HISTORY = HIST_DIR+'master.csv'
+        elif self.NAQP or self.SPRINT:
             self.HISTORY = HIST_DIR+'NAQPCW.txt'
         elif self.SST:
-            #self.HISTORY = HIST_DIR+'K1USNSST-043.txt'
             self.HISTORY = HIST_DIR+'K1USNSST*.txt'
         elif self.CWops:
             #self.HISTORY = HIST_DIR+'Shareable CWops data.xlsx'
-            #self.HISTORY = HIST_DIR+'CWOPS_2855.txt'
             self.HISTORY = HIST_DIR+'CWOPS_*.txt'
         elif self.CW_SS:
             self.HISTORY = HIST_DIR+'SS_Call_History_Aug2018.txt'
         elif self.CAL_QP:
-            #self.HISTORY = HIST_DIR+'hist_ca2017.csv'
-            self.HISTORY = HIST_DIR+'CQP-CH-N1MM-05Oct2018.txt'
+            #self.HISTORY = HIST_DIR+'CQP-CH-N1MM-05Oct2018.txt'
+            self.HISTORY = HIST_DIR+'QSOP_CA*.txt'
         elif self.ARRL_FD:
-            self.HISTORY = HIST_DIR+'FD_2020.txt'
+            #self.HISTORY = HIST_DIR+'FD_2020.txt'
+            self.HISTORY = HIST_DIR+'FD_202*.txt'
         elif self.ARRL_VHF:
-            self.HISTORY = HIST_DIR+'ARRLVHFJAN.txt'
+            #self.HISTORY = HIST_DIR+'ARRLVHFJAN.txt'
+            self.HISTORY = HIST_DIR+'ARRLVHF*.txt'
         else:
             self.HISTORY = HIST_DIR+'master.csv'
             #self.HISTORY = ''
@@ -308,32 +309,48 @@ def WatchDog(P):
     # Read radio status
     if P.sock.connection!='NONE':
         print('Watch Dog - reading radio status ...', P.sock.connection)
-        socket_io.read_radio_status(P.sock)
-        print('\tWoof Woof:',P.sock.freq, P.sock.band, P.sock.mode, P.sock.wpm)
+        if False:
+            socket_io.read_radio_status(P.sock)
+            #print('\tWoof Woof:',P.sock.freq, P.sock.band, P.sock.mode, P.sock.wpm)
+            
+            P.gui.rig.band.set(P.sock.band)
+            x=str(int(P.sock.freq*1e-3))+' KHz  '+str(P.sock.mode)
+            P.gui.rig.status.set(x)
+            P.gui.rig.frequency=P.sock.freq
+            P.gui.rig.mode.set(P.sock.mode)
+            #self.ant.set(ant)
+            #print('\tWoof Woof 2:',x)
 
-        P.gui.rig.band.set(P.sock.band)
-        x=str(int(P.sock.freq*1e-3))+' KHz  '+str(P.sock.mode)
-        P.gui.rig.status.set(x)
-        P.gui.rig.frequency=P.sock.freq
-        P.gui.rig.mode.set(P.sock.mode)
-        #self.ant.set(ant)
-        print('\tWoof Woof 2:',x)
+            if P.sock.mode=='FM':
+                gui_tone = P.gui.rig.SB_PL_TXT.get()
+                print('\tWoof Woof - PL tone=',P.sock.pl_tone,gui_tone)
+                if P.sock.pl_tone==0:
+                    tone='None'
+                else:
+                    tone=str(P.sock.pl_tone)
+                if tone!=gui_tone:
+                    #print('*** Tone Mismatch ***')
+                    P.gui.rig.SB_PL_TXT.set(tone)
 
-        if True:
-            gui_tone = P.gui.rig.SB_PL_TXT.get()
-            print('\tWoof Woof - PL tone=',P.sock.pl_tone,gui_tone)
-            if P.sock.pl_tone==0:
-                tone='None'
-            else:
-                tone=str(P.sock.pl_tone)
-            if tone!=gui_tone:
-                #print('*** Tone Mismatch ***')
-                P.gui.rig.SB_PL_TXT.set(tone)
+        else:
+            freq = P.sock.get_freq()
+            mode = P.sock.get_mode()
+            band = P.sock.get_band(freq * 1e-6)
+
+            P.gui.rig.band.set(band)
+            x=str(int(freq*1e-3))+' KHz  '+str(mode)
+            P.gui.rig.status.set(x)
+            P.gui.rig.frequency=freq
+            P.gui.rig.mode.set(mode)
+            
 
     # Let user adjust WPM from radio knob
     if VERBOSITY>0:
         print("WatchDog - Checking WPM ...")
-    wpm=P.sock.wpm
+    if False:
+        wpm=P.sock.wpm
+    else:
+        wpm = P.sock.read_speed()
     if wpm!=P.WPM and wpm>0:
         print("WatchDog - Changing WPM to",wpm)
         P.keyer.set_wpm(wpm)

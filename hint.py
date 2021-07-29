@@ -41,7 +41,7 @@ def master(P,call,dx_station=None):
             else:
                 return state
         elif P.CQ_WW:
-            zone=P.MASTER[call]['CQz']
+            zone=P.MASTER[call]['cqz']
             return zone
         elif P.CW_SS:
             sec=P.MASTER[call]['sec']
@@ -54,7 +54,7 @@ def master(P,call,dx_station=None):
         elif P.CWops or P.SST:
             name  = P.MASTER[call]['name']
             state = P.MASTER[call]['state']
-            num = P.MASTER[call]['CWops']
+            num = P.MASTER[call]['cwops']
             print(name+' '+state+' '+num)
             return name+' '+state+' '+num
         elif P.NAQP or P.SPRINT:
@@ -62,8 +62,8 @@ def master(P,call,dx_station=None):
             state = P.MASTER[call]['state']
             return name+' '+state
         elif P.ARRL_FD:
-            cat   = P.MASTER[call]['FDcat']
-            sec   = P.MASTER[call]['FDsec']
+            cat   = P.MASTER[call]['fdcat']
+            sec   = P.MASTER[call]['fdsec']
             return cat+' '+sec
         elif P.ARRL_VHF:
             gridsq = P.MASTER[call]['grid']
@@ -72,11 +72,11 @@ def master(P,call,dx_station=None):
             state = P.MASTER[call]['state']
             if state=='':
                 # Try deciphering from section info
-                sec   = P.MASTER[call]['FDsec']
+                sec   = P.MASTER[call]['fdsec']
                 state=arrl_sec2state(sec)
             return state
         elif P.IARU:
-            qth  = P.MASTER[call]['ITUz']
+            qth  = P.MASTER[call]['ituz']
             return qth
         else:
             print('HINT.MASTER: No hints available for this contest')

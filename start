@@ -36,7 +36,7 @@ set CONTEST="CWops"
 #set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="arrl_10m"
-set CONTEST="iaru"
+#set CONTEST="iaru"
 
 #set CAPTURE="-capture -sidetone"
 #set CAPTURE="-capture"
@@ -79,7 +79,8 @@ else if( $CONTEST == "fd" )then
 # Settings for CW Ops mini tests
 else if( $CONTEST == "CWops" )then
     set WPM=30
-    set MASTER=""
+    #set MASTER=""
+    #set HINTS="-adjust -master"
     set HINTS="-nohints -adjust"
     #set HINTS="-master -adjust"
 
