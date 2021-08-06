@@ -51,6 +51,7 @@ from audio_io import WaveRecorder
 import time
 import os
 from settings import *
+from tcp_server import *
 
 ################################################################################
 
@@ -113,6 +114,7 @@ class PARAMS:
         arg_proc.add_argument("-port2", help="Rotor onnection Port",
                               type=int,default=0)
         arg_proc.add_argument('-server', action='store_true',help='Start hamlib server')
+        arg_proc.add_argument('-udp', action='store_true',help='Start UDP server')
         arg_proc.add_argument('-use_log_hist', action='store_true',help='Use history from log')
         args = arg_proc.parse_args()
 
@@ -151,6 +153,7 @@ class PARAMS:
             
         self.PORT          = args.port
         self.HAMLIB_SERVER = args.server
+        self.UDP_SERVER    = args.udp
         self.USE_LOG_HISTORY = args.use_log_hist
         self.SIDETONE      = args.sidetone or self.PORT==1
 
@@ -367,6 +370,10 @@ def WatchDog(P):
         print("WatchDog - QSO Rate ...")
     P.gui.qso_rate()
 
+    # Send out heart beat
+    if P.UDP_SERVER:
+        P.udp_server.Broadcast('Keyer Heartbeat - Thump Thump - kerr chunk')
+    
     # Read rotor position
     #print('sock2=',P.sock2)
     #print('sock2=',P.sock2.connection)
@@ -398,6 +405,7 @@ def WatchDog(P):
         P.WATCHDOG = False
 
         
+        
 class serial_dummy():
     def __init__(self):
         print('Serial dummy object substituted')
@@ -418,7 +426,18 @@ def toggle_dtr(n=1):
             ser.setDTR(False)
             
         #sys.exit(0)
+
+
+
+def UDP_msg_handler(msg):
+    print('UDP Message Handler: msg=',msg)
+
+    if msg[:5]=='Call:':
+        #print('UDP Message Handler: Setting call to:',msg[5:])
+        P.gui.call.delete(0, END)
+        P.gui.call.insert(0,msg[5:])
         
+    
     
 ############################################################################################
 
@@ -601,7 +620,7 @@ P.lock1 = threading.Lock()
 P.keyer.evt =  threading.Event()
 P.keyer.evt.clear()
 
-# Start a thread that control keying of TX
+# Start a thread that controls keying of TX
 worker = threading.Thread(target=process_chars, args=(P,),name='Process Chars')
 worker.setDaemon(True)
 worker.start()
@@ -638,10 +657,18 @@ P.gui     = GUI(P,MACROS)
 
 # Set up a thread for code practice
 P.practice = practice.CODE_PRACTICE(P)
-worker2 = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
-worker2.setDaemon(True)
-worker2.start()
-P.threads.append(worker2)
+worker = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
+worker.setDaemon(True)
+worker.start()
+P.threads.append(worker)
+
+# Start thread with UDP server
+if P.UDP_SERVER:
+    P.udp_server = TCP_Server(None,7474,Stopper=P.Stopper,Handler=UDP_msg_handler)
+    worker = Thread(target=P.udp_server.Listener, args=(), name='UDP Server' )
+    worker.setDaemon(True)
+    worker.start()
+    P.threads.append(worker)
 
 # WatchDog - runs in its own thread
 P.WATCHDOG = True

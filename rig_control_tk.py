@@ -37,15 +37,18 @@ from os import system
 ################################################################################
 
 class RIG_CONTROL():
-    def __init__(self,parent,sock):
-        self.sock = sock
+    def __init__(self,P):
+        self.P = P
+        parent = P.root
+        self.sock = P.sock
 
         self.win=Toplevel(parent)
         self.win.title("Rig Control")
         self.tabs = ttk.Notebook(self.win)          # Create Tab Control
         self.win.withdraw()
+        self.win.protocol("WM_DELETE_WINDOW", self.CloseWindow)
 
-        if sock.connection == 'NONE':
+        if self.sock.connection == 'NONE':
             return None
         
         # Legacy compatibility
@@ -209,6 +212,12 @@ class RIG_CONTROL():
         get_status(self)
         #self.win.withdraw()
             
+        
+    ############################################################################################
+
+    def CloseWindow(self):
+        print('Close window')
+        self.P.gui.RigCtrlCB()
         
     ############################################################################################
 

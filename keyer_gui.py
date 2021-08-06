@@ -52,6 +52,7 @@ from audio_io import WaveRecorder
 UTC = pytz.utc
 MAX_AGE_HOURS=24*7          # Was 48=2 days
 WPM_STEP = 2
+NUM_ROWS=2
 
 ############################################################################################
 
@@ -110,6 +111,7 @@ class GUI():
         self.contest = False
         self.P = P
         self.P.LAST_MSG = -1
+        self.P.root = self.root
         self.keyer=P.keyer;
         self.start_time = datetime.utcnow().replace(tzinfo=UTC)
         self.nqsos_start = 0
@@ -419,7 +421,7 @@ class GUI():
         self.RigCtrlBtn = Button(self.root, text='Rig Ctrl', command=self.RigCtrlCB )
         self.RigCtrlBtn.grid(row=row,column=col,sticky=E+W)
         tip = ToolTip(self.RigCtrlBtn,' Show/Hide Rig Control Frame ')
-        self.rig = RIG_CONTROL(self.root,P.sock)
+        self.rig = RIG_CONTROL(P)
         
         # Add a tab to manage Rotor
         # This is actually rather difficult since there doesn't
@@ -503,33 +505,32 @@ class GUI():
             .grid(row=row,column=int(ncols/2),columnspan=2,sticky=E+W)
         
         # Buttons to allow quick store & return to spotted freqs
-        row += 1
         self.spots=[]
-        for i in range(12):
-            if i<4:
-                c='pale green'
-            elif i<8:
-                c='indian red'
-            else:
-                c='slateblue1'
-            Grid.columnconfigure(self.root, i, weight=1,uniform='twelve')
-            btn = Button(self.root, text='--' , background=c)
-            #btn = Button(self.root, text='--' , background=c, \
-            #             command=lambda j=i: self.Spots_cb(j,0) )
-            btn.grid(row=row,column=i,sticky=E+W)
+        for j in range(NUM_ROWS):
+            row += 1
+            for i in range(12):
+                if i<4:
+                    c='pale green'
+                elif i<8:
+                    c='indian red'
+                else:
+                    c='slateblue1'
+                Grid.columnconfigure(self.root, i, weight=1,uniform='twelve')
+                btn = Button(self.root, text='--' , background=c)
+                btn.grid(row=row,column=i,sticky=E+W)
 
-            btn.bind('<Button-1>', self.Spots_Mouse )      
-            btn.bind('<Button-2>', self.Spots_Mouse )      
-            btn.bind('<Button-3>', self.Spots_Mouse )      
+                btn.bind('<Button-1>', self.Spots_Mouse )      
+                btn.bind('<Button-2>', self.Spots_Mouse )      
+                btn.bind('<Button-3>', self.Spots_Mouse )      
 
-            tip = ToolTip(btn, ' Quick Store/Recall ' )
-
-            spot = OrderedDict()
-            spot['Button'] = btn
-            #spot['Call']   = None
-            spot['Freq']   = None
-            spot['Fields'] = None
-            self.spots.append(spot)
+                tip = ToolTip(btn, ' Quick Store/Recall ' )
+                
+                spot = OrderedDict()
+                spot['Button'] = btn
+                #spot['Call']   = None
+                spot['Freq']   = None
+                spot['Fields'] = None
+                self.spots.append(spot)
 
         # Restore the state from the last time in
         self.RestoreState()
