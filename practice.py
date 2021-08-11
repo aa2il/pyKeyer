@@ -32,7 +32,6 @@ if sys.version_info[0]==3:
 else:
     from Tkinter import END
 from load_history import *
-#from rig_io.ft_tables import MY_CALL
 from sidetone import *
 from nano_io import nano_write
 

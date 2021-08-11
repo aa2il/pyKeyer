@@ -69,7 +69,19 @@ def GetKeyerMemory(self):
 
 def KeyerMemoryDefaults(self,arg):
     print("\Setting Keypad Defaults ",arg)
-
+    
+    MY_CALL     = self.P.SETTINGS['MY_CALL']
+    MY_NAME     = self.P.SETTINGS['MY_NAME']
+    MY_STATE    = self.P.SETTINGS['MY_STATE']
+    MY_SEC      = self.P.SETTINGS['MY_SEC']
+    MY_CAT      = self.P.SETTINGS['MY_CAT']
+    MY_PREC     = self.P.SETTINGS['MY_PREC']
+    MY_CHECK    = self.P.SETTINGS['MY_CHECK']
+    MY_COUNTY   = self.P.SETTINGS['MY_COUNTY']
+    MY_CQ_ZONE  = self.P.SETTINGS['MY_CQ_ZONE']
+    MY_ITU_ZONE = self.P.SETTINGS['MY_ITU_ZONE']
+    MY_GRID     = self.P.SETTINGS['MY_GRID']
+    
     if arg==1:
         # ARRL Intl DX Contest & CQ 160m
         Keyer=[MY_CALL,'TU 5NN '+MY_STATE,MY_STATE+' '+MY_STATE,'73','AGN?','0001']

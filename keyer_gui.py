@@ -1563,13 +1563,13 @@ class GUI():
                     band += 'm'
 
             # Do some error checking                    
-            if mode!=self.sock.mode and self.sock.connection!='NONE':
+            if mode!=self.sock.mode and self.sock.connection!='NONE' and False:
                 txt='##### WARNING ##### Mode mismatch in keyer_gui - radio:'+mode+'\tWoof:'+self.sock.mode
                 print(txt)                          # Print error msg to terminal ...
                 self.txt.insert(END, txt+'\n')      # ... and put it in the console text window
                 self.txt.see(END)
 
-            if band!=self.sock.band and self.sock.connection!='NONE':
+            if band!=self.sock.band and self.sock.connection!='NONE' and False:
                 txt='##### WARNING ##### Band mismatch in keyer_gui - radio:'+band+'\tWoof:'+self.sock.band
                 print(txt)
                 self.txt.insert(END, txt+'\n')
@@ -1904,8 +1904,6 @@ class GUI():
         ch    = event.char
         state = event.state
 
-        #print("Key Press:",key) #,ch,len(key),num
-
         # Modfiers
         shift     = ((state & 0x0001) != 0)
         #caps_lock = state & 0x0002
@@ -1916,8 +1914,10 @@ class GUI():
         #mouse2 = state & 0x0200
         #mouse3 = state & 0x0400
 
-        #print('State:',state,shift,control,alt)
-        #print event
+        if False:
+            print("Key Press:",key) #,ch,len(key),num
+            print('State:',state,shift,control,alt)
+            #print event
 
         # This should never happen
         if len(key)==0:
@@ -1925,6 +1925,10 @@ class GUI():
 
         # Check for special keys
         if len(key)>=2 or alt or control:
+            if len(key)==1:
+                key=key.lower()
+            
+            #print('Special:',key,'\t',state)
             #if key=='Shift_L' or key=='Shift_R':
             #    return("break")
                 
@@ -1960,7 +1964,7 @@ class GUI():
                 return("break")
 
             # This works but seemed problematic in normal operating??
-            if (key=='Delete' and True) or (key=='w' and alt):
+            if (key=='Delete' and False) or (key=='w' and alt):
                 print('Delete - clear box')
                 if event.widget!=self.txt:
                     event.widget.delete(0,END)     # Clear the entry box

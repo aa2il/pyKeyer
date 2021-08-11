@@ -433,9 +433,14 @@ def UDP_msg_handler(msg):
     print('UDP Message Handler: msg=',msg)
 
     if msg[:5]=='Call:':
-        #print('UDP Message Handler: Setting call to:',msg[5:])
+        call=msg[5:]
+        #print('UDP Message Handler: Setting call to:',call,P.gui.contest)
         P.gui.call.delete(0, END)
-        P.gui.call.insert(0,msg[5:])
+        P.gui.call.insert(0,call)
+        P.gui.dup_check(call)
+        if P.gui.contest:
+            #print('UDP Message Handler: Update hints')
+            P.gui.get_hint(call)
         
     
     
