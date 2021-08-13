@@ -79,10 +79,8 @@ else if( $CONTEST == "fd" )then
 # Settings for CW Ops mini tests
 else if( $CONTEST == "CWops" )then
     set WPM=30
-    #set MASTER=""
-    #set HINTS="-adjust -master"
+    set MASTER=""
     set HINTS="-nohints -adjust"
-    #set HINTS="-master -adjust"
 
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then

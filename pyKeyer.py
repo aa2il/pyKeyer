@@ -431,16 +431,20 @@ def toggle_dtr(n=1):
 
 def UDP_msg_handler(msg):
     print('UDP Message Handler: msg=',msg)
+    self=P.gui
 
     if msg[:5]=='Call:':
         call=msg[5:]
         #print('UDP Message Handler: Setting call to:',call,P.gui.contest)
-        P.gui.call.delete(0, END)
-        P.gui.call.insert(0,call)
-        P.gui.dup_check(call)
-        if P.gui.contest:
-            #print('UDP Message Handler: Update hints')
-            P.gui.get_hint(call)
+        call2=self.get_call()
+        if call!=call2:
+            self.Clear_Log_Fields()
+            #self.call.delete(0, END)
+            self.call.insert(0,call)
+            self.dup_check(call)
+            if P.gui.contest:
+                #print('UDP Message Handler: Update hints')
+                self.get_hint(call)
         
     
     

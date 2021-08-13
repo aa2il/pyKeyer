@@ -51,8 +51,8 @@ from audio_io import WaveRecorder
 
 UTC = pytz.utc
 MAX_AGE_HOURS=24*7          # Was 48=2 days
-WPM_STEP = 2
-NUM_ROWS=2
+WPM_STEP = 4                # Key speed step for up/dn buttons - was 2
+NUM_ROWS=2                  # No. of spot rows, one is not quite enough for s&p
 
 ############################################################################################
 

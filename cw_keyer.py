@@ -111,7 +111,13 @@ morse[61]="-...-";     # = = BT
 
 ############################################################################################
 
-def cut_numbers(n,ndigits=-3):
+def cut_numbers(n,ndigits=-3,ALL=False):
+
+    n=int(n)
+
+    if n<0:
+        print('CUT_NUMBERS - ERROR - Positive number only duffess1',n)
+        return str(n)
 
     if False:
     
@@ -121,6 +127,25 @@ def cut_numbers(n,ndigits=-3):
             txt = 'T'+'{:,d}'.format(n)
         else:
             txt = '{:,d}'.format(n)
+
+    elif ALL:
+
+        nn=str(n)
+        txt=''
+        for i in range(len(nn)):
+            d=nn[i]
+            if d=='0':
+                d='T'
+            elif d=='1':
+                d='A'
+            elif d=='9':
+                d='N'
+            txt=txt+d
+
+        while len(txt)<ndigits:
+            txt = 'T'+txt
+            
+        return txt
 
     else:
         #if ndigits<0:

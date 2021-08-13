@@ -34,6 +34,7 @@ else:
 from load_history import *
 from sidetone import *
 from nano_io import nano_write
+from cw_keyer import cut_numbers
 
 ###################################################################
 
@@ -55,6 +56,7 @@ class CODE_PRACTICE():
             print(files[-1])
             #sys.exit(0)
             P.HISTORY=files[-1]
+            print('CODE_PRACTICE: History=',P.HISTORY)
   
         if len(P.HISTORY)>0:
             self.HIST = load_history(P.HISTORY)
@@ -176,6 +178,13 @@ class CODE_PRACTICE():
                     qth   = HIST[call]['cwops']
                     if len(qth)==0:
                         qth   = HIST[call]['state']
+                    else:
+                        # Some of the time, send as cut numbers 
+                        x = random.random()
+                        if qth.isdigit() and x<=0.35:
+                            #qth2 = cut_numbers( int(qth), ALL=True )
+                            print('PRACTICE: Cutting',qth,qth2)
+                            qth = cut_numbers( int(qth), ALL=True )
                     txt2  = ' '+name+' '+qth
                     exch2 = txt2
 
