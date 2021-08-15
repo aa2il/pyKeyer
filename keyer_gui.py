@@ -1414,6 +1414,12 @@ class GUI():
         self.fp_txt.close()
         self.P.SHUTDOWN=True
 
+        # Immediately stop sending
+        self.keyer.abort()     
+        if not self.q.empty():
+            self.q.get(False)
+            self.q.task_done()
+
         # Loop through all the threads and close (join) them
         #print "Waiting for WatchDog to quit..."
         #while self.P.WATCHDOG:
@@ -1583,9 +1589,9 @@ class GUI():
             elif self.contest and self.P.CW_SS:
                 self.exch_out = str(self.cntr)+','+MY_PREC+','+MY_CALL+','+MY_CHECK+','+MY_SEC
             elif self.contest and self.P.SPRINT:
-                self.exch_out = self(self.cntr)+','+MY_NAME+','+MY_STATE
+                self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
             elif self.contest and self.P.CAL_QP:
-                self.exch_out = self(self.cntr)+','+MY_COUNTY
+                self.exch_out = str(self.cntr)+','+MY_COUNTY
             elif self.contest and self.P.WPX:
                 self.exch_out = '599,'+str(self.cntr)
             elif self.contest and self.P.IARU:

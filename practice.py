@@ -179,11 +179,11 @@ class CODE_PRACTICE():
                     if len(qth)==0:
                         qth   = HIST[call]['state']
                     else:
-                        # Some of the time, send as cut numbers 
+                        # Half the time, send as cut numbers 
                         x = random.random()
-                        if qth.isdigit() and x<=0.35:
+                        if qth.isdigit() and x<=0.5:
                             #qth2 = cut_numbers( int(qth), ALL=True )
-                            print('PRACTICE: Cutting',qth,qth2)
+                            #print('PRACTICE: Cutting',qth,qth2)
                             qth = cut_numbers( int(qth), ALL=True )
                     txt2  = ' '+name+' '+qth
                     exch2 = txt2

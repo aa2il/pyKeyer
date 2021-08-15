@@ -50,9 +50,15 @@ if( $CONTEST == "naqp" )then
     #set WPM=22
     #set HINTS=""
 
+# Settings for CW Ops mini tests
+else if( $CONTEST == "CWops" )then
+    set WPM=30
+    set HINTS="-nohints -adjust"
+
+# Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then
     set WPM=25
-    set HINTS="-master"
+    set HINTS="-nohints -adjust"
 
 # Settings for NCCC CW Sprints
 else if( $CONTEST == "sprint" )then
@@ -76,12 +82,6 @@ else if( $CONTEST == "fd" )then
     #set HINTS="-nohints"
     set HINTS="-nohints -adjust"
 
-# Settings for CW Ops mini tests
-else if( $CONTEST == "CWops" )then
-    set WPM=30
-    set MASTER=""
-    set HINTS="-nohints -adjust"
-
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then
     set WPM=30
@@ -91,8 +91,7 @@ else if( $CONTEST == "iaru" )then
 else if( $CONTEST == "cqp" )then
     #set MASTER=""
     set MASTER="-master -ca_only"
-    #set WPM=25
-    #set HINTS=""
+    set HINTS="-nohints -adjust"
 
 # Settings for ARRL VHF
 else if( $CONTEST == "vhf" )then
