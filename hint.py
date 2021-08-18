@@ -23,6 +23,10 @@ from rig_io.ft_tables import CA_COUNTIES,arrl_sec2state
 
 ############################################################################################
 
+VERBOSITY=0
+
+############################################################################################
+
 # Routine to sift through previous contest lists to get a hint of qth
 def master(P,call,dx_station=None):
 
@@ -31,8 +35,9 @@ def master(P,call,dx_station=None):
         call=dx_station.homecall
     
     if call in P.calls:
-        print('MASTER:',call,' is in master list')
-        print(P.MASTER[call])
+        if VERBOSITY>0:
+            print('MASTER:',call,' is in master list')
+            print(P.MASTER[call])
         if P.CAL_QP:
             state=P.MASTER[call]['state']
             if state=='CA':
@@ -55,7 +60,8 @@ def master(P,call,dx_station=None):
             name  = P.MASTER[call]['name']
             state = P.MASTER[call]['state']
             num = P.MASTER[call]['cwops']
-            print(name+' '+state+' '+num)
+            if VERBOSITY>0:
+                print(name+' '+state+' '+num)
             return name+' '+state+' '+num
         elif P.NAQP or P.SPRINT:
             name  = P.MASTER[call]['name']
@@ -83,7 +89,8 @@ def master(P,call,dx_station=None):
             return None
 
     else:
-        print('HINT.MASTER:',call,' is NOT in master list')
+        if VERBOSITY>0:
+            print('HINT.MASTER:',call,' is NOT in master list')
         if dx_station:
             if P.CQ_WW:
                 return dx_station.cqz
@@ -95,7 +102,8 @@ def master(P,call,dx_station=None):
 # Routine to give a hint of QTH of a CA station
 def commie_fornia(dx_station,qth):
     if dx_station.country=='United States' and dx_station.cqz==3:
-        print('Commie-fornia')
+        if VERBOSITY>0:
+            print('Commie-fornia')
         #print CA_COUNTIES
         #hints= [s for s in CA_COUNTIES if qth in s]
         hints=[]

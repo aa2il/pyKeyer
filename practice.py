@@ -36,7 +36,7 @@ from sidetone import *
 from nano_io import nano_write
 from cw_keyer import cut_numbers
 
-###################################################################
+############################################################################################
 
 # Code practice
 class CODE_PRACTICE():
@@ -82,8 +82,7 @@ class CODE_PRACTICE():
     # Main routine that orchestrates code practice
     def run(self):
 
-        # Loop forever
-        #while True:
+        # Loop until exit event is set
         while not self.P.Stopper.isSet():
             
             if self.P.PRACTICE_MODE:
@@ -91,7 +90,7 @@ class CODE_PRACTICE():
                 self.practice_qso()
 
             else:
-                time.sleep(0.5)
+                time.sleep(1)
                 
 
             
@@ -111,7 +110,6 @@ class CODE_PRACTICE():
         while not done:
             i = random.randint(0, self.Ncalls-1)
             call = self.calls[i]
-            #call='KC1KUG'
             if P.NAQP or P.SST:
                 name  = HIST[call]['name']
                 qth   = HIST[call]['state']
@@ -120,7 +118,8 @@ class CODE_PRACTICE():
                 name  = HIST[call]['name']
                 num   = HIST[call]['cwops']
                 qth   = HIST[call]['state']
-                done = len(name)>0 and len(num)+len(qth)>0
+                #done = len(name)>0 and len(num)+len(qth)>0        # Need either no. or state
+                done = len(name)>0 and len(num)>0                  # Need no. but some have state in no. field
             elif P.CAL_QP:
                 sec=HIST[call]['state']
                 if sec=='CA':
@@ -135,7 +134,8 @@ class CODE_PRACTICE():
             #print('PRACTICE_QSO:',call,HIST[call],done)
 
         # Wait for op to hit CQ
-        print('\nPRACTICE_QSO: Waiting 1a - hit CQ ...',call,'...',P.gui.macro_label,'...')
+        print('PRACTICE_QSO: Waiting 1a - hit CQ ...',call,'...',P.gui.macro_label,'...')
+        self.wait_for_keyer()
         Done=False
         while not Done:
             Done= ('CQ'  in P.gui.macro_label) or ('QRZ'   in P.gui.macro_label) or \
@@ -152,7 +152,6 @@ class CODE_PRACTICE():
         if self.P.Stopper.isSet():
             return
         print('PRACTICE_QSO: Waiting 1c - ',keyer.evt.isSet() )
-        keyer.evt.wait()
         keyer.evt.clear()
         P.gui.macro_label=''
         print('PRACTICE_QSO: Waiting 1d - Got handshake with keyer ...')
@@ -162,9 +161,7 @@ class CODE_PRACTICE():
         while not done:
 
             # Timing is critical so we make sure we have control
-            #print('CODE PRACTICE: Waiting 1c - Acquire lock ...')
             lock.acquire()
-            #print('CODE PRACTICE: Waiting 1d - Got lock ...')
             if P.PRACTICE_MODE:
                 txt1 = ' '+call
                 if P.NAQP or P.SST:
@@ -182,14 +179,12 @@ class CODE_PRACTICE():
                         # Half the time, send as cut numbers 
                         x = random.random()
                         if qth.isdigit() and x<=0.5:
-                            #qth2 = cut_numbers( int(qth), ALL=True )
-                            #print('PRACTICE: Cutting',qth,qth2)
                             qth = cut_numbers( int(qth), ALL=True )
                     txt2  = ' '+name+' '+qth
                     exch2 = txt2
 
-                    print('hist=',HIST[call])
-                    print('exch2=',exch2)
+                    #print('hist=',HIST[call])
+                    #print('exch2=',exch2)
                     
                 elif P.ARRL_FD:
                     cat   = HIST[call]['fdcat']             # Category
@@ -254,7 +249,7 @@ class CODE_PRACTICE():
                     txt2='?????'
                     print('CODE PRACTICE: Unknown Contest')
                                     
-                print('CODE PRACTICE: call=',txt1)
+                print('CODE PRACTICE: Sending call=',txt1)
                 if self.P.NANO_IO:
                     nano_write(self.P.ser,txt1)
                 else:
@@ -263,9 +258,8 @@ class CODE_PRACTICE():
             lock.release()
 
             # Wait for op to answer
-            print('\nCODE PRACTICE: Waiting 2a - Answer ...', \
-                  P.gui.macro_label,'... evt=',keyer.evt.isSet())
-            time.sleep(0.1)
+            print('CODE PRACTICE: Waiting 2a - Answer ... keyer.evt=',keyer.evt.isSet())
+            self.wait_for_keyer()
             while ('Reply' not in P.gui.macro_label) and ('?' not in P.gui.macro_label) and \
                   (MY_CALL not in P.gui.macro_label) and not self.P.Stopper.isSet():
                 time.sleep(0.1)
@@ -275,9 +269,8 @@ class CODE_PRACTICE():
             P.gui.macro_label=''
             if self.P.Stopper.isSet():
                 return
-            keyer.evt.wait()
             keyer.evt.clear()
-            print('\nCODE PRACTICE: Waiting 2b - Got Answer ...',done)
+            print('CODE PRACTICE: Waiting 2b - Got Answer ... done=',done)
 
         # Send exchange 
         done = False
@@ -289,7 +282,7 @@ class CODE_PRACTICE():
             # Timing is critical so we make sure we have control
             lock.acquire()
             if P.PRACTICE_MODE:
-                print('CODE PRACTICE: exch=',txt2)
+                print('CODE PRACTICE: Sending exch=',txt2)
                 if self.P.NANO_IO:
                     nano_write(self.P.ser,txt2)
                 else:
@@ -297,32 +290,28 @@ class CODE_PRACTICE():
             lock.release()
 
             # Wait for op to answer
-            print('\nCODE PRACTICE: Waiting 3a - Answer...')
-            time.sleep(0.1)
+            print('CODE PRACTICE: Waiting 3a - Answer...')
+            self.wait_for_keyer()
             label = P.gui.macro_label.upper()
-            #print 'label=',label
             while ('TU' not in label) and ('?' not in label) and \
                   ('LOG' not in label) and not self.P.Stopper.isSet(): ### and ('CQ' not in label):
                 time.sleep(0.1)
                 label = P.gui.macro_label.upper()
-                #if len(label)>0:
-                #    print 'label=',label
+                if len(label)>0:
+                    print('CODE_PRACTICE 3a: label=',label,'\tkeyer.evt=',keyer.evt.isSet())
             if self.P.Stopper.isSet():
                 return
-            keyer.evt.wait()
-            keyer.evt.clear()
             done = ('TU' in label) or ('LOG' in label)
-            #if 'CQ' in label:
-            #    time.sleep(0.1)
 
-            print('\nCODE PRACTICE: Waiting 3b - Answered ...',done,label)
+            print('CODE PRACTICE: Waiting 3b - Answered ... done=',done,'\tlabel=',label)
             if not done:
-                #print 'label=',label
                 repeats=repeats or ('?' in label)
                 print('Repeats=',repeats)
                 
                 # Determine next element
-                if P.CW_SS:
+                if 'CALL' in label:
+                    txt2=call+' '+call
+                elif P.CW_SS:
                     if 'NR?' in label:
                         txt2=serial+' '+serial
                     elif 'PREC?' in label:
@@ -387,9 +376,10 @@ class CODE_PRACTICE():
 
                 # Get ready to try again
                 P.gui.macro_label=''
-
-        # Error checking
-        print('\nCODE PRACTICE: Error check ...')
+                keyer.evt.clear()
+            
+        # Error checking - keyer event hasn't been cleared yet so the gui boxes won't get erased too fast
+        print('CODE PRACTICE: Error check ...')
         call2 = P.gui.get_call().upper()
         if P.NAQP or P.SST:
             name2 = P.gui.get_name().upper()
@@ -428,6 +418,10 @@ class CODE_PRACTICE():
             sec    = P.gui.get_qth().upper()
             exch2  = serial+','+name2+' '+sec
 
+        # We have everything we need, now the main program can clear the gui boxes
+        keyer.evt.clear()
+
+        # Check call & exchange matching
         if P.NAQP or P.CWops or P.SST:
             match = call==call2 and name==name2 and qth==qth2
         elif P.ARRL_FD:
@@ -439,7 +433,7 @@ class CODE_PRACTICE():
 
         if not match:
             txt='********************** ERROR **********************'
-            print('\n'+txt)
+            print(txt)
             print('Call sent:',call,' - received:',call2)
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.insert(END,'Call sent: '+call+' - received: '+call2+'\n')
@@ -477,6 +471,14 @@ class CODE_PRACTICE():
                 P.gui.set_wpm(+1)
             print(' ')
 
+            
+    # Routine to wait for keyer to flush - bail out if stopper gets set
+    def wait_for_keyer(self):
+        while not self.P.keyer.evt.wait(timeout=1):
+            if self.P.Stopper.isSet():
+                break
+        return
+        
 
 # If this file is called as main, convert history file into simple log format
 # At some point, chnage this into a function

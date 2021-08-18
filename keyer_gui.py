@@ -721,7 +721,7 @@ class GUI():
             except:
                 pass
 
-    # Routine to substitute various keyer commands in macro text
+    # Routine to substitute various keyer commands that are stable in macro text
     def Patch_Macro(self,txt):
         txt = txt.replace('[MYCALL]',self.P.SETTINGS['MY_CALL'] )
         if '[MYSTATE]' in txt:
@@ -757,15 +757,41 @@ class GUI():
         if '[MYCOUNTY]' in txt:
             self.qth_out = self.P.SETTINGS['MY_COUNTY'] 
             txt = txt.replace('[MYCOUNTY]', self.qth_out)
+
+        return txt
+    
+    # Routine to substitute various keyer commands that change quickly in macro text 
+    def Patch_Macro2(self,txt):
+    
         if '[GDAY]' in txt:
             hour = datetime.now().hour
             if hour<12:
                 txt = txt.replace('[GDAY]','GM' )
-            elif hour<17:
+            elif hour<16:
                 txt = txt.replace('[GDAY]','GA' )
             else:
                 txt = txt.replace('[GDAY]','GE' )
 
+        call = self.get_call().upper()
+        call2 = self.last_call
+        #print '---- CALL:',call,call2,call==call2
+        if call==call2:
+            txt = txt.replace('[CALL_CHANGED]','')
+        else:
+            txt = txt.replace('[CALL_CHANGED]',call)
+
+        if '[CALL]' in txt:
+            txt = txt.replace('[CALL]',call)
+            self.last_call=call
+        
+        txt = txt.replace('[NAME]',self.get_name() )
+        txt = txt.replace('[RST]', self.get_rst() )
+
+        if '[EXCH]' in txt:
+            txt = txt.replace('[EXCH]', '' )
+            self.exch_out = txt
+
+                
         return txt
 
     # Callback to send a pre-defined macro
@@ -838,25 +864,7 @@ class GUI():
 
         # This should have already been handled when we loaded the macros
         #txt = self.Patch_Macro(txt)
-
-        call = self.get_call().upper()
-        call2 = self.last_call
-        #print '---- CALL:',call,call2,call==call2
-        if call==call2:
-            txt = txt.replace('[CALL_CHANGED]','')
-        else:
-            txt = txt.replace('[CALL_CHANGED]',call)
-
-        if '[CALL]' in txt:
-            txt = txt.replace('[CALL]',call)
-            self.last_call=call
-        
-        txt = txt.replace('[NAME]',self.get_name() )
-        txt = txt.replace('[RST]', self.get_rst() )
-
-        if '[EXCH]' in txt:
-            txt = txt.replace('[EXCH]', '' )
-            self.exch_out = txt
+        txt = self.Patch_Macro2(txt)
 
         # Send text to keyer ...
         self.q.put(txt)

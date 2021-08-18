@@ -193,7 +193,9 @@ MACROS[Key] = OrderedDict()
 MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SST [MYCALL] '}
 MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
 MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [MYSTATE] '}
-MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 [MYCALL] SST [LOG]'}
+MACROS[Key][1+12]  = {'Label' : 'Reply'     , 'Text' : '[CALL] TNX AGN [MYNAME] [MYSTATE] '}
+MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 SST [MYCALL] [LOG]'}
+MACROS[Key][2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] GL EE'}
 MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
 MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
 
