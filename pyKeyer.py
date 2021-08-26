@@ -47,7 +47,7 @@ from load_history import *
 from pprint import pprint
 import rig_io.hamlibserver as rigctl
 from sidetone import *
-from audio_io import WaveRecorder
+#from audio_io import WaveRecorder
 import time
 import os
 from settings import *
@@ -86,6 +86,7 @@ class PARAMS:
         arg_proc.add_argument('-cqp', action='store_true',help='California QP')
         arg_proc.add_argument('-fd', action='store_true',help='ARRL Field Day')
         arg_proc.add_argument('-vhf', action='store_true',help='ARRL VHF')
+        arg_proc.add_argument('-sat', action='store_true',help='Satellites')
         arg_proc.add_argument('-sprint', action='store_true',help='NCCC CW Sprint')
         arg_proc.add_argument('-cqww', action='store_true',help='CQ Worldwide')
         arg_proc.add_argument('-iaru', action='store_true',help='IARU HF Championship')
@@ -131,6 +132,7 @@ class PARAMS:
         self.ARRL_10m      = args.arrl_10m
         self.ARRL_FD       = args.fd
         self.ARRL_VHF      = args.vhf
+        self.SATELLITES    = args.sat
         self.CAPTURE       = args.capture
         self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force

@@ -80,7 +80,7 @@ class SIDETONE_OSC():
         tt = np.arange(3*Ndit) / self.FS
         self.dah = self.AMP*np.sin(2 * np.pi * self.F0 * tt)
         self.dit = self.dah[0:Ndit]
-        print('Gen elements:',dotlen,Ndit,len(self.dit))
+        #print('Gen elements:',dotlen,Ndit,len(self.dit))
         self.space = 0*self.dit
         self.long_space = 0*self.dah
 

@@ -35,6 +35,7 @@ from load_history import *
 from sidetone import *
 from nano_io import nano_write
 from cw_keyer import cut_numbers
+from rig_io.ft_tables import SST_SECS
 
 ############################################################################################
 
@@ -117,9 +118,14 @@ class CODE_PRACTICE():
             elif P.CWops:
                 name  = HIST[call]['name']
                 num   = HIST[call]['cwops']
-                qth   = HIST[call]['state']
-                #done = len(name)>0 and len(num)+len(qth)>0        # Need either no. or state
+
+                # Select criteria for a accepting a call
+                # Most of the time require a cwops number but once in a while use only state
+                # This seems to be most realistic of what in encountered in the tests.
                 done = len(name)>0 and len(num)>0                  # Need no. but some have state in no. field
+                x = random.random()
+                done =done and ((num not in SST_SECS) or (x<0.1))
+                
             elif P.CAL_QP:
                 sec=HIST[call]['state']
                 if sec=='CA':
@@ -148,10 +154,10 @@ class CODE_PRACTICE():
             #    keyer.evt.clear()
 
         # Wait for handshake with keyer
-        print('PRACTICE_QSO: Waiting 1b - Handshake with keyer ...')
+        #print('PRACTICE_QSO: Waiting 1b - Handshake with keyer ...')
         if self.P.Stopper.isSet():
             return
-        print('PRACTICE_QSO: Waiting 1c - ',keyer.evt.isSet() )
+        #print('PRACTICE_QSO: Waiting 1c - ',keyer.evt.isSet() )
         keyer.evt.clear()
         P.gui.macro_label=''
         print('PRACTICE_QSO: Waiting 1d - Got handshake with keyer ...')
@@ -279,6 +285,11 @@ class CODE_PRACTICE():
             if self.P.Stopper.isSet():
                 return
 
+            # Check if call is correct
+            call2 = P.gui.get_call().upper()
+            if call2!=call:
+                txt2 = call+' '+txt2
+            
             # Timing is critical so we make sure we have control
             lock.acquire()
             if P.PRACTICE_MODE:
@@ -306,7 +317,7 @@ class CODE_PRACTICE():
             print('CODE PRACTICE: Waiting 3b - Answered ... done=',done,'\tlabel=',label)
             if not done:
                 repeats=repeats or ('?' in label)
-                print('Repeats=',repeats)
+                #print('Repeats=',repeats)
                 
                 # Determine next element
                 if 'CALL' in label:

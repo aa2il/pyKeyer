@@ -33,7 +33,6 @@ import pytz
 from datetime import datetime, date, tzinfo
 import time
 import cw_keyer
-from rig_io.ft_tables import *
 import hint
 from dx.spot_processing import Station
 from pprint import pprint
@@ -86,6 +85,8 @@ def get_contest_name(P):
         return 'ARRL-FD'
     elif P.ARRL_VHF:
         return 'ARRL-VHF'
+    elif P.SATELLITES:
+        return 'SATELLITES'
     elif P.CAL_QP:
         return 'CQP'
     elif P.SPRINT:
@@ -369,6 +370,8 @@ class GUI():
             idx=MACRO_LIST.index('ARRL Field Day')
         elif self.P.ARRL_VHF:
             idx=MACRO_LIST.index('ARRL VHF')
+        elif self.P.SATELLITES:
+            idx=MACRO_LIST.index('Satellite QSO')
         elif self.P.NAQP:
             idx=MACRO_LIST.index('NAQP')
         elif self.P.SST:
@@ -456,7 +459,8 @@ class GUI():
         col  = 0
         self.SAT_TXT = StringVar()
         Label(self.root, text='Satellites:').grid(row=row,column=col,sticky=E+W)
-        SB = OptionMenu(self.root,self.SAT_TXT,*SATELLITE_LIST, \
+        sat_list=sorted( SATELLITE_LIST )
+        SB = OptionMenu(self.root,self.SAT_TXT,*sat_list, \
                         command=self.set_satellite).grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         self.set_satellite('None')
 
@@ -1249,8 +1253,13 @@ class GUI():
                 dirname=''
                 P.wave_file = dirname+'capture'+s+'.wav'
                 print('\nOpening',P.wave_file,'...')
-    
-                P.rec = WaveRecorder(P.wave_file, 'wb',channels=1,wav_rate=8000,rb2=P.osc.rb2)
+
+                if P.sock.rig_type2=='FT991a':
+                    gain=[4,1]
+                else:
+                    gain=[1,1]
+                P.rec = WaveRecorder(P.wave_file, 'wb',channels=1,wav_rate=8000,rb2=P.osc.rb2,GAIN=gain)
+                
                 if not P.RIG_AUDIO_IDX:
                     P.RIG_AUDIO_IDX = P.rec.list_input_devices('USB Audio CODEC')
                 P.rec.start_recording(P.RIG_AUDIO_IDX)

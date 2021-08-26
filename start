@@ -19,7 +19,7 @@ set PORT = 4532
 #set MASTER=""
 
 set PRACTICE="-prac"
-set PRACTICE="-prac -nano"
+#set PRACTICE="-prac -nano"
 #set PRACTICE=""
 
 set RIG="NONE"
@@ -169,6 +169,7 @@ set OPTS="-wpm ${WPM} $PRACTICE -${CONTEST} -rig $RIG $MASTER $HINTS $CAPTURE"
 
 cd ~/Python/pyKeyer
 echo pyKeyer.py $OPTS 
-pyKeyer.py $OPTS &
+pyKeyer.py $OPTS
+
 
 
