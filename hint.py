@@ -38,13 +38,8 @@ def master(P,call,dx_station=None):
         if VERBOSITY>0:
             print('MASTER:',call,' is in master list')
             print(P.MASTER[call])
-        if P.CAL_QP:
-            state=P.MASTER[call]['state']
-            if state=='CA':
-                county=P.MASTER[call]['county']
-                return county
-            else:
-                return state
+        if P.KEYING:
+            return P.KEYING.hint(call)
         elif P.CQ_WW:
             zone=P.MASTER[call]['cqz']
             return zone
@@ -56,13 +51,6 @@ def master(P,call,dx_station=None):
                 sec='PR'
             chk=P.MASTER[call]['check']
             return chk+' '+sec
-        elif P.CWops or P.SST:
-            name  = P.MASTER[call]['name']
-            state = P.MASTER[call]['state']
-            num = P.MASTER[call]['cwops']
-            if VERBOSITY>0:
-                print(name+' '+state+' '+num)
-            return name+' '+state+' '+num
         elif P.NAQP or P.SPRINT:
             name  = P.MASTER[call]['name']
             state = P.MASTER[call]['state']

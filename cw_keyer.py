@@ -116,7 +116,7 @@ def cut_numbers(n,ndigits=-3,ALL=False):
     n=int(n)
 
     if n<0:
-        print('CUT_NUMBERS - ERROR - Positive number only duffess1',n)
+        print('CUT_NUMBERS - ERROR - Positive number only duffess',n)
         return str(n)
 
     if False:
@@ -154,7 +154,7 @@ def cut_numbers(n,ndigits=-3,ALL=False):
             if n>9 and n<100 and n!=73 and n!=88:
                 ndigits=2
         
-        txt = '{:,d}'.format(n)
+        txt = '{:d}'.format(n)
         #print('Cut Numbers: n=',n,'\tndigits=',ndigits,'\ttxt=',txt,'\tlen=',len(txt))
         while len(txt)<ndigits:
             txt = 'T'+txt

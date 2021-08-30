@@ -22,7 +22,6 @@
 ############################################################################################
 
 from collections import OrderedDict
-#from rig_io.ft_tables import MY_CALL
 
 ############################################################################################
 
@@ -188,55 +187,6 @@ MACROS[Key][10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
 MACROS[Key][11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
 CONTEST[Key]=True
 
-Key='SST'
-MACROS[Key] = OrderedDict()
-MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SST [MYCALL] '}
-MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [MYSTATE] '}
-MACROS[Key][1+12]  = {'Label' : 'Reply'     , 'Text' : '[CALL] TNX AGN [MYNAME] [MYSTATE] '}
-MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 SST [MYCALL] [LOG]'}
-MACROS[Key][2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] GL EE'}
-MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
-
-MACROS[Key][4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
-MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
-MACROS[Key][5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
-MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-
-MACROS[Key][8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
-MACROS[Key][9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
-MACROS[Key][10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
-MACROS[Key][11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
-CONTEST[Key]=True
-
-Key='CWops'
-MACROS[Key] = OrderedDict()
-MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CWT [MYCALL] '}
-MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
-MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
-MACROS[Key][2+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
-
-MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
-MACROS[Key][5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
-MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-
-MACROS[Key][8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
-MACROS[Key][9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
-MACROS[Key][10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
-MACROS[Key][11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
-CONTEST[Key]=True
-
 Key='CQ_WPX'
 MACROS[Key] = OrderedDict()
 MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
@@ -335,28 +285,6 @@ MACROS[Key][10]    = {'Label' : 'Check?'   , 'Text' : 'CHK? '}
 MACROS[Key][10+12] = {'Label' : 'Check 2x' , 'Text' : '[MYCHECK] [MYCHECK] '}
 MACROS[Key][11]    = {'Label' : 'Sec?    ' , 'Text' : 'SEC? '}
 MACROS[Key][11+12] = {'Label' : 'Sec 2x'   , 'Text' : '[MYSEC] [MYSEC] '}
-CONTEST[Key]=True
-
-Key='Cal QP'
-MACROS[Key] = OrderedDict()
-MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CQP [MYCALL] '}
-MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYCOUNTY] '}
-MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 CQP [MYCALL] [LOG]'}
-MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
-
-MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYCOUNTY] '}
-MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-
-MACROS[Key][8]     = {'Label' : 'NR 2x'    , 'Text' : '[SERIAL] [SERIAL] '}
-MACROS[Key][9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYCOUNTY] [MYCOUNTY] '}
-MACROS[Key][10]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
-MACROS[Key][11]    = {'Label' : 'QTH? '    , 'Text' : 'QTH? '}
 CONTEST[Key]=True
 
 Key='ARRL 10m'

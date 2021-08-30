@@ -35,7 +35,6 @@ from load_history import *
 from sidetone import *
 from nano_io import nano_write
 from cw_keyer import cut_numbers
-from rig_io.ft_tables import SST_SECS
 
 ############################################################################################
 
@@ -111,26 +110,18 @@ class CODE_PRACTICE():
         while not done:
             i = random.randint(0, self.Ncalls-1)
             call = self.calls[i]
-            if P.NAQP or P.SST:
+            if P.NAQP:
                 name  = HIST[call]['name']
                 qth   = HIST[call]['state']
                 done = len(name)>0 and len(qth)>0
             elif P.CWops:
-                name  = HIST[call]['name']
-                num   = HIST[call]['cwops']
-
-                # Select criteria for a accepting a call
-                # Most of the time require a cwops number but once in a while use only state
-                # This seems to be most realistic of what in encountered in the tests.
-                done = len(name)>0 and len(num)>0                  # Need no. but some have state in no. field
-                x = random.random()
-                done =done and ((num not in SST_SECS) or (x<0.1))
-                
+                name,num,done = P.KEYING.qso_info(HIST,call,1)
+            elif P.SST:
+                name,qth,done = P.KEYING.qso_info(HIST,call,1)
+            elif P.CW_OPEN:
+                name,done = P.KEYING.qso_info(HIST,call,1)
             elif P.CAL_QP:
-                sec=HIST[call]['state']
-                if sec=='CA':
-                    sec  = HIST[call]['county']
-                done = len(sec)>0
+                sec,done = P.KEYING.qso_info(HIST,call,1)
             elif P.ARRL_10m:
                 state=HIST[call]['state']
                 done = len(state)>0
@@ -170,28 +161,14 @@ class CODE_PRACTICE():
             lock.acquire()
             if P.PRACTICE_MODE:
                 txt1 = ' '+call
-                if P.NAQP or P.SST:
+                if P.KEYING:
+                    txt2 = P.KEYING.qso_info(HIST,call,2)
+                    exch2 = txt2
+                elif P.NAQP:
                     name  = HIST[call]['name']
                     qth   = HIST[call]['state']
                     txt2  = ' '+name+' '+qth
                     exch2 = txt2
-                elif P.CWops:
-                    name  = HIST[call]['name'].split(' ')
-                    name  = name[0]
-                    qth   = HIST[call]['cwops']
-                    if len(qth)==0:
-                        qth   = HIST[call]['state']
-                    else:
-                        # Half the time, send as cut numbers 
-                        x = random.random()
-                        if qth.isdigit() and x<=0.5:
-                            qth = cut_numbers( int(qth), ALL=True )
-                    txt2  = ' '+name+' '+qth
-                    exch2 = txt2
-
-                    #print('hist=',HIST[call])
-                    #print('exch2=',exch2)
-                    
                 elif P.ARRL_FD:
                     cat   = HIST[call]['fdcat']             # Category
                     sec   = HIST[call]['fdsec']             # Section
@@ -210,7 +187,7 @@ class CODE_PRACTICE():
                     txt2   = ' '+serial+' '+prec+' '+call+' '+chk+' '+sec
                     exch2  = txt2
                     exch   = serial+','+prec+','+call+','+chk+','+sec
-                elif P.CAL_QP:
+                elif P.CAL_QP999:
                     serial = cut_numbers( random.randint(0, 999) )
                     sec    = HIST[call]['state']
                     if sec=='CA':
@@ -320,7 +297,9 @@ class CODE_PRACTICE():
                 #print('Repeats=',repeats)
                 
                 # Determine next element
-                if 'CALL' in label:
+                if P.KEYING:
+                    txt2 = P.KEYING.repeat(label,exch2)
+                elif 'CALL' in label:
                     txt2=call+' '+call
                 elif P.CW_SS:
                     if 'NR?' in label:
@@ -333,7 +312,7 @@ class CODE_PRACTICE():
                         txt2=sec+' '+sec
                     else:
                         txt2=exch2
-                elif P.NAQP or P.CWops or P.SST:
+                elif P.NAQP:
                     if 'NAME?' in label:
                         txt2=name+' '+name
                     elif 'QTH?' in label:
@@ -356,13 +335,6 @@ class CODE_PRACTICE():
                         txt2=call+' '+call
                     elif 'GRID?' in label or 'QTH?' in label or  'SEC?' in label:
                         txt2=gridqs+' '+gridsq
-                    else:
-                        txt2=exch2
-                elif P.CAL_QP:
-                    if 'NR?' in label:
-                        txt2=serial+' '+serial
-                    elif 'QTH?' in label:
-                        txt2=sec+' '+sec
                     else:
                         txt2=exch2
                 elif P.WPX:
@@ -392,12 +364,11 @@ class CODE_PRACTICE():
         # Error checking - keyer event hasn't been cleared yet so the gui boxes won't get erased too fast
         print('CODE PRACTICE: Error check ...')
         call2 = P.gui.get_call().upper()
-        if P.NAQP or P.SST:
+        if P.KEYING:
+            match = P.KEYING.error_check()
+        elif P.NAQP:
             name2 = P.gui.get_name().upper()
             qth2  = P.gui.get_qth().upper()
-        elif P.CWops:
-            name2 = P.gui.get_name().upper()
-            qth2  = P.gui.get_exchange().upper()
         elif P.ARRL_FD:
             cat2  = P.gui.get_cat().upper()
             sec2  = P.gui.get_qth().upper()
@@ -411,10 +382,6 @@ class CODE_PRACTICE():
             #print('hey 1:',exch2)
             exch2  = serial+','+prec+','+call2+','+chk+','+sec
             #print('hey 2:',exch2)
-        elif P.CAL_QP:
-            serial = P.gui.get_serial().upper()
-            sec    = P.gui.get_qth().upper()
-            exch2  = serial+','+sec
         elif P.WPX:
             serial = P.gui.get_serial().upper()
             rst    = P.gui.get_rst().upper()
@@ -433,23 +400,23 @@ class CODE_PRACTICE():
         keyer.evt.clear()
 
         # Check call & exchange matching
-        if P.NAQP or P.CWops or P.SST:
+        if P.NAQP:
             match = call==call2 and name==name2 and qth==qth2
         elif P.ARRL_FD:
             match = call==call2 and cat==cat2 and sec==sec2
         elif P.ARRL_VHF:
             match = call==call2 and gridsq==grid2 
-        elif P.CW_SS or P.CAL_QP or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or P.ARRL_10m:
+        elif P.CW_SS or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or P.ARRL_10m:
             match = call==call2 and exch==exch2
 
-        if not match:
+        if not match and not P.KEYING:
             txt='********************** ERROR **********************'
             print(txt)
             print('Call sent:',call,' - received:',call2)
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.insert(END,'Call sent: '+call+' - received: '+call2+'\n')
 
-            if P.NAQP or P.CWops or P.SST:
+            if P.NAQP:
                 print('Name sent:',name,' - received:',name2)
                 print('QTH  sent:',qth,' - received:',qth2)
                 P.gui.txt.insert(END,'Name sent: '+name+' - received: '+name2+'\n')
@@ -462,7 +429,7 @@ class CODE_PRACTICE():
             elif P.ARRL_VHF:
                 print('Grid sent:',gridsq,' - received:',grid2)
                 P.gui.txt.insert(END,'Grid sent: '+gridsq+' - received: '+grid2+'\n')
-            elif P.CW_SS or P.CAL_QP or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or ARRL_10m:
+            elif P.CW_SS or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or P.ARRL_10m:
                 print('Exchange sent:    ',exch)
                 print('Exchange received:',exch2)
                 P.gui.txt.insert(END,'Exchange sent:     '+exch+'\n')
@@ -472,15 +439,15 @@ class CODE_PRACTICE():
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)
 
-            if P.ADJUST_SPEED:
+        if P.ADJUST_SPEED:
+            if not match:
                 #print("ERROR - WPM DOWN ...")
                 P.gui.set_wpm(-1)
-            
-        else:
-            if P.ADJUST_SPEED and not repeats:
-                #print("NO ERROR - WPM UP ...")
-                P.gui.set_wpm(+1)
-            print(' ')
+            else:
+                if not repeats:
+                    #print("NO ERROR - WPM UP ...")
+                    P.gui.set_wpm(+1)
+        print(' ')
 
             
     # Routine to wait for keyer to flush - bail out if stopper gets set

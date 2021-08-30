@@ -67,14 +67,12 @@ def show_threads():
 
 # Routine to determine contest name
 def get_contest_name(P):
-    if P.CW_SS:
+    if P.KEYING:
+        return P.KEYING.contest_name
+    elif P.CW_SS:
         return 'ARRL-SS-CW'
     elif P.NAQP:
         return 'NAQP-CW'
-    elif P.SST:
-        return 'SST'
-    elif P.CWops:
-        return 'CW Ops Mini-Test'
     elif P.WPX:
         return 'CQ-WPX-CW'
     elif P.ARRL_DX:
@@ -87,8 +85,6 @@ def get_contest_name(P):
         return 'ARRL-VHF'
     elif P.SATELLITES:
         return 'SATELLITES'
-    elif P.CAL_QP:
-        return 'CQP'
     elif P.SPRINT:
         return 'NCCC-Sprint'
     elif P.CQ_WW:
@@ -352,10 +348,10 @@ class GUI():
         Label(self.root, text='Macros:').grid(row=row,column=col,sticky=E+W)
         MACRO_LIST=list(self.MACROS.keys())
         print('MACROS:',MACRO_LIST)
-        if self.P.CW_SS:
+        if self.P.KEYING:
+            idx=MACRO_LIST.index(self.P.KEYING.Key)
+        elif self.P.CW_SS:
             idx=MACRO_LIST.index('ARRL CW SS')
-        elif self.P.CAL_QP:
-            idx=MACRO_LIST.index('Cal QP')
         elif self.P.SPRINT:
             idx=MACRO_LIST.index('Sprint')
         elif self.P.CQ_WW:
@@ -374,10 +370,6 @@ class GUI():
             idx=MACRO_LIST.index('Satellite QSO')
         elif self.P.NAQP:
             idx=MACRO_LIST.index('NAQP')
-        elif self.P.SST:
-            idx=MACRO_LIST.index('SST')
-        elif self.P.CWops:
-            idx=MACRO_LIST.index('CWops')
         elif self.P.WPX:
             idx=MACRO_LIST.index('CQ_WPX')
         else:
@@ -813,8 +805,10 @@ class GUI():
         #print 'LAST_MSG=',txt,arg,self.P.LAST_MSG
 
         # Highlight appropriate buttons for running or s&p
-        if self.P.NAQP or self.P.SST or self.P.CAL_QP or self.P.SPRINT or \
-           self.P.CWops or self.P.WPX or self.P.IARU or self.P.CQ_WW or \
+        if self.P.KEYING:
+            self.P.KEYING.highlight(self,arg)
+        elif self.P.NAQP or self.P.SPRINT or \
+           self.P.WPX or self.P.IARU or self.P.CQ_WW or \
            self.P.ARRL_FD or self.P.ARRL_VHF or self.P.ARRL_10m:
             #print 'HIGHLIGHTING',arg
             if arg==0:
@@ -822,9 +816,9 @@ class GUI():
                 self.btns1[2].configure(background='green',highlightbackground='green')
                 self.call.focus_set()
             elif arg==1:
-                if self.P.NAQP or self.P.CWops or self.P.SST:
+                if self.P.NAQP:
                     self.name.focus_set()
-                elif self.P.SPRINT or self.P.WPX or self.P.CAL_QP:
+                elif self.P.SPRINT or self.P.WPX:
                     self.serial.focus_set()
                 elif self.P.ARRL_FD:
                     self.cat.focus_set()
@@ -839,7 +833,7 @@ class GUI():
             elif arg==4:
                 self.btns1[5].configure(background='red',highlightbackground= 'red')
                 self.btns1[7].configure(background='red',highlightbackground= 'red')
-                if self.P.NAQP or self.P.CWops or self.P.SST or \
+                if self.P.NAQP or \
                    self.P.ARRL_FD or self.P.ARRL_VHF or self.P.WPX or  self.P.ARRL_10m or \
                    self.P.IARU or self.P.SPRINT or self.P.CQ_WW:
                     self.btns1[1].configure(background='pale green',highlightbackground=self.default_color)
@@ -860,11 +854,11 @@ class GUI():
             cntr = self.sock.get_serial_out()
             if cntr==0 or cntr=='':
                 cntr=self.P.MY_CNTR
-            #print('KEYER_GUI: cntr=',cntr,'\tndigits=',self.ndigits)
+            print('KEYER_GUI: cntr=',cntr,'\tndigits=',self.ndigits)
             self.cntr = cw_keyer.cut_numbers(cntr,ndigits=self.ndigits)
             txt = txt.replace('[SERIAL]',self.cntr)
             self.serial_out = self.cntr
-            #print('KEYER_GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
+            print('KEYER_GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
 
         # This should have already been handled when we loaded the macros
         #txt = self.Patch_Macro(txt)
@@ -955,8 +949,10 @@ class GUI():
         self.P.ARRL_FD  = val.find('ARRL Field Day') >= 0
         self.P.ARRL_VHF = val.find('ARRL VHF')       >= 0
         self.P.NAQP     = val.find('NAQP')           >= 0
+        self.P.SATELLITES = val.find('Satellite')    >= 0
         self.P.SST      = val.find('SST')            >= 0
         self.P.CWops    = val.find('CWops')          >= 0
+        self.P.CW_OPEN  = val.find('CW Open')          >= 0
         self.P.WPX      = val.find('CQ_WPX')         >= 0
         self.P.contest_name  = get_contest_name(self.P)
 
@@ -966,20 +962,19 @@ class GUI():
         self.P.CONTEST[val] = True
         #print( self.P.CONTEST)
                 
-        # Enable the specific input boxes 
-        if self.P.NAQP or self.P.CWops or self.P.SST:
+        # Enable the specific input boxes
+        if self.P.KEYING:
+            self.P.KEYING.enable_boxes(self)
+            
+        elif self.P.NAQP:
             # Specific contest exchange for NAQP
             self.contest=True
             self.hide_all()
 
             self.name_lab.grid(columnspan=1,column=4,sticky=E+W)
             self.name.grid(column=4,columnspan=2)
-            if self.P.CWops:
-                self.exch_lab.grid(columnspan=1,column=6,sticky=E+W)
-                self.exch.grid(column=6,columnspan=2)
-            else:
-                self.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
-                self.qth.grid(column=6,columnspan=2)
+            self.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
+            self.qth.grid(column=6,columnspan=2)
 
             self.boxes=[self.call]
             self.boxes.append(self.name)
@@ -1005,6 +1000,27 @@ class GUI():
             if not self.P.NO_HINTS:
                 self.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
                 self.hint.grid(column=7,columnspan=3)
+                self.boxes.append(self.hint)
+            
+        elif self.P.SATELLITES:
+            # Specific contest exchange for SATELLITES
+            self.contest=False
+            self.hide_all()
+
+            self.qth_lab.grid()
+            self.qth_lab.grid(column=4,columnspan=1)
+            self.qth.grid(column=4,columnspan=1)
+
+            self.exch_lab.grid()
+            self.exch_lab.grid(column=5,columnspan=3)
+            self.exch.grid(column=5,columnspan=3)
+
+            self.boxes=[self.call]
+            self.boxes.append(self.exch)
+            
+            if not self.P.NO_HINTS:
+                self.hint_lab.grid(column=8,columnspan=1,sticky=E+W)
+                self.hint.grid(column=8,columnspan=2)
                 self.boxes.append(self.hint)
             
         elif self.P.ARRL_FD:
@@ -1094,38 +1110,6 @@ class GUI():
                 self.hint.grid(column=7,columnspan=3)
                 self.boxes.append(self.hint)
                   
-        elif self.P.CAL_QP:
-            # Specific contest exchange for California QSO Party
-            self.contest=True
-            self.hide_all()
-            self.ndigits=3
-
-            col=0
-            cspan=3
-            self.call_lab.grid(column=col,columnspan=cspan)
-            self.call.grid(column=col,columnspan=cspan)
-            col+=cspan
-            cspan=2
-            self.serial_lab.grid(column=col,columnspan=cspan)
-            self.serial.grid(column=col,columnspan=cspan)
-            col+=cspan
-            cspan=2
-            self.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-            self.qth.grid(column=col,columnspan=cspan)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.serial)
-            self.boxes.append(self.qth)
-            self.counter_lab.grid()
-            self.counter.grid()
-            
-            if not self.P.NO_HINTS:
-                col+=cspan
-                cspan=3
-                self.hint_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-                self.hint.grid(column=col,columnspan=cspan,sticky=E+W)
-                self.boxes.append(self.hint)
-
         elif self.P.WPX:
             # Specific contest exchange for CQ WPX
             self.contest=True
@@ -1501,18 +1485,15 @@ class GUI():
         MY_CAT      = self.P.SETTINGS['MY_CAT']
         MY_PREC     = self.P.SETTINGS['MY_PREC']
         MY_CHECK    = self.P.SETTINGS['MY_CHECK']
-        MY_COUNTY   = self.P.SETTINGS['MY_COUNTY']
         MY_CQ_ZONE  = self.P.SETTINGS['MY_CQ_ZONE']
         MY_ITU_ZONE = self.P.SETTINGS['MY_ITU_ZONE']
         MY_GRID     = self.P.SETTINGS['MY_GRID']
         
         if self.contest:
             rst='599'
-            if self.P.NAQP or self.P.SST:
-                exch=name+','+qth
-                valid = valid and len(name)>0 and len(qth)>0
-            elif self.P.CWops:
-                qth = self.get_exchange().upper()
+            if self.P.KEYING:
+                exch,valid,self.exch_out = self.P.KEYING.logging()
+            elif self.P.NAQP:
                 exch=name+','+qth
                 valid = valid and len(name)>0 and len(qth)>0
             elif self.P.WPX:
@@ -1530,11 +1511,6 @@ class GUI():
                 chk    = self.get_check().upper()
                 sec    = qth
                 exch   = serial+','+prec+','+call+','+chk+','+sec
-                valid  = valid and len(exch)>0
-            elif self.P.CAL_QP:
-                serial = self.get_serial().upper()
-                sec    = qth
-                exch   = serial+','+sec
                 valid  = valid and len(exch)>0
             elif self.P.ARRL_FD:
                 cat    = self.get_cat().upper()
@@ -1599,16 +1575,12 @@ class GUI():
                 self.txt.see(END)
             
             # Construct exchange out
-            if self.contest and (self.P.NAQP or self.P.SST):
-                self.exch_out = MY_NAME+','+MY_STATE
-            elif self.contest and self.P.CWops:
+            if self.contest and self.P.NAQP:
                 self.exch_out = MY_NAME+','+MY_STATE
             elif self.contest and self.P.CW_SS:
                 self.exch_out = str(self.cntr)+','+MY_PREC+','+MY_CALL+','+MY_CHECK+','+MY_SEC
             elif self.contest and self.P.SPRINT:
                 self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
-            elif self.contest and self.P.CAL_QP:
-                self.exch_out = str(self.cntr)+','+MY_COUNTY
             elif self.contest and self.P.WPX:
                 self.exch_out = '599,'+str(self.cntr)
             elif self.contest and self.P.IARU:
@@ -1621,6 +1593,8 @@ class GUI():
                 self.exch_out = MY_CAT+','+MY_SEC
             elif self.contest and self.P.ARRL_VHF:
                 self.exch_out = MY_GRID
+            elif self.contest and self.P.SATELLITES:
+                self.exch_out = '5NN,'+MY_GRID
                 
             qso = dict( list(zip(['QSO_DATE_OFF','TIME_OFF','CALL','FREQ','BAND','MODE', \
                              'SRX_STRING','STX_STRING','NAME','QTH','SRX','STX','SAT_NAME'],  \
@@ -1822,16 +1796,14 @@ class GUI():
                 self.prefill=True
                 a=last_exch.split(',')
                 print('a=',a)
-                if self.P.NAQP or self.P.CWops or self.P.SST:
+                if self.P.KEYING:
+                    self.P.KEYING.dupe(a)
+                elif self.P.NAQP:
                     self.name.delete(0,END)
                     self.name.insert(0,a[0])
                     if len(a)>=2:
-                        if self.P.CWops:
-                            self.exch.delete(0,END)
-                            self.exch.insert(0,a[1])
-                        else:
-                            self.qth.delete(0,END)
-                            self.qth.insert(0,a[1])
+                        self.qth.delete(0,END)
+                        self.qth.insert(0,a[1])
                             
                 elif self.P.CW_SS:
                     if match2:
@@ -1868,11 +1840,6 @@ class GUI():
                     self.qth.delete(0,END)  
                     if len(a)>=2:
                         self.qth.insert(0,a[1])
-                elif self.P.CAL_QP:
-                    self.serial.delete(0,END)
-                    if len(a)>=2:
-                        self.qth.delete(0,END)
-                        self.qth.insert(0,a[1])
                 elif self.P.SPRINT:
                     #self.serial.delete(0,END)
                     if len(a)>=2:
@@ -1896,8 +1863,7 @@ class GUI():
                 self.cat.delete(0,END)
                 self.serial.delete(0,END)
                 self.hint.delete(0, END)
-                if self.P.CWops:
-                    self.exch.delete(0,END)
+                self.exch.delete(0,END)
 
             # Kludge - should be taken care of above?
             #if (self.prev_call != call and True) or self.prefill:
@@ -2021,7 +1987,10 @@ class GUI():
                     return "break"
                 h = h.split(' ')
                 print('h=',h)
-                if self.P.ARRL_FD:
+                
+                if self.P.KEYING:
+                    self.P.KEYING.insert_hint(h)
+                elif self.P.ARRL_FD:
                     self.cat.delete(0, END)
                     self.cat.insert(0,h[0])
                     self.qth.delete(0, END)
@@ -2039,31 +2008,17 @@ class GUI():
                     self.qth.delete(0, END)
                     self.qth.insert(0,h[0])
                     
-                elif self.P.CAL_QP:
-                    self.qth.delete(0, END)
-                    self.qth.insert(0,h[0])
-                    
                 elif self.P.CW_SS:
                     self.check.delete(0, END)
                     self.check.insert(0,h[0])
                     self.qth.delete(0, END)
                     self.qth.insert(0,h[1])
                     
-                elif self.P.NAQP or self.P.SPRINT or self.P.CWops or self.P.SST:
-                    i=0
-                    #if self.P.SPRINT:
-                    #    i=1
+                elif self.P.NAQP or self.P.SPRINT:
                     self.name.delete(0, END)
-                    self.name.insert(0,h[i])
-                    if self.P.CWops:
-                        self.exch.delete(0, END)
-                        if len( h[i+2] )>0:
-                            self.exch.insert(0,h[i+2])
-                        else:
-                            self.exch.insert(0,h[i+1])
-                    else:
-                        self.qth.delete(0, END)
-                        self.qth.insert(0,h[i+1])
+                    self.name.insert(0,h[0])
+                    self.qth.delete(0, END)
+                    self.qth.insert(0,h[1])
 
                 return "break"
 
@@ -2082,20 +2037,25 @@ class GUI():
                     self.call.focus_set()
                     return("break")
                 elif self.contest:
-                    if (self.P.NAQP or self.P.CW_SS or self.P.CAL_QP or \
-                        self.P.SPRINT or self.P.SST or self.P.ARRL_10m or \
+                    if self.P.KEYING:
+                        self.P.KEYING.next_event(key,event,None)
+                        return("break")
+                    elif (self.P.NAQP or self.P.CW_SS or \
+                        self.P.SPRINT or self.P.ARRL_10m or \
                         self.P.ARRL_FD or self.P.IARU or self.P.CQ_WW) \
                         and event.widget==self.qth:
                         #print 'QTH box',key,len(key),key=='Tab'
-                        self.call.focus_set()
-                        return("break")
-                    elif self.P.CWops and event.widget==self.exch:
                         self.call.focus_set()
                         return("break")
                     elif self.P.WPX and event.widget==self.serial:
                         self.call.focus_set()
                         return("break")
 
+            elif key=='ISO_Left_Tab':
+                if self.P.KEYING:
+                    self.P.KEYING.next_event(key,event,None)
+                    return("break")
+                    
             # Return key in the text box - nothing to do
             if (key=='Return' or key=='KP_Enter') and event.widget!=self.txt and True:
                 pass
@@ -2135,7 +2095,9 @@ class GUI():
 
             # If we're in a contest and the return key was pressed, send response and get ready for the exchange
             if (key=='Return' or key=='KP_Enter') and len(call)>0:
-                if self.contest and (self.P.NAQP or self.P.CWops or self.P.SST):
+                if self.P.KEYING:
+                    next_widget = self.P.KEYING.next_event(key,event,1)
+                elif self.contest and (self.P.NAQP):
                     next_widget=self.name
                     self.Send_Macro(1)                     # Send reply
 
@@ -2169,9 +2131,6 @@ class GUI():
                         self.Send_Macro(4)                 # Send my call
 
                 elif self.contest and self.P.CAL_QP:
-                    next_widget=self.serial
-                    self.Send_Macro(1)                     # Send reply
-
                     self.dx_station = Station(call)
                     #pprint(vars(self.dx_station))
 
@@ -2203,6 +2162,14 @@ class GUI():
                     self.force_focus(self.call)
                     return("break")
 
+            elif self.P.SATELLITES:
+                if key=='Tab':
+                    self.force_focus(self.qth)
+                    return("break")
+                elif key=='ISO_Left_Tab':
+                    self.force_focus(self.exch)
+                    return("break")
+
             elif self.P.WPX:
                 if key=='Tab':
                     self.force_focus(self.rst)
@@ -2219,7 +2186,7 @@ class GUI():
                     self.force_focus(self.qth)
                     return("break")
 
-            elif self.P.CAL_QP or self.P.SPRINT:
+            elif self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.serial)
                     return("break")
@@ -2238,10 +2205,14 @@ class GUI():
 
             # If we're in a contest and the return key was pressed, get ready for rest of the exchange
             if key=='Return' or key=='KP_Enter':
-                if self.contest and (self.P.NAQP or self.P.SPRINT or self.P.SST):
+                if self.P.KEYING:
+                    if self.P.CW_OPEN:
+                        nmacro=2
+                    else:
+                        nmacro=None
+                    next_widget = self.P.KEYING.next_event(key,event,nmacro)
+                elif self.contest and (self.P.NAQP or self.P.SPRINT):
                     next_widget=self.qth
-                elif self.contest and self.P.CWops:
-                    next_widget=self.exch
 
             if self.P.SPRINT:
                 if key=='Tab':
@@ -2261,8 +2232,10 @@ class GUI():
             if key=='Return' or key=='KP_Enter':
                 if self.contest:
                     next_widget=self.qth
-                    if self.P.NAQP or self.P.CWops or self.P.SST or \
-                       self.P.CW_SS or self.P.CAL_QP or self.P.ARRL_FD or \
+                    if self.P.KEYING:
+                        next_widget = self.P.KEYING.next_event(key,event,2)
+                    elif self.P.NAQP or \
+                       self.P.CW_SS or self.P.ARRL_FD or \
                        self.P.IARU or self.P.CQ_WW or self.P.ARRL_10m:
                         self.Send_Macro(2)                     # Send TU
 
@@ -2285,6 +2258,14 @@ class GUI():
                     return("break")
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.check)
+                    return("break")
+
+            elif self.P.SATELLITES:
+                if key=='Tab':
+                    self.force_focus(self.exch)
+                    return("break")
+                elif key=='ISO_Left_Tab':
+                    self.force_focus(self.call)
                     return("break")
 
             elif self.P.SPRINT:
@@ -2349,8 +2330,18 @@ class GUI():
             if key=='Return' or key=='KP_Enter':
                 if self.contest:
                     #next_widget=self.call
-                    if self.P.CWops or self.P.ARRL_VHF:
+                    if self.P.KEYING:
+                        next_widget = self.P.KEYING.next_event(key,event,2)
+                    elif self.P.ARRL_VHF:
                         self.Send_Macro(2)                     # Send TU
+
+            if self.P.SATELLITES:
+                if key=='Tab':
+                    self.force_focus(self.call)
+                    return("break")
+                elif key=='ISO_Left_Tab':
+                    self.force_focus(self.qth)
+                    return("break")
 
             
         elif event.widget==self.counter:
@@ -2360,16 +2351,12 @@ class GUI():
             serial=self.get_serial().upper()
             
             self.sock.set_log_fields({'Serial_out':serial})
-            if self.P.CW_SS:
+            if self.P.KEYING:
+                next_widget = self.P.KEYING.next_event(key,event,None)
+                return("break")
+            elif self.P.CW_SS:
                 if key=='Tab' or key=='Return' or key=='KP_Enter':
                     self.force_focus(self.prec)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
-            elif self.P.CAL_QP:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.qth)
                     return("break")
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.call)

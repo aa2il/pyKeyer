@@ -53,6 +53,11 @@ import os
 from settings import *
 from tcp_server import *
 
+from cwops import *
+from cwopen import *
+from sst import *
+from cqp import *
+
 ################################################################################
 
 # User params
@@ -80,6 +85,7 @@ class PARAMS:
         arg_proc.add_argument('-naqp', action='store_true',help='NAQP')
         arg_proc.add_argument('-sst', action='store_true',help='K1USN SST')
         arg_proc.add_argument('-CWops', action='store_true',help='CWops')
+        arg_proc.add_argument('-cwopen', action='store_true',help='CWops CW Open')
         arg_proc.add_argument('-wpx', action='store_true',help='CQ WPX')
         arg_proc.add_argument('-arrl_dx', action='store_true',help='ARRL DX')
         arg_proc.add_argument('-arrl_10m', action='store_true',help='ARRL 10m')
@@ -122,6 +128,7 @@ class PARAMS:
         self.NAQP          = args.naqp
         self.SST           = args.sst
         self.CWops         = args.CWops
+        self.CW_OPEN       = args.cwopen
         self.WPX           = args.wpx
         self.CW_SS         = args.ss
         self.SPRINT        = args.sprint
@@ -166,22 +173,20 @@ class PARAMS:
         self.SHUTDOWN      = False
         self.DIRTY         = False
 
-        self.contest_name  = get_contest_name(self)
-
-        if self.USE_MASTER:
-            self.HISTORY = HIST_DIR+'master.csv'
-        elif self.NAQP or self.SPRINT:
+        self.KEYING=None
+        self.HIST_DIR=HIST_DIR
+        if self.NAQP or self.SPRINT:
             self.HISTORY = HIST_DIR+'NAQPCW.txt'
-        elif self.SST:
-            self.HISTORY = HIST_DIR+'K1USNSST*.txt'
         elif self.CWops:
-            #self.HISTORY = HIST_DIR+'Shareable CWops data.xlsx'
-            self.HISTORY = HIST_DIR+'CWOPS_*.txt'
+            self.KEYING=CWOPS_KEYING(self)
+        elif self.SST:
+            self.KEYING=SST_KEYING(self)
         elif self.CW_SS:
             self.HISTORY = HIST_DIR+'SS_Call_History_Aug2018.txt'
         elif self.CAL_QP:
-            #self.HISTORY = HIST_DIR+'CQP-CH-N1MM-05Oct2018.txt'
-            self.HISTORY = HIST_DIR+'QSOP_CA*.txt'
+            self.KEYING=CQP_KEYING(self)
+        elif self.CW_OPEN:
+            self.KEYING=CWOPEN_KEYING(self)
         elif self.ARRL_FD:
             #self.HISTORY = HIST_DIR+'FD_2020.txt'
             self.HISTORY = HIST_DIR+'FD_202*.txt'
@@ -191,7 +196,11 @@ class PARAMS:
         else:
             self.HISTORY = HIST_DIR+'master.csv'
             #self.HISTORY = ''
+        if self.USE_MASTER:
+            self.HISTORY = HIST_DIR+'master.csv'
 
+        self.contest_name  = get_contest_name(self)
+            
         self.ROTOR_CONNECTION = args.rotor
         self.PORT2            = args.port2
 

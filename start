@@ -32,6 +32,7 @@ set CONTEST="CWops"
 #set CONTEST="fd"
 #set CONTEST="vhf"
 #set CONTEST="cqp"
+set CONTEST="cwopen"
 #set CONTEST="WPX"
 #set CONTEST="ss"
 #set CONTEST="cqww"
@@ -65,6 +66,11 @@ else if( $CONTEST == "sprint" )then
     set WPM=25
     set CONTEST="-sprint"
     set HINTS=""
+
+# Settings for CW Ops cw open
+else if( $CONTEST == "cwopen" )then
+    set WPM=30
+    set HINTS="-adjust"
 
 # Setting for CQ WPX (or any contest that requires rst + serial number)
 else if( $CONTEST == "wpx" )then
