@@ -57,6 +57,8 @@ from cwops import *
 from cwopen import *
 from sst import *
 from cqp import *
+from vhf import *
+from satellites import *
 
 ################################################################################
 
@@ -191,8 +193,9 @@ class PARAMS:
             #self.HISTORY = HIST_DIR+'FD_2020.txt'
             self.HISTORY = HIST_DIR+'FD_202*.txt'
         elif self.ARRL_VHF:
-            #self.HISTORY = HIST_DIR+'ARRLVHFJAN.txt'
-            self.HISTORY = HIST_DIR+'ARRLVHF*.txt'
+            self.KEYING=VHF_KEYING(self)
+        elif self.SATELLITES:
+            self.KEYING=SAT_KEYING(self)
         else:
             self.HISTORY = HIST_DIR+'master.csv'
             #self.HISTORY = ''

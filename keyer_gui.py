@@ -81,10 +81,6 @@ def get_contest_name(P):
         return 'ARRL-10M'
     elif P.ARRL_FD:
         return 'ARRL-FD'
-    elif P.ARRL_VHF:
-        return 'ARRL-VHF'
-    elif P.SATELLITES:
-        return 'SATELLITES'
     elif P.SPRINT:
         return 'NCCC-Sprint'
     elif P.CQ_WW:
@@ -364,10 +360,6 @@ class GUI():
             idx=MACRO_LIST.index('ARRL 10m')
         elif self.P.ARRL_FD:
             idx=MACRO_LIST.index('ARRL Field Day')
-        elif self.P.ARRL_VHF:
-            idx=MACRO_LIST.index('ARRL VHF')
-        elif self.P.SATELLITES:
-            idx=MACRO_LIST.index('Satellite QSO')
         elif self.P.NAQP:
             idx=MACRO_LIST.index('NAQP')
         elif self.P.WPX:
@@ -809,7 +801,7 @@ class GUI():
             self.P.KEYING.highlight(self,arg)
         elif self.P.NAQP or self.P.SPRINT or \
            self.P.WPX or self.P.IARU or self.P.CQ_WW or \
-           self.P.ARRL_FD or self.P.ARRL_VHF or self.P.ARRL_10m:
+           self.P.ARRL_FD or self.P.ARRL_10m:
             #print 'HIGHLIGHTING',arg
             if arg==0:
                 self.btns1[1].configure(background='green',highlightbackground='green')
@@ -822,8 +814,6 @@ class GUI():
                     self.serial.focus_set()
                 elif self.P.ARRL_FD:
                     self.cat.focus_set()
-                elif self.P.ARRL_VHF:
-                    self.exch.focus_set()
                 elif self.P.IARU or self.P.CQ_WW or self.P.ARRL_10m:
                     self.qth.focus_set()
             elif arg==2:
@@ -834,7 +824,7 @@ class GUI():
                 self.btns1[5].configure(background='red',highlightbackground= 'red')
                 self.btns1[7].configure(background='red',highlightbackground= 'red')
                 if self.P.NAQP or \
-                   self.P.ARRL_FD or self.P.ARRL_VHF or self.P.WPX or  self.P.ARRL_10m or \
+                   self.P.ARRL_FD or self.P.WPX or  self.P.ARRL_10m or \
                    self.P.IARU or self.P.SPRINT or self.P.CQ_WW:
                     self.btns1[1].configure(background='pale green',highlightbackground=self.default_color)
                     self.btns1[2].configure(background='pale green',highlightbackground=self.default_color)
@@ -983,44 +973,6 @@ class GUI():
             if not self.P.NO_HINTS:
                 self.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
                 self.hint.grid(column=7,columnspan=3)
-                self.boxes.append(self.hint)
-            
-        elif self.P.ARRL_VHF:
-            # Specific contest exchange for ARRL VHF
-            self.contest=True
-            self.hide_all()
-
-            self.exch_lab.grid()
-            self.exch_lab.grid(columnspan=3)
-            self.exch.grid(columnspan=3)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.exch)
-            
-            if not self.P.NO_HINTS:
-                self.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-                self.hint.grid(column=7,columnspan=3)
-                self.boxes.append(self.hint)
-            
-        elif self.P.SATELLITES:
-            # Specific contest exchange for SATELLITES
-            self.contest=False
-            self.hide_all()
-
-            self.qth_lab.grid()
-            self.qth_lab.grid(column=4,columnspan=1)
-            self.qth.grid(column=4,columnspan=1)
-
-            self.exch_lab.grid()
-            self.exch_lab.grid(column=5,columnspan=3)
-            self.exch.grid(column=5,columnspan=3)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.exch)
-            
-            if not self.P.NO_HINTS:
-                self.hint_lab.grid(column=8,columnspan=1,sticky=E+W)
-                self.hint.grid(column=8,columnspan=2)
                 self.boxes.append(self.hint)
             
         elif self.P.ARRL_FD:
@@ -1517,9 +1469,6 @@ class GUI():
                 sec    = qth
                 exch   = cat+','+sec
                 valid = valid and len(cat)>0 and len(qth)>0
-            elif self.P.ARRL_VHF:
-                exch   = self.get_exchange().upper()
-                valid  = valid and len(exch)>=4
             elif self.P.SPRINT:
                 serial = self.get_serial().upper()
                 sec    = qth
@@ -1591,10 +1540,6 @@ class GUI():
                 self.exch_out = '599,'+MY_STATE
             elif self.contest and self.P.ARRL_FD:
                 self.exch_out = MY_CAT+','+MY_SEC
-            elif self.contest and self.P.ARRL_VHF:
-                self.exch_out = MY_GRID
-            elif self.contest and self.P.SATELLITES:
-                self.exch_out = '5NN,'+MY_GRID
                 
             qso = dict( list(zip(['QSO_DATE_OFF','TIME_OFF','CALL','FREQ','BAND','MODE', \
                              'SRX_STRING','STX_STRING','NAME','QTH','SRX','STX','SAT_NAME'],  \
@@ -1831,9 +1776,6 @@ class GUI():
                     if len(a)>=2:
                         self.qth.delete(0,END)
                         self.qth.insert(0,a[1])
-                elif self.P.ARRL_VHF:
-                    self.exch.delete(0,END)
-                    self.exch.insert(0,a[0])
                 elif self.P.WPX:
                     self.serial.delete(0,END)
                 elif self.P.IARU or self.P.CQ_WW:
@@ -2000,10 +1942,6 @@ class GUI():
                     self.qth.delete(0, END)
                     self.qth.insert(0,h[0])
                     
-                elif self.P.ARRL_VHF:
-                    self.exch.delete(0, END)
-                    self.exch.insert(0,h[0])
-                    
                 elif self.P.IARU or self.P.CQ_WW:
                     self.qth.delete(0, END)
                     self.qth.insert(0,h[0])
@@ -2105,10 +2043,6 @@ class GUI():
                     next_widget=self.cat
                     self.Send_Macro(1)                     # Send reply
 
-                elif self.contest and self.P.ARRL_VHF:
-                    next_widget=self.exch
-                    self.Send_Macro(1)                     # Send reply
-
                 elif self.contest and self.P.WPX:
                     next_widget=self.serial
                     self.Send_Macro(1)                     # Send reply
@@ -2160,14 +2094,6 @@ class GUI():
                     return("break")
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.call)
-                    return("break")
-
-            elif self.P.SATELLITES:
-                if key=='Tab':
-                    self.force_focus(self.qth)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.exch)
                     return("break")
 
             elif self.P.WPX:
@@ -2260,14 +2186,6 @@ class GUI():
                     self.force_focus(self.check)
                     return("break")
 
-            elif self.P.SATELLITES:
-                if key=='Tab':
-                    self.force_focus(self.exch)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
-
             elif self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.call)
@@ -2332,18 +2250,7 @@ class GUI():
                     #next_widget=self.call
                     if self.P.KEYING:
                         next_widget = self.P.KEYING.next_event(key,event,2)
-                    elif self.P.ARRL_VHF:
-                        self.Send_Macro(2)                     # Send TU
 
-            if self.P.SATELLITES:
-                if key=='Tab':
-                    self.force_focus(self.call)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.qth)
-                    return("break")
-
-            
         elif event.widget==self.counter:
             print('^^^^^^^^^^^ Counter window',self.P.MY_CNTR)
             

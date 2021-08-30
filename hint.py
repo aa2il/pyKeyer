@@ -59,9 +59,6 @@ def master(P,call,dx_station=None):
             cat   = P.MASTER[call]['fdcat']
             sec   = P.MASTER[call]['fdsec']
             return cat+' '+sec
-        elif P.ARRL_VHF:
-            gridsq = P.MASTER[call]['grid']
-            return gridsq
         elif P.ARRL_10m:
             state = P.MASTER[call]['state']
             if state=='':

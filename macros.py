@@ -48,34 +48,6 @@ MACROS[Key][10] = {'Label' : 'V    '   , 'Text' : 'V'}
 MACROS[Key][11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV[-10] VVV'}
 CONTEST[Key]=False
 
-Key='Satellite QSO'
-MACROS[Key] = OrderedDict()
-MACROS[Key][0]  = {'Label'    : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
-MACROS[Key][0+12]  = {'Label' : 'QRS '        , 'Text' : 'QRS PSE QRS '}
-MACROS[Key][1]     = {'Label' : 'Reply'       , 'Text' : '[CALL] TU [RST] [MYGRID] [MYGRID] BK'}
-MACROS[Key][1+12]  = {'Label' : 'Long'        , 'Text' : '[CALL] TU FER THE CALL [RST] [MYGRID] [MYGRID] OP [MYNAME] [MYNAME] BK'}
-MACROS[Key][2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] R73 QRZ? [MYCALL] [LOG]'}
-MACROS[Key][2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] MNY TNX FER QSO ES 73 QRZ? [MYCALL] [LOG]'}
-MACROS[Key][3]     = {'Label' : 'Call?'       , 'Text' : '[CALL]? '}
-MACROS[Key][3+12] = {'Label' : 'CALL? '       , 'Text' : 'CALL? '}
-
-MACROS[Key][4]     = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] DE [MYCALL] [MYCALL] K'}
-MACROS[Key][4+12]  = {'Label' : '[MYCALL]'    , 'Text' : '[CALL] '}
-MACROS[Key][5]     = {'Label' : 'S&P Reply'   , 'Text' : 'RR TU [RST] [MYGRID] [MYGRID] BK'}
-MACROS[Key][5+12]  = {'Label' : 'S&P 2x'      , 'Text' : 'R TU FER RPRT UR [RST} IN [MYGRID] [MYGRID] OP {MYNAME] [MYNAME] BK'}
-MACROS[Key][6]     = {'Label' : 'AGN?'        , 'Text' : 'AGN? '}
-MACROS[Key][6+12]  = {'Label' : '? '          , 'Text' : '? '}
-MACROS[Key][7]     = {'Label' : 'Log QSO'     , 'Text' : '[LOG] '}
-
-MACROS[Key][8]     = {'Label' : 'OP'          , 'Text' : 'OP [MYNAME] [MYNAME] '}
-MACROS[Key][9]     = {'Label' : 'QTH'         , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
-MACROS[Key][10]    = {'Label' : '73 Short'    , 'Text' : '73 GL EE'}
-MACROS[Key][10+1]  = {'Label' : '73 Long'     , 'Text' : 'MNY TNX FER FB QSO 73 HPE CU AGAN '}
-MACROS[Key][11]    = {'Label' : '73'          , 'Text' : '73 GL'}
-MACROS[Key][12]    = {'Label' : 'BK'          , 'Text' : 'BK '}
-
-CONTEST[Key]=False
-
 Key='Regular_QSO'
 MACROS[Key] = OrderedDict()
 MACROS[Key][0]  = {'Label'   : 'CQ'       , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
@@ -135,31 +107,6 @@ MACROS[Key][9]     = {'Label' : 'Sec 2x'    , 'Text' : '[MYSEC] [MYSEC] '}
 MACROS[Key][10]    = {'Label' : 'NR?  '     , 'Text' : 'NR? '}
 MACROS[Key][11]    = {'Label' : 'QTH? '     , 'Text' : 'SEC? '}
 MACROS[Key][11+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
-CONTEST[Key]=True
-
-Key='ARRL VHF'
-MACROS[Key] = OrderedDict()
-MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] '}
-MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] TEST [LOG]'}
-MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-#MACROS[Key][3+12]  = {'Label' : '?'         , 'Text' : '? '}
-MACROS[Key][3+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
-
-MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MGRID] [MYGRID]'}
-MACROS[Key][5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYGRID] [MYGRID] '}
-MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-
-MACROS[Key][8]     = {'Label' : 'Grid 2x'   , 'Text' : '[MYGRID] [MYGRID] '}
-MACROS[Key][9]     = {'Label' : 'Grid 2x'   , 'Text' : '[MYGRID] [MYGRID] '}
-MACROS[Key][10]    = {'Label' : 'NR?  '     , 'Text' : 'NR? '}
-MACROS[Key][11]    = {'Label' : 'QTH? '     , 'Text' : 'SEC? '}
-MACROS[Key][11+12] = {'Label' : 'CALL? '    , 'Text' : 'CALL? '}
 CONTEST[Key]=True
 
 Key='NAQP'
@@ -367,9 +314,9 @@ MACROS[Key][11] = {'Label' : '      '  , ' ' : ' '}
 CONTEST[Key]=True
 
 
-
+"""
 # Sprints:
-""" If you call CQ, you should send your report as follows:
+If you call CQ, you should send your report as follows:
 
 HIS CALLSIGN  -  YOUR CALLSIGN   -  NUMBER  -  NAME  -  STATE
 

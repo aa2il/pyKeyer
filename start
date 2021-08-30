@@ -31,8 +31,9 @@ set CONTEST="CWops"
 
 #set CONTEST="fd"
 #set CONTEST="vhf"
+set CONTEST="sat"
 #set CONTEST="cqp"
-set CONTEST="cwopen"
+#set CONTEST="cwopen"
 #set CONTEST="WPX"
 #set CONTEST="ss"
 #set CONTEST="cqww"
@@ -101,6 +102,10 @@ else if( $CONTEST == "cqp" )then
 
 # Settings for ARRL VHF
 else if( $CONTEST == "vhf" )then
+    set WPM=25
+
+# Settings for satellites
+else if( $CONTEST == "sat" )then
     set WPM=25
 
 # Settings for ARRL 10m

@@ -122,13 +122,15 @@ class CODE_PRACTICE():
                 name,done = P.KEYING.qso_info(HIST,call,1)
             elif P.CAL_QP:
                 sec,done = P.KEYING.qso_info(HIST,call,1)
+            elif P.ARRL_VHF or P.SATELLITES:
+                grid,done = P.KEYING.qso_info(HIST,call,1)
             elif P.ARRL_10m:
                 state=HIST[call]['state']
                 done = len(state)>0
                 print(i,call,state,done)
             else:
                 done=True
-            #print('PRACTICE_QSO:',call,HIST[call],done)
+            print('PRACTICE_QSO:',call,HIST[call],done)
 
         # Wait for op to hit CQ
         print('PRACTICE_QSO: Waiting 1a - hit CQ ...',call,'...',P.gui.macro_label,'...')
@@ -174,10 +176,6 @@ class CODE_PRACTICE():
                     sec   = HIST[call]['fdsec']             # Section
                     txt2  = ' '+cat+' '+sec
                     exch2 = txt2
-                elif P.ARRL_VHF:
-                    gridsq = HIST[call]['grid']             # grid square
-                    txt2   = ' '+gridsq
-                    exch2  = txt2
                 elif P.CW_SS:
                     serial = cut_numbers( random.randint(0, 999) )
                     i      = random.randint(0, len(P.PRECS)-1)
@@ -187,14 +185,6 @@ class CODE_PRACTICE():
                     txt2   = ' '+serial+' '+prec+' '+call+' '+chk+' '+sec
                     exch2  = txt2
                     exch   = serial+','+prec+','+call+','+chk+','+sec
-                elif P.CAL_QP999:
-                    serial = cut_numbers( random.randint(0, 999) )
-                    sec    = HIST[call]['state']
-                    if sec=='CA':
-                        sec  = HIST[call]['county']
-                    txt2  = ' '+serial+' '+sec
-                    exch2 = txt2
-                    exch  = serial+','+sec
                 elif P.ARRL_10m:
                     qth   = HIST[call]['state']
                     txt2  = ' 5NN '+qth
@@ -330,13 +320,6 @@ class CODE_PRACTICE():
                         txt2=sec+' '+sec
                     else:
                         txt2=exch2
-                elif P.ARRL_VHF:
-                    if 'CALL?' in label:
-                        txt2=call+' '+call
-                    elif 'GRID?' in label or 'QTH?' in label or  'SEC?' in label:
-                        txt2=gridqs+' '+gridsq
-                    else:
-                        txt2=exch2
                 elif P.WPX:
                     if 'NR?' in label:
                         txt2=serial+' '+serial
@@ -372,8 +355,6 @@ class CODE_PRACTICE():
         elif P.ARRL_FD:
             cat2  = P.gui.get_cat().upper()
             sec2  = P.gui.get_qth().upper()
-        elif P.ARRL_VHF:
-            grid2  = P.gui.get_exchange().upper()
         elif P.CW_SS:
             serial = P.gui.get_serial().upper()
             prec   = P.gui.get_prec().upper()
@@ -404,8 +385,6 @@ class CODE_PRACTICE():
             match = call==call2 and name==name2 and qth==qth2
         elif P.ARRL_FD:
             match = call==call2 and cat==cat2 and sec==sec2
-        elif P.ARRL_VHF:
-            match = call==call2 and gridsq==grid2 
         elif P.CW_SS or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or P.ARRL_10m:
             match = call==call2 and exch==exch2
 
@@ -426,9 +405,6 @@ class CODE_PRACTICE():
                 print('Sec  sent:',sec,' - received:',sec2)
                 P.gui.txt.insert(END,'Cat sent: '+cat+' - received: '+cat2+'\n')
                 P.gui.txt.insert(END,'Sec  sent: '+sec+ ' - received: '+sec2+'\n')
-            elif P.ARRL_VHF:
-                print('Grid sent:',gridsq,' - received:',grid2)
-                P.gui.txt.insert(END,'Grid sent: '+gridsq+' - received: '+grid2+'\n')
             elif P.CW_SS or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or P.ARRL_10m:
                 print('Exchange sent:    ',exch)
                 print('Exchange received:',exch2)
