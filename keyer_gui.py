@@ -69,24 +69,6 @@ def show_threads():
 def get_contest_name(P):
     if P.KEYING:
         return P.KEYING.contest_name
-    elif P.CW_SS:
-        return 'ARRL-SS-CW'
-    elif P.NAQP:
-        return 'NAQP-CW'
-    elif P.WPX:
-        return 'CQ-WPX-CW'
-    elif P.ARRL_DX:
-        return 'ARRL-DX'
-    elif P.ARRL_10m:
-        return 'ARRL-10M'
-    elif P.ARRL_FD:
-        return 'ARRL-FD'
-    elif P.SPRINT:
-        return 'NCCC-Sprint'
-    elif P.CQ_WW:
-        return 'CQWW'
-    elif P.IARU:
-        return 'IARU-HF'
     else:
         return 'None'
     
@@ -346,24 +328,6 @@ class GUI():
         print('MACROS:',MACRO_LIST)
         if self.P.KEYING:
             idx=MACRO_LIST.index(self.P.KEYING.Key)
-        elif self.P.CW_SS:
-            idx=MACRO_LIST.index('ARRL CW SS')
-        elif self.P.SPRINT:
-            idx=MACRO_LIST.index('Sprint')
-        elif self.P.CQ_WW:
-            idx=MACRO_LIST.index('CQ WW')
-        elif self.P.IARU:
-            idx=MACRO_LIST.index('IARU HF')
-        elif self.P.ARRL_DX:
-            idx=MACRO_LIST.index('ARRL DX')
-        elif self.P.ARRL_10m:
-            idx=MACRO_LIST.index('ARRL 10m')
-        elif self.P.ARRL_FD:
-            idx=MACRO_LIST.index('ARRL Field Day')
-        elif self.P.NAQP:
-            idx=MACRO_LIST.index('NAQP')
-        elif self.P.WPX:
-            idx=MACRO_LIST.index('CQ_WPX')
         else:
             idx=0
         self.MACRO_TXT.set(MACRO_LIST[idx])
@@ -799,45 +763,6 @@ class GUI():
         # Highlight appropriate buttons for running or s&p
         if self.P.KEYING:
             self.P.KEYING.highlight(self,arg)
-        elif self.P.NAQP or self.P.SPRINT or \
-           self.P.WPX or self.P.IARU or self.P.CQ_WW or \
-           self.P.ARRL_FD or self.P.ARRL_10m:
-            #print 'HIGHLIGHTING',arg
-            if arg==0:
-                self.btns1[1].configure(background='green',highlightbackground='green')
-                self.btns1[2].configure(background='green',highlightbackground='green')
-                self.call.focus_set()
-            elif arg==1:
-                if self.P.NAQP:
-                    self.name.focus_set()
-                elif self.P.SPRINT or self.P.WPX:
-                    self.serial.focus_set()
-                elif self.P.ARRL_FD:
-                    self.cat.focus_set()
-                elif self.P.IARU or self.P.CQ_WW or self.P.ARRL_10m:
-                    self.qth.focus_set()
-            elif arg==2:
-                if self.P.SPRINT:
-                    self.btns1[1].configure(background='pale green',highlightbackground=self.default_color)
-                    self.btns1[2].configure(background='pale green',highlightbackground=self.default_color)
-            elif arg==4:
-                self.btns1[5].configure(background='red',highlightbackground= 'red')
-                self.btns1[7].configure(background='red',highlightbackground= 'red')
-                if self.P.NAQP or \
-                   self.P.ARRL_FD or self.P.WPX or  self.P.ARRL_10m or \
-                   self.P.IARU or self.P.SPRINT or self.P.CQ_WW:
-                    self.btns1[1].configure(background='pale green',highlightbackground=self.default_color)
-                    self.btns1[2].configure(background='pale green',highlightbackground=self.default_color)
-                if self.P.SPRINT:
-                    self.serial.focus_set()      
-            elif arg==7:
-                self.btns1[1].configure(background='pale green',highlightbackground=self.default_color)
-                self.btns1[5].configure(background='indian red',highlightbackground=self.default_color)
-                self.btns1[7].configure(background='indian red',highlightbackground=self.default_color)
-                if self.P.SPRINT:
-                    self.btns1[1].configure(background='green',highlightbackground='green')
-                    self.btns1[2].configure(background='green',highlightbackground='green')
-        
         self.macro_label = self.macros[arg]["Label"]
         print("\nSend_Marco:",arg,':',self.macro_label,txt)
         if '[SERIAL]' in txt:
@@ -938,6 +863,7 @@ class GUI():
         self.P.ARRL_10m = val.find('ARRL 10m')       >= 0
         self.P.ARRL_FD  = val.find('ARRL Field Day') >= 0
         self.P.ARRL_VHF = val.find('ARRL VHF')       >= 0
+        self.P.STEW_PERRY = val.find('STEW PERRY')       >= 0
         self.P.NAQP     = val.find('NAQP')           >= 0
         self.P.SATELLITES = val.find('Satellite')    >= 0
         self.P.SST      = val.find('SST')            >= 0
@@ -956,185 +882,6 @@ class GUI():
         if self.P.KEYING:
             self.P.KEYING.enable_boxes(self)
             
-        elif self.P.NAQP:
-            # Specific contest exchange for NAQP
-            self.contest=True
-            self.hide_all()
-
-            self.name_lab.grid(columnspan=1,column=4,sticky=E+W)
-            self.name.grid(column=4,columnspan=2)
-            self.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
-            self.qth.grid(column=6,columnspan=2)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.name)
-            self.boxes.append(self.qth)
-
-            if not self.P.NO_HINTS:
-                self.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-                self.hint.grid(column=7,columnspan=3)
-                self.boxes.append(self.hint)
-            
-        elif self.P.ARRL_FD:
-            # Specific contest exchange for ARRL Field Day
-            self.contest=True
-            self.hide_all()
-
-            self.cat_lab.grid(columnspan=1,column=4,sticky=E+W)
-            self.cat.grid(column=4,columnspan=2)
-            self.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
-            self.qth.grid(column=6,columnspan=2)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.cat)
-            self.boxes.append(self.qth)
-
-            if not self.P.NO_HINTS:
-                self.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-                self.hint.grid(column=7,columnspan=3)
-                self.boxes.append(self.hint)
-            
-        elif self.P.ARRL_10m:
-            # Specific contest exchange for ARRL 10m
-            self.contest=True
-            self.hide_all()
-
-            self.rst_lab.grid(columnspan=1,column=4,sticky=E+W)
-            self.rst.grid(column=4,columnspan=1)
-            self.rst.delete(0,END)
-            self.rst.insert(0,'5NN')
-            
-            self.qth_lab.grid(columnspan=1,column=5,sticky=E+W)
-            self.qth.grid(column=5,columnspan=1)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.rst)
-            self.boxes.append(self.qth)
-
-            if not self.P.NO_HINTS:
-                self.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-                self.hint.grid(column=6,columnspan=2)
-                self.boxes.append(self.hint)
-            
-        elif self.P.CW_SS:
-            # Specific contest exchange for CW SS
-            self.contest=True
-            self.hide_all()
-            self.ndigits=3
-
-            self.serial_lab.grid()
-            self.serial.grid()
-            self.prec_lab.grid()
-            self.prec.grid()
-            self.call2_lab.grid()
-            self.call2.grid()
-            self.check_lab.grid()
-            self.check.grid()
-            #self.qth_lab.grid()
-            #self.qth.grid()
-            self.qth_lab.grid(columnspan=3,column=8,sticky=E+W)
-            self.qth.grid(column=8,columnspan=2)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.serial)
-            self.boxes.append(self.prec)
-            self.boxes.append(self.call2)
-            self.boxes.append(self.check)
-            self.boxes.append(self.qth)
-            self.counter_lab.grid()
-            self.counter.grid()
-
-            if not self.P.NO_HINTS:
-                self.call_lab.grid(column=0,columnspan=2)
-                self.call.grid(column=0,columnspan=2)
-                self.serial_lab.grid(column=2)
-                self.serial.grid(column=2)
-                self.prec_lab.grid(column=3)
-                self.prec.grid(column=3)
-                self.call2_lab.grid(column=4)
-                self.call2.grid(column=4)
-                self.check_lab.grid(column=5)
-                self.check.grid(column=5)
-                self.qth_lab.grid(column=6,columnspan=1)
-                self.qth.grid(column=6,columnspan=1)
-
-                self.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-                self.hint.grid(column=7,columnspan=3)
-                self.boxes.append(self.hint)
-                  
-        elif self.P.WPX:
-            # Specific contest exchange for CQ WPX
-            self.contest=True
-            self.hide_all()
-            self.ndigits=3
-
-            self.rst_lab.grid(columnspan=1,column=4,sticky=E+W)
-            self.rst.grid(column=4,columnspan=1)
-            self.rst.delete(0,END)
-            self.rst.insert(0,'5NN')
-            
-            self.serial_lab.grid(columnspan=1,column=5,sticky=E+W)
-            self.serial.grid(column=5,columnspan=1)
-            self.counter_lab.grid()
-            self.counter.grid()
-
-            self.boxes=[self.call]
-            self.boxes.append(self.rst)
-            self.boxes.append(self.serial)
-
-        elif self.P.IARU or self.P.CQ_WW:
-            # Specific contest exchange for CQ WW and IARU HF Champs
-            self.contest=True
-            self.hide_all()
-            self.ndigits=-3
-
-            col=4
-            cspan=1
-            self.rst_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-            self.rst.grid(column=col,columnspan=cspan)
-            self.rst.delete(0,END)
-            self.rst.insert(0,'5NN')
-            
-            col+=cspan
-            cspan=3
-            self.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-            self.qth.grid(column=col,columnspan=cspan)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.rst)
-            self.boxes.append(self.qth)
-
-            if not self.P.NO_HINTS:
-                col+=cspan
-                cspan=3
-                self.hint_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-                self.hint.grid(column=col,columnspan=cspan)
-                self.boxes.append(self.hint)
-            
-        elif self.P.SPRINT:
-            # Specific contest exchange for NCCC Sprints
-            self.contest=True
-            self.hide_all()
-            self.ndigits=1
-
-            self.serial_lab.grid()
-            self.serial.grid()
-            self.name_lab.grid(columnspan=1,column=5,sticky=E+W)
-            self.name.grid(column=5,columnspan=1)
-            self.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
-            self.qth.grid(column=6,columnspan=1)
-
-            self.boxes=[self.call]
-            self.boxes.append(self.serial)
-            self.boxes.append(self.qth)
-            self.counter_lab.grid()
-            self.counter.grid()
-
-            if not self.P.NO_HINTS:
-                self.hint_lab.grid(columnspan=3,column=7,sticky=E+W)
-                self.hint.grid(column=7,columnspan=3)
-                self.boxes.append(self.hint)
-
         elif self.P.CONTEST[val]:
             # Generic contest exchange 
             self.contest=True
@@ -1430,50 +1177,13 @@ class GUI():
         print('LOG_QSO:',call,name,qth)
         serial=0
 
-        MY_CALL     = self.P.SETTINGS['MY_CALL']
         MY_NAME     = self.P.SETTINGS['MY_NAME']
         MY_STATE    = self.P.SETTINGS['MY_STATE']
-        MY_SEC      = self.P.SETTINGS['MY_SEC']
-        MY_CAT      = self.P.SETTINGS['MY_CAT']
-        MY_PREC     = self.P.SETTINGS['MY_PREC']
-        MY_CHECK    = self.P.SETTINGS['MY_CHECK']
-        MY_CQ_ZONE  = self.P.SETTINGS['MY_CQ_ZONE']
-        MY_ITU_ZONE = self.P.SETTINGS['MY_ITU_ZONE']
-        MY_GRID     = self.P.SETTINGS['MY_GRID']
         
         if self.contest:
             rst='599'
             if self.P.KEYING:
                 exch,valid,self.exch_out = self.P.KEYING.logging()
-            elif self.P.NAQP:
-                exch=name+','+qth
-                valid = valid and len(name)>0 and len(qth)>0
-            elif self.P.WPX:
-                rst =self.get_rst().upper()
-                serial = self.get_serial().upper()
-                exch=str(rst) +','+ serial
-            elif self.P.IARU or self.P.CQ_WW or self.P.ARRL_10m:
-                rst =self.get_rst().upper()
-                #qth = self.get_exchange().upper()
-                exch=str(rst) +','+ qth
-            elif self.P.CW_SS:
-                serial = self.get_serial().upper()
-                prec   = self.get_prec().upper()
-                call2  = self.get_call2().upper()
-                chk    = self.get_check().upper()
-                sec    = qth
-                exch   = serial+','+prec+','+call+','+chk+','+sec
-                valid  = valid and len(exch)>0
-            elif self.P.ARRL_FD:
-                cat    = self.get_cat().upper()
-                sec    = qth
-                exch   = cat+','+sec
-                valid = valid and len(cat)>0 and len(qth)>0
-            elif self.P.SPRINT:
-                serial = self.get_serial().upper()
-                sec    = qth
-                exch   = serial+','+name+','+sec
-                valid  = valid and len(exch)>0
             else:
                 exch=self.get_exchange().upper()
                 valid = valid and len(exch)>0
@@ -1524,22 +1234,8 @@ class GUI():
                 self.txt.see(END)
             
             # Construct exchange out
-            if self.contest and self.P.NAQP:
-                self.exch_out = MY_NAME+','+MY_STATE
-            elif self.contest and self.P.CW_SS:
-                self.exch_out = str(self.cntr)+','+MY_PREC+','+MY_CALL+','+MY_CHECK+','+MY_SEC
-            elif self.contest and self.P.SPRINT:
+            if self.contest and self.P.SPRINT:
                 self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
-            elif self.contest and self.P.WPX:
-                self.exch_out = '599,'+str(self.cntr)
-            elif self.contest and self.P.IARU:
-                self.exch_out = '599,'+MY_ITU_ZONE
-            elif self.contest and self.P.CQ_WW:
-                self.exch_out = '599,'+MY_CQ_ZONE
-            elif self.contest and self.P.ARRL_10m:
-                self.exch_out = '599,'+MY_STATE
-            elif self.contest and self.P.ARRL_FD:
-                self.exch_out = MY_CAT+','+MY_SEC
                 
             qso = dict( list(zip(['QSO_DATE_OFF','TIME_OFF','CALL','FREQ','BAND','MODE', \
                              'SRX_STRING','STX_STRING','NAME','QTH','SRX','STX','SAT_NAME'],  \
@@ -1619,7 +1315,7 @@ class GUI():
                 idx+=1
 
         else:
-            print('*** Missing one or more fields ***',self.contest,self.P.NAQP)
+            print('*** Missing one or more fields ***',self.contest)
             print('Call=',call)
             if self.contest:
                 print('Exch=',exch)
@@ -1743,45 +1439,6 @@ class GUI():
                 print('a=',a)
                 if self.P.KEYING:
                     self.P.KEYING.dupe(a)
-                elif self.P.NAQP:
-                    self.name.delete(0,END)
-                    self.name.insert(0,a[0])
-                    if len(a)>=2:
-                        self.qth.delete(0,END)
-                        self.qth.insert(0,a[1])
-                            
-                elif self.P.CW_SS:
-                    if match2:
-                        self.serial.delete(0,END)
-                        self.serial.insert(0,a[0])
-                        if len(a)>=2:
-                            self.prec.delete(0,END)
-                            if not self.P.PRACTICE_MODE:
-                                self.prec.insert(0,a[1])
-                            if len(a)>=3:
-                                self.call2.delete(0,END)
-                                self.call2.insert(0,a[2])
-                                if len(a)>=4:
-                                    self.check.delete(0,END)
-                                    self.check.insert(0,a[3])
-                                    if len(a)>=5:
-                                        self.qth.delete(0,END)
-                                        self.qth.insert(0,a[4])
-                elif self.P.ARRL_10m:
-                    self.qth.delete(0,END)
-                    self.qth.insert(0,a[1])
-                elif self.P.ARRL_FD:
-                    self.cat.delete(0,END)
-                    self.cat.insert(0,a[0])
-                    if len(a)>=2:
-                        self.qth.delete(0,END)
-                        self.qth.insert(0,a[1])
-                elif self.P.WPX:
-                    self.serial.delete(0,END)
-                elif self.P.IARU or self.P.CQ_WW:
-                    self.qth.delete(0,END)  
-                    if len(a)>=2:
-                        self.qth.insert(0,a[1])
                 elif self.P.SPRINT:
                     #self.serial.delete(0,END)
                     if len(a)>=2:
@@ -1932,27 +1589,7 @@ class GUI():
                 
                 if self.P.KEYING:
                     self.P.KEYING.insert_hint(h)
-                elif self.P.ARRL_FD:
-                    self.cat.delete(0, END)
-                    self.cat.insert(0,h[0])
-                    self.qth.delete(0, END)
-                    self.qth.insert(0,h[1])
-                    
-                elif self.P.ARRL_10m:
-                    self.qth.delete(0, END)
-                    self.qth.insert(0,h[0])
-                    
-                elif self.P.IARU or self.P.CQ_WW:
-                    self.qth.delete(0, END)
-                    self.qth.insert(0,h[0])
-                    
-                elif self.P.CW_SS:
-                    self.check.delete(0, END)
-                    self.check.insert(0,h[0])
-                    self.qth.delete(0, END)
-                    self.qth.insert(0,h[1])
-                    
-                elif self.P.NAQP or self.P.SPRINT:
+                elif self.P.SPRINT:
                     self.name.delete(0, END)
                     self.name.insert(0,h[0])
                     self.qth.delete(0, END)
@@ -1978,14 +1615,8 @@ class GUI():
                     if self.P.KEYING:
                         self.P.KEYING.next_event(key,event,None)
                         return("break")
-                    elif (self.P.NAQP or self.P.CW_SS or \
-                        self.P.SPRINT or self.P.ARRL_10m or \
-                        self.P.ARRL_FD or self.P.IARU or self.P.CQ_WW) \
-                        and event.widget==self.qth:
+                    elif self.P.SPRINT  and event.widget==self.qth:
                         #print 'QTH box',key,len(key),key=='Tab'
-                        self.call.focus_set()
-                        return("break")
-                    elif self.P.WPX and event.widget==self.serial:
                         self.call.focus_set()
                         return("break")
 
@@ -2035,28 +1666,6 @@ class GUI():
             if (key=='Return' or key=='KP_Enter') and len(call)>0:
                 if self.P.KEYING:
                     next_widget = self.P.KEYING.next_event(key,event,1)
-                elif self.contest and (self.P.NAQP):
-                    next_widget=self.name
-                    self.Send_Macro(1)                     # Send reply
-
-                elif self.contest and self.P.ARRL_FD:
-                    next_widget=self.cat
-                    self.Send_Macro(1)                     # Send reply
-
-                elif self.contest and self.P.WPX:
-                    next_widget=self.serial
-                    self.Send_Macro(1)                     # Send reply
-
-                elif self.contest and (self.P.IARU or self.P.CQ_WW or self.P.ARRL_10m):
-                    next_widget=self.qth
-                    self.Send_Macro(1)                     # Send reply
-
-                elif self.contest and self.P.CW_SS:
-                    self.call2.delete(0, END)
-                    self.call2.insert(0,call)
-                    next_widget=self.serial
-                    self.Send_Macro(1)                     # Send reply
-
                 elif self.contest and self.P.SPRINT:
                     next_widget=self.serial
                     if self.P.LAST_MSG==0:
@@ -2096,22 +1705,6 @@ class GUI():
                     self.force_focus(self.call)
                     return("break")
 
-            elif self.P.WPX:
-                if key=='Tab':
-                    self.force_focus(self.rst)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.serial)
-                    return("break")
-
-            elif self.P.IARU or self.P.CQ_WW or self.P.ARRL_10m:
-                if key=='Tab':
-                    self.force_focus(self.rst)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.qth)
-                    return("break")
-
             elif self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.serial)
@@ -2137,7 +1730,7 @@ class GUI():
                     else:
                         nmacro=None
                     next_widget = self.P.KEYING.next_event(key,event,nmacro)
-                elif self.contest and (self.P.NAQP or self.P.SPRINT):
+                elif self.contest and (self.P.SPRINT):
                     next_widget=self.qth
 
             if self.P.SPRINT:
@@ -2160,9 +1753,7 @@ class GUI():
                     next_widget=self.qth
                     if self.P.KEYING:
                         next_widget = self.P.KEYING.next_event(key,event,2)
-                    elif self.P.NAQP or \
-                       self.P.CW_SS or self.P.ARRL_FD or \
-                       self.P.IARU or self.P.CQ_WW or self.P.ARRL_10m:
+                    elif self.P.CW_SS or self.P.ARRL_FD :\
                         self.Send_Macro(2)                     # Send TU
 
                     elif self.P.SPRINT:
@@ -2225,20 +1816,9 @@ class GUI():
         elif event.widget==self.rst:
             rst=self.get_rst().upper()
             self.sock.set_log_fields({'RST_out':rst})
-            if self.P.WPX:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.serial)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
-            elif self.P.ARRL_10m:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.qth)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
+            if self.P.KEYING:
+                next_widget = self.P.KEYING.next_event(key,event,None)
+                return("break")
 
         elif event.widget==self.exch:
             exch=self.get_exchange().upper()
@@ -2258,22 +1838,20 @@ class GUI():
             serial=self.get_serial().upper()
             
             self.sock.set_log_fields({'Serial_out':serial})
-            if self.P.KEYING:
-                next_widget = self.P.KEYING.next_event(key,event,None)
-                return("break")
+            if key=='Return' or key=='KP_Enter':
+                if self.P.KEYING:
+                    if self.P.WPX:
+                        nmacro=2
+                    else:
+                        nmacro=None
+                    next_widget = self.P.KEYING.next_event(key,event,nmacro)
+                    return("break")
             elif self.P.CW_SS:
                 if key=='Tab' or key=='Return' or key=='KP_Enter':
                     self.force_focus(self.prec)
                     return("break")
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.call)
-                    return("break")
-            elif self.P.WPX:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.call)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.rst)
                     return("break")
             elif self.P.SPRINT:
                 if key=='Tab' or key=='Return' or key=='KP_Enter':

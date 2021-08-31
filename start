@@ -29,15 +29,18 @@ set RIG="NONE"
 set CONTEST="CWops"
 #set CONTEST="sst"
 
+#set CONTEST="naqp"
 #set CONTEST="fd"
 #set CONTEST="vhf"
-set CONTEST="sat"
+#set CONTEST="stew"
+#set CONTEST="sat"
 #set CONTEST="cqp"
 #set CONTEST="cwopen"
-#set CONTEST="WPX"
-#set CONTEST="ss"
+#set CONTEST="wpx"
+set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="arrl_10m"
+#set CONTEST="arrl_dx"
 #set CONTEST="iaru"
 
 #set CAPTURE="-capture -sidetone"
@@ -75,7 +78,7 @@ else if( $CONTEST == "cwopen" )then
 
 # Setting for CQ WPX (or any contest that requires rst + serial number)
 else if( $CONTEST == "wpx" )then
-    set WPM=20
+    set WPM=30
     set HINTS=""
 
 # Setting for CQ World Wide
@@ -104,6 +107,10 @@ else if( $CONTEST == "cqp" )then
 else if( $CONTEST == "vhf" )then
     set WPM=25
 
+# Settings for Stew Perry - need to test this out
+else if( $CONTEST == "vhf" )then
+    set WPM=25
+
 # Settings for satellites
 else if( $CONTEST == "sat" )then
     set WPM=25
@@ -111,6 +118,11 @@ else if( $CONTEST == "sat" )then
 # Settings for ARRL 10m
 else if( $CONTEST == "arrl_10m" )then
     set WPM=25
+    set HINTS=""
+
+# Settings for ARRL Intl DX - need to test this more, not sure it handles dx stations correctly
+else if( $CONTEST == "arrl_dx" )then
+    set WPM=30
     set HINTS=""
 
 # Settings for ARRL Sweepstakes

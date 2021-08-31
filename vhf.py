@@ -3,7 +3,7 @@
 # vhf.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for ARRL VHF contest
+# Keying routines for ARRL VHF and Stew Perry 160m contests
 #
 ############################################################################################
 #
@@ -23,6 +23,7 @@ from tkinter import END,E,W
 from collections import OrderedDict
 from macros import MACROS,CONTEST
 from cw_keyer import cut_numbers
+import sys
 
 ############################################################################################
 
@@ -49,7 +50,13 @@ class VHF_KEYING():
     # Routient to set macros for this contest
     def macros(self):
 
-        Key='ARRL VHF'
+        if self.P.ARRL_VHF:
+            Key='ARRL VHF'
+        elif self.P.STEW_PERRY:
+            Key='Stew_Perry'
+        else:
+            print('Whooops!')
+            sys.exit(0)
         self.Key=Key
 
         MACROS[Key] = OrderedDict()

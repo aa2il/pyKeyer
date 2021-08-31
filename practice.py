@@ -110,24 +110,24 @@ class CODE_PRACTICE():
         while not done:
             i = random.randint(0, self.Ncalls-1)
             call = self.calls[i]
-            if P.NAQP:
-                name  = HIST[call]['name']
-                qth   = HIST[call]['state']
-                done = len(name)>0 and len(qth)>0
-            elif P.CWops:
+            if P.CWops:
                 name,num,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.SST:
+            elif P.SST or P.NAQP:
                 name,qth,done = P.KEYING.qso_info(HIST,call,1)
             elif P.CW_OPEN:
                 name,done = P.KEYING.qso_info(HIST,call,1)
+            elif P.ARRL_FD:
+                cat,sec,done = P.KEYING.qso_info(HIST,call,1)
+            elif P.CW_SS:
+                chk,sec,done = P.KEYING.qso_info(HIST,call,1)
             elif P.CAL_QP:
                 sec,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.ARRL_VHF or P.SATELLITES:
+            elif P.ARRL_VHF or P.SATELLITES or P.STEW_PERRY:
                 grid,done = P.KEYING.qso_info(HIST,call,1)
             elif P.ARRL_10m:
-                state=HIST[call]['state']
-                done = len(state)>0
-                print(i,call,state,done)
+                state,done = P.KEYING.qso_info(HIST,call,1)
+            elif P.IARU or P.CQ_WW:
+                zone,done = P.KEYING.qso_info(HIST,call,1)
             else:
                 done=True
             print('PRACTICE_QSO:',call,HIST[call],done)
@@ -166,58 +166,6 @@ class CODE_PRACTICE():
                 if P.KEYING:
                     txt2 = P.KEYING.qso_info(HIST,call,2)
                     exch2 = txt2
-                elif P.NAQP:
-                    name  = HIST[call]['name']
-                    qth   = HIST[call]['state']
-                    txt2  = ' '+name+' '+qth
-                    exch2 = txt2
-                elif P.ARRL_FD:
-                    cat   = HIST[call]['fdcat']             # Category
-                    sec   = HIST[call]['fdsec']             # Section
-                    txt2  = ' '+cat+' '+sec
-                    exch2 = txt2
-                elif P.CW_SS:
-                    serial = cut_numbers( random.randint(0, 999) )
-                    i      = random.randint(0, len(P.PRECS)-1)
-                    prec   = P.PRECS[i]
-                    chk    = HIST[call]['check']
-                    sec    = HIST[call]['sec']
-                    txt2   = ' '+serial+' '+prec+' '+call+' '+chk+' '+sec
-                    exch2  = txt2
-                    exch   = serial+','+prec+','+call+','+chk+','+sec
-                elif P.ARRL_10m:
-                    qth   = HIST[call]['state']
-                    txt2  = ' 5NN '+qth
-                    exch2 = txt2
-                    exch  = '5NN,'+qth
-                    #print('BURP: call/qth=',call,qth)
-                    #print('BURP:',HIST[call])
-                elif P.WPX:
-                    serial = cut_numbers( random.randint(0, 999) )
-                    txt2  = ' 5NN '+serial
-                    exch2 = txt2
-                    exch  = '5NN,'+serial
-                elif P.IARU:
-                    qth   = HIST[call]['ituz']
-                    txt2  = ' 5NN '+qth
-                    exch2 = txt2
-                    exch  = '5NN,'+qth
-                elif P.CQ_WW:
-                    qth   = HIST[call]['cqz']
-                    txt2  = ' 5NN '+qth
-                    exch2 = txt2
-                    exch  = '5NN,'+qth
-                elif P.SPRINT:
-                    serial = cut_numbers( random.randint(0, 999) )
-                    name   = HIST[call]['name']
-                    sec    = HIST[call]['state']
-                    if P.LAST_MSG==0:
-                        txt2 = MY_CALL+' '+serial+' '+name+' '+sec+' '+call
-                    else:
-                        txt1 = 'NA '+call+' CQ'
-                        txt2 = MY_CALL+' '+call+' '+serial+' '+name+' '+sec
-                    exch2  = txt2
-                    exch   = serial+','+name+' '+sec
                 else:
                     txt2='?????'
                     print('CODE PRACTICE: Unknown Contest')
@@ -291,54 +239,6 @@ class CODE_PRACTICE():
                     txt2 = P.KEYING.repeat(label,exch2)
                 elif 'CALL' in label:
                     txt2=call+' '+call
-                elif P.CW_SS:
-                    if 'NR?' in label:
-                        txt2=serial+' '+serial
-                    elif 'PREC?' in label:
-                        txt2=prec+' '+prec
-                    elif 'CHECK?' in label:
-                        txt2=chk+' '+chk
-                    elif 'SEC?' in label:
-                        txt2=sec+' '+sec
-                    else:
-                        txt2=exch2
-                elif P.NAQP:
-                    if 'NAME?' in label:
-                        txt2=name+' '+name
-                    elif 'QTH?' in label:
-                        txt2=qth+' '+qth
-                    elif 'NR?' in label:
-                        txt2=qth+' '+qth
-                    else:
-                        txt2=exch2
-                elif P.ARRL_FD:
-                    if 'CALL?' in label:
-                        txt2=call+' '+call
-                    elif 'NR?' in label:
-                        txt2=cat+' '+cat
-                    elif 'QTH?' in label or  'SEC?' in label:
-                        txt2=sec+' '+sec
-                    else:
-                        txt2=exch2
-                elif P.WPX:
-                    if 'NR?' in label:
-                        txt2=serial+' '+serial
-                    else:
-                        txt2=exch2
-                elif P.IARU or P.CQ_WW or P.ARRL_10m:
-                    if 'NR?' in label or 'QTH?' in label:
-                        txt2=qth+' '+qth
-                    else:
-                        txt2=exch2
-                elif P.SPRINT:
-                    if 'NR?' in label:
-                        txt2=serial+' '+serial
-                    elif 'NAME?' in label:
-                        txt2=name+' '+name
-                    elif 'QTH?' in label:
-                        txt2=sec+' '+sec
-                    else:
-                        txt2=exch2
 
                 # Get ready to try again
                 P.gui.macro_label=''
@@ -349,67 +249,17 @@ class CODE_PRACTICE():
         call2 = P.gui.get_call().upper()
         if P.KEYING:
             match = P.KEYING.error_check()
-        elif P.NAQP:
-            name2 = P.gui.get_name().upper()
-            qth2  = P.gui.get_qth().upper()
-        elif P.ARRL_FD:
-            cat2  = P.gui.get_cat().upper()
-            sec2  = P.gui.get_qth().upper()
-        elif P.CW_SS:
-            serial = P.gui.get_serial().upper()
-            prec   = P.gui.get_prec().upper()
-            chk    = P.gui.get_check().upper()
-            sec    = P.gui.get_qth().upper()
-            #print('hey 1:',exch2)
-            exch2  = serial+','+prec+','+call2+','+chk+','+sec
-            #print('hey 2:',exch2)
-        elif P.WPX:
-            serial = P.gui.get_serial().upper()
-            rst    = P.gui.get_rst().upper()
-            exch2  = rst+','+serial
-        elif P.IARU or P.CQ_WW or P.ARRL_10m:
-            rst    = P.gui.get_rst().upper()
-            qth2  = P.gui.get_qth().upper()
-            exch2  = rst+','+qth2
-        elif P.SPRINT:
-            serial = P.gui.get_serial().upper()
-            name2  = P.gui.get_name().upper()
-            sec    = P.gui.get_qth().upper()
-            exch2  = serial+','+name2+' '+sec
 
         # We have everything we need, now the main program can clear the gui boxes
         keyer.evt.clear()
 
         # Check call & exchange matching
-        if P.NAQP:
-            match = call==call2 and name==name2 and qth==qth2
-        elif P.ARRL_FD:
-            match = call==call2 and cat==cat2 and sec==sec2
-        elif P.CW_SS or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or P.ARRL_10m:
-            match = call==call2 and exch==exch2
-
         if not match and not P.KEYING:
             txt='********************** ERROR **********************'
             print(txt)
             print('Call sent:',call,' - received:',call2)
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.insert(END,'Call sent: '+call+' - received: '+call2+'\n')
-
-            if P.NAQP:
-                print('Name sent:',name,' - received:',name2)
-                print('QTH  sent:',qth,' - received:',qth2)
-                P.gui.txt.insert(END,'Name sent: '+name+' - received: '+name2+'\n')
-                P.gui.txt.insert(END,'QTH  sent: '+qth+ ' - received: '+qth2+'\n')
-            elif P.ARRL_FD:
-                print('Cat sent:',cat,' - received:',cat2)
-                print('Sec  sent:',sec,' - received:',sec2)
-                P.gui.txt.insert(END,'Cat sent: '+cat+' - received: '+cat2+'\n')
-                P.gui.txt.insert(END,'Sec  sent: '+sec+ ' - received: '+sec2+'\n')
-            elif P.CW_SS or P.SPRINT or P.WPX or P.IARU or P.CQ_WW or P.ARRL_10m:
-                print('Exchange sent:    ',exch)
-                print('Exchange received:',exch2)
-                P.gui.txt.insert(END,'Exchange sent:     '+exch+'\n')
-                P.gui.txt.insert(END,'Exchange received: '+exch2+'\n')
 
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')

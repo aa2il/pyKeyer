@@ -40,35 +40,6 @@ def master(P,call,dx_station=None):
             print(P.MASTER[call])
         if P.KEYING:
             return P.KEYING.hint(call)
-        elif P.CQ_WW:
-            zone=P.MASTER[call]['cqz']
-            return zone
-        elif P.CW_SS:
-            sec=P.MASTER[call]['sec']
-            if sec=='':
-                sec=P.MASTER[call]['state']
-            if sec=='KP4':
-                sec='PR'
-            chk=P.MASTER[call]['check']
-            return chk+' '+sec
-        elif P.NAQP or P.SPRINT:
-            name  = P.MASTER[call]['name']
-            state = P.MASTER[call]['state']
-            return name+' '+state
-        elif P.ARRL_FD:
-            cat   = P.MASTER[call]['fdcat']
-            sec   = P.MASTER[call]['fdsec']
-            return cat+' '+sec
-        elif P.ARRL_10m:
-            state = P.MASTER[call]['state']
-            if state=='':
-                # Try deciphering from section info
-                sec   = P.MASTER[call]['fdsec']
-                state=arrl_sec2state(sec)
-            return state
-        elif P.IARU:
-            qth  = P.MASTER[call]['ituz']
-            return qth
         else:
             print('HINT.MASTER: No hints available for this contest')
             return None

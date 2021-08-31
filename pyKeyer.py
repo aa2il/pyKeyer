@@ -57,7 +57,14 @@ from cwops import *
 from cwopen import *
 from sst import *
 from cqp import *
+from wpx import *
+from fd import *
+from ss import *
 from vhf import *
+from ten import *
+from naqp import *
+from iaru import *
+from cqww import *
 from satellites import *
 
 ################################################################################
@@ -94,6 +101,7 @@ class PARAMS:
         arg_proc.add_argument('-cqp', action='store_true',help='California QP')
         arg_proc.add_argument('-fd', action='store_true',help='ARRL Field Day')
         arg_proc.add_argument('-vhf', action='store_true',help='ARRL VHF')
+        arg_proc.add_argument('-stew', action='store_true',help='Stew Parry')
         arg_proc.add_argument('-sat', action='store_true',help='Satellites')
         arg_proc.add_argument('-sprint', action='store_true',help='NCCC CW Sprint')
         arg_proc.add_argument('-cqww', action='store_true',help='CQ Worldwide')
@@ -141,6 +149,7 @@ class PARAMS:
         self.ARRL_10m      = args.arrl_10m
         self.ARRL_FD       = args.fd
         self.ARRL_VHF      = args.vhf
+        self.ARRL_STEW_PERRY = args.stew
         self.SATELLITES    = args.sat
         self.CAPTURE       = args.capture
         self.RIG_AUDIO_IDX = None
@@ -177,23 +186,32 @@ class PARAMS:
 
         self.KEYING=None
         self.HIST_DIR=HIST_DIR
-        if self.NAQP or self.SPRINT:
-            self.HISTORY = HIST_DIR+'NAQPCW.txt'
+        if self.SPRINT:
+            self.KEYING=SPRINT_KEYING(self)
         elif self.CWops:
             self.KEYING=CWOPS_KEYING(self)
         elif self.SST:
             self.KEYING=SST_KEYING(self)
+        elif self.NAQP:
+            self.KEYING=NAQP_KEYING(self)
         elif self.CW_SS:
-            self.HISTORY = HIST_DIR+'SS_Call_History_Aug2018.txt'
+            self.KEYING=SS_KEYING(self)
         elif self.CAL_QP:
             self.KEYING=CQP_KEYING(self)
         elif self.CW_OPEN:
             self.KEYING=CWOPEN_KEYING(self)
         elif self.ARRL_FD:
-            #self.HISTORY = HIST_DIR+'FD_2020.txt'
-            self.HISTORY = HIST_DIR+'FD_202*.txt'
-        elif self.ARRL_VHF:
+            self.KEYING=FD_KEYING(self)
+        elif self.ARRL_VHF or self.STEW_PERRY:
             self.KEYING=VHF_KEYING(self)
+        elif self.IARU:
+            self.KEYING=IARU_KEYING(self)
+        elif self.CQ_WW:
+            self.KEYING=CQWW_KEYING(self)
+        elif self.WPX:
+            self.KEYING=WPX_KEYING(self)
+        elif self.ARRL_10m or self.ARRL_DX:
+            self.KEYING=TEN_METER_KEYING(self)
         elif self.SATELLITES:
             self.KEYING=SAT_KEYING(self)
         else:
