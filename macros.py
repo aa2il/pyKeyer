@@ -32,22 +32,6 @@ PRECS='QSABUMS'
 MACROS = OrderedDict()
 CONTEST = OrderedDict()
 
-Key='Default'
-MACROS[Key] = OrderedDict()
-MACROS[Key][0]  = {'Label' : 'CQ'      , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
-MACROS[Key][1]  = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
-MACROS[Key][2]  = {'Label' : 'Reply'   , 'Text' : 'RTU [RST] [MYSTATE] '}
-MACROS[Key][3]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
-MACROS[Key][4]  = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
-MACROS[Key][5]  = {'Label' : '73'      , 'Text' : '73 '}
-MACROS[Key][6]  = {'Label' : 'BK'      , 'Text' : 'BK '}
-MACROS[Key][7]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
-MACROS[Key][8]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
-MACROS[Key][9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
-MACROS[Key][10] = {'Label' : 'V    '   , 'Text' : 'V'}
-MACROS[Key][11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV[-10] VVV'}
-CONTEST[Key]=False
-
 Key='Regular_QSO'
 MACROS[Key] = OrderedDict()
 MACROS[Key][0]  = {'Label'   : 'CQ'       , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}

@@ -3,7 +3,7 @@
 # iaru.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for ARRL 10m contest
+# Keying routines for IARU HF Chanpionships
 #
 ############################################################################################
 #
@@ -159,7 +159,7 @@ class IARU_KEYING():
             gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
         
 
-    # Specific contest exchange for ARRL VHF
+    # Specific contest exchange for IARU Champs
     def enable_boxes(self,gui):
 
         gui.contest=True

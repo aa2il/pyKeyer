@@ -22,9 +22,9 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import random
-from macros import MACROS,CONTEST
 from rig_io.ft_tables import SST_SECS
 from cw_keyer import cut_numbers
+from default import DEFAULT_KEYING
 
 ############################################################################################
 
@@ -32,50 +32,39 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Keyin class for CWops mini tests 
-class CWOPS_KEYING():
+# Keying class for CWops mini tests  - inherits base class
+class CWOPS_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        self.P=P
-
-        if P.USE_MASTER:
-            P.HISTORY = P.HIST_DIR+'master.csv'
-        else:
-            #P.HISTORY = HIST_DIR+'Shareable CWops data.xlsx'
-            P.HISTORY = P.HIST_DIR+'CWOPS_*.txt'
-
-        self.contest_name  = 'CW Ops Mini-Test'
-
-        self.macros()
+        DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test','CWOPS_*.txt')
 
     # Routient to set macros for this contest
     def macros(self):
 
-        self.Key='CWops'
-        Key=self.Key
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CWT [MYCALL] '}
-        MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
-        MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
-        MACROS[Key][2+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CWT [MYCALL] '}
+        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
-        MACROS[Key][5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
-        MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-        
-        MACROS[Key][8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
-        MACROS[Key][9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
-        MACROS[Key][10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
-        MACROS[Key][11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
-        CONTEST[Key]=True
+        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
+        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
+        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
 
+        MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
+        MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
+        MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+
+        return MACROS
+        
     # Routine to generate a hint for a given call
     def hint(self,call):
         P=self.P
@@ -91,7 +80,7 @@ class CWOPS_KEYING():
 
         name  = HIST[call]['name'].split(' ')
         name  = name[0]
-        
+                
         if iopt==1:
             
             #name  = HIST[call]['name']
@@ -104,7 +93,7 @@ class CWOPS_KEYING():
             x = random()
             done =done and ((num not in SST_SECS) or (x<0.1))
                 
-            return name,num,done
+            return done
 
         else:
 
@@ -123,31 +112,15 @@ class CWOPS_KEYING():
                     num = cut_numbers( int(num), ALL=True )
                 txt2  = ' '+name+' '+num
                 self.qth = num
-                
+            
             return txt2
-            
-    # Routine to process qso element repeats
-    def repeat(self,label,exch2):
-            
-        if 'CALL' in label:
-            txt2=self.call+' '+self.call
-        elif 'NAME?' in label:
-            txt2=self.name+' '+self.name
-        elif 'QTH?' in label:
-            txt2=self.qth+' '+self.qth
-        elif 'NR?' in label:
-            txt2=self.qth+' '+self.qth
-        else:
-            txt2=exch2
-
-        return txt2
 
     # Error checking
     def error_check(self):
         P=self.P
 
-        call2 = P.gui.get_call().upper()
-        name2 = P.gui.get_name().upper()
+        call2   = P.gui.get_call().upper()
+        name2    = P.gui.get_name().upper()
         qth2  = P.gui.get_exchange().upper()
         match = self.call==call2 and self.name==name2 and self.qth==qth2
 
@@ -164,51 +137,30 @@ class CWOPS_KEYING():
 
             print('QTH  sent:',self.qth,' - received:',qth2)
             P.gui.txt.insert(END,'QTH  sent: '+self.qth+ ' - received: '+qth2+'\n')
-            
+
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)
             
         return match
-            
-
-    # Highlight function keys that make sense in the current context
-    def highlight(self,gui,arg):
-        
-        if arg==0:
-            gui.btns1[1].configure(background='green',highlightbackground='green')
-            gui.btns1[2].configure(background='green',highlightbackground='green')
-            gui.call.focus_set()
-        elif arg==1:
-            gui.name.focus_set()
-        elif arg==4:
-            gui.btns1[5].configure(background='red',highlightbackground= 'red')
-            gui.btns1[7].configure(background='red',highlightbackground= 'red')
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
-        elif arg==7:
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
-            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
-        
+    
 
     # Specific contest exchange for CWops
     def enable_boxes(self,gui):
 
-        #gui=self.P.gui
-
         gui.contest=True
         gui.hide_all()
-
+        self.macros=[1,None,2]
+        
         gui.name_lab.grid(columnspan=1,column=4,sticky=E+W)
         gui.name.grid(column=4,columnspan=2)
         gui.exch_lab.grid(columnspan=1,column=6,sticky=E+W)
         gui.exch.grid(column=6,columnspan=2)
-
+        
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.exch)
-
+        
         if not self.P.NO_HINTS:
             gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
             gui.hint.grid(column=7,columnspan=3)
@@ -218,14 +170,14 @@ class CWOPS_KEYING():
     def logging(self):
 
         gui=self.P.gui
-        
+
         call=gui.get_call().upper()
         name=gui.get_name().upper()
         qth = gui.get_exchange().upper()
         exch=name+','+qth
         valid = len(call)>=3 and len(name)>0 and len(qth)>0
-
-        MY_NAME     = self.P.SETTINGS['MY_NAME']
+        
+        MY_NAME   = self.P.SETTINGS['MY_NAME']
         MY_STATE    = self.P.SETTINGS['MY_STATE']
         exch_out = MY_NAME+','+MY_STATE
         
@@ -256,28 +208,3 @@ class CWOPS_KEYING():
             gui.exch.insert(0,h[1])
 
 
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
-
-        gui=self.P.gui
-
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % len(gui.boxes)
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % len(gui.boxes)
-            else:
-                print('We should never get here!!')
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            

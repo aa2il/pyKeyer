@@ -21,8 +21,9 @@
 
 from tkinter import END,E,W
 from collections import OrderedDict
-from macros import MACROS,CONTEST
+from random import randint
 from cw_keyer import cut_numbers
+from default import DEFAULT_KEYING
 
 ############################################################################################
 
@@ -31,48 +32,40 @@ VERBOSITY=0
 ############################################################################################
 
 # Keyin class for working satellites
-class SAT_KEYING():
+class SAT_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        self.P=P
-
-        P.HISTORY = P.HIST_DIR+'master.csv'
-
-        self.contest_name  = 'SATELLITES'
-        
-        self.macros()
+        DEFAULT_KEYING.__init__(self,P,'SATELLITES',None)
 
     # Routient to set macros for this contest
     def macros(self):
 
-        Key='Satellite QSO'
-        self.Key=Key
+        MACROS = OrderedDict()
+        MACROS[0]  = {'Label'    : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
+        MACROS[0+12]  = {'Label' : 'QRS '        , 'Text' : 'QRS PSE QRS '}
+        MACROS[1]     = {'Label' : 'Reply'       , 'Text' : '[CALL] TU [RST] [MYGRID] [MYGRID] BK'}
+        MACROS[1+12]  = {'Label' : 'Long'        , 'Text' : '[CALL] TU FER THE CALL [RST] [MYGRID] [MYGRID] OP [MYNAME] [MYNAME] BK'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] R73 QRZ? [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] MNY TNX FER QSO ES 73 QRZ? [MYCALL] [LOG]'}
+        MACROS[3]     = {'Label' : 'Call?'       , 'Text' : '[CALL]? '}
+        MACROS[3+12] = {'Label' : 'CALL? '       , 'Text' : 'CALL? '}
 
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]  = {'Label'    : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
-        MACROS[Key][0+12]  = {'Label' : 'QRS '        , 'Text' : 'QRS PSE QRS '}
-        MACROS[Key][1]     = {'Label' : 'Reply'       , 'Text' : '[CALL] TU [RST] [MYGRID] [MYGRID] BK'}
-        MACROS[Key][1+12]  = {'Label' : 'Long'        , 'Text' : '[CALL] TU FER THE CALL [RST] [MYGRID] [MYGRID] OP [MYNAME] [MYNAME] BK'}
-        MACROS[Key][2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] R73 QRZ? [MYCALL] [LOG]'}
-        MACROS[Key][2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] MNY TNX FER QSO ES 73 QRZ? [MYCALL] [LOG]'}
-        MACROS[Key][3]     = {'Label' : 'Call?'       , 'Text' : '[CALL]? '}
-        MACROS[Key][3+12] = {'Label' : 'CALL? '       , 'Text' : 'CALL? '}
+        MACROS[4]     = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] DE [MYCALL] [MYCALL] K'}
+        MACROS[4+12]  = {'Label' : '[MYCALL]'    , 'Text' : 'DE [MY_CALL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply'   , 'Text' : 'RR TU [RST] [MYGRID] [MYGRID] BK'}
+        MACROS[5+12]  = {'Label' : 'S&P 2x'      , 'Text' : 'R TU FER RPRT UR [RST} IN [MYGRID] [MYGRID] OP {MYNAME] [MYNAME] BK'}
+        MACROS[6]     = {'Label' : 'AGN?'        , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : '? '          , 'Text' : '? '}
+        MACROS[7]     = {'Label' : 'Log QSO'     , 'Text' : '[LOG] '}
         
-        MACROS[Key][4]     = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] DE [MYCALL] [MYCALL] K'}
-        MACROS[Key][4+12]  = {'Label' : '[MYCALL]'    , 'Text' : '[CALL] '}
-        MACROS[Key][5]     = {'Label' : 'S&P Reply'   , 'Text' : 'RR TU [RST] [MYGRID] [MYGRID] BK'}
-        MACROS[Key][5+12]  = {'Label' : 'S&P 2x'      , 'Text' : 'R TU FER RPRT UR [RST} IN [MYGRID] [MYGRID] OP {MYNAME] [MYNAME] BK'}
-        MACROS[Key][6]     = {'Label' : 'AGN?'        , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '          , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'     , 'Text' : '[LOG] '}
+        MACROS[8]     = {'Label' : 'OP'          , 'Text' : 'OP [MYNAME] [MYNAME] '}
+        MACROS[9]     = {'Label' : 'QTH'         , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
+        MACROS[10]    = {'Label' : '73 Short'    , 'Text' : '73 GL EE'}
+        MACROS[10+1]  = {'Label' : '73 Long'     , 'Text' : 'MNY TNX FER FB QSO 73 HPE CU AGAN '}
+        MACROS[11]    = {'Label' : '73'          , 'Text' : '73 GL EE'}
+        MACROS[12]    = {'Label' : 'BK'          , 'Text' : 'BK '}
         
-        MACROS[Key][8]     = {'Label' : 'OP'          , 'Text' : 'OP [MYNAME] [MYNAME] '}
-        MACROS[Key][9]     = {'Label' : 'QTH'         , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
-        MACROS[Key][10]    = {'Label' : '73 Short'    , 'Text' : '73 GL EE'}
-        MACROS[Key][10+1]  = {'Label' : '73 Long'     , 'Text' : 'MNY TNX FER FB QSO 73 HPE CU AGAN '}
-        MACROS[Key][11]    = {'Label' : '73'          , 'Text' : '73 GL'}
-        MACROS[Key][12]    = {'Label' : 'BK'          , 'Text' : 'BK '}
-        CONTEST[Key]=False
+        return MACROS
 
         
     # Routine to generate a hint for a given call
@@ -90,28 +83,19 @@ class SAT_KEYING():
         if iopt==1:
             
             done = len(grid)==4
-            print(call,grid,done)
-            return grid,done
+            return done
 
         else:
 
             self.call = call
             self.grid=grid
+
+            sig = randint(0, 9)
+            self.rst = cut_numbers( 500+10*sig+9 )
             
-            txt2   = ' '+grid
+            txt2   = ' R '+self.rst+' '+grid+' '+grid
             return txt2
             
-    # Routine to process qso element repeats
-    def repeat(self,label,exch2):
-
-        if 'CALL' in label:
-            txt2=self.call+' '+self.call
-        elif 'GRID?' in label or 'QTH?' in label or  'SEC?' in label:
-            txt2=self.grid+' '+self.grid
-        else:
-            txt2=exch2
-
-        return txt2
 
     # Error checking
     def error_check(self):
@@ -119,19 +103,26 @@ class SAT_KEYING():
 
         call2 = P.gui.get_call().upper()
         grid2 = P.gui.get_exchange().upper()
-        match = self.call==call2 and self.grid==grid2
+        rst2  = P.gui.get_rst_in().upper()
+        match = self.call==call2 and self.grid==grid2 and self.rst==rst2
 
         if not match:
             txt='********************** ERROR **********************'
             print(txt)
             P.gui.txt.insert(END, txt+'\n')
 
-            print('Call sent:',self.call,' - received:',call2)
-            P.gui.txt.insert(END,'Call sent: '+self.call+' - received: '+call2+'\n')
+            txt2='Call sent: '+self.call+'\t-\treceived: '+call2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Grid sent:',self.grid,' - received:',grid2)
-            P.gui.txt.insert(END,'Grid sent: '+self.grid+' - received: '+grid2+'\n')
-
+            txt2='RST sent: '+self.rst+'\t-\treceived: '+rst2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
+            
+            txt2='Grid sent: '+self.grid+'\t-\treceived: '+grid2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
+            
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)
@@ -139,47 +130,34 @@ class SAT_KEYING():
         return match
             
 
-    # Highlight function keys that make sense in the current context
-    def highlight(self,gui,arg):
-        
-        if arg==0:
-            gui.btns1[1].configure(background='green',highlightbackground='green')
-            gui.btns1[2].configure(background='green',highlightbackground='green')
-            gui.call.focus_set()
-        elif arg==1:
-            gui.exch.focus_set()
-        elif arg==4:
-            gui.btns1[5].configure(background='red',highlightbackground= 'red')
-            gui.btns1[7].configure(background='red',highlightbackground= 'red')
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
-        elif arg==7:
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
-            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
-        
 
     # Specific contest exchange for satellites
     def enable_boxes(self,gui):
 
         gui.contest=True
         gui.hide_all()
+        self.macros=[None,1,None,2]
 
         col=0
         cspan=3
         gui.call_lab.grid(column=col,columnspan=cspan)
         gui.call.grid(column=col,columnspan=cspan)
         col+=cspan
-        cspan=2
-        gui.rst_lab.grid(column=col,columnspan=cspan)
-        gui.rst.grid(column=col,columnspan=cspan)
+        cspan=1
+        gui.rstout_lab.grid(column=col,columnspan=cspan)
+        gui.rstout.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.rstin_lab.grid(column=col,columnspan=cspan)
+        gui.rstin.grid(column=col,columnspan=cspan)
         col+=cspan
         cspan=2
         gui.exch_lab.grid(column=col,columnspan=cspan)
         gui.exch.grid(column=col,columnspan=cspan)
 
         gui.boxes=[gui.call]
-        gui.boxes.append(gui.rst)
+        gui.boxes.append(gui.rstout)
+        gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.exch)
             
         if not gui.P.NO_HINTS:
@@ -191,14 +169,15 @@ class SAT_KEYING():
 
         gui=self.P.gui
 
-        call = gui.get_call().upper()
-        rst  = gui.get_rst().upper()
-        exch = gui.get_exchange().upper()
-        valid = len(call)>=3 and len(rst)>=2 and len(exch)>=4
-        exch = rst+','+exch
+        call   = gui.get_call().upper()
+        rstin  = gui.get_rst_in().upper()
+        rstout = gui.get_rst_out().upper()
+        exch   = gui.get_exchange().upper()
+        valid  = len(call)>=3 and len(rstin)>0 and len(exch)>0
+        exch   = rstin+','+exch
 
         MY_GRID     = self.P.SETTINGS['MY_GRID']
-        exch_out = '5NN,'+MY_GRID
+        exch_out = rstout+','+MY_GRID
         
         return exch,valid,exch_out
     
@@ -219,31 +198,3 @@ class SAT_KEYING():
         gui.exch.insert(0,h[0])
 
 
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
-
-        gui=self.P.gui
-
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            nn = len(gui.boxes)
-            #if idx==nn and key in ['Return','KP_Enter']:
-            #    idx2 = idx
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % nn
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % nn
-            else:
-                print('We should never get here!!')
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            

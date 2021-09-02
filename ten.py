@@ -172,7 +172,7 @@ class TEN_METER_KEYING():
             gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
         
 
-    # Specific contest exchange for ARRL VHF
+    # Specific contest exchange for ARRL 10m
     def enable_boxes(self,gui):
 
         gui.contest=True

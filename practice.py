@@ -110,27 +110,8 @@ class CODE_PRACTICE():
         while not done:
             i = random.randint(0, self.Ncalls-1)
             call = self.calls[i]
-            if P.CWops:
-                name,num,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.SST or P.NAQP:
-                name,qth,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.CW_OPEN:
-                name,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.ARRL_FD:
-                cat,sec,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.CW_SS:
-                chk,sec,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.CAL_QP:
-                sec,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.ARRL_VHF or P.SATELLITES or P.STEW_PERRY:
-                grid,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.ARRL_10m:
-                state,done = P.KEYING.qso_info(HIST,call,1)
-            elif P.IARU or P.CQ_WW:
-                zone,done = P.KEYING.qso_info(HIST,call,1)
-            else:
-                done=True
-            print('PRACTICE_QSO:',call,HIST[call],done)
+            done = P.KEYING.qso_info(HIST,call,1)
+            #print('PRACTICE_QSO:',call,HIST[call],done)
 
         # Wait for op to hit CQ
         print('PRACTICE_QSO: Waiting 1a - hit CQ ...',call,'...',P.gui.macro_label,'...')

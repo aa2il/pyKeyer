@@ -46,6 +46,20 @@ from fileio import *
 from threading import enumerate
 from audio_io import WaveRecorder
 
+from cwops import *
+from cwopen import *
+from sst import *
+from cqp import *
+from wpx import *
+from fd import *
+from ss import *
+from vhf import *
+from ten import *
+from naqp import *
+from iaru import *
+from cqww import *
+from satellites import *
+
 ############################################################################################
 
 UTC = pytz.utc
@@ -65,17 +79,10 @@ def show_threads():
         print(th,th.getName())
     print(' ')
 
-# Routine to determine contest name
-def get_contest_name(P):
-    if P.KEYING:
-        return P.KEYING.contest_name
-    else:
-        return 'None'
     
-
 # The GUI 
 class GUI():
-    def __init__(self,P,MACROS):
+    def __init__(self,P):
 
         print("\nCreating GUI ...")
         self.root = Tk()
@@ -101,7 +108,6 @@ class GUI():
         self.rig_ctrl = False
         self.root.protocol("WM_DELETE_WINDOW", self.Quit)
 
-        self.MACROS = MACROS
         self.MACRO_TXT = StringVar()
         self.macro_label = ''
 
@@ -218,10 +224,21 @@ class GUI():
         self.name = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
         self.name.grid(row=row+1,rowspan=2,column=4,columnspan=4,sticky=E+W)
 
-        self.rst_lab = Label(self.root, text="RST in",font=font1)
-        self.rst_lab.grid(row=row,columnspan=3,column=8,sticky=E+W)
-        self.rst = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.rst.grid(row=row+1,rowspan=2,column=8,columnspan=3)
+        self.rstin_lab = Label(self.root, text="RST in",font=font1)
+        self.rstin_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
+        self.rstin = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.rstin.grid(row=row+1,rowspan=2,column=8,columnspan=1)
+
+        self.rstout_lab = Label(self.root, text="RST out",font=font1)
+        self.rstout_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
+        self.rstout = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.rstout.grid(row=row+1,rowspan=2,column=9,columnspan=1)
+        if self.P.contest_name=='SATELLITES':
+            self.rstin.insert(0,'5')
+            self.rstout.insert(0,'5')
+        else:
+            self.rstin.insert(0,'5NN')
+            self.rstout.insert(0,'5NN')
 
         # For contests, some subset of these will be visible instead
         self.exch_lab = Label(self.root, text="Exchange",font=font1)
@@ -324,14 +341,7 @@ class GUI():
 
         # Set up a spin box to control select macro set
         Label(self.root, text='Macros:').grid(row=row,column=col,sticky=E+W)
-        MACRO_LIST=list(self.MACROS.keys())
-        print('MACROS:',MACRO_LIST)
-        if self.P.KEYING:
-            idx=MACRO_LIST.index(self.P.KEYING.Key)
-        else:
-            idx=0
-        self.MACRO_TXT.set(MACRO_LIST[idx])
-        SB = OptionMenu(self.root,self.MACRO_TXT,*MACRO_LIST, \
+        SB = OptionMenu(self.root,self.MACRO_TXT,*self.P.CONTEST_LIST, \
              command=self.set_macros).grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         col += 3
 
@@ -488,7 +498,7 @@ class GUI():
         self.RestoreState()
         
         # And away we go!
-        self.set_macros(MACRO_LIST[idx])
+        self.set_macros()
         
 
     # Callback to process mouse events on the spot buttons
@@ -523,12 +533,19 @@ class GUI():
         self.name.insert(0,fields['Name'])
         self.qth.delete(0, END)
         self.qth.insert(0,fields['QTH'])
-        self.rst.delete(0, END)
-        #rst=fields['RST_out']
+
+        self.rstin.delete(0, END)
         rst=fields['RST_in']
         if rst=='':
             rst='5nn'
-        self.rst.insert(0,rst)
+        self.rstin.insert(0,rst)
+
+        self.rstout.delete(0, END)
+        rst=fields['RST_out']
+        if rst=='':
+            rst='5nn'
+        self.rstout.insert(0,rst)
+        
         self.exch.delete(0, END)
         self.exch.insert(0,fields['Exchange'])
         self.cat.delete(0, END)
@@ -545,14 +562,16 @@ class GUI():
         call=self.get_call()
         name=self.get_name()
         qth=self.get_qth()
-        rst =self.get_rst()
-        cat=self.get_cat()
+        rst_in  = self.get_rst_in()
+        rst_out = self.get_rst_out()
+        cat     = self.get_cat()
 
-        prec=self.get_prec()
-        check=self.get_check()
+        prec    = self.get_prec()
+        check   = self.get_check()
         
         exchange=self.get_exchange()
-        fields = {'Call':call,'Name':name,'RST_in':rst,'QTH':qth,'Exchange':exchange, \
+        fields = {'Call':call,'Name':name,'RST_in':rst_in,'RST_out':rst_out, \
+                  'QTH':qth,'Exchange':exchange, \
                   'Category':cat,'Prec':prec,'Check':check}
         if send2fldigi:
             self.sock.set_log_fields(fields)
@@ -563,8 +582,14 @@ class GUI():
         self.call.delete(0, END)
         self.name.delete(0, END)
         self.qth.delete(0, END)
-        self.rst.delete(0, END)
-        self.rst.insert(0,'5NN')
+        self.rst_in.delete(0, END)
+        self.rst_out.delete(0, END)
+        if self.P.contest_name=='SATELLITES':
+            self.rst_in.insert(0,'5')
+            self.rst_out.insert(0,'5')
+        else:
+            self.rst_in.insert(0,'5nN')
+            self.rst_out.insert(0,'5NN')
         self.cat.delete(0, END)
 
         self.prec.delete(0, END)
@@ -737,7 +762,7 @@ class GUI():
             self.last_call=call
         
         txt = txt.replace('[NAME]',self.get_name() )
-        txt = txt.replace('[RST]', self.get_rst() )
+        txt = txt.replace('[RST]', self.get_rst_out() )
 
         if '[EXCH]' in txt:
             txt = txt.replace('[EXCH]', '' )
@@ -761,8 +786,7 @@ class GUI():
         #print 'LAST_MSG=',txt,arg,self.P.LAST_MSG
 
         # Highlight appropriate buttons for running or s&p
-        if self.P.KEYING:
-            self.P.KEYING.highlight(self,arg)
+        self.P.KEYING.highlight(self,arg)
         self.macro_label = self.macros[arg]["Label"]
         print("\nSend_Marco:",arg,':',self.macro_label,txt)
         if '[SERIAL]' in txt:
@@ -796,8 +820,10 @@ class GUI():
     def hide_all(self):
         self.cat_lab.grid_remove()
         self.cat.grid_remove()
-        self.rst_lab.grid_remove()
-        self.rst.grid_remove()
+        self.rstin_lab.grid_remove()
+        self.rstin.grid_remove()
+        self.rstout_lab.grid_remove()
+        self.rstout.grid_remove()
         self.exch_lab.grid_remove()
         self.exch.grid_remove()
         self.name_lab.grid_remove()
@@ -826,16 +852,46 @@ class GUI():
         return self.SAT_TXT.get()
         
     # Callback for Macro list spinner
-    def set_macros(self,val):
-        MY_CALL = self.P.SETTINGS['MY_CALL']
+    def set_macros(self,val=None):
+
+        if not val:
+            val=self.P.contest_name
+            self.MACRO_TXT.set(val)
+        print('SET_MACROS: val=',val)
+
+        # Initiate keying module for this contest
+        if val.find('CW Ops')>=0:
+            self.P.KEYING=CWOPS_KEYING(self.P)
+        elif val=='SST':
+            self.P.KEYING=SST_KEYING(self.P)
+        elif val=='CW Open':
+            self.P.KEYING=CWOPEN_KEYING(self.P)
+        elif val=='SATELLITES':
+            self.P.KEYING=SAT_KEYING(self.P)
+        elif val=='ARRL VHF':
+            self.P.KEYING=VHF_KEYING(self.P)
+        elif val=='CQP':
+            self.P.KEYING=CQP_KEYING(self.P)
+        else:
+            print('KEYER_GUI: *** ERROR *** Cant figure which contest !')
+            sys.exit(0)
+            
+        self.P.CW_SS    = val.find('ARRL CW SS')     >= 0
+        self.P.SPRINT   = val.find('Sprint')         >= 0
+        self.P.CQ_WW    = val.find('CQ WW')          >= 0
+        self.P.IARU     = val.find('IARU HF')        >= 0
+        self.P.ARRL_DX  = val.find('ARRL DX')        >= 0
+        self.P.ARRL_10m = val.find('ARRL 10m')       >= 0
+        self.P.ARRL_FD  = val.find('ARRL Field Day') >= 0
+        self.P.STEW_PERRY = val.find('STEW PERRY')       >= 0
+        self.P.NAQP     = val.find('NAQP')           >= 0
+        self.P.WPX      = val.find('CQ_WPX')         >= 0
         
-        print('SET_MACROS: val=',val,' - ',val[0:4])
-        self.macros = self.MACROS[val]
+        self.P.contest_name  = self.P.KEYING.contest_name
+        self.macros = self.P.KEYING.macros()
+        
+        MY_CALL = self.P.SETTINGS['MY_CALL']
         for i in range(12):
-            if False:
-                print(i,i in self.macros,i+12 in self.macros)
-                print(self.macros[i]["Label"])
-                print(self.macros[i+12]["Label"])
             lab = self.macros[i]["Label"].replace('[MYCALL]',MY_CALL )
             self.btns1[i].configure( text=lab )
 
@@ -853,25 +909,6 @@ class GUI():
             else:
                 self.btns2[i].grid_remove()
 
-        # Turn on correct flag
-        self.P.CW_SS    = val.find('ARRL CW SS')     >= 0
-        self.P.CAL_QP   = val.find('Cal QP')         >= 0
-        self.P.SPRINT   = val.find('Sprint')         >= 0
-        self.P.CQ_WW    = val.find('CQ WW')          >= 0
-        self.P.IARU     = val.find('IARU HF')        >= 0
-        self.P.ARRL_DX  = val.find('ARRL DX')        >= 0
-        self.P.ARRL_10m = val.find('ARRL 10m')       >= 0
-        self.P.ARRL_FD  = val.find('ARRL Field Day') >= 0
-        self.P.ARRL_VHF = val.find('ARRL VHF')       >= 0
-        self.P.STEW_PERRY = val.find('STEW PERRY')       >= 0
-        self.P.NAQP     = val.find('NAQP')           >= 0
-        self.P.SATELLITES = val.find('Satellite')    >= 0
-        self.P.SST      = val.find('SST')            >= 0
-        self.P.CWops    = val.find('CWops')          >= 0
-        self.P.CW_OPEN  = val.find('CW Open')          >= 0
-        self.P.WPX      = val.find('CQ_WPX')         >= 0
-        self.P.contest_name  = get_contest_name(self.P)
-
         #print( self.P.CONTEST)
         for key in self.P.CONTEST.keys():
             self.P.CONTEST[key]=False
@@ -879,9 +916,9 @@ class GUI():
         #print( self.P.CONTEST)
                 
         # Enable the specific input boxes
-        if self.P.KEYING:
-            self.P.KEYING.enable_boxes(self)
-            
+        self.P.KEYING.enable_boxes(self)
+
+        """
         elif self.P.CONTEST[val]:
             # Generic contest exchange 
             self.contest=True
@@ -897,8 +934,11 @@ class GUI():
 
             self.name_lab.grid()
             self.name.grid()
-            self.rst_lab.grid()
-            self.rst.grid()
+            self.rstin_lab.grid()
+            self.rstin.grid()
+            self.rstout_lab.grid()
+            self.rstout.grid()
+        """
 
     # Callback for WPM spinner
     def set_wpm(self,dWPM=0):
@@ -978,11 +1018,22 @@ class GUI():
             txt='OM'
         return txt
 
-    # Read outgoing RST from the entry box
-    def get_rst(self):
-        txt=self.rst.get().strip()
+    # Read incoming RST from the entry box
+    def get_rst_in(self):
+        txt=self.rstin.get().strip()
         if txt=='':
             txt='5NN'
+        return txt
+
+    # Read outgoing RST from the entry box
+    def get_rst_out(self):
+        txt=self.rstout.get().strip()
+        if txt=='':
+            txt='5NN'
+        elif len(txt)==2:
+            txt=txt+'N'
+        elif len(txt)==1:
+            txt=txt+'NN'
         return txt
 
     # Read exchange data from the entry box
@@ -1181,17 +1232,13 @@ class GUI():
         MY_STATE    = self.P.SETTINGS['MY_STATE']
         
         if self.contest:
-            rst='599'
-            if self.P.KEYING:
-                exch,valid,self.exch_out = self.P.KEYING.logging()
-            else:
-                exch=self.get_exchange().upper()
-                valid = valid and len(exch)>0
+            rst='5NN'
+            exch,valid,self.exch_out = self.P.KEYING.logging()
         else:
-            rst =self.get_rst().upper()
-            exch=str(rst) +' '+ name
+            rstin =self.get_rst_in().upper()
+            exch=str(rstin) +' '+ name
             print('name=',name)
-            print('rst=',rst)
+            print('rst=',rstin)
             print('exch=',exch)
 
         if valid:
@@ -1248,7 +1295,7 @@ class GUI():
 
             elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE:
                 print('KEYER_GUI: =============== via FLDIGI ...')
-                fields = {'Call':call,'Name':name,'RST_out':rst,'QTH':qth,'Exchange':exch}
+                fields = {'Call':call,'Name':name,'RST_out':rstout,'QTH':qth,'Exchange':exch}
                 self.sock.set_log_fields(fields)
                 self.sock.set_mode('CW')
                 self.sock.run_macro(47)
@@ -1279,9 +1326,17 @@ class GUI():
             self.call2.delete(0,END)
             self.check.delete(0,END)
             self.exch.delete(0,END)
-            self.rst.delete(0,END)
-            self.rst.insert(0,'5NN')
             self.cat.delete(0,END)
+            
+            self.rstin.delete(0,END)
+            self.rstout.delete(0,END)
+            print('-------------- Logging: contest_name=',self.P.contest_name,'=================================================')
+            if self.P.contest_name=='SATELLITES':
+                self.rstin.insert(0,'5')
+                self.rstout.insert(0,'5')
+            else:
+                self.rstin.insert(0,'5Nn')
+                self.rstout.insert(0,'5NN')
 
             # Save out to simple log file also
             self.fp_log.write('%s,%s,%s,%s,%s,%s,"%s","%s","%s"\n' % \
@@ -1437,8 +1492,8 @@ class GUI():
                 self.prefill=True
                 a=last_exch.split(',')
                 print('a=',a)
-                if self.P.KEYING:
-                    self.P.KEYING.dupe(a)
+                self.P.KEYING.dupe(a)
+                """
                 elif self.P.SPRINT:
                     #self.serial.delete(0,END)
                     if len(a)>=2:
@@ -1450,6 +1505,8 @@ class GUI():
                 else:
                     self.exch.delete(0,END)
                     self.exch.insert(0,last_exch)
+                """
+                
         else:
 
             # Clear pre-filled fields - this is still problematic so it is disabled for now
@@ -1564,8 +1621,14 @@ class GUI():
                     self.call.delete(0, END)
                     self.call2.delete(0, END)
                     self.cat.delete(0, END)
-                    self.rst.delete(0, END)
-                    self.rst.insert(0,'5NN')
+                    self.rstin.delete(0, END)
+                    self.rstout.delete(0, END)
+                    if self.P.contest_name=='SATELLITES':
+                        self.rstin.insert(0,'5')
+                        self.rstout.insert(0,'5')
+                    else:
+                        self.rstin.insert(0,'5nn')
+                        self.rstout.insert(0,'5NN')
                     self.exch.delete(0, END)
                     self.name.delete(0, END)
                     self.qth.delete(0, END)
@@ -1587,13 +1650,14 @@ class GUI():
                 h = h.split(' ')
                 print('h=',h)
                 
-                if self.P.KEYING:
-                    self.P.KEYING.insert_hint(h)
+                self.P.KEYING.insert_hint(h)
+                """
                 elif self.P.SPRINT:
                     self.name.delete(0, END)
                     self.name.insert(0,h[0])
                     self.qth.delete(0, END)
                     self.qth.insert(0,h[1])
+                """
 
                 return "break"
 
@@ -1612,18 +1676,18 @@ class GUI():
                     self.call.focus_set()
                     return("break")
                 elif self.contest:
-                    if self.P.KEYING:
-                        self.P.KEYING.next_event(key,event,None)
-                        return("break")
+                    self.P.KEYING.next_event(key,event)
+                    return("break")
+                    """
                     elif self.P.SPRINT  and event.widget==self.qth:
                         #print 'QTH box',key,len(key),key=='Tab'
                         self.call.focus_set()
                         return("break")
+                    """
 
             elif key=='ISO_Left_Tab':
-                if self.P.KEYING:
-                    self.P.KEYING.next_event(key,event,None)
-                    return("break")
+                self.P.KEYING.next_event(key,event)
+                return("break")
                     
             # Return key in the text box - nothing to do
             if (key=='Return' or key=='KP_Enter') and event.widget!=self.txt and True:
@@ -1664,48 +1728,22 @@ class GUI():
 
             # If we're in a contest and the return key was pressed, send response and get ready for the exchange
             if (key=='Return' or key=='KP_Enter') and len(call)>0:
-                if self.P.KEYING:
-                    next_widget = self.P.KEYING.next_event(key,event,1)
+                next_widget = self.P.KEYING.next_event(key,event)
+
+                """
                 elif self.contest and self.P.SPRINT:
                     next_widget=self.serial
                     if self.P.LAST_MSG==0:
                         self.Send_Macro(1)                 # Send reply
                     else:
                         self.Send_Macro(4)                 # Send my call
-
-                elif self.contest and self.P.CAL_QP:
-                    self.dx_station = Station(call)
-                    #pprint(vars(self.dx_station))
+                """
 
             # Take care of hints
             if self.contest:
                 self.get_hint(call)
                                         
-            if self.P.CW_SS:
-                #print 'boxes=',self.boxes
-                #idx=self.boxes.index(self.call)
-                #print 'idx=',idx
-                if key=='Tab':
-                    self.call2.delete(0, END)
-                    self.call2.insert(0,call)
-                    self.get_hint(call)
-                    self.force_focus(self.serial)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.call2.delete(0, END)
-                    self.call2.insert(0,call)
-                    self.force_focus(self.qth)
-                    return("break")
-            
-            elif self.P.ARRL_FD:
-                if key=='Tab':
-                    self.force_focus(self.cat)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
-
-            elif self.P.SPRINT:
+            if self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.serial)
                     return("break")
@@ -1724,14 +1762,11 @@ class GUI():
 
             # If we're in a contest and the return key was pressed, get ready for rest of the exchange
             if key=='Return' or key=='KP_Enter':
-                if self.P.KEYING:
-                    if self.P.CW_OPEN:
-                        nmacro=2
-                    else:
-                        nmacro=None
-                    next_widget = self.P.KEYING.next_event(key,event,nmacro)
+                next_widget = self.P.KEYING.next_event(key,event)
+                """
                 elif self.contest and (self.P.SPRINT):
                     next_widget=self.qth
+                """
 
             if self.P.SPRINT:
                 if key=='Tab':
@@ -1747,15 +1782,15 @@ class GUI():
             #self.qth.insert(0, qth)
             self.sock.set_log_fields({'QTH':qth})
 
+            if len(qth)>0 and self.P.contest_name=='CQP':
+                self.P.KEYING.qth_hints()
+
             # If we're in a contest and the return key was pressed, send reply
             if key=='Return' or key=='KP_Enter':
                 if self.contest:
                     next_widget=self.qth
-                    if self.P.KEYING:
-                        next_widget = self.P.KEYING.next_event(key,event,2)
-                    elif self.P.CW_SS or self.P.ARRL_FD :\
-                        self.Send_Macro(2)                     # Send TU
-
+                    next_widget = self.P.KEYING.next_event(key,event)
+                    """
                     elif self.P.SPRINT:
 
                         if self.P.LAST_MSG==0:
@@ -1768,15 +1803,9 @@ class GUI():
 
                     else:
                         print('!!!!!!!!!!!!! KEYER_GUI - should never get here !!!!!!!!!!')
-                        
-            if self.P.CW_SS:
-                if key=='Tab':
-                    self.force_focus(self.call)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.check)
-                    return("break")
-
+                    """
+                    
+            """
             elif self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.call)
@@ -1784,40 +1813,22 @@ class GUI():
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.name)
                     return("break")
-
-            elif self.P.CAL_QP:
-                if self.P.NO_HINTS:
-                    h=None
-                else:
-                    h = hint.commie_fornia(self.dx_station,qth)
-                    if h:
-                        print('hint=',h)
-                        self.hint.delete(0, END)
-                        self.hint.insert(0,h)
-                
-                if key=='Tab':
-                    self.force_focus(self.call)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.serial)
-                    return("break")
+            """
             
         elif event.widget==self.cat:
             cat=self.get_cat().upper()
-            #self.sock.set_log_fields({'RST_out':rst})
-            if self.P.ARRL_FD:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.qth)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
 
-        elif event.widget==self.rst:
-            rst=self.get_rst().upper()
+        elif event.widget==self.rstin:
+            rst=self.get_rst_in().upper()
+            self.sock.set_log_fields({'RST_in':rst})
+            next_widget = self.P.KEYING.next_event(key,event)
+            return("break")
+
+        elif event.widget==self.rstout:
+            rst=self.get_rst_out().upper()
             self.sock.set_log_fields({'RST_out':rst})
-            if self.P.KEYING:
-                next_widget = self.P.KEYING.next_event(key,event,None)
+            if key=='Return' or key=='KP_Enter':
+                next_widget = self.P.KEYING.next_event(key,event)       # 1
                 return("break")
 
         elif event.widget==self.exch:
@@ -1827,9 +1838,7 @@ class GUI():
             # If we're in a contest and the return key was pressed, send reply
             if key=='Return' or key=='KP_Enter':
                 if self.contest:
-                    #next_widget=self.call
-                    if self.P.KEYING:
-                        next_widget = self.P.KEYING.next_event(key,event,2)
+                    next_widget = self.P.KEYING.next_event(key,event)        #2
 
         elif event.widget==self.counter:
             print('^^^^^^^^^^^ Counter window',self.P.MY_CNTR)
@@ -1839,20 +1848,13 @@ class GUI():
             
             self.sock.set_log_fields({'Serial_out':serial})
             if key=='Return' or key=='KP_Enter':
-                if self.P.KEYING:
-                    if self.P.WPX:
-                        nmacro=2
-                    else:
-                        nmacro=None
-                    next_widget = self.P.KEYING.next_event(key,event,nmacro)
-                    return("break")
-            elif self.P.CW_SS:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.prec)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
+                if self.P.WPX:
+                    nmacro=2
+                else:
+                    nmacro=None
+                next_widget = self.P.KEYING.next_event(key,event)   # nmacro
+                return("break")
+            """
             elif self.P.SPRINT:
                 if key=='Tab' or key=='Return' or key=='KP_Enter':
                     self.force_focus(self.name)
@@ -1860,44 +1862,20 @@ class GUI():
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.call)
                     return("break")
+            """
                 
         elif event.widget==self.prec:
             prec=self.get_prec().upper()
             self.sock.set_log_fields({'Prec':prec})
-            if self.P.CW_SS:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.call2)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.serial)
-                    return("break")
 
         elif event.widget==self.call2:
             call2=self.get_call2().upper()
             self.sock.set_log_fields({'Call2':call2})
-            if self.P.CW_SS:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.call.delete(0, END)
-                    self.call.insert(0,call2)
-                    self.force_focus(self.check)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.call.delete(0, END)
-                    self.call.insert(0,call2)
-                    self.force_focus(self.prec)
-                    return("break")
 
         elif event.widget==self.check:
             print('!!!Check!!!')
             check=self.get_check().upper()
             self.sock.set_log_fields({'Check':check})
-            if self.P.CW_SS:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.qth)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call2)
-                    return("break")
             
         # Make sure we keep the focus
         self.root.focus_set()

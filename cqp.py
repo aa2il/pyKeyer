@@ -22,8 +22,10 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
-from macros import MACROS,CONTEST
 from cw_keyer import cut_numbers
+from default import DEFAULT_KEYING
+from dx.spot_processing import Station
+import hint
 
 ############################################################################################
 
@@ -32,46 +34,36 @@ VERBOSITY=0
 ############################################################################################
 
 # Keyin class for CQP
-class CQP_KEYING():
+class CQP_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        self.P=P
-
-        if P.USE_MASTER:
-            P.HISTORY = P.HIST_DIR+'master.csv'
-        else:
-            #self.HISTORY = HIST_DIR+'CQP-CH-N1MM-05Oct2018.txt'
-            P.HISTORY = HIST_DIR+'QSOP_CA*.txt'
-
-        self.contest_name  = 'CQP'
-
-        self.macros()
+        DEFAULT_KEYING.__init__(self,P,'CQP','QSOP_CA*.txt')
+        #self.aux_cb=self.qth_hints
 
     # Routient to set macros for this contest
     def macros(self):
 
-        Key='Cal QP'
-        self.Key=Key
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CQP [MYCALL] '}
-        MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYCOUNTY] '}
-        MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 CQP [MYCALL] [LOG]'}
-        MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CQP [MYCALL] '}
+        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYCOUNTY] '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 CQP [MYCALL] [LOG]'}
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYCOUNTY] '}
-        MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYCOUNTY] '}
+        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[Key][8]     = {'Label' : 'NR 2x'    , 'Text' : '[SERIAL] [SERIAL] '}
-        MACROS[Key][9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYCOUNTY] [MYCOUNTY] '}
-        MACROS[Key][10]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
-        MACROS[Key][11]    = {'Label' : 'QTH? '    , 'Text' : 'QTH? '}
-        CONTEST[Key]=True
+        MACROS[8]     = {'Label' : 'NR 2x'    , 'Text' : '[SERIAL] [SERIAL] '}
+        MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYCOUNTY] [MYCOUNTY] '}
+        MACROS[10]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
+        MACROS[11]    = {'Label' : 'QTH? '    , 'Text' : 'QTH? '}
+
+        return MACROS
 
     # Routine to generate a hint for a given call
     def hint(self,call):
@@ -84,65 +76,55 @@ class CQP_KEYING():
         else:
             return state
 
+        
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
-        sec=HIST[call]['state']
-        if sec=='CA':
-            sec  = HIST[call]['county']
+        qth=HIST[call]['state']
+        if qth=='CA':
+            qth  = HIST[call]['county']
                 
         if iopt==1:
             
-            done = len(sec)>0
-            return sec,done
+            done = len(qth)>0
+            return done
 
         else:
 
             self.call = call
-            self.sec = sec
+            self.qth = qth
 
             serial = cut_numbers( randint(0, 999) )
             self.serial = serial
             
-            txt2  = ' '+serial+' '+sec
+            txt2  = ' '+serial+' '+qth
             return txt2
             
-    # Routine to process qso element repeats
-    def repeat(self,label,exch2):
-            
-        if 'CALL' in label:
-            txt2=self.call+' '+self.call
-        elif 'NR?' in label:
-            txt2=self.serial+' '+self.serial
-        elif 'QTH?' in label:
-            txt2=self.sec+' '+self.sec
-        else:
-            txt2=exch2
-
-        return txt2
-
     # Error checking
     def error_check(self):
         P=self.P
 
         call2   = P.gui.get_call().upper()
         serial2 = P.gui.get_serial().upper()
-        sec2    = P.gui.get_qth().upper()
-        match   = self.call==call2 and self.serial==serial2 and self.sec==sec2
+        qth2    = P.gui.get_qth().upper()
+        match   = self.call==call2 and self.serial==serial2 and self.qth==qth2
 
         if not match:
             txt='********************** ERROR **********************'
             print(txt)
             P.gui.txt.insert(END, txt+'\n')
 
-            print('Call sent:',self.call,' - received:',call2)
-            P.gui.txt.insert(END,'Call sent: '+self.call+' - received: '+call2+'\n')
+            txt2='Call sent:'+self.call+'\t- received:'+call2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Serial sent:',self.name,' - received:',name2)
-            P.gui.txt.insert(END,'Serial sent: '+self.serial+' - received: '+serial2+'\n')
+            txt2='Serial sent:'+self.serial+'\t- received:'+serial2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
 
-            print('QTH  sent:',self.qth,' - received:',qth2)
-            P.gui.txt.insert(END,'QTH  sent: '+self.sec+ ' - received: '+sec2+'\n')
+            txt2='QTH sent: '+self.qth+'\t-\treceived: '+qth2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
@@ -151,32 +133,13 @@ class CQP_KEYING():
         return match
             
 
-    # Highlight function keys that make sense in the current context
-    def highlight(self,gui,arg):
-        
-        if arg==0:
-            gui.btns1[1].configure(background='green',highlightbackground='green')
-            gui.btns1[2].configure(background='green',highlightbackground='green')
-            gui.call.focus_set()
-        elif arg==1:
-            gui.serial.focus_set()
-        elif arg==4:
-            gui.btns1[5].configure(background='red',highlightbackground= 'red')
-            gui.btns1[7].configure(background='red',highlightbackground= 'red')
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
-        elif arg==7:
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
-            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
-        
-
     # Specific contest exchange for CQP
     def enable_boxes(self,gui):
 
         gui.contest=True
         gui.ndigits=3
         gui.hide_all()
+        self.macros=[1,None,2]
 
         col=0
         cspan=3
@@ -211,9 +174,9 @@ class CQP_KEYING():
 
         call=gui.get_call().upper()
         serial = gui.get_serial().upper()
-        sec = gui.get_qth().upper()
-        exch   = serial+','+sec
-        valid = len(call)>=3 and len(sec)>0 and len(serial)>0
+        qth = gui.get_qth().upper()
+        exch   = serial+','+qth
+        valid = len(call)>=3 and len(qth)>0 and len(serial)>0
         
         MY_COUNTY   = self.P.SETTINGS['MY_COUNTY']
         exch_out = str(gui.cntr)+','+MY_COUNTY
@@ -237,34 +200,21 @@ class CQP_KEYING():
         gui=self.P.gui
 
         gui.qth.delete(0, END)
-        gui.qth.insert(0,h[1])
+        gui.qth.insert(0,h[0])
 
 
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
+    # Hints if we're in the qth window
+    def qth_hints(self):
+        gui  = self.P.gui
+        call = gui.get_call().upper()
+        qth  = gui.get_qth().upper()
+        if len(call)>=3:
+            self.dx_station = Station(call)
+            #pprint(vars(self.dx_station))
 
-        gui=self.P.gui
+            h = hint.commie_fornia(self.dx_station,qth)
+            if h:
+                print('hint=',h)
+                gui.hint.delete(0, END)
+                gui.hint.insert(0,h)
 
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            nn = len(gui.boxes)
-            #if idx==nn and key in ['Return','KP_Enter']:
-            #    idx2 = idx
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % nn
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % nn
-            else:
-                print('We should never get here!!')
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            

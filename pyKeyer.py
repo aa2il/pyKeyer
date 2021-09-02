@@ -53,19 +53,13 @@ import os
 from settings import *
 from tcp_server import *
 
-from cwops import *
-from cwopen import *
-from sst import *
-from cqp import *
 from wpx import *
 from fd import *
 from ss import *
-from vhf import *
 from ten import *
 from naqp import *
 from iaru import *
 from cqww import *
-from satellites import *
 
 ################################################################################
 
@@ -136,21 +130,15 @@ class PARAMS:
         args = arg_proc.parse_args()
 
         self.NAQP          = args.naqp
-        self.SST           = args.sst
-        self.CWops         = args.CWops
-        self.CW_OPEN       = args.cwopen
         self.WPX           = args.wpx
         self.CW_SS         = args.ss
         self.SPRINT        = args.sprint
-        self.CAL_QP        = args.cqp
         self.CQ_WW         = args.cqww
         self.IARU          = args.iaru
         self.ARRL_DX       = args.arrl_dx
         self.ARRL_10m      = args.arrl_10m
         self.ARRL_FD       = args.fd
-        self.ARRL_VHF      = args.vhf
-        self.ARRL_STEW_PERRY = args.stew
-        self.SATELLITES    = args.sat
+        self.STEW_PERRY    = args.stew
         self.CAPTURE       = args.capture
         self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force
@@ -186,23 +174,27 @@ class PARAMS:
 
         self.KEYING=None
         self.HIST_DIR=HIST_DIR
+
+        self.CONTEST_LIST=['CW Ops Mini-Test','SST','CW Open','ARRL VHF','SATELLITES']
         if self.SPRINT:
             self.KEYING=SPRINT_KEYING(self)
-        elif self.CWops:
-            self.KEYING=CWOPS_KEYING(self)
-        elif self.SST:
-            self.KEYING=SST_KEYING(self)
+        elif args.CWops:
+            self.contest_name='CW Ops Mini-Test'
+        elif args.sst:
+            self.contest_name='SST'
+        elif args.vhf:
+            self.contest_name='ARRL VHF'
         elif self.NAQP:
             self.KEYING=NAQP_KEYING(self)
         elif self.CW_SS:
             self.KEYING=SS_KEYING(self)
-        elif self.CAL_QP:
-            self.KEYING=CQP_KEYING(self)
-        elif self.CW_OPEN:
-            self.KEYING=CWOPEN_KEYING(self)
+        elif args.cqp:
+            self.contest_name='CQP'
+        elif args.cwopen:
+            self.contest_name='CW Open'
         elif self.ARRL_FD:
             self.KEYING=FD_KEYING(self)
-        elif self.ARRL_VHF or self.STEW_PERRY:
+        elif self.STEW_PERRY:
             self.KEYING=VHF_KEYING(self)
         elif self.IARU:
             self.KEYING=IARU_KEYING(self)
@@ -212,16 +204,14 @@ class PARAMS:
             self.KEYING=WPX_KEYING(self)
         elif self.ARRL_10m or self.ARRL_DX:
             self.KEYING=TEN_METER_KEYING(self)
-        elif self.SATELLITES:
-            self.KEYING=SAT_KEYING(self)
+        elif args.sat:
+            self.contest_name='SATELLITES'
         else:
             self.HISTORY = HIST_DIR+'master.csv'
             #self.HISTORY = ''
         if self.USE_MASTER:
             self.HISTORY = HIST_DIR+'master.csv'
 
-        self.contest_name  = get_contest_name(self)
-            
         self.ROTOR_CONNECTION = args.rotor
         self.PORT2            = args.port2
 
@@ -694,7 +684,7 @@ else:
 P.calls = list(P.MASTER.keys())
 
 # Create GUI
-P.gui     = GUI(P,MACROS)
+P.gui     = GUI(P)
 
 # Set up a thread for code practice
 P.practice = practice.CODE_PRACTICE(P)

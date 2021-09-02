@@ -31,7 +31,7 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Keyin class for SST mini tests 
+# Keyin class for North American QSO party
 class NAQP_KEYING():
 
     def __init__(self,P):
@@ -82,7 +82,7 @@ class NAQP_KEYING():
         name  = P.MASTER[call]['name']
         state = P.MASTER[call]['state']
         if VERBOSITY>0:
-            print('SST_KEYEING - Hint:',name+' '+state)
+            print('NAQP_KEYEING - Hint:',name+' '+state)
         return name+' '+state
 
     # Routine to get practice qso info
@@ -172,7 +172,7 @@ class NAQP_KEYING():
             gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
         
 
-    # Specific contest exchange for SST
+    # Specific contest exchange for NAQP
     def enable_boxes(self,gui):
 
         gui.contest=True

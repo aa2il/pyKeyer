@@ -22,8 +22,8 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
+from macros import MACROS,CONTEST
 from cw_keyer import cut_numbers
-from default import DEFAULT_KEYING
 
 ############################################################################################
 
@@ -31,73 +31,80 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Keying class for CW Open - inherits base class
-class CWOPEN_KEYING(DEFAULT_KEYING):
+# Base keying class for simple qsos
+class DEFAULT_KEYING():
 
-    def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'CW Open','CWOPS_*.txt')
+    def __init__(self,P,contest_name='CW Default',HISTORY=None):
+        self.P=P
+        self.contest_name  = contest_name 
+        #self.aux_cb=None
+
+        P.HISTORY = P.HIST_DIR+'master.csv'
+        if P.USE_MASTER:
+            P.HISTORY = P.HIST_DIR+'master.csv'
+        elif HISTORY:
+            P.HISTORY = P.HIST_DIR+HISTORY
+        else:
+            P.HISTORY = None
+            
 
     # Routient to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYNAME] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 TEST [MYCALL] [LOG]'}
-        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
-        
-        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYNAME] '}
-        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-        
-        MACROS[8]     = {'Label' : 'NR 2x'    , 'Text' : '[SERIAL] [SERIAL] '}
-        MACROS[9]     = {'Label' : 'My Name 2x' , 'Text' : '[MYNAME] [MYNAME] '}
-        MACROS[10]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
-        MACROS[11]    = {'Label' : 'NAME? '    , 'Text' : 'NAME? '}
+        MACROS[0]  = {'Label' : 'CQ'      , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
+        MACROS[1]  = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
+        MACROS[2]  = {'Label' : 'Reply'   , 'Text' : 'RTU [RST] [MYSTATE] '}
+        MACROS[3]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
+        MACROS[4]  = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
+        MACROS[5]  = {'Label' : '73'      , 'Text' : '73 '}
+        MACROS[6]  = {'Label' : 'BK'      , 'Text' : 'BK '}
+        MACROS[7]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
+        MACROS[8]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
+        MACROS[9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
+        MACROS[10] = {'Label' : 'V    '   , 'Text' : 'V'}
+        MACROS[11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV[-10] VVV'}
 
         return MACROS
-
+        
     # Routine to generate a hint for a given call
     def hint(self,call):
-        P=self.P
-
-        name=P.MASTER[call]['name']
-        return name
+        return None
 
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
-        name=HIST[call]['name']
-                
         if iopt==1:
             
-            done = len(name)>0
-            return done
+            return True
 
         else:
 
-            self.call = call
-            self.name = name
-
-            serial = cut_numbers( randint(0, 999) )
-            self.serial = serial
+            return ''
             
-            txt2  = ' '+serial+' '+name
-            return txt2
+    # Routine to process qso element repeats
+    def repeat(self,label,exch2):
+            
+        if 'CALL' in label:
+            txt2=self.call+' '+self.call
+        elif 'NR?' in label:
+            txt2=self.serial+' '+self.serial
+        elif 'NAME?' in label:
+            txt2=self.name+' '+self.name
+        elif 'QTH?' in label or 'GRID?' in label:
+            txt2=self.qth+' '+self.qth
+        else:
+            txt2=exch2
 
-        
+        return txt2
+
     # Error checking
     def error_check(self):
         P=self.P
 
         call2   = P.gui.get_call().upper()
         serial2 = P.gui.get_serial().upper()
-        name2    = P.gui.get_name().upper()
+        name2   = P.gui.get_name().upper()
         match   = self.call==call2 and self.serial==serial2 and self.name==name2
 
         if not match:
@@ -124,7 +131,27 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         return match
             
 
-    # Specific contest exchange for CW Open
+    # Highlight function keys that make sense in the current context
+    def highlight(self,gui,arg):
+        
+        if arg==0:
+            gui.btns1[1].configure(background='green',highlightbackground='green')
+            gui.btns1[2].configure(background='green',highlightbackground='green')
+            gui.call.focus_set()
+        elif arg==1:
+            gui.serial.focus_set()
+        elif arg==4:
+            gui.btns1[5].configure(background='red',highlightbackground= 'red')
+            gui.btns1[7].configure(background='red',highlightbackground= 'red')
+            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
+            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
+        elif arg==7:
+            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
+            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
+            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
+        
+
+    # Specific contest exchange for default qsos
     def enable_boxes(self,gui):
 
         gui.contest=True
@@ -132,7 +159,7 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         gui.hide_all()
         self.macros=[1,None,2]
         #self.box_names=['call','serial','name']
-        
+
         col=0
         cspan=3
         gui.call_lab.grid(column=col,columnspan=cspan)
@@ -195,3 +222,40 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         gui.name.insert(0,h[0])
 
 
+    # Move on to next entry box & optionally play a macros
+    def next_event(self,key,event):
+
+        gui=self.P.gui
+
+        if event.widget==gui.txt:
+            #print('txt->call')
+            next_widget = gui.call
+        else:
+            # Get current widget index
+            idx=gui.boxes.index(event.widget)
+            nn = len(gui.boxes)
+
+            # Determine adjacent (next) widget
+            if key in ['Tab','Return','KP_Enter']:
+                idx2 = (idx+1) % nn
+            elif key=='ISO_Left_Tab':
+                idx2 = (idx-1) % nn
+            else:
+                print('We should never get here!!',idx,key,nn)
+                idx2=idx
+            #print(idx,'->',idx2)
+            next_widget = gui.boxes[idx2]
+
+            # Send a macro if needed
+            if key=='Return' or key=='KP_Enter':
+                n=self.macros[idx]
+                if n!=None:
+                    gui.Send_Macro(n)
+
+        # Do any extra stuff that might be special to this contest
+        #if self.aux_cb:
+        #    self.aux_cb()
+            
+        next_widget.focus_set()
+        return next_widget
+            

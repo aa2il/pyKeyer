@@ -171,7 +171,7 @@ class FD_KEYING():
             gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
         
 
-    # Specific contest exchange for SST
+    # Specific contest exchange for field day
     def enable_boxes(self,gui):
 
         gui.contest=True
