@@ -34,8 +34,8 @@ VERBOSITY=0
 # Keying class for ARRL VHF contests
 class VHF_KEYING(DEFAULT_KEYING):
 
-    def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'SST','ARRLVHF*.txt')
+    def __init__(self,Pcontest_name):
+        DEFAULT_KEYING.__init__(self,P,contest_name,'ARRLVHF*.txt')
 
     # Routient to set macros for this contest
     def macros(self):

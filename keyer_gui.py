@@ -791,7 +791,7 @@ class GUI():
         print("\nSend_Marco:",arg,':',self.macro_label,txt)
         if '[SERIAL]' in txt:
             cntr = self.sock.get_serial_out()
-            if cntr==0 or cntr=='':
+            if not cntr or cntr=='':
                 cntr=self.P.MY_CNTR
             print('KEYER_GUI: cntr=',cntr,'\tndigits=',self.ndigits)
             self.cntr = cw_keyer.cut_numbers(cntr,ndigits=self.ndigits)
@@ -868,24 +868,30 @@ class GUI():
             self.P.KEYING=CWOPEN_KEYING(self.P)
         elif val=='SATELLITES':
             self.P.KEYING=SAT_KEYING(self.P)
-        elif val=='ARRL VHF':
-            self.P.KEYING=VHF_KEYING(self.P)
+        elif val=='ARRL VHF' or val=='STEW PERRY':
+            self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
+        elif val.find('NAQP')>=0:
+            self.P.KEYING=NAQP_KEYING(self.P)
+        elif val=='IARU-HF':
+            self.P.KEYING=IARU_KEYING(self.P)
+        elif val=='CQWW':
+            self.P.KEYING=CQWW_KEYING(self.P)
+        elif val=='ARRL-SS-CW':
+            self.P.KEYING=SS_KEYING(self.P)
+        elif val=='ARRL-FD':
+            self.P.KEYING=FD_KEYING(self.P)
+        elif val.find('CQ-WPX')>=0:
+            self.P.KEYING=WPX_KEYING(self.P)
+        elif val=='ARRL-10M' or val=='ARRL-DX':
+            self.P.KEYING=TEN_METER_KEYING(self.P,val)
         else:
             print('KEYER_GUI: *** ERROR *** Cant figure which contest !')
+            print(val)
             sys.exit(0)
             
-        self.P.CW_SS    = val.find('ARRL CW SS')     >= 0
         self.P.SPRINT   = val.find('Sprint')         >= 0
-        self.P.CQ_WW    = val.find('CQ WW')          >= 0
-        self.P.IARU     = val.find('IARU HF')        >= 0
-        self.P.ARRL_DX  = val.find('ARRL DX')        >= 0
-        self.P.ARRL_10m = val.find('ARRL 10m')       >= 0
-        self.P.ARRL_FD  = val.find('ARRL Field Day') >= 0
-        self.P.STEW_PERRY = val.find('STEW PERRY')       >= 0
-        self.P.NAQP     = val.find('NAQP')           >= 0
-        self.P.WPX      = val.find('CQ_WPX')         >= 0
         
         self.P.contest_name  = self.P.KEYING.contest_name
         self.macros = self.P.KEYING.macros()
@@ -1330,7 +1336,6 @@ class GUI():
             
             self.rstin.delete(0,END)
             self.rstout.delete(0,END)
-            print('-------------- Logging: contest_name=',self.P.contest_name,'=================================================')
             if self.P.contest_name=='SATELLITES':
                 self.rstin.insert(0,'5')
                 self.rstout.insert(0,'5')
@@ -1436,6 +1441,7 @@ class GUI():
 
     # Routine to check & flag dupes
     def dup_check(self,call):
+        print('DUP_CHECK: call=',call)
 
         # Look for dupes
         match1=False                # True if there is matching call
@@ -1477,7 +1483,7 @@ class GUI():
                         band += 'm'
 
                     # JBA - Probably need to fix this for ARRL SS - JBA - P.CW_SS
-                    if self.P.CW_SS:
+                    if self.P.contest_name=='ARRL-SS-CW':
                         match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['MODE']==mode)
                     else:
                         match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['BAND']==band and qso['MODE']==mode)
@@ -1788,7 +1794,7 @@ class GUI():
             # If we're in a contest and the return key was pressed, send reply
             if key=='Return' or key=='KP_Enter':
                 if self.contest:
-                    next_widget=self.qth
+                    #next_widget=self.qth
                     next_widget = self.P.KEYING.next_event(key,event)
                     """
                     elif self.P.SPRINT:
@@ -1845,15 +1851,9 @@ class GUI():
             
         elif event.widget==self.serial:
             serial=self.get_serial().upper()
-            
             self.sock.set_log_fields({'Serial_out':serial})
             if key=='Return' or key=='KP_Enter':
-                if self.P.WPX:
-                    nmacro=2
-                else:
-                    nmacro=None
-                next_widget = self.P.KEYING.next_event(key,event)   # nmacro
-                return("break")
+                next_widget = self.P.KEYING.next_event(key,event)
             """
             elif self.P.SPRINT:
                 if key=='Tab' or key=='Return' or key=='KP_Enter':

@@ -19,7 +19,7 @@
 #
 ############################################################################################
 
-from rig_io.ft_tables import CA_COUNTIES,arrl_sec2state
+#from rig_io.ft_tables import CA_COUNTIES,arrl_sec2state
 
 ############################################################################################
 
@@ -48,7 +48,7 @@ def master(P,call,dx_station=None):
         if VERBOSITY>0:
             print('HINT.MASTER:',call,' is NOT in master list')
         if dx_station:
-            if P.CQ_WW:
+            if P.contest_name=='CQWW':
                 return dx_station.cqz
         return None
 

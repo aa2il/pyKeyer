@@ -53,14 +53,6 @@ import os
 from settings import *
 from tcp_server import *
 
-from wpx import *
-from fd import *
-from ss import *
-from ten import *
-from naqp import *
-from iaru import *
-from cqww import *
-
 ################################################################################
 
 # User params
@@ -129,16 +121,7 @@ class PARAMS:
         arg_proc.add_argument('-use_log_hist', action='store_true',help='Use history from log')
         args = arg_proc.parse_args()
 
-        self.NAQP          = args.naqp
-        self.WPX           = args.wpx
-        self.CW_SS         = args.ss
         self.SPRINT        = args.sprint
-        self.CQ_WW         = args.cqww
-        self.IARU          = args.iaru
-        self.ARRL_DX       = args.arrl_dx
-        self.ARRL_10m      = args.arrl_10m
-        self.ARRL_FD       = args.fd
-        self.STEW_PERRY    = args.stew
         self.CAPTURE       = args.capture
         self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force
@@ -175,8 +158,12 @@ class PARAMS:
         self.KEYING=None
         self.HIST_DIR=HIST_DIR
 
-        self.CONTEST_LIST=['CW Ops Mini-Test','SST','CW Open','ARRL VHF','SATELLITES']
+        self.CONTEST_LIST=['CW Ops Mini-Test','SST','CW Open','ARRL VHF','NAQP-CW', \
+                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
+                           'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES']
         if self.SPRINT:
+            print('NEED TO FIX THIS!!!!!!!!!!!!!')
+            sys.exit(0)
             self.KEYING=SPRINT_KEYING(self)
         elif args.CWops:
             self.contest_name='CW Ops Mini-Test'
@@ -184,26 +171,28 @@ class PARAMS:
             self.contest_name='SST'
         elif args.vhf:
             self.contest_name='ARRL VHF'
-        elif self.NAQP:
-            self.KEYING=NAQP_KEYING(self)
-        elif self.CW_SS:
-            self.KEYING=SS_KEYING(self)
+        elif args.naqp:
+            self.contest_name='NAQP-CW'
+        elif args.ss:
+            self.contest_name='ARRL-SS-CW'
         elif args.cqp:
             self.contest_name='CQP'
         elif args.cwopen:
             self.contest_name='CW Open'
-        elif self.ARRL_FD:
-            self.KEYING=FD_KEYING(self)
-        elif self.STEW_PERRY:
-            self.KEYING=VHF_KEYING(self)
-        elif self.IARU:
-            self.KEYING=IARU_KEYING(self)
-        elif self.CQ_WW:
-            self.KEYING=CQWW_KEYING(self)
-        elif self.WPX:
-            self.KEYING=WPX_KEYING(self)
-        elif self.ARRL_10m or self.ARRL_DX:
-            self.KEYING=TEN_METER_KEYING(self)
+        elif args.fd:
+            self.contest_name='ARRL-FD'
+        elif args.stew:
+            self.contest_name='STEW PERRY'
+        elif args.iaru:
+            self.contest_name='IARU-HF'
+        elif args.cqww:
+            self.contest_name='CQWW'
+        elif args.wpx:
+            self.contest_name = 'CQ-WPX-CW'
+        elif args.arrl_10m:
+            self.contest_name = 'ARRL-10M'
+        elif args.arrl_dx:
+            self.contest_name = 'ARRL-DX'
         elif args.sat:
             self.contest_name='SATELLITES'
         else:

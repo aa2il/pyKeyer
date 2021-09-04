@@ -112,15 +112,18 @@ class SST_KEYING(DEFAULT_KEYING):
             print(txt)
             P.gui.txt.insert(END, txt+'\n')
 
-            print('Call sent:',self.call,' - received:',call2)
-            P.gui.txt.insert(END,'Call sent: '+self.call+' - received: '+call2+'\n')
+            txt2='Call sent:'+self.call+'\t- received:'+call2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Name sent:',self.name,' - received:',name2)
-            P.gui.txt.insert(END,'Name sent: '+self.name+' - received: '+name2+'\n')
+            txt2='Name sent:'+self.name+'\t- received:'+name2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
 
-            print('QTH  sent:',self.qth,' - received:',qth2)
-            P.gui.txt.insert(END,'QTH  sent: '+self.qth+ ' - received: '+qth2+'\n')
-            
+            txt2='QTH sent:'+self.qth+'\t- received:'+qth2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
+
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)

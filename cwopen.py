@@ -48,16 +48,17 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+        MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYNAME] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL]  [MYNAME] '}
         MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[7+12]  = {'Label' : '73'        , 'Text' : '73 GL ee'}
         
-        MACROS[8]     = {'Label' : 'NR 2x'    , 'Text' : '[SERIAL] [SERIAL] '}
-        MACROS[9]     = {'Label' : 'My Name 2x' , 'Text' : '[MYNAME] [MYNAME] '}
-        MACROS[10]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
+        MACROS[8]     = {'Label' : 'NR 2x'     , 'Text' : '[SERIAL] [SERIAL] '}
+        MACROS[9]     = {'Label' : 'My Name 2x', 'Text' : '[MYNAME] [MYNAME] '}
+        MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[11]    = {'Label' : 'NAME? '    , 'Text' : 'NAME? '}
 
         return MACROS
@@ -128,7 +129,7 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
     def enable_boxes(self,gui):
 
         gui.contest=True
-        gui.ndigits=3
+        gui.ndigits=-3
         gui.hide_all()
         self.macros=[1,None,2]
         #self.box_names=['call','serial','name']
@@ -180,8 +181,10 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
 
         gui=self.P.gui
 
-        gui.serial.delete(0,END)
-        gui.serial.insert(0,a[0])
+        #return
+        #gui.serial.delete(0,END)
+        #gui.serial.insert(0,a[0])
+        
         if len(a)>=2:
             gui.name.delete(0,END)
             gui.name.insert(0,a[1])

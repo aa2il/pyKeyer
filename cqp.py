@@ -188,8 +188,8 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         gui=self.P.gui
 
-        gui.serial.delete(0,END)
-        gui.serial.insert(0,a[0])
+        #gui.serial.delete(0,END)
+        #gui.serial.insert(0,a[0])
         if len(a)>=2:
             gui.qth.delete(0,END)
             gui.qth.insert(0,a[1])

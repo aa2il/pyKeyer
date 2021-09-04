@@ -24,6 +24,7 @@ from collections import OrderedDict
 from random import randint
 from macros import MACROS,CONTEST
 from cw_keyer import cut_numbers
+from default import DEFAULT_KEYING
 
 ############################################################################################
 
@@ -32,49 +33,41 @@ VERBOSITY=0
 ############################################################################################
 
 # Keying class for ARRL CW Sweepstakes
-class SS_KEYING():
+class SS_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        self.P=P
+        DEFAULT_KEYING.__init__(self,P,'ARRL-SS-CW','SS_Call_History_Aug2018.txt')
 
-        if P.USE_MASTER:
-            P.HISTORY = P.HIST_DIR+'master.csv'
-        else:
-            P.HISTORY = HIST_DIR+'SS_Call_History_Aug2018.txt'
-
-        self.contest_name  = 'ARRL-SS-CW'
-        self.macros()
+        self.aux_cb = self.copy_call
 
     # Routient to set macros for this contest
     def macros(self):
 
-        Key='ARRL CW SS'
-        self.Key=Key
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SS [MYCALL] '}
-        MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYPREC] [MYCALL] [MYCHECK] [MYSEC] '}
-        MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 de [MYCALL] QRZ? [LOG]'}
-        MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SS [MYCALL] '}
+        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYPREC] [MYCALL] [MYCHECK] [MYSEC] '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 de [MYCALL] QRZ? [LOG]'}
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+
+        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYPREC] [MYCALL] [MYCHECK] [MYSEC] '}
+        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYPREC] [MYCALL] [MYCHECK] [MYSEC] '}
-        MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-        
-        MACROS[Key][8]     = {'Label' : 'NR?'      , 'Text' : 'NR? '}
-        MACROS[Key][8+12]  = {'Label' : 'Serial 2x', 'Text' : '[SERIAL] [SERIAL] '}
-        MACROS[Key][9]     = {'Label' : 'Prec?'    , 'Text' : 'PREC? '}
-        MACROS[Key][9+12]  = {'Label' : 'Prec 2x'  , 'Text' : '[MYPREC] [MYPREC] '}
-        MACROS[Key][10]    = {'Label' : 'Check?'   , 'Text' : 'CHK? '}
-        MACROS[Key][10+12] = {'Label' : 'Check 2x' , 'Text' : '[MYCHECK] [MYCHECK] '}
-        MACROS[Key][11]    = {'Label' : 'Sec?    ' , 'Text' : 'SEC? '}
-        MACROS[Key][11+12] = {'Label' : 'Sec 2x'   , 'Text' : '[MYSEC] [MYSEC] '}
-        CONTEST[Key]=True
-        
+        MACROS[8]     = {'Label' : 'NR?'      , 'Text' : 'NR? '}
+        MACROS[8+12]  = {'Label' : 'Serial 2x', 'Text' : '[SERIAL] [SERIAL] '}
+        MACROS[9]     = {'Label' : 'Prec?'    , 'Text' : 'PREC? '}
+        MACROS[9+12]  = {'Label' : 'Prec 2x'  , 'Text' : '[MYPREC] [MYPREC] '}
+        MACROS[10]    = {'Label' : 'Check?'   , 'Text' : 'CHK? '}
+        MACROS[10+12] = {'Label' : 'Check 2x' , 'Text' : '[MYCHECK] [MYCHECK] '}
+        MACROS[11]    = {'Label' : 'Sec?    ' , 'Text' : 'SEC? '}
+        MACROS[11+12] = {'Label' : 'Sec 2x'   , 'Text' : '[MYSEC] [MYSEC] '}
+
+        return MACROS
 
     # Routine to generate a hint for a given call
     def hint(self,call):
@@ -93,11 +86,11 @@ class SS_KEYING():
 
         chk    = HIST[call]['check']
         sec    = HIST[call]['sec']
-                
+
         if iopt==1:
             
             done = len(chk)>0 and len(sec)>0
-            return chk,sec,done
+            return done
 
         else:
 
@@ -115,7 +108,7 @@ class SS_KEYING():
             return txt2
             
     # Routine to process qso element repeats
-    def repeat(self,label,exch2):
+    def repeat_old(self,label,exch2):
             
         if 'CALL' in label:
             txt2=self.call+' '+self.call
@@ -130,13 +123,13 @@ class SS_KEYING():
         else:
             txt2=exch2
 
-        return txt2
-
+            return txt2
+            
     # Error checking
     def error_check(self):
         P=self.P
 
-        call2   = P.gui.get_call().upper()
+        call2 = P.gui.get_call().upper()
         serial2 = P.gui.get_serial().upper()
         prec2   = P.gui.get_prec().upper()
         chk2    = P.gui.get_check().upper()
@@ -148,20 +141,25 @@ class SS_KEYING():
             print(txt)
             P.gui.txt.insert(END, txt+'\n')
 
-            print('Call sent:',self.call,' - received:',call2)
-            P.gui.txt.insert(END,'Call sent: '+self.call+' - received: '+call2+'\n')
+            txt2='Call sent:'+self.call+'\t- received:'+call2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Serial sent:',self.name,' - received:',name2)
-            P.gui.txt.insert(END,'Serial sent: '+self.serial+' - received: '+serial2+'\n')
+            txt2='Serial sent:'+self.serial+'\t- received:'+serial2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
 
-            print('Cat sent:',self.cat,' - received:',cat2)
-            P.gui.txt.insert(END,'Cat sent: '+self.cat+ ' - received: '+cat2+'\n')
+            txt2='Cat sent:'+self.cat+'\t- received:'+cat2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Check sent:',self.chk,' - received:',chk2)
-            P.gui.txt.insert(END,'Check sent: '+self.chk+ ' - received: '+chk2+'\n')
+            txt2='Check sent:'+self.check+'\t- received:'+check2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Prec sent:',self.prec,' - received:',prec2)
-            P.gui.txt.insert(END,'Prec sent: '+self.prec+ ' - received: '+prec2+'\n')
+            txt2='Prec sent:'+self.prec+'\t- received:'+prec2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
@@ -170,32 +168,13 @@ class SS_KEYING():
         return match
             
 
-    # Highlight function keys that make sense in the current context
-    def highlight(self,gui,arg):
-        
-        if arg==0:
-            gui.btns1[1].configure(background='green',highlightbackground='green')
-            gui.btns1[2].configure(background='green',highlightbackground='green')
-            gui.call.focus_set()
-        elif arg==1:
-            gui.serial.focus_set()
-        elif arg==4:
-            gui.btns1[5].configure(background='red',highlightbackground= 'red')
-            gui.btns1[7].configure(background='red',highlightbackground= 'red')
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
-        elif arg==7:
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
-            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
-        
-
     # Specific contest exchange for CW Open
     def enable_boxes(self,gui):
 
         gui.contest=True
         gui.ndigits=3
         gui.hide_all()
+        self.macros=[1,None,None,None,None,2]
 
         gui.serial_lab.grid()
         gui.serial.grid()
@@ -216,7 +195,7 @@ class SS_KEYING():
         gui.boxes.append(gui.qth)
         gui.counter_lab.grid()
         gui.counter.grid()
-        
+
         if not gui.P.NO_HINTS:
             gui.call_lab.grid(column=0,columnspan=2)
             gui.call.grid(column=0,columnspan=2)
@@ -239,8 +218,8 @@ class SS_KEYING():
     def logging(self):
 
         gui=self.P.gui
-
-        call   = gui.get_call().upper()
+        
+        call = gui.get_call().upper()
         serial = gui.get_serial().upper()
         prec   = gui.get_prec().upper()
         call2  = gui.get_call2().upper()
@@ -248,7 +227,7 @@ class SS_KEYING():
         sec    = gui.get_qth().upper()
         exch   = serial+','+prec+','+call+','+chk+','+sec
         valid  = len(call)>0 and len(serial)>0 and len(prec)>0 and len(call)>0 and len(chk)>0 and len(sec)>0
-
+        
         MY_CALL     = self.P.SETTINGS['MY_CALL']
         MY_SEC      = self.P.SETTINGS['MY_SEC']
         MY_CAT      = self.P.SETTINGS['MY_CAT']
@@ -263,8 +242,9 @@ class SS_KEYING():
         gui=self.P.gui
 
         #if match2:
-        gui.serial.delete(0,END)
-        gui.serial.insert(0,a[0])
+        #gui.serial.delete(0,END)
+        #gui.serial.insert(0,a[0])
+        
         if len(a)>=2:
             gui.prec.delete(0,END)
             if not gui.P.PRACTICE_MODE:
@@ -284,47 +264,17 @@ class SS_KEYING():
     def insert_hint(self,h):
 
         gui=self.P.gui
-
         gui.check.delete(0, END)
         gui.check.insert(0,h[0])
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[1])
+
+    # Copy call into call2 box
+    def copy_call(self,key,event):
         
-
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
-
         gui=self.P.gui
-
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        # Copy call into other entry field for it
         if event.widget==gui.call:
             call = gui.get_call().upper()
             gui.call2.delete(0, END)
             gui.call2.insert(0,call)
             
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            nn = len(gui.boxes)
-            #if idx==nn and key in ['Return','KP_Enter']:
-            #    idx2 = idx
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % nn
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % nn
-            else:
-                print('We should never get here!!',idx,key,nn)
-                idx2=idx
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            
-
-

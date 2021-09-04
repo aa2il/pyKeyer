@@ -37,7 +37,7 @@ class DEFAULT_KEYING():
     def __init__(self,P,contest_name='CW Default',HISTORY=None):
         self.P=P
         self.contest_name  = contest_name 
-        #self.aux_cb=None
+        self.aux_cb=None
 
         P.HISTORY = P.HIST_DIR+'master.csv'
         if P.USE_MASTER:
@@ -93,6 +93,12 @@ class DEFAULT_KEYING():
             txt2=self.name+' '+self.name
         elif 'QTH?' in label or 'GRID?' in label:
             txt2=self.qth+' '+self.qth
+        elif 'PREC?' in label:
+            txt2=self.prec+' '+self.prec
+        elif 'CHECK?' in label:
+            txt2=self.chk+' '+self.chk
+        elif 'SEC?' in label:
+            txt2=self.sec+' '+self.sec
         else:
             txt2=exch2
 
@@ -207,8 +213,8 @@ class DEFAULT_KEYING():
 
         gui=self.P.gui
 
-        gui.serial.delete(0,END)
-        gui.serial.insert(0,a[0])
+        #gui.serial.delete(0,END)
+        #gui.serial.insert(0,a[0])
         if len(a)>=2:
             gui.name.delete(0,END)
             gui.name.insert(0,a[1])
@@ -253,8 +259,8 @@ class DEFAULT_KEYING():
                     gui.Send_Macro(n)
 
         # Do any extra stuff that might be special to this contest
-        #if self.aux_cb:
-        #    self.aux_cb()
+        if self.aux_cb:
+            self.aux_cb(key,event)
             
         next_widget.focus_set()
         return next_widget

@@ -18,9 +18,10 @@ set PORT = 4532
 
 #set MASTER=""
 
+set PRACTICE=""
 set PRACTICE="-prac"
-#set PRACTICE="-prac -nano"
-#set PRACTICE=""
+set NANO=""
+set NANO="-nano"
 
 set RIG="NONE"
 #set RIG="DIRECT"
@@ -28,14 +29,14 @@ set RIG="NONE"
 
 set CONTEST="CWops"
 #set CONTEST="sst"
+set CONTEST="cwopen"
 
 #set CONTEST="naqp"
 #set CONTEST="fd"
 #set CONTEST="vhf"
 #set CONTEST="stew"
 #set CONTEST="sat"
-set CONTEST="cqp"
-#set CONTEST="cwopen"
+#set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="ss"
 #set CONTEST="cqww"
@@ -79,7 +80,6 @@ else if( $CONTEST == "cwopen" )then
 # Setting for CQ WPX (or any contest that requires rst + serial number)
 else if( $CONTEST == "wpx" )then
     set WPM=30
-    set HINTS=""
 
 # Setting for CQ World Wide
 else if( $CONTEST == "cqww" )then
@@ -189,7 +189,7 @@ else
     popd
 endif
 
-set OPTS="-wpm ${WPM} $PRACTICE -${CONTEST} -rig $RIG $MASTER $HINTS $CAPTURE"
+set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $MASTER $HINTS $CAPTURE"
 
 cd ~/Python/pyKeyer
 echo pyKeyer.py $OPTS 

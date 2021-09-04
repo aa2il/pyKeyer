@@ -21,9 +21,9 @@
 
 from tkinter import END,E,W
 from collections import OrderedDict
-from macros import MACROS,CONTEST
 from rig_io.ft_tables import SST_SECS
 from cw_keyer import cut_numbers
+from default import DEFAULT_KEYING
 
 ############################################################################################
 
@@ -32,48 +32,38 @@ VERBOSITY=0
 ############################################################################################
 
 # Keyin class for North American QSO party
-class NAQP_KEYING():
+class NAQP_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        self.P=P
+        DEFAULT_KEYING.__init__(self,P,'SST','NAQPCW.txt')
 
-        if P.USE_MASTER:
-            P.HISTORY = P.HIST_DIR+'master.csv'
-        else:
-            P.HISTORY = HIST_DIR+'NAQPCW.txt'
-
-        self.contest_name  = 'NAQP-CW'
-
-        self.macros()
 
     # Routient to set macros for this contest
     def macros(self):
 
-        Key='NAQP'
-        self.Key=Key
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NA [MYCALL]'}
-        MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [MYSTATE] '}
-        MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] NA [LOG]'}
-        MACROS[Key][2+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NA [MYCALL]'}
+        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [MYSTATE] '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] NA [LOG]'}
+        MACROS[2+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
-        MACROS[Key][5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
-        MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
+        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
+        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[Key][8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
-        MACROS[Key][9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
-        MACROS[Key][10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
-        MACROS[Key][11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
-        CONTEST[Key]=True
+        MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
+        MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
+        MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
 
+        return MACROS
 
     # Routine to generate a hint for a given call
     def hint(self,call):
@@ -95,7 +85,7 @@ class NAQP_KEYING():
         if iopt==1:
             
             done = len(name)>0 and len(qth)>0
-            return name,qth,done
+            return done
 
         else:
 
@@ -106,22 +96,6 @@ class NAQP_KEYING():
             txt2  = ' '+name+' '+qth
             return txt2
             
-    # Routine to process qso element repeats
-    def repeat(self,label,exch2):
-            
-        if 'CALL' in label:
-            txt2=self.call+' '+self.call
-        elif 'NAME?' in label:
-            txt2=self.name+' '+self.name
-        elif 'QTH?' in label:
-            txt2=self.qth+' '+self.qth
-        elif 'NR?' in label:
-            txt2=self.qth+' '+self.qth
-        else:
-            txt2=exch2
-
-        return txt2
-
     # Error checking
     def error_check(self):
         P=self.P
@@ -136,15 +110,18 @@ class NAQP_KEYING():
             print(txt)
             P.gui.txt.insert(END, txt+'\n')
 
-            print('Call sent:',self.call,' - received:',call2)
-            P.gui.txt.insert(END,'Call sent: '+self.call+' - received: '+call2+'\n')
+            txt2='Call sent:'+self.call+'\t- received:'+call2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Name sent:',self.name,' - received:',name2)
-            P.gui.txt.insert(END,'Name sent: '+self.name+' - received: '+name2+'\n')
+            txt2='Name sent:'+self.name+'\t- received:'+name2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
 
-            print('QTH  sent:',self.qth,' - received:',qth2)
-            P.gui.txt.insert(END,'QTH  sent: '+self.qth+ ' - received: '+qth2+'\n')
-            
+            txt2='QTH sent:'+self.qth+'\t- received:'+qth2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
+
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)
@@ -152,31 +129,13 @@ class NAQP_KEYING():
         return match
             
 
-    # Highlight function keys that make sense in the current context
-    def highlight(self,gui,arg):
-        
-        if arg==0:
-            gui.btns1[1].configure(background='green',highlightbackground='green')
-            gui.btns1[2].configure(background='green',highlightbackground='green')
-            gui.call.focus_set()
-        elif arg==1:
-            gui.name.focus_set()
-        elif arg==4:
-            gui.btns1[5].configure(background='red',highlightbackground= 'red')
-            gui.btns1[7].configure(background='red',highlightbackground= 'red')
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
-        elif arg==7:
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
-            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
-        
 
     # Specific contest exchange for NAQP
     def enable_boxes(self,gui):
 
         gui.contest=True
         gui.hide_all()
+        self.macros=[1,None,2]
 
         gui.name_lab.grid(columnspan=1,column=4,sticky=E+W)
         gui.name.grid(column=4,columnspan=2)
@@ -230,32 +189,3 @@ class NAQP_KEYING():
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[1])
 
-
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
-
-        gui=self.P.gui
-
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            nn = len(gui.boxes)
-            #if idx==nn and key in ['Return','KP_Enter']:
-            #    idx2 = idx
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % nn
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % nn
-            else:
-                print('We should never get here!!')
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            

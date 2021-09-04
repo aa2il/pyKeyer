@@ -21,8 +21,8 @@
 
 from tkinter import END,E,W
 from collections import OrderedDict
-from macros import MACROS,CONTEST
 from cw_keyer import cut_numbers
+from default import DEFAULT_KEYING
 
 ############################################################################################
 
@@ -31,51 +31,39 @@ VERBOSITY=0
 ############################################################################################
 
 # Keyin class for ARRL Field Day
-class FD_KEYING():
+class FD_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        self.P=P
-
-        if P.USE_MASTER:
-            P.HISTORY = P.HIST_DIR+'master.csv'
-        else:
-            #P.HISTORY = HIST_DIR+'FD_2020.txt'
-            P.HISTORY = HIST_DIR+'FD_202*.txt'
-            
-        self.contest_name  = 'ARRL-FD'
-
-        self.macros()
+        DEFAULT_KEYING.__init__(self,P,'ARRL-FD','FD_202*.txt')
 
     # Routient to set macros for this contest
     def macros(self):
 
-        Key='ARRL Field Day'
-        self.Key=Key
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ FD [MYCALL] '}
-        MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        #MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYCAT] [MYCAT] [MYSEC] [MYSEC] '}
-        MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYCAT] [MYSEC] '}
-        MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 FD [MYCALL] [LOG]'}
-        MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        #MACROS[Key][3+12]  = {'Label' : '?'          , 'Text' : '? '}
-        MACROS[Key][3+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ FD [MYCALL] '}
+        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        #MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYCAT] [MYCAT] [MYSEC] [MYSEC] '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYCAT] [MYSEC] '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 FD [MYCALL] [LOG]'}
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        #MACROS[3+12]  = {'Label' : '?'          , 'Text' : '? '}
+        MACROS[3+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
         
-        MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYCAT] [MYSEC]'}
-        MACROS[Key][5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYCAT] [MYCAT] [MYSEC] [MYSEC]'}
-        MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
+        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYCAT] [MYSEC]'}
+        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYCAT] [MYCAT] [MYSEC] [MYSEC]'}
+        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[Key][8]     = {'Label' : 'Cat 2x'    , 'Text' : '[MYCAT] [MYCAT] '}
-        MACROS[Key][9]     = {'Label' : 'Sec 2x'    , 'Text' : '[MYSEC] [MYSEC] '}
-        MACROS[Key][10]    = {'Label' : 'NR?  '     , 'Text' : 'NR? '}
-        MACROS[Key][11]    = {'Label' : 'QTH? '     , 'Text' : 'SEC? '}
-        MACROS[Key][11+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
-        CONTEST[Key]=True
+        MACROS[8]     = {'Label' : 'Cat 2x'    , 'Text' : '[MYCAT] [MYCAT] '}
+        MACROS[9]     = {'Label' : 'Sec 2x'    , 'Text' : '[MYSEC] [MYSEC] '}
+        MACROS[10]    = {'Label' : 'NR?  '     , 'Text' : 'NR? '}
+        MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'SEC? '}
+        MACROS[11+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
 
+        return MACROS
 
     # Routine to generate a hint for a given call
     def hint(self,call):
@@ -84,7 +72,7 @@ class FD_KEYING():
         cat   = P.MASTER[call]['fdcat']
         sec   = P.MASTER[call]['fdsec']
         return cat+' '+sec
-        
+
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
@@ -94,7 +82,7 @@ class FD_KEYING():
         if iopt==1:
             
             done = len(cat)>0 and len(qth)>0
-            return cat,qth,done
+            return done
 
         else:
 
@@ -119,8 +107,8 @@ class FD_KEYING():
         else:
             txt2=exch2
 
-        return txt2
-
+            return txt2
+            
     # Error checking
     def error_check(self):
         P=self.P
@@ -143,7 +131,7 @@ class FD_KEYING():
 
             print('QTH  sent:',self.qth,' - received:',qth2)
             P.gui.txt.insert(END,'QTH  sent: '+self.qth+ ' - received: '+qth2+'\n')
-            
+
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)
@@ -153,7 +141,7 @@ class FD_KEYING():
 
     # Highlight function keys that make sense in the current context
     def highlight(self,gui,arg):
-        
+
         if arg==0:
             gui.btns1[1].configure(background='green',highlightbackground='green')
             gui.btns1[2].configure(background='green',highlightbackground='green')
@@ -176,6 +164,7 @@ class FD_KEYING():
 
         gui.contest=True
         gui.hide_all()
+        self.macros=[1,None,2]
 
         gui.cat_lab.grid(columnspan=1,column=4,sticky=E+W)
         gui.cat.grid(column=4,columnspan=2)
@@ -218,7 +207,7 @@ class FD_KEYING():
         if len(a)>=2:
             gui.qth.delete(0,END)
             gui.qth.insert(0,a[1])
-            
+
     # Hint insertion
     def insert_hint(self,h):
 
@@ -229,32 +218,3 @@ class FD_KEYING():
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[1])
 
-
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
-
-        gui=self.P.gui
-
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            nn = len(gui.boxes)
-            #if idx==nn and key in ['Return','KP_Enter']:
-            #    idx2 = idx
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % nn
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % nn
-            else:
-                print('We should never get here!!')
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            

@@ -21,9 +21,9 @@
 
 from tkinter import END,E,W
 from collections import OrderedDict
-from macros import MACROS,CONTEST
 from cw_keyer import cut_numbers
-import sys
+from default import DEFAULT_KEYING
+from rig_io.ft_tables import CA_COUNTIES,arrl_sec2state
 
 ############################################################################################
 
@@ -32,53 +32,36 @@ VERBOSITY=0
 ############################################################################################
 
 # Keying class for ARRL 10m and Intl DX contests
-class TEN_METER_KEYING():
+class TEN_METER_KEYING(DEFAULT_KEYING):
 
-    def __init__(self,P):
-        self.P=P
+    def __init__(self,P,contest_name):
+        DEFAULT_KEYING.__init__(self,P,contest_name)
 
-        P.HISTORY = P.HIST_DIR+'master.csv'
-
-        if P.ARRL_10m:
-            self.contest_name  = 'ARRL-10M'
-        elif P.ARRL_DX:
-            self.contest_name  = 'ARRL-DX'
-        else:
-            print('Rut row!')
-            sys.exit(0)
-            
-        self.macros()
 
     # Routient to set macros for this contest
     def macros(self):
 
-        if self.P.ARRL_10m:
-            Key='ARRL 10m'
-        elif self.P.ARRL_DX:
-            Key='ARRL DX'
-        self.Key=Key
-
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        MACROS[Key][0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[Key][1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYSTATE] '}
-        MACROS[Key][2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 TEST [MYCALL] [LOG]'}
-        MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
+        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYSTATE] '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 TEST [MYCALL] [LOG]'}
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[Key][4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYSTATE] '}
-        MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYSTATE] '}
+        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[Key][8]     = {'Label' : ' '     , 'Text' : ' '}
-        MACROS[Key][9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYSTATE] [MYSTATE] '}
-        MACROS[Key][10]    = {'Label' : ' '       , 'Text' : ' '}
-        MACROS[Key][11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
-        CONTEST[Key]=True
+        MACROS[8]     = {'Label' : ' '     , 'Text' : ' '}
+        MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[10]    = {'Label' : ' '       , 'Text' : ' '}
+        MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
 
+        return MACROS
 
     # Routine to generate a hint for a given call
     def hint(self,call):
@@ -90,16 +73,16 @@ class TEN_METER_KEYING():
             sec   = P.MASTER[call]['fdsec']
             state=arrl_sec2state(sec)
         return state
-    
+
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
         state=HIST[call]['state']
-        
+
         if iopt==1:
             
             done = len(state)>0
-            return state,done
+            return done
 
         else:
 
@@ -110,40 +93,31 @@ class TEN_METER_KEYING():
             txt2  = ' 5NN '+state
             return txt2
             
-    # Routine to process qso element repeats
-    def repeat(self,label,exch2):
-
-        if 'CALL' in label:
-            txt2=self.call+' '+self.call
-        elif 'NR?' in label or 'QTH?' in label:
-            txt2=self.qth+' '+self.qth
-        else:
-            txt2=exch2
-
-        return txt2
-
     # Error checking
     def error_check(self):
         P=self.P
 
         call2 = P.gui.get_call().upper()
-        rst2  = P.gui.get_rst().upper()
+        rst2  = P.gui.get_rst_in().upper()
         qth2  = P.gui.get_qth().upper()
         match = self.call==call2 and self.rst==rst2 and self.qth==qth2
-        
+
         if not match:
             txt='********************** ERROR **********************'
             print(txt)
             P.gui.txt.insert(END, txt+'\n')
 
-            print('Call sent:',self.call,' - received:',call2)
-            P.gui.txt.insert(END,'Call sent: '+self.call+' - received: '+call2+'\n')
+            txt2='Call sent:'+self.call+'\t- received:'+call2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('RST sent:',self.rst,' - received:',rst2)
-            P.gui.txt.insert(END,'RST sent: '+self.rst+' - received: '+rst2+'\n')
-
-            print('QTH sent:',self.qth,' - received:',qth2)
-            P.gui.txt.insert(END,'QTH sent: '+self.qth+' - received: '+qth2+'\n')
+            txt2='RST sent:'+self.rst+'\t- received:'+rst2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
+            
+            txt2='QTH sent:'+self.qth+'\t- received:'+qth2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
 
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
@@ -152,58 +126,40 @@ class TEN_METER_KEYING():
         return match
             
 
-    # Highlight function keys that make sense in the current context
-    def highlight(self,gui,arg):
-        
-        if arg==0:
-            gui.btns1[1].configure(background='green',highlightbackground='green')
-            gui.btns1[2].configure(background='green',highlightbackground='green')
-            gui.call.focus_set()
-        elif arg==1:
-            gui.qth.focus_set()
-        elif arg==4:
-            gui.btns1[5].configure(background='red',highlightbackground= 'red')
-            gui.btns1[7].configure(background='red',highlightbackground= 'red')
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
-        elif arg==7:
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
-            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
-        
-
     # Specific contest exchange for ARRL 10m
     def enable_boxes(self,gui):
 
         gui.contest=True
         gui.hide_all()
+        self.macros=[1,None,2]
 
-        gui.rst_lab.grid(columnspan=1,column=4,sticky=E+W)
-        gui.rst.grid(column=4,columnspan=1)
-        gui.rst.delete(0,END)
-        gui.rst.insert(0,'5NN')
+        gui.rstin_lab.grid(columnspan=1,column=4,sticky=E+W)
+        gui.rstin.grid(column=4,columnspan=1)
+        gui.rstin.delete(0,END)
+        gui.rstin.insert(0,'5NN')
         
         gui.qth_lab.grid(columnspan=1,column=5,sticky=E+W)
         gui.qth.grid(column=5,columnspan=1)
-        
+
         gui.boxes=[gui.call]
-        gui.boxes.append(gui.rst)
+        gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.qth)
-        
+
         if not gui.P.NO_HINTS:
             gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
             gui.hint.grid(column=6,columnspan=2)
-
             
+        
     # Gather together logging info for this contest
     def logging(self):
 
         gui=self.P.gui
-
+        
         call = gui.get_call().upper()
-        rst  = gui.get_rst().upper()
-        qth  = gui.get_qth().upper()
+        rst  = gui.get_rst_in().upper()
+        qth = gui.get_qth().upper()
         valid = len(call)>=3 and len(rst)>0 and len(qth)>0
+        exch = rst+','+qth
 
         MY_STATE = self.P.SETTINGS['MY_STATE']
         exch_out = '599,'+MY_STATE
@@ -226,32 +182,3 @@ class TEN_METER_KEYING():
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
-
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
-
-        gui=self.P.gui
-
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            nn = len(gui.boxes)
-            #if idx==nn and key in ['Return','KP_Enter']:
-            #    idx2 = idx
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % nn
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % nn
-            else:
-                print('We should never get here!!')
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            

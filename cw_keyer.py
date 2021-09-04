@@ -25,7 +25,7 @@ import socket
 import threading
 import sys
 import serial
-from nano_io import nano_write, nano_set_wpm
+from nano_io import nano_write,nano_set_wpm,nano_tune
 
 ############################################################################################
 
@@ -166,12 +166,12 @@ def cut_numbers(n,ndigits=-3,ALL=False):
 # The key object - this is where all the hard work is really done
 class Keyer():
 
-    def __init__(self,P,ser,DEFAULT_WPM=22,KEY_DOWN=False):
+    def __init__(self,P,ser,DEFAULT_WPM=25,KEY_DOWN=False):
 
         self.P = P
         self.ser = ser         # An open serial port
         if DEFAULT_WPM<5:
-            self.DEFAULT_WPM=22
+            self.DEFAULT_WPM=25
         else:
             self.DEFAULT_WPM=DEFAULT_WPM
         self.KEY_DOWN = KEY_DOWN
@@ -209,7 +209,7 @@ class Keyer():
 
         # If using nano IO interface, send the char & let the nano do the rest
         if self.P.NANO_IO:
-            #print('send_cw: msg=',msg)
+            print('send_cw: msg=',msg,'\t@ wpm=',self.WPM)
             nano_write(ser,msg)
             return
 
@@ -445,14 +445,25 @@ class Keyer():
                     if len(cmd2)>4:
                         SEC=int(cmd2[4:])
                         print("Keying TX for ",SEC)
-                        self.ser.setDTR(True)
-                        time.sleep(SEC)
-                        self.ser.setDTR(False)
+                        if self.P.NANO_IO:
+                            nano_tune(self.ser,True)
+                            time.sleep(SEC)
+                            nano_tune(self.ser,False)
+                        else:
+                            self.ser.setDTR(True)
+                            time.sleep(SEC)
+                            self.ser.setDTR(False)
                     elif self.KEY_DOWN:
-                        self.ser.setDTR(False)
+                        if self.P.NANO_IO:
+                            nano_tune(self.ser,False)
+                        else:
+                            self.ser.setDTR(False)
                         self.KEY_DOWN=False
                     else:
-                        self.ser.setDTR(True)
+                        if self.P.NANO_IO:
+                            nano_tune(self.ser,True)
+                        else:
+                            self.ser.setDTR(True)
                         self.KEY_DOWN=True
 
                 elif cmd2[0]=="+":

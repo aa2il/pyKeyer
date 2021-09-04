@@ -38,6 +38,16 @@ def nano_read(ser,echo=False):
 def nano_write(ser,txt):
     ser.write(bytes(txt, 'utf-8'))
 
+# Key down/key up for tuning
+def nano_tune(ser,tune):
+    if tune:
+        # Key down
+        txt='~T'
+    else:
+        # Cancel - see nanoIO.ino for this little gem
+        txt=']'
+    ser.write(bytes(txt, 'utf-8'))
+
 # Open up comms to nano IO
 def open_nano(baud=38400):
 
