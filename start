@@ -27,9 +27,9 @@ set RIG="NONE"
 #set RIG="DIRECT"
 #set RIG="HAMLIB"
 
-set CONTEST="CWops"
-#set CONTEST="sst"
-set CONTEST="cwopen"
+#set CONTEST="CWops"
+set CONTEST="sst"
+#set CONTEST="cwopen"
 
 #set CONTEST="naqp"
 #set CONTEST="fd"
