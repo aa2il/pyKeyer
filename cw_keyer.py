@@ -325,7 +325,7 @@ class Keyer():
                 Udp=False
                 cmd2=''.join(cmd)
                 cmd2=cmd2.upper()
-                print("cmd=",cmd2)
+                print("cmd2=",cmd2)   # ,'\t',cmd2[:4])
 
                 # Execute the command
                 if cmd2=="RESET":
@@ -459,12 +459,14 @@ class Keyer():
                         else:
                             self.ser.setDTR(False)
                         self.KEY_DOWN=False
+                        print('TUNE - key up')
                     else:
                         if self.P.NANO_IO:
                             nano_tune(self.ser,True)
                         else:
                             self.ser.setDTR(True)
                         self.KEY_DOWN=True
+                        print('TUNE - key down')
 
                 elif cmd2[0]=="+":
                     # Increase speed

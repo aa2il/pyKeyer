@@ -40,7 +40,7 @@ class DEFAULT_KEYING():
         self.aux_cb=None
 
         P.HISTORY = P.HIST_DIR+'master.csv'
-        if P.USE_MASTER:
+        if P.USE_MASTER or HISTORY==None:
             P.HISTORY = P.HIST_DIR+'master.csv'
         elif HISTORY:
             P.HISTORY = P.HIST_DIR+HISTORY

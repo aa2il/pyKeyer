@@ -1256,22 +1256,30 @@ class GUI():
             now       = datetime.utcnow().replace(tzinfo=UTC)
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
-            satellite = self.get_satellite()
             
-            if False:
-                # This is dangerous since it relies on the watchdog
-                freq_kHz = 1e-3*self.sock.freq
-                freq     = int( freq_kHz )
-                band     = self.sock.band
-                mode     = self.sock.mode
-            else:
-                # Read the radio instead
-                freq_kHz = 1e-3*self.sock.get_freq()
-                freq     = int( freq_kHz )
-                mode     = self.sock.get_mode()
-                band     = str( self.sock.get_band() )
+            # Read the radio 
+            freq_kHz = 1e-3*self.sock.get_freq()
+            freq     = int( freq_kHz )
+            mode     = self.sock.get_mode()
+            band     = str( self.sock.get_band() )
+            if band[-1]!='m':
+                band += 'm'
+
+            # For satellites, read vof B also
+            if self.P.contest_name=='SATELLITES' and False:
+                satellite   = self.get_satellite()
+                freq_kHz_rx = freq_kHz
+                band_rx     = band
+
+                freq_kHz    = 1e-3*self.sock.get_freq(VFO='B')
+                freq        = int( freq_kHz2 )
+                band        = str( self.sock.get_band(VFO='B') )
                 if band[-1]!='m':
                     band += 'm'
+            else:
+                satellite   = 'None'
+                freq_kHz_rx = freq_kHz
+                band_rx     = band
 
             # Do some error checking                    
             if mode!=self.sock.mode and self.sock.connection!='NONE' and False:
@@ -1291,10 +1299,12 @@ class GUI():
                 self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
                 
             qso = dict( list(zip(['QSO_DATE_OFF','TIME_OFF','CALL','FREQ','BAND','MODE', \
-                             'SRX_STRING','STX_STRING','NAME','QTH','SRX','STX','SAT_NAME'],  \
+                                  'SRX_STRING','STX_STRING','NAME','QTH','SRX',
+                                  'STX','SAT_NAME','FREQ_RX','BAND_RX'],  \
                            [date_off,time_off,call,str(1e-3*freq_kHz),band,mode, \
-                            exch,self.exch_out,name,qth,str(serial),str(self.cntr),satellite] )))
-                        
+                            exch,self.exch_out,name,qth,str(serial),
+                            str(self.cntr),satellite,str(1e-3*freq_kHz_rx),band_rx] )))
+
             if self.P.sock3.connection=='FLLOG':
                 print('KEYER_GUI: =============== via FLLOG ...')
                 self.P.sock3.Add_QSO(qso)
