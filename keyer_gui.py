@@ -1248,7 +1248,7 @@ class GUI():
             print('exch=',exch)
 
         if valid:
-            print('LOG IT!',self.contest)
+            print('LOG IT!',self.contest,self.P.contest_name)
             #print self.sock.run_macro(-1)
 
             # Get time stamp, freq, mode, etc.
@@ -1261,25 +1261,34 @@ class GUI():
             freq_kHz = 1e-3*self.sock.get_freq()
             freq     = int( freq_kHz )
             mode     = self.sock.get_mode()
+            if mode=='FMN':
+                mode='FM'
+            elif mode=='AMN':
+                mode='AM'
             band     = str( self.sock.get_band() )
             if band[-1]!='m':
                 band += 'm'
 
-            # For satellites, read vof B also
-            if self.P.contest_name=='SATELLITES' and False:
+            # For satellites, read vfo B also
+            if self.P.contest_name=='SATELLITES':
+                print('LOG IT - SATS!')
                 satellite   = self.get_satellite()
                 freq_kHz_rx = freq_kHz
                 band_rx     = band
+                print(satellite,freq_kHz_rx,band_rx)
 
                 freq_kHz    = 1e-3*self.sock.get_freq(VFO='B')
-                freq        = int( freq_kHz2 )
+                freq        = int( freq_kHz )
                 band        = str( self.sock.get_band(VFO='B') )
                 if band[-1]!='m':
                     band += 'm'
+                print(freq_kHz,band)
             else:
+                print('LOG IT - No SAT')
                 satellite   = 'None'
                 freq_kHz_rx = freq_kHz
                 band_rx     = band
+                print(satellite,freq_kHz_rx,band_rx)
 
             # Do some error checking                    
             if mode!=self.sock.mode and self.sock.connection!='NONE' and False:
@@ -1492,10 +1501,30 @@ class GUI():
                     if band[-1]!='m':
                         band += 'm'
 
-                    # JBA - Probably need to fix this for ARRL SS - JBA - P.CW_SS
-                    if self.P.contest_name=='ARRL-SS-CW':
+                    # There are some contests that are "special"
+                    if self.P.contest_name=='ARRL VHF' and True:
+                        # Group phone mode together
+                        #PHONE_MODES=['FM','SSB','USB','LSB']
+                        #match3 = qso['MODE']==mode or (qso['MODE'] in PHONE_MODES and mode in PHONE_MODES)
+
+                        # Actually, can only work each station once per band, regardless of mode
+                        match3 = qso['BAND']==band 
+
+                        # Rovers can be reworked if they are in a different grid square
+                        if '/R' in call:
+                            qth = self.P.gui.get_qth().upper()
+                            match4 = qth==qso['QTH']
+                        else:
+                            match4 = True
+
+                        # Combine it all together
+                        match2 = match2 or (age<MAX_AGE_HOURS*3600 and match3 and match4)
+                        
+                    elif self.P.contest_name=='ARRL-SS-CW':
+                        # Can only work each station once regardless of band
                         match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['MODE']==mode)
                     else:
+                        # Most of the time, we can work each station on each band and mode
                         match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['BAND']==band and qso['MODE']==mode)
                     last_exch = qso['SRX_STRING']
 
