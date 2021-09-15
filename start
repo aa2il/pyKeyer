@@ -36,7 +36,7 @@ set CONTEST="sst"
 #set CONTEST="vhf"
 #set CONTEST="stew"
 #set CONTEST="sat"
-#set CONTEST="cqp"
+set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="ss"
 #set CONTEST="cqww"
@@ -101,8 +101,8 @@ else if( $CONTEST == "iaru" )then
 else if( $CONTEST == "cqp" )then
     #set MASTER=""
     set MASTER="-master -ca_only"
-    #set HINTS="-nohints -adjust"
-    set HINTS="-adjust"
+    set HINTS="-nohints -adjust"
+    #set HINTS="-adjust"
 
 # Settings for ARRL VHF
 else if( $CONTEST == "vhf" )then

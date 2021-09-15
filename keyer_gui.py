@@ -582,14 +582,14 @@ class GUI():
         self.call.delete(0, END)
         self.name.delete(0, END)
         self.qth.delete(0, END)
-        self.rst_in.delete(0, END)
-        self.rst_out.delete(0, END)
+        self.rstin.delete(0, END)
+        self.rstout.delete(0, END)
         if self.P.contest_name=='SATELLITES':
-            self.rst_in.insert(0,'5')
-            self.rst_out.insert(0,'5')
+            self.rstin.insert(0,'5')
+            self.rstout.insert(0,'5')
         else:
-            self.rst_in.insert(0,'5nN')
-            self.rst_out.insert(0,'5NN')
+            self.rstin.insert(0,'5nN')
+            self.rstout.insert(0,'5NN')
         self.cat.delete(0, END)
 
         self.prec.delete(0, END)
@@ -1247,6 +1247,14 @@ class GUI():
             print('rst=',rstin)
             print('exch=',exch)
 
+        # Make sure a satellite is selected if needed
+        satellite = self.get_satellite()
+        if self.P.contest_name=='SATELLITES' and satellite=='None':
+            errmsg='Need to Select a Satellite!'
+            valid=False
+        else:
+            errmsg='Missing one or more fields!'
+            
         if valid:
             print('LOG IT!',self.contest,self.P.contest_name)
             #print self.sock.run_macro(-1)
@@ -1271,24 +1279,18 @@ class GUI():
 
             # For satellites, read vfo B also
             if self.P.contest_name=='SATELLITES':
-                print('LOG IT - SATS!')
-                satellite   = self.get_satellite()
                 freq_kHz_rx = freq_kHz
                 band_rx     = band
-                print(satellite,freq_kHz_rx,band_rx)
 
                 freq_kHz    = 1e-3*self.sock.get_freq(VFO='B')
                 freq        = int( freq_kHz )
                 band        = str( self.sock.get_band(VFO='B') )
                 if band[-1]!='m':
                     band += 'm'
-                print(freq_kHz,band)
+
             else:
-                print('LOG IT - No SAT')
-                satellite   = 'None'
                 freq_kHz_rx = freq_kHz
                 band_rx     = band
-                print(satellite,freq_kHz_rx,band_rx)
 
             # Do some error checking                    
             if mode!=self.sock.mode and self.sock.connection!='NONE' and False:
@@ -1398,6 +1400,7 @@ class GUI():
             print('Call=',call)
             if self.contest:
                 print('Exch=',exch)
+            messagebox.showerror("pyKeyer - Logging",errmsg)
 
         # Save these for error checking in practice mode
         #print '%%% Saving exchange ***'
