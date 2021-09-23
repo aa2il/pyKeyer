@@ -47,11 +47,11 @@ from load_history import *
 from pprint import pprint
 import rig_io.hamlibserver as rigctl
 from sidetone import *
-#from audio_io import WaveRecorder
 import time
 import os
 from settings import *
 from tcp_server import *
+import xlrd
 
 ################################################################################
 
@@ -107,6 +107,8 @@ class PARAMS:
                               choices=CONNECTIONS+['NONE']+RIGS)
         arg_proc.add_argument("-port", help="Connection Port",
                               type=int,default=0)
+        arg_proc.add_argument("-max_age", help="Max age in hours",
+                              type=int,default=24*7)
         arg_proc.add_argument('-nano', action='store_true',help="Use Nano IO Interface")
         arg_proc.add_argument("-mode", help="Rig Mode",
                       type=str,default=None,
@@ -119,6 +121,7 @@ class PARAMS:
         arg_proc.add_argument('-server', action='store_true',help='Start hamlib server')
         arg_proc.add_argument('-udp', action='store_true',help='Start UDP server')
         arg_proc.add_argument('-use_log_hist', action='store_true',help='Use history from log')
+        arg_proc.add_argument('-use_adif_hist', action='store_true',help='Use history from adif log')
         args = arg_proc.parse_args()
 
         self.SPRINT        = args.sprint
@@ -146,6 +149,7 @@ class PARAMS:
         self.HAMLIB_SERVER = args.server
         self.UDP_SERVER    = args.udp
         self.USE_LOG_HISTORY = args.use_log_hist
+        self.USE_ADIF_HISTORY = args.use_adif_hist
         self.SIDETONE      = args.sidetone or self.PORT==1
 
         self.CONTEST       = CONTEST
@@ -457,7 +461,10 @@ def UDP_msg_handler(msg):
                 #print('UDP Message Handler: Update hints')
                 self.get_hint(call)
         
-    
+    elif msg[:4]=='Sat:':
+        sat=msg[4:]
+        print('UDP Message Handler: Setting SAT to:',sat)
+        self.set_satellite(sat)
     
 ############################################################################################
 
@@ -707,7 +714,21 @@ if P.sock.active:
 
     # Set sub-dial
     P.sock.set_sub_dial('CLAR')
-    
+
+# Read satellite grids confirmed    
+FNAME = os.path.expanduser('~/Python/data/states.xls')
+book  = xlrd.open_workbook(FNAME,formatting_info=True)
+sheet1 = book.sheet_by_name('6-meters')
+
+# Digest confirmed grids
+P.grids=[]
+for i in range(1, sheet1.nrows):
+    grid = unidecode( sheet1.cell(i,10).value )
+    if len(grid)>0:
+        P.grids.append( grid.upper() )
+print('Grids:',P.grids)
+#sys.exit(0)
+
 # Spin
 mainloop()
 

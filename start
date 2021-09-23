@@ -99,10 +99,9 @@ else if( $CONTEST == "iaru" )then
 
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then
-    #set MASTER=""
+    set WPM=30
     set MASTER="-master -ca_only"
     set HINTS="-nohints -adjust"
-    #set HINTS="-adjust"
 
 # Settings for ARRL VHF
 else if( $CONTEST == "vhf" )then

@@ -51,7 +51,7 @@ class SAT_KEYING(DEFAULT_KEYING):
         MACROS[3+12] = {'Label' : 'CALL? '       , 'Text' : 'CALL? '}
 
         MACROS[4]     = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] DE [MYCALL] [MYCALL] K'}
-        MACROS[4+12]  = {'Label' : '[MYCALL]'    , 'Text' : 'DE [MY_CALL] '}
+        MACROS[4+12]  = {'Label' : '[MYCALL]'    , 'Text' : '[MY_CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply'   , 'Text' : 'RR TU [RST] [MYGRID] [MYGRID] BK'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'      , 'Text' : 'R TU FER RPRT UR [RST} IN [MYGRID] [MYGRID] OP {MYNAME] [MYNAME] BK'}
         MACROS[6]     = {'Label' : 'AGN?'        , 'Text' : 'AGN? '}
@@ -187,7 +187,8 @@ class SAT_KEYING(DEFAULT_KEYING):
         gui=self.P.gui
 
         gui.exch.delete(0,END)
-        gui.exch.insert(0,a[0])
+        if len(a)>=2:
+            gui.exch.insert(0,a[1])
 
     # Hint insertion
     def insert_hint(self,h):

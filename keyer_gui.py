@@ -168,12 +168,20 @@ class GUI():
         except:
             pass
 
+        # Read adif log also
+        fname_adif = MY_CALL.replace('/','_')+".adif"
+        if P.USE_ADIF_HISTORY:
+            print('fname_adif=',fname_adif)
+            qsos = parse_adif(fname_adif,upper_case=True,verbosity=0)
+            for qso in qsos:
+                self.log_book.append(qso)
+
         self.nqsos_start = len(self.log_book)
-        #print self.log_book
+        print('There are',len(self.log_book),'QSOS in the log book')
         #sys.exit(0)
 
         # Keep an ADIF copy of the log as well
-        self.fp_adif = open(MY_CALL.replace('/','_')+".adif","a+")
+        self.fp_adif = open(fname_adif,"a+")
         print("KEYER_GUI: ADIF file name=", self.fp_adif) 
 
         # Also save all sent text to a file
@@ -1447,8 +1455,23 @@ class GUI():
             for qso in self.log_book:
                 #print(qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"])
                 #print('QSO_RATE:',qso)
-                date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
-                                   .replace(tzinfo=UTC)
+                try:
+                    if "QSO_DATE_OFF" in qso:
+                        doff = qso["QSO_DATE_OFF"]
+                    else:
+                        doff = qso["QSO_DATE"]
+                    if "TIME_OFF" in qso:
+                        toff = qso["TIME_OFF"]
+                    else:
+                        toff = qso["TIME_ON"]
+                    date_off = datetime.strptime( doff+" "+toff, \
+                                "%Y%m%d %H%M%S") \
+                                .replace(tzinfo=UTC)
+                except Exception as e: 
+                    print('Problem with qso=',qso)
+                    print( str(e) )
+                    continue
+                
                 age = (now - date_off).total_seconds() # In seconds
                 if age<=dt:
                     nqsos+=1
@@ -1463,7 +1486,7 @@ class GUI():
 
     # Routine to check & flag dupes
     def dup_check(self,call):
-        print('DUP_CHECK: call=',call)
+        print('DUP_CHECK: call=',call,MAX_AGE_HOURS)
 
         # Look for dupes
         match1=False                # True if there is matching call
@@ -1505,7 +1528,12 @@ class GUI():
                         band += 'm'
 
                     # There are some contests that are "special"
-                    if self.P.contest_name=='ARRL VHF' and True:
+                    if self.P.contest_name=='SATELLITES':
+                        # Need to add more logic to this going forward
+                        print(call,'- Worked before')
+                        match2 = True
+                        
+                    elif self.P.contest_name=='ARRL VHF' and True:
                         # Group phone mode together
                         #PHONE_MODES=['FM','SSB','USB','LSB']
                         #match3 = qso['MODE']==mode or (qso['MODE'] in PHONE_MODES and mode in PHONE_MODES)
@@ -1882,6 +1910,13 @@ class GUI():
         elif event.widget==self.exch:
             exch=self.get_exchange().upper()
             self.sock.set_log_fields({'Exchange':exch})
+
+            if self.P.contest_name=='SATELLITES':
+                if len(exch)==4 and not exch in self.P.grids:
+                    self.exch.configure(background="lime")
+                else:
+                    self.exch.configure(background=self.default_color)
+                    
 
             # If we're in a contest and the return key was pressed, send reply
             if key=='Return' or key=='KP_Enter':
