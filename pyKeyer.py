@@ -200,6 +200,7 @@ class PARAMS:
         elif args.sat:
             self.contest_name='SATELLITES'
         else:
+            self.contest_name='Default'
             self.HISTORY = HIST_DIR+'master.csv'
             #self.HISTORY = ''
         if self.USE_MASTER:

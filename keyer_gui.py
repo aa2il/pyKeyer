@@ -395,7 +395,7 @@ class GUI():
         # Add a tab to manage Rotor
         # This is actually rather difficult since there doesn't
         # appear to be a tk equivalent to QLCDnumber
-        self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P.sock2)
+        self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
         
         # Practice button
         col += 1
@@ -606,6 +606,7 @@ class GUI():
         self.prefill=False
         self.prev_call=''
 
+        
     # callback to look up a call on qrz.com
     def Web_LookUp(self):
         call = self.get_call()
@@ -894,6 +895,8 @@ class GUI():
             self.P.KEYING=WPX_KEYING(self.P)
         elif val=='ARRL-10M' or val=='ARRL-DX':
             self.P.KEYING=TEN_METER_KEYING(self.P,val)
+        elif val=='Default':
+            self.P.KEYING=DEFAULT_KEYING(self.P)
         else:
             print('KEYER_GUI: *** ERROR *** Cant figure which contest !')
             print(val)
@@ -1368,6 +1371,7 @@ class GUI():
             if self.P.contest_name=='SATELLITES':
                 self.rstin.insert(0,'5')
                 self.rstout.insert(0,'5')
+                self.exch.configure(background=self.default_color)
             else:
                 self.rstin.insert(0,'5Nn')
                 self.rstout.insert(0,'5NN')
@@ -1692,9 +1696,10 @@ class GUI():
                     if event.widget==self.call:
                         self.call.configure(background=self.default_color)
 
-                # Wipe all fields
+                # Wipe all fields Alt-w
                 if (key=='w' or key=='e') and alt:
                     self.call.delete(0, END)
+                    self.exch.configure(background=self.default_color)
                     self.call2.delete(0, END)
                     self.cat.delete(0, END)
                     self.rstin.delete(0, END)
@@ -1706,6 +1711,7 @@ class GUI():
                         self.rstin.insert(0,'5nn')
                         self.rstout.insert(0,'5NN')
                     self.exch.delete(0, END)
+                    self.exch.configure(background=self.default_color)
                     self.name.delete(0, END)
                     self.qth.delete(0, END)
                     self.serial.delete(0, END)

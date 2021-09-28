@@ -61,7 +61,9 @@ class CQP_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'NR 2x'    , 'Text' : '[SERIAL] [SERIAL] '}
         MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYCOUNTY] [MYCOUNTY] '}
         MACROS[10]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
+        MACROS[10+12] = {'Label' : 'COUNTY? ' , 'Text' : 'COUNTY? '}
         MACROS[11]    = {'Label' : 'QTH? '    , 'Text' : 'QTH? '}
+        MACROS[11+12] = {'Label' : 'STATE?'   , 'Text' : 'STATE? '}
 
         return MACROS
 

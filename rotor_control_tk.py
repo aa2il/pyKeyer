@@ -39,8 +39,9 @@ except:
 ################################################################################
 
 class ROTOR_CONTROL():
-    def __init__(self,tabs,sock2):
-        self.sock = sock2
+    def __init__(self,tabs,P):
+        self.sock = P.sock2
+        self.MY_GRID = P.SETTINGS['MY_GRID']
         if self.sock.connection == 'NONE' and False:
             return None
 
@@ -101,7 +102,8 @@ class ROTOR_CONTROL():
         col=0
         lb3=Label(self.tab,text="Grid:")
         lb3.grid(row=row,column=col)
-        self.grid_sq = Entry(self.tab,validate='focusin',validatecommand=self.newGridSquare)
+        self.grid_sq = Entry(self.tab)
+        self.grid_sq.bind("<Return>",self.newGridSquare)
         #self.grid_sq.setToolTip('Point to a Grid')
         self.grid_sq.grid(row=row,column=col+1)            # ,1,3)
         
@@ -154,17 +156,19 @@ class ROTOR_CONTROL():
         self.ellcd2.set(pos[1])
 
     # Function to point rotor toward a user specified grid square
-    def newGridSquare(self):
+    def newGridSquare(self,evt):
         txt=self.grid_sq.get()
         print('newGridSquare:',txt)
-        if bearing_ok:
+        if len(txt)==4 and bearing_ok:
             try:
-                bearing = calculate_heading(MY_GRID,txt)
+                print('Computing bearing ...')
+                bearing = calculate_heading(self.MY_GRID,txt)
                 print('bearing=',bearing)
                 self.azlcd2.set(bearing)
                 self.setRotorAz(bearing)
-            except:
-                print('Problem computing bearing for',MY_GRID,txt)
+            except Exception as e: 
+                print('Problem computing bearing for',self.MY_GRID,txt)
+                print( str(e) )
 
     # Function to give nominal direction info
     def nominalBearing(self):
