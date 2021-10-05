@@ -123,10 +123,10 @@ class GUI():
         self.prefill=False
         self.cntr=0
 
-        MY_CALL = P.SETTINGS['MY_CALL']
-
         # Open simple log file & read its contents
+        MY_CALL = P.SETTINGS['MY_CALL']
         fname = MY_CALL.replace('/','_')+".LOG"
+        print('Opening log file',fname,'...')
         try:
             self.fp_log = open(fname,"r+")
         except:
