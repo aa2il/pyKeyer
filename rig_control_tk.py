@@ -443,8 +443,11 @@ class RIG_CONTROL():
             
             # Set radio according to spin box value
             split = self.sock.split_mode(-1)
-            print('SET_VFO_MODE: Setting radio vfo ...',vfo,val,'\tsplit=',split)
-            if vfo in 'AM' or split:
+            sat = self.sock.sat_mode(-1)
+            dual = self.sock.dual_watch(-1)
+            print('SET_VFO_MODE: Setting radio vfo ...',vfo,val,'\tsplit=',split,\
+                  '\tsat=',sat,'\tdual=',dual)
+            if vfo in 'AM' or split or sat or dual:
                 self.sock.set_mode(val,VFO=vfo)
         
         

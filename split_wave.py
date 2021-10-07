@@ -1,7 +1,16 @@
 #! /usr/bin/python3
 #######################################################################################
 
-# Program to split up a wave file
+# Program to split up a capture wave file
+
+# This file was accidently deleted shortly after I got it working.
+# It was recovered using:
+#
+# sudo ext4magic /dev/sdb2 -r -f /home/joea/Python/sound/split_wave.py -d /data2/data/junk
+#
+# Hopefully, it still works - need to test to be sure 
+
+#######################################################################################
 
 import wave
 import sys
