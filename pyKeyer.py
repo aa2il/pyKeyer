@@ -490,8 +490,13 @@ if P.NANO_IO:
     try:
         ser = open_nano(baud=BAUD)
     except Exception as e: 
-        print('\n*** Unable to open nano IO device ***\n')
         print( str(e) )
+        print('\n*************************************')
+        print(  '*** Unable to open Nano IO device ***')
+        print(  '***  Make sure it is plugged in!  ***')
+        print(  '*************************************')
+        print(  '***          Giving up            ***')
+        print('*************************************\n')
         sys.exit(0)
     P.ser=ser
 
@@ -508,7 +513,9 @@ elif P.sock.rig_type2=='TS850':
     #toggle_dtr(5)
     #sys.exit(0)
         
-elif P.sock.rig_type=='Icom' or (P.sock.rig_type=='Hamlib' and P.sock.rig_type2=='IC9700'):
+elif P.sock.rig_type=='Icom' or \
+     (P.sock.rig_type=='Hamlib' and P.sock.rig_type2=='IC9700') or \
+     (P.sock.rig_type=='FLRIG'  and P.sock.rig_type2=='IC9700'):
 
     if P.PRACTICE_MODE:
         ser=serial_dummy()

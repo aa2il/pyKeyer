@@ -104,14 +104,24 @@ def oh_canada(dx_station):
     BC      British Columbia
     NT """
 
+    # For Cali QSO Party:
+    # MR = Maritime provinces plus Newfoundland and Labrador (NB, NL, NS, PE)
     CQP_VE_CALL_AREAS = ['??','MR','QC','ON','MB','SK','AB','BC','NT']
 
     if dx_station.country=='Canada':
-        if (dx_station.prefix=='VO2' or dx_station.prefix=='VY2'):
+        #if (dx_station.prefix=='VO2' or dx_station.prefix=='VY2'):
+        if dx_station.prefix in ['VO2','VY2','VE9']:
             qth='MR'
         else:
             num=int( dx_station.call_number )
-            qth=CQP_VE_CALL_AREAS[num]
+            if num>=0 and num<len( CQP_VE_CALL_AREAS ):
+                qth=CQP_VE_CALL_AREAS[num]
+            else:
+                y
+                qth=''
+                print('**** ERROR *** HINTS - Oh Canada - having trouble with',\
+                      dx_station.call,dx_station.call_number,num)
+                
     elif dx_station.country=='Alaska':
         qth='AK'
     elif dx_station.country=='Hawaii':
