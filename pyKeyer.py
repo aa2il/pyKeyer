@@ -113,6 +113,8 @@ class PARAMS:
         arg_proc.add_argument("-mode", help="Rig Mode",
                       type=str,default=None,
                       choices=[None,'CW','SSB'])
+        arg_proc.add_argument("-log", help="Log file name",
+                      type=str,default=None)
         arg_proc.add_argument("-rotor", help="Rotor connection Type",
                       type=str,default="NONE",
                       choices=['HAMLIB','NONE'])
@@ -138,6 +140,7 @@ class PARAMS:
         #self.DIRECT_CONNECT = args.direct
         self.WPM           = args.wpm
         self.INIT_MODE     = args.mode
+        self.LOG_FILE      = args.log
         
         self.connection    = args.rig[0]
         if len(args.rig)>=2:
@@ -361,7 +364,6 @@ def WatchDog(P):
             P.gui.rig.status.set(x)
             P.gui.rig.frequency=freq
             P.gui.rig.mode.set(mode)
-            
 
     # Let user adjust WPM from radio knob
     if VERBOSITY>0:
@@ -419,7 +421,6 @@ def WatchDog(P):
         P.Timer=None
         print('... Watch Dog quit')
         P.WATCHDOG = False
-
         
         
 class serial_dummy():

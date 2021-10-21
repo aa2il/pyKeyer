@@ -61,7 +61,7 @@ class SAT_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'OP'          , 'Text' : 'OP [MYNAME] [MYNAME] '}
         MACROS[9]     = {'Label' : 'QTH'         , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
         MACROS[10]    = {'Label' : '73 Short'    , 'Text' : '73 GL EE'}
-        MACROS[10+1]  = {'Label' : '73 Long'     , 'Text' : 'MNY TNX FER FB QSO 73 HPE CU AGAN '}
+        MACROS[10+12] = {'Label' : '73 Long'     , 'Text' : 'MNY TNX FER FB QSO 73 HPE CU AGAN '}
         MACROS[11]    = {'Label' : '73'          , 'Text' : '73 GL EE'}
         MACROS[12]    = {'Label' : 'BK'          , 'Text' : 'BK '}
         
@@ -152,17 +152,27 @@ class SAT_KEYING(DEFAULT_KEYING):
         gui.rstin.grid(column=col,columnspan=cspan)
         col+=cspan
         cspan=2
-        gui.exch_lab.grid(column=col,columnspan=cspan)
-        gui.exch.grid(column=col,columnspan=cspan)
+        #gui.exch_lab.grid(column=col,columnspan=cspan)
+        #gui.exch.grid(column=col,columnspan=cspan)
+        gui.qth_lab.grid(column=col,columnspan=cspan)
+        gui.qth.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.name_lab.grid(column=col,columnspan=cspan)
+        gui.name.grid(column=col,columnspan=cspan)
 
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstout)
         gui.boxes.append(gui.rstin)
-        gui.boxes.append(gui.exch)
+        #gui.boxes.append(gui.exch)
+        gui.boxes.append(gui.qth)
+        gui.boxes.append(gui.name)
             
         if not gui.P.NO_HINTS:
-            gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-            gui.hint.grid(column=7,columnspan=3)
+            col+=cspan
+            cspan=3
+            gui.hint_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+            gui.hint.grid(column=col,columnspan=cspan)
         
     # Gather together logging info for this contest
     def logging(self):
@@ -172,9 +182,15 @@ class SAT_KEYING(DEFAULT_KEYING):
         call   = gui.get_call().upper()
         rstin  = gui.get_rst_in().upper()
         rstout = gui.get_rst_out().upper()
-        exch   = gui.get_exchange().upper()
-        valid  = len(call)>=3 and len(rstin)>0 and len(exch)>0
-        exch   = rstin+','+exch
+        #exch   = gui.get_exchange().upper()
+        qth   = gui.get_qth().upper()
+        name   = gui.get_name().upper()
+        valid  = len(call)>=3 # and len(rstin)>0 and len(exch)>0
+        #exch   = rstin+','+exch+','+name
+        exch   = rstin+','+qth+','+name
+
+        #a=exch.split(',')
+        #gui.set_qth(a[0])
 
         MY_GRID     = self.P.SETTINGS['MY_GRID']
         exch_out = rstout+','+MY_GRID
@@ -186,16 +202,26 @@ class SAT_KEYING(DEFAULT_KEYING):
 
         gui=self.P.gui
 
-        gui.exch.delete(0,END)
+        #gui.exch.delete(0,END)
+        #gui.exch.insert(0,a[1])
+        
+        gui.qth.delete(0,END)
+        gui.qth.insert(0,a[0])
         if len(a)>=2:
-            gui.exch.insert(0,a[1])
+            gui.name.delete(0,END)
+            gui.name.insert(0,a[1])
 
     # Hint insertion
     def insert_hint(self,h):
 
         gui=self.P.gui
 
-        gui.exch.delete(0, END)
-        gui.exch.insert(0,h[0])
+        #gui.exch.delete(0, END)
+        #gui.exch.insert(0,h[0])
+        gui.qth.delete(0, END)
+        gui.qth.insert(0,h[0])
+        if len(h)>=1:
+            gui.name.delete(0, END)
+            gui.name.insert(0,h[1])
 
 

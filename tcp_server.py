@@ -26,6 +26,8 @@ from threading import Thread,Event
 import time
 import select
 
+VERBOSITY=0
+
 ################################################################################
 
 # TCP Server class
@@ -59,36 +61,66 @@ class TCP_Server(Thread):
         self.tcpServer.listen(4)
         
         while not self.Stopper.isSet():
+            if VERBOSITY>0:
+                print('TCP_SERVER - Listener - Hey 1')
             time.sleep(1)
             
             # Get list of sockets 
-            #print('Getting list')
-            #readable,writeable,inerror = select.select(self.socks,self.socks,self.socks,0)
             readable,writeable,inerror = select.select(self.socks,[],[],0)
-            #print('readable=',readable,'\twriteable=',writeable,'\tinerror=',inerror)
+            if VERBOSITY>0:
+                print('TCP_SERVER - Listener - readable=',readable,  \
+                      '\twriteable=',writeable,'\tinerror=',inerror)
             
             # iterate through readable sockets
             #i=0
             for sock in readable:
+                if VERBOSITY>0:
+                    print('TCP_SERVER - Listener - Hey 2')
                 if sock is self.tcpServer:
+                    if VERBOSITY>0:
+                        print('TCP_SERVER - Listener - Hey 3')
                     
                     # Accept new connection
                     conn, addr = self.tcpServer.accept()
+                    #conn.settimeout(2)
+                    conn.setblocking(0)
                     print('\r{}:'.format(addr),'connected')
                     readable.append(conn)
                     self.socks.append(conn)
 
                 else:
-                    
+
                     # Read from a client
+                    #timeout=False
                     try:
-                        data = sock.recv(self.BUFFER_SIZE)
-                    except:
+                        if VERBOSITY>0:
+                            print('TCP_SERVER - Listener - Hey 4a')
+                        ready = select.select([sock], [], [], 1)
+                        if ready[0]:
+                            data = sock.recv(self.BUFFER_SIZE)
+                        else:
+                            data=None
+                        if VERBOSITY>0:
+                            print('TCP_SERVER - Listener - Hey 4b - ready=',ready)
+                    #except socket.timeout:
+                    #    if VERBOSITY>0:
+                    #        print('TCP_SERVER - Listener - Socket timeout')
+                    #    data=None
+                    #    timeout=True
+                    except Exception as e: 
                         print('Listener: Problem with socket - closing')
+                        print( str(e) )
                         print(sock)
                         data=None
                 
-                    if not data:
+                    if data:
+                        # We received a message from a client
+                        print('\r{}:'.format(sock.getpeername()),data)
+                        if self.msg_handler:
+                            self.msg_handler(data.decode())
+                            
+                    elif ready[0]:
+                        # The client seemed to send a msg but we didn't get it
                         try:
                             print('\r{}:'.format(sock.getpeername()),'disconnected')
                             sock.close()
@@ -97,9 +129,8 @@ class TCP_Server(Thread):
                         readable.remove(sock)
                         self.socks.remove(sock)
                     else:
-                        print('\r{}:'.format(sock.getpeername()),data)
-                        if self.msg_handler:
-                            self.msg_handler(data.decode())
+                        # Nothing to see here
+                        pass
                         
             # a simple spinner to show activity
             #i += 1

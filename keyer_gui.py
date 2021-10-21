@@ -58,7 +58,7 @@ from ten import *
 from naqp import *
 from iaru import *
 from cqww import *
-from satellites import *
+from sats import *
 
 ############################################################################################
 
@@ -169,10 +169,11 @@ class GUI():
             pass
 
         # Read adif log also
-        fname_adif = MY_CALL.replace('/','_')+".adif"
+        if P.LOG_FILE==None:
+            P.LOG_FILE = MY_CALL.replace('/','_')+".adif"
         if P.USE_ADIF_HISTORY:
-            print('fname_adif=',fname_adif)
-            qsos = parse_adif(fname_adif,upper_case=True,verbosity=0)
+            print('fname_adif=',P.LOG_FILE)
+            qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
             for qso in qsos:
                 self.log_book.append(qso)
 
@@ -181,7 +182,7 @@ class GUI():
         #sys.exit(0)
 
         # Keep an ADIF copy of the log as well
-        self.fp_adif = open(fname_adif,"a+")
+        self.fp_adif = open(P.LOG_FILE,"a+")
         print("KEYER_GUI: ADIF file name=", self.fp_adif) 
 
         # Also save all sent text to a file
@@ -290,22 +291,22 @@ class GUI():
         self.hint.grid(row=row+1,rowspan=2,column=8,columnspan=1)
 
         # Buttons to access FLDIGI logger
-        btn = Button(self.root, text='Get',command=self.Set_Log_Fields,takefocus=0 )
-        btn.grid(row=row+1,column=ncols-2)
-        tip = ToolTip(btn, ' Get FLDIGI Logger Fields ' )
+        if False:
+            btn = Button(self.root, text='Get',command=self.Set_Log_Fields, \
+                         takefocus=0 )
+            btn.grid(row=row+1,column=ncols-2)
+            tip = ToolTip(btn, ' Get FLDIGI Logger Fields ' )
 
-        btn = Button(self.root, text='Put',command=self.Read_Log_Fields,takefocus=0 ) 
-        btn.grid(row=row+1,column=ncols-1)
-        tip = ToolTip(btn, ' Set FLDIGI Logger Fields ' )
+            btn = Button(self.root, text='Put',command=self.Read_Log_Fields,\
+                         takefocus=0 ) 
+            btn.grid(row=row+1,column=ncols-1)
+            tip = ToolTip(btn, ' Set FLDIGI Logger Fields ' )
 
-        btn = Button(self.root, text='Wipe',command=self.Clear_Log_Fields,takefocus=0 ) 
-        btn.grid(row=row+2,column=ncols-2)
-        tip = ToolTip(btn, ' Clear FLDIGI Logger Fields ' )
+            btn = Button(self.root, text='Wipe',command=self.Clear_Log_Fields,\
+                         takefocus=0 ) 
+            btn.grid(row=row+2,column=ncols-2)
+            tip = ToolTip(btn, ' Clear FLDIGI Logger Fields ' )
         
-        btn = Button(self.root, text='QRZ.com',command=self.Web_LookUp,takefocus=0 ) 
-        btn.grid(row=row+2,column=ncols-1)
-        tip = ToolTip(btn, ' Query QRZ.com ' )
-
         # Set up text entry box with a scroll bar
         row+=3
         Grid.rowconfigure(self.root, row, weight=1)             # Allows resizing
@@ -413,13 +414,21 @@ class GUI():
         P.SIDETONE = not P.SIDETONE
         self.SideToneCB()
 
-        # TUNE buttons
+        # TUNE button
         col += 1
-        self.TuneBtn = Button(self.root, text='Tune',bg='yellow',highlightbackground= 'yellow', \
+        self.TuneBtn = Button(self.root, text='Tune',bg='yellow',\
+                              highlightbackground= 'yellow', \
                               command=self.Tune )
         self.TuneBtn.grid(row=row,column=col,sticky=E+W)
         tip = ToolTip(self.TuneBtn,' Key Radio to Ant Tuning ')
 
+        # QRZ button
+        col += 1
+        btn = Button(self.root, text='QRZ.com',command=self.Web_LookUp,\
+                     takefocus=0 ) 
+        btn.grid(row=row,column=ncols-1)
+        tip = ToolTip(btn, ' Query QRZ.com ' )
+        
         # Set up a spin box to allow satellite logging
         row += 1
         col  = 0
@@ -1253,7 +1262,7 @@ class GUI():
             exch,valid,self.exch_out = self.P.KEYING.logging()
         else:
             rstin =self.get_rst_in().upper()
-            exch=str(rstin) +' '+ name
+            exch=str(rstin)+','+ name
             print('name=',name)
             print('rst=',rstin)
             print('exch=',exch)
@@ -1372,6 +1381,7 @@ class GUI():
                 self.rstin.insert(0,'5')
                 self.rstout.insert(0,'5')
                 self.exch.configure(background=self.default_color)
+                self.qth.configure(background=self.default_color)
             else:
                 self.rstin.insert(0,'5Nn')
                 self.rstout.insert(0,'5NN')
@@ -1534,7 +1544,7 @@ class GUI():
                     # There are some contests that are "special"
                     if self.P.contest_name=='SATELLITES':
                         # Need to add more logic to this going forward
-                        print(call,'- Worked before')
+                        print(call,'- Worked before on sats')
                         match2 = True
                         
                     elif self.P.contest_name=='ARRL VHF' and True:
@@ -1561,7 +1571,20 @@ class GUI():
                     else:
                         # Most of the time, we can work each station on each band and mode
                         match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['BAND']==band and qso['MODE']==mode)
-                    last_exch = qso['SRX_STRING']
+                        
+                    if self.P.contest_name=='SATELLITES':
+                        print('HEEEEEEEEYYYYYYYYYYYYYY')
+                        try:
+                            qth=qso['QTH']
+                        except:
+                            qth=''
+                        try:
+                            name=qso['NAME']
+                        except:
+                            name=''
+                        last_exch = qth+','+name
+                    else:
+                        last_exch = qso['SRX_STRING']
 
         # If there was a dupe, change color of call entry box & show last exchange
         if match1:
@@ -1571,7 +1594,7 @@ class GUI():
             if len( self.exch.get() )==0:
                 self.prefill=True
                 a=last_exch.split(',')
-                print('a=',a)
+                print('last_exch - a=',a)
                 self.P.KEYING.dupe(a)
                 """
                 elif self.P.SPRINT:
@@ -1699,7 +1722,7 @@ class GUI():
                 # Wipe all fields Alt-w
                 if (key=='w' or key=='e') and alt:
                     self.call.delete(0, END)
-                    self.exch.configure(background=self.default_color)
+                    self.call.configure(background=self.default_color)
                     self.call2.delete(0, END)
                     self.cat.delete(0, END)
                     self.rstin.delete(0, END)
@@ -1714,6 +1737,7 @@ class GUI():
                     self.exch.configure(background=self.default_color)
                     self.name.delete(0, END)
                     self.qth.delete(0, END)
+                    self.qth.configure(background=self.default_color)
                     self.serial.delete(0, END)
                     self.prec.delete(0, END)
                     self.hint.delete(0, END)
@@ -1866,7 +1890,12 @@ class GUI():
 
             if len(qth)>0 and self.P.contest_name=='CQP':
                 self.P.KEYING.qth_hints()
-
+            elif self.P.contest_name=='SATELLITES':
+                if len(qth)==4 and not qth in self.P.grids:
+                    self.qth.configure(background="lime")
+                else:
+                    self.qth.configure(background=self.default_color)
+                    
             # If we're in a contest and the return key was pressed, send reply
             if key=='Return' or key=='KP_Enter':
                 if self.contest:
@@ -1923,7 +1952,6 @@ class GUI():
                 else:
                     self.exch.configure(background=self.default_color)
                     
-
             # If we're in a contest and the return key was pressed, send reply
             if key=='Return' or key=='KP_Enter':
                 if self.contest:
