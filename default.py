@@ -171,20 +171,28 @@ class DEFAULT_KEYING():
         gui.call_lab.grid(column=col,columnspan=cspan)
         gui.call.grid(column=col,columnspan=cspan)
         col+=cspan
-        cspan=2
-        gui.serial_lab.grid(column=col,columnspan=cspan)
-        gui.serial.grid(column=col,columnspan=cspan)
+        cspan=1
+        gui.rstout_lab.grid(column=col,columnspan=cspan)
+        gui.rstout.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.rstin_lab.grid(column=col,columnspan=cspan)
+        gui.rstin.grid(column=col,columnspan=cspan)
         col+=cspan
         cspan=2
         gui.name_lab.grid(columnspan=cspan,column=col,sticky=E+W)
         gui.name.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.qth_lab.grid(column=col,columnspan=cspan)
+        gui.qth.grid(column=col,columnspan=cspan)
         
         gui.boxes=[gui.call]
-        gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.rstout)
+        gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.name)
-        gui.counter_lab.grid()
-        gui.counter.grid()
-        
+        gui.boxes.append(gui.qth)
+            
         if not gui.P.NO_HINTS:
             col+=cspan
             cspan=3
@@ -201,7 +209,7 @@ class DEFAULT_KEYING():
         serial = gui.get_serial().upper()
         name = gui.get_name().upper()
         exch   = serial+','+name
-        valid = len(call)>=3 and len(name)>0 and len(serial)>0
+        valid = len(call)>=3 
         
         MY_NAME   = self.P.SETTINGS['MY_NAME']
         exch_out = str(gui.cntr)+','+MY_NAME

@@ -149,7 +149,7 @@ class SS_KEYING(DEFAULT_KEYING):
             print(txt2)
             P.gui.txt.insert(END, txt2+'\n')
 
-            txt2='Cat sent:'+self.cat+'\t- received:'+cat2
+            txt2='Prec sent:'+self.prec+'\t- received:'+prec2
             print(txt2)
             P.gui.txt.insert(END, txt2+'\n')
             
@@ -176,16 +176,30 @@ class SS_KEYING(DEFAULT_KEYING):
         gui.hide_all()
         self.macros=[1,None,None,None,None,2]
 
-        gui.serial_lab.grid()
-        gui.serial.grid()
-        gui.prec_lab.grid()
-        gui.prec.grid()
-        gui.call2_lab.grid()
-        gui.call2.grid()
-        gui.check_lab.grid()
-        gui.check.grid()
-        gui.qth_lab.grid(columnspan=3,column=8,sticky=E+W)
-        gui.qth.grid(column=8,columnspan=2)
+        col=0
+        cspan=3
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.serial_lab.grid(column=col,columnspan=cspan)
+        gui.serial.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.prec_lab.grid(column=col,columnspan=cspan)
+        gui.prec.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.call2_lab.grid(column=col,columnspan=cspan)
+        gui.call2.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.check_lab.grid(column=col,columnspan=cspan)
+        gui.check.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.qth_lab.grid(column=col,columnspan=cspan)
+        gui.qth.grid(column=col,columnspan=cspan)
 
         gui.boxes=[gui.call]
         gui.boxes.append(gui.serial)
@@ -197,21 +211,10 @@ class SS_KEYING(DEFAULT_KEYING):
         gui.counter.grid()
 
         if not gui.P.NO_HINTS:
-            gui.call_lab.grid(column=0,columnspan=2)
-            gui.call.grid(column=0,columnspan=2)
-            gui.serial_lab.grid(column=2)
-            gui.serial.grid(column=2)
-            gui.prec_lab.grid(column=3)
-            gui.prec.grid(column=3)
-            gui.call2_lab.grid(column=4)
-            gui.call2.grid(column=4)
-            gui.check_lab.grid(column=5)
-            gui.check.grid(column=5)
-            gui.qth_lab.grid(column=6,columnspan=1)
-            gui.qth.grid(column=6,columnspan=1)
-            
-            gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-            gui.hint.grid(column=7,columnspan=3)
+            col+=cspan
+            cspan=3
+            gui.hint_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+            gui.hint.grid(column=col,columnspan=cspan)
             
         
     # Gather together logging info for this contest

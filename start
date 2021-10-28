@@ -36,9 +36,9 @@ set CONTEST="sst"
 #set CONTEST="vhf"
 #set CONTEST="stew"
 #set CONTEST="sat"
-set CONTEST="cqp"
+#set CONTEST="cqp"
 #set CONTEST="wpx"
-#set CONTEST="ss"
+set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="arrl_10m"
 #set CONTEST="arrl_dx"
@@ -129,6 +129,8 @@ else if( $CONTEST == "arrl_dx" )then
 else if( $CONTEST == "ss" )then
     set WPM=25
     set HINTS=""
+    set HINTS="-adjust"
+    #set HINTS="-nohints -adjust"
 
 else
     echo Unknown Contest:- $CONTEST-

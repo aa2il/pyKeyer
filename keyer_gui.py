@@ -244,7 +244,7 @@ class GUI():
         self.rstout.grid(row=row+1,rowspan=2,column=9,columnspan=1)
         if self.P.contest_name=='SATELLITES':
             self.rstin.insert(0,'5')
-            self.rstout.insert(0,'5')
+            self.rstout.insert(0,'5nn')
         else:
             self.rstin.insert(0,'5NN')
             self.rstout.insert(0,'5NN')
@@ -603,9 +603,9 @@ class GUI():
         self.rstout.delete(0, END)
         if self.P.contest_name=='SATELLITES':
             self.rstin.insert(0,'5')
-            self.rstout.insert(0,'5')
+            self.rstout.insert(0,'5nn')
         else:
-            self.rstin.insert(0,'5nN')
+            self.rstin.insert(0,'5NN')
             self.rstout.insert(0,'5NN')
         self.cat.delete(0, END)
 
@@ -1379,7 +1379,7 @@ class GUI():
             self.rstout.delete(0,END)
             if self.P.contest_name=='SATELLITES':
                 self.rstin.insert(0,'5')
-                self.rstout.insert(0,'5')
+                self.rstout.insert(0,'5nn')
                 self.exch.configure(background=self.default_color)
                 self.qth.configure(background=self.default_color)
             else:
@@ -1729,7 +1729,7 @@ class GUI():
                     self.rstout.delete(0, END)
                     if self.P.contest_name=='SATELLITES':
                         self.rstin.insert(0,'5')
-                        self.rstout.insert(0,'5')
+                        self.rstout.insert(0,'5nn')
                     else:
                         self.rstin.insert(0,'5nn')
                         self.rstout.insert(0,'5NN')

@@ -726,14 +726,16 @@ if P.sock.active:
 
 # Read satellite grids confirmed    
 FNAME = os.path.expanduser('~/Python/data/states.xls')
+print('Reading Sat Grids - fname=',FNAME)
 book  = xlrd.open_workbook(FNAME,formatting_info=True)
 sheet1 = book.sheet_by_name('6-meters')
 
 # Digest confirmed grids
 P.grids=[]
 for i in range(1, sheet1.nrows):
+    #print(i,sheet1.cell(i,10) )
     grid = unidecode( sheet1.cell(i,10).value )
-    if len(grid)>0:
+    if len(grid)>0 and 'Paper' not in grid:
         P.grids.append( grid.upper() )
 print('Grids:',P.grids)
 #sys.exit(0)
