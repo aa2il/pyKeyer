@@ -41,17 +41,18 @@ class SAT_KEYING(DEFAULT_KEYING):
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]  = {'Label'    : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
-        MACROS[0+12]  = {'Label' : 'QRS '        , 'Text' : 'QRS PSE QRS '}
+        MACROS[0]     = {'Label' : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
+        MACROS[0+12]  = {'Label' : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] [MYGRID] K '}
+        #MACROS[0+12]  = {'Label' : 'QRS '        , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'       , 'Text' : '[CALL] TU [RST] [MYGRID] [MYGRID] BK'}
         MACROS[1+12]  = {'Label' : 'Long'        , 'Text' : '[CALL] TU FER THE CALL [RST] [MYGRID] [MYGRID] OP [MYNAME] [MYNAME] BK'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] R73 QRZ? [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] MNY TNX FER QSO ES 73 QRZ? [MYCALL] [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] TNX FER FB QSO 73 73 ee [LOG]'}
+        #MACROS[2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] MNY TNX FER QSO ES 73 QRZ? [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'       , 'Text' : '[CALL]? '}
         MACROS[3+12] = {'Label' : 'CALL? '       , 'Text' : 'CALL? '}
 
         MACROS[4]     = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] DE [MYCALL] [MYCALL] K'}
-        MACROS[4+12]  = {'Label' : '[MYCALL]'    , 'Text' : '[MY_CALL] '}
+        MACROS[4+12]  = {'Label' : '[MYCALL]'    , 'Text' : '[MYCALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply'   , 'Text' : 'RR TU [RST] [MYGRID] [MYGRID] BK'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'      , 'Text' : 'R TU FER RPRT UR [RST} IN [MYGRID] [MYGRID] OP {MYNAME] [MYNAME] BK'}
         MACROS[6]     = {'Label' : 'AGN?'        , 'Text' : 'AGN? '}
@@ -63,7 +64,7 @@ class SAT_KEYING(DEFAULT_KEYING):
         MACROS[10]    = {'Label' : '73 Short'    , 'Text' : '73 GL EE'}
         MACROS[10+12] = {'Label' : '73 Long'     , 'Text' : 'MNY TNX FER FB QSO 73 HPE CU AGAN '}
         MACROS[11]    = {'Label' : '73'          , 'Text' : '73 GL EE'}
-        MACROS[12]    = {'Label' : 'BK'          , 'Text' : 'BK '}
+        MACROS[11+12] = {'Label' : 'BK'          , 'Text' : 'BK '}
         
         return MACROS
 

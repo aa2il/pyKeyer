@@ -1,6 +1,6 @@
 ############################################################################################
 #
-# ss.py - Rev 1.0
+# arrl_ss.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ARRL CW Sweepstakes
@@ -251,7 +251,7 @@ class SS_KEYING(DEFAULT_KEYING):
         if len(a)>=2:
             gui.prec.delete(0,END)
             if not gui.P.PRACTICE_MODE:
-                gui.prec.insert(0,a[1])
+                #gui.prec.insert(0,a[1])
                 if len(a)>=3:
                     gui.call2.delete(0,END)
                     gui.call2.insert(0,a[2])

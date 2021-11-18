@@ -62,11 +62,6 @@ AMP=0.5
 HIST_DIR=os.path.expanduser('~/Python/history/data/')
 VERBOSITY=0
 
-if False:
-    from datetime import datetime
-    print(datetime.now().hour)
-    sys.exit()
-
 ################################################################################
 
 # Structure to contain processing params
@@ -108,7 +103,7 @@ class PARAMS:
         arg_proc.add_argument("-port", help="Connection Port",
                               type=int,default=0)
         arg_proc.add_argument("-max_age", help="Max age in hours",
-                              type=int,default=24*7)
+                              type=int,default=9999)
         arg_proc.add_argument('-nano', action='store_true',help="Use Nano IO Interface")
         arg_proc.add_argument("-mode", help="Rig Mode",
                       type=str,default=None,
@@ -172,46 +167,69 @@ class PARAMS:
             print('NEED TO FIX THIS!!!!!!!!!!!!!')
             sys.exit(0)
             self.KEYING=SPRINT_KEYING(self)
+            MAX_AGE_HOURS=1
         elif args.CWops:
             self.contest_name='CW Ops Mini-Test'
+            MAX_AGE_HOURS=1
         elif args.sst:
             self.contest_name='SST'
+            MAX_AGE_HOURS=1
         elif args.vhf:
             self.contest_name='ARRL VHF'
+            MAX_AGE_HOURS=33
         elif args.naqp:
             self.contest_name='NAQP-CW'
+            MAX_AGE_HOURS=12
         elif args.ss:
             self.contest_name='ARRL-SS-CW'
+            MAX_AGE_HOURS=30
         elif args.cqp:
             self.contest_name='CQP'
+            MAX_AGE_HOURS=48 #??
         elif args.cwopen:
             self.contest_name='CW Open'
+            MAX_AGE_HOURS=4
         elif args.fd:
             self.contest_name='ARRL-FD'
+            MAX_AGE_HOURS=48  #??
         elif args.stew:
             self.contest_name='STEW PERRY'
+            MAX_AGE_HOURS=24  #??
         elif args.iaru:
             self.contest_name='IARU-HF'
+            MAX_AGE_HOURS=48  #??
         elif args.cqww:
             self.contest_name='CQWW'
+            MAX_AGE_HOURS=48
         elif args.wpx:
             self.contest_name = 'CQ-WPX-CW'
+            MAX_AGE_HOURS=48
         elif args.arrl_10m:
             self.contest_name = 'ARRL-10M'
+            MAX_AGE_HOURS=48    #??
         elif args.arrl_dx:
             self.contest_name = 'ARRL-DX'
+            MAX_AGE_HOURS=48    #??
         elif args.sat:
             self.contest_name='SATELLITES'
+            MAX_AGE_HOURS=9999
         else:
             self.contest_name='Default'
             self.HISTORY = HIST_DIR+'master.csv'
             #self.HISTORY = ''
+            MAX_AGE_HOURS=9999
         if self.USE_MASTER:
             self.HISTORY = HIST_DIR+'master.csv'
 
         self.ROTOR_CONNECTION = args.rotor
         self.PORT2            = args.port2
 
+        # Compute length of contest
+        if args.max_age!=9999:
+            self.MAX_AGE       = args.max_age*60        # In minutes
+        else:
+            self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
+            
         # Read config file
         self.RCFILE=os.path.expanduser("~/.keyerrc")
         self.SETTINGS=None

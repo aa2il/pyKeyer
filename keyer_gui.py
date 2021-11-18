@@ -63,8 +63,7 @@ from sats import *
 ############################################################################################
 
 UTC = pytz.utc
-MAX_AGE_HOURS=24*7          # Was 48=2 days
-WPM_STEP = 4                # Key speed step for up/dn buttons - was 2
+WPM_STEP = 3                # Key speed step for up/dn buttons - was 4
 NUM_ROWS=2                  # No. of spot rows, one is not quite enough for s&p
 
 ############################################################################################
@@ -1151,7 +1150,7 @@ class GUI():
         #print('RestoreState: Age=',age,' Mins')
 
         # If we're in a long contest, restore the serail counter
-        if age<60*MAX_AGE_HOURS:
+        if age<self.P.MAX_AGE:
             self.P.MY_CNTR = pickle.load(fp)
             print('RestoreState: Counter=',self.P.MY_CNTR)
             self.counter.delete(0, END)
@@ -1217,8 +1216,10 @@ class GUI():
 
         # Make sure root window is clobbered
         try:
+            print('Destroying root window ...')
             self.root.destroy()
         except:
+            print('Failed to destroying root window ... Giving up!')
             sys.exit(0)
             
         show_threads()
@@ -1500,7 +1501,7 @@ class GUI():
 
     # Routine to check & flag dupes
     def dup_check(self,call):
-        print('DUP_CHECK: call=',call,MAX_AGE_HOURS)
+        print('DUP_CHECK: call=',call,self.P.MAX_AGE)
 
         # Look for dupes
         match1=False                # True if there is matching call
@@ -1513,7 +1514,7 @@ class GUI():
             match1 = self.P.sock3.Dupe_Check(call)
             print('match1=',match1)
             if match1:
-                match2 = self.P.sock3.Dupe_Check(call,mode,MAX_AGE_HOURS*60,freq)
+                match2 = self.P.sock3.Dupe_Check(call,mode,self.P.MAX_AGE,freq)
                 print('match2=',match2)
                 qso = self.P.sock3.Get_Last_QSO(call)
                 print('last qso=',qso)
@@ -1526,7 +1527,7 @@ class GUI():
                     band = str( self.sock.get_band() )
                     if band[-1]!='m':
                         band += 'm'
-                    match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['BAND']==band and qso['MODE']==mode)
+                    match2 = match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
                     print('match 1&22:',match1,match2)
 
         else:
@@ -1563,14 +1564,14 @@ class GUI():
                             match4 = True
 
                         # Combine it all together
-                        match2 = match2 or (age<MAX_AGE_HOURS*3600 and match3 and match4)
+                        match2 = match2 or (age<self.P.MAX_AGE*60 and match3 and match4)
                         
                     elif self.P.contest_name=='ARRL-SS-CW':
                         # Can only work each station once regardless of band
-                        match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['MODE']==mode)
+                        match2 = match2 or (age<self.P.MAX_AGE*60 and qso['MODE']==mode)
                     else:
                         # Most of the time, we can work each station on each band and mode
-                        match2 = match2 or (age<MAX_AGE_HOURS*3600 and qso['BAND']==band and qso['MODE']==mode)
+                        match2 = match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
                         
                     if self.P.contest_name=='SATELLITES':
                         print('HEEEEEEEEYYYYYYYYYYYYYY')
