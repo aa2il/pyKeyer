@@ -1,9 +1,9 @@
 ############################################################################################
 #
-# cwopen.py - Rev 1.0
+# default.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for CW Ops CW Open.
+# Keying routines for default qsos
 #
 ############################################################################################
 #

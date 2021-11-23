@@ -59,12 +59,13 @@ from naqp import *
 from iaru import *
 from cqww import *
 from sats import *
+from settings import *
 
 ############################################################################################
 
 UTC = pytz.utc
 WPM_STEP = 3                # Key speed step for up/dn buttons - was 4
-NUM_ROWS=2                  # No. of spot rows, one is not quite enough for s&p
+#NUM_ROWS=2                  # No. of spot rows, one is not quite enough for s&p
 
 ############################################################################################
 
@@ -187,10 +188,13 @@ class GUI():
         # Also save all sent text to a file
         self.fp_txt = open(MY_CALL.replace('/','_')+".TXT","a+")
 
-        # Set up basic logging entry boxes
+        # Add menu bar
         ncols=12
         row=0
-
+        self.create_menu_bar()
+        
+        # Set up basic logging entry boxes
+        #row+=1
         if sys.version_info[0]==3:
             font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
             font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
@@ -386,7 +390,7 @@ class GUI():
         # before we try to pack them.  Otherwise, all we get is the results of the packing
 
         # Rig control sub-menu
-        col += 2
+        col += 1
         self.RigCtrlBtn = Button(self.root, text='Rig Ctrl', command=self.RigCtrlCB )
         self.RigCtrlBtn.grid(row=row,column=col,sticky=E+W)
         tip = ToolTip(self.RigCtrlBtn,' Show/Hide Rig Control Frame ')
@@ -396,6 +400,13 @@ class GUI():
         # This is actually rather difficult since there doesn't
         # appear to be a tk equivalent to QLCDnumber
         self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
+
+        # Capture
+        col += 1
+        self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
+        self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
+        tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
+        self.CaptureAudioCB(-1)
         
         # Practice button
         col += 1
@@ -445,12 +456,9 @@ class GUI():
             btn.grid(row=row,column=col,sticky=E+W)
             tip = ToolTip(btn, ' Reset to Default Params ' )
 
-        # Capture
-        self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
-        self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
-        self.CaptureAudioCB(-1)
-        
+        """
+        # Don't need these anymore
+
         # Save state button
         col += 1
         btn = Button(self.root, text='Save State',command=self.SaveState ) 
@@ -469,22 +477,23 @@ class GUI():
         btn.grid(row=row,column=col,sticky=E+W)
         tip = ToolTip(btn, ' Exit Program ' )
 
+        """
+            
         # Reset clarifier
-        #self.sock.send('RC;RT0;XT0;')
         ClarReset(self)
-        #self.sock.rit(0,0)
 
         # Some other info
-        row += 1
-        #Label(self.root, text="--- Spots ---",font=font1).grid(row=row,columnspan=ncols,column=0,sticky=E+W)
+        #row += 1
+        #col=0
+        col=8
         self.rate_lab = Label(self.root, text="QSO Rate:",font=font1)
-        self.rate_lab.grid(row=row,columnspan=4,column=0,sticky=W)
-        Label(self.root, text="--- Spots ---",font=font1) \
-            .grid(row=row,column=int(ncols/2),columnspan=2,sticky=E+W)
+        self.rate_lab.grid(row=row,columnspan=4,column=col,sticky=W)
+        #Label(self.root, text="--- Spots ---",font=font1) \
+        #    .grid(row=row,column=int(ncols/2),columnspan=2,sticky=E+W)
         
         # Buttons to allow quick store & return to spotted freqs
         self.spots=[]
-        for j in range(NUM_ROWS):
+        for j in range(self.P.NUM_ROWS):
             row += 1
             for i in range(12):
                 if i<4:
@@ -1159,6 +1168,8 @@ class GUI():
         # If not too much time has elapsed, restore the spots 
         if age<30:
             spots = pickle.load(fp)
+            if len(spots)>12*self.P.NUM_ROWS:
+                spots=spots[:12*self.P.NUM_ROWS]
             print('RestoreState: Spots=',spots)
             frqs = pickle.load(fp)
             flds = pickle.load(fp)
@@ -1177,7 +1188,7 @@ class GUI():
         msg='Really Quit?'
         lab="pyKeyer"
         if sys.version_info[0]==3:
-            result=messagebox.askyesno(lab,msg)
+            result=tkinter.messagebox.askyesno(lab,msg)
         else:
             result=tkMessageBox.askyesno(lab,msg)
         if not result:
@@ -1423,7 +1434,7 @@ class GUI():
             print('Call=',call)
             if self.contest:
                 print('Exch=',exch)
-            messagebox.showerror("pyKeyer - Logging",errmsg)
+            tkinter.messagebox.showerror("pyKeyer - Logging",errmsg)
 
         # Save these for error checking in practice mode
         #print '%%% Saving exchange ***'
@@ -1644,6 +1655,7 @@ class GUI():
             self.call.configure(background=self.default_color)
 
 
+############################################################################################
     
     # Callback when a key is pressed in an entry box
     def key_press(self,event,id=None):
@@ -2003,3 +2015,54 @@ class GUI():
         next_widget.focus_set()      
         next_widget.focus_force()
         self.root.update_idletasks()
+
+
+############################################################################################
+
+     # Open dialog window for basic settings
+    def Settings(self):
+        self.SettingsWin = SETTINGS_GUI(self.root,self.P)
+        return
+
+    
+    # Function to create menu bar
+    def create_menu_bar(self):
+        print('Creating Menubar ...')
+                   
+        menubar = Menu(self.root)
+        Menu1 = Menu(menubar, tearoff=0)
+
+        """
+        Menu1.add_command(label="Clear", command=self.Clear_Spot_List)
+        Menu1.add_command(label="Reset", command=self.Reset)
+
+        self.dx_only = BooleanVar(value=self.P.DX_ONLY)
+        Menu1.add_checkbutton(
+            label="DX Only",
+            underline=0,
+            variable=self.dx_only,
+            command=self.toggle_dx_only
+        )
+        
+        nodemenu = Menu(self.root, tearoff=0)
+        self.node = StringVar(self.root)
+        self.node.set(self.P.SERVER)
+        #print( self.node.get() , self.P.SERVER )
+        for node in list(self.P.NODES.keys()):
+            nodemenu.add_radiobutton(label=node,
+                                     value=node,
+                                     variable=self.node,
+                                     command=lambda: self.SelectNode() )
+        
+        Menu1.add_cascade(label="Nodes", menu=nodemenu)
+        Menu1.add_separator()
+        """
+        
+        Menu1.add_command(label="Settings ...", command=self.Settings)
+        Menu1.add_separator()
+        Menu1.add_command(label="Exit", command=self.Quit)
+        menubar.add_cascade(label="File", menu=Menu1)
+
+        self.root.config(menu=menubar)
+
+        

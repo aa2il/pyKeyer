@@ -71,7 +71,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         P=self.P
         name  = P.MASTER[call]['name']
         state = P.MASTER[call]['state']
-        num = P.MASTER[call]['cwops']
+        num   = P.MASTER[call]['cwops']
         if VERBOSITY>0:
             print('CWOPS_KEYEING - Hint:',name+' '+state+' '+num)
         return name+' '+state+' '+num
@@ -113,6 +113,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
                     num = cut_numbers( int(num), ALL=True )
                 txt2  = ' '+name+' '+num
                 self.qth = num
+            self.serial=self.qth            # Need this bx the way the repeat keys are labeled
             
             return txt2
 

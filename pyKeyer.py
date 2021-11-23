@@ -71,32 +71,57 @@ class PARAMS:
         # Process command line args
         # Can add required=True to anything that is required
         arg_proc = argparse.ArgumentParser()
-        arg_proc.add_argument('-ss', action='store_true',help='ARRL Sweepstakes')
-        arg_proc.add_argument('-naqp', action='store_true',help='NAQP')
-        arg_proc.add_argument('-sst', action='store_true',help='K1USN SST')
-        arg_proc.add_argument('-CWops', action='store_true',help='CWops')
-        arg_proc.add_argument('-cwopen', action='store_true',help='CWops CW Open')
-        arg_proc.add_argument('-wpx', action='store_true',help='CQ WPX')
-        arg_proc.add_argument('-arrl_dx', action='store_true',help='ARRL DX')
-        arg_proc.add_argument('-arrl_10m', action='store_true',help='ARRL 10m')
-        arg_proc.add_argument('-cqp', action='store_true',help='California QP')
-        arg_proc.add_argument('-fd', action='store_true',help='ARRL Field Day')
-        arg_proc.add_argument('-vhf', action='store_true',help='ARRL VHF')
-        arg_proc.add_argument('-stew', action='store_true',help='Stew Parry')
-        arg_proc.add_argument('-sat', action='store_true',help='Satellites')
-        arg_proc.add_argument('-sprint', action='store_true',help='NCCC CW Sprint')
-        arg_proc.add_argument('-cqww', action='store_true',help='CQ Worldwide')
-        arg_proc.add_argument('-iaru', action='store_true',help='IARU HF Championship')
-        arg_proc.add_argument('-test', action='store_true',help='Disable TX')
-        arg_proc.add_argument('-practice', action='store_true',help='Practice mode')
-        arg_proc.add_argument('-sidetone', action='store_true',help='Sidetone Osc')
-        arg_proc.add_argument('-nohints', action='store_true',help='No hints')
-        arg_proc.add_argument('-capture', action='store_true',help='Record Rig Audio')
-        arg_proc.add_argument('-force', action='store_true',help='Force rig connection (debugging)')
-        arg_proc.add_argument('-master', action='store_true',help='Use Master History File')
-        arg_proc.add_argument('-ca_only', action='store_true',help='Only use California Stations')
+        arg_proc.add_argument('-ss', action='store_true',
+                              help='ARRL Sweepstakes')
+        arg_proc.add_argument('-naqp', action='store_true',
+                              help='NAQP')
+        arg_proc.add_argument('-sst', action='store_true',
+                              help='K1USN SST')
+        arg_proc.add_argument('-CWops', action='store_true',
+                              help='CWops')
+        arg_proc.add_argument('-cwopen', action='store_true',
+                              help='CWops CW Open')
+        arg_proc.add_argument('-wpx', action='store_true',
+                              help='CQ WPX')
+        arg_proc.add_argument('-arrl_dx', action='store_true',
+                              help='ARRL DX')
+        arg_proc.add_argument('-arrl_10m', action='store_true',
+                              help='ARRL 10m')
+        arg_proc.add_argument('-cqp', action='store_true',
+                              help='California QP')
+        arg_proc.add_argument('-fd', action='store_true',
+                              help='ARRL Field Day')
+        arg_proc.add_argument('-vhf', action='store_true',
+                              help='ARRL VHF')
+        arg_proc.add_argument('-stew', action='store_true',
+                              help='Stew Parry')
+        arg_proc.add_argument('-sat', action='store_true',
+                              help='Satellites')
+        arg_proc.add_argument('-sprint', action='store_true',
+                              help='NCCC CW Sprint')
+        arg_proc.add_argument('-cqww', action='store_true',
+                              help='CQ Worldwide')
+        arg_proc.add_argument('-iaru', action='store_true',
+                              help='IARU HF Championship')
+        arg_proc.add_argument('-test', action='store_true',
+                              help='Disable TX')
+        arg_proc.add_argument('-practice', action='store_true',
+                              help='Practice mode')
+        arg_proc.add_argument('-sidetone', action='store_true',
+                              help='Sidetone Osc')
+        arg_proc.add_argument('-nohints', action='store_true',
+                              help='No hints')
+        arg_proc.add_argument('-capture', action='store_true',
+                              help='Record Rig Audio')
+        arg_proc.add_argument('-force', action='store_true',
+                              help='Force rig connection (debugging)')
+        arg_proc.add_argument('-master', action='store_true',
+                              help='Use Master History File')
+        arg_proc.add_argument('-ca_only', action='store_true',
+                              help='Only use California Stations')
         arg_proc.add_argument("-wpm", help="CW speed",type=int,default=20)
-        arg_proc.add_argument('-adjust', action='store_true',help='Adjust speed based on correct copy')
+        arg_proc.add_argument('-adjust', action='store_true',
+                              help='Adjust speed based on correct copy')
         arg_proc.add_argument("-rig", help="Connection Type",
                               type=str,default=["ANY"],nargs='+',
                               choices=CONNECTIONS+['NONE']+RIGS)
@@ -104,21 +129,30 @@ class PARAMS:
                               type=int,default=0)
         arg_proc.add_argument("-max_age", help="Max age in hours",
                               type=int,default=9999)
-        arg_proc.add_argument('-nano', action='store_true',help="Use Nano IO Interface")
+        arg_proc.add_argument("-nrows", help="No. STO/RCL rows",
+                              type=int,default=2)
+        arg_proc.add_argument('-nano', action='store_true',
+                              help="Use Nano IO Interface")
         arg_proc.add_argument("-mode", help="Rig Mode",
-                      type=str,default=None,
-                      choices=[None,'CW','SSB'])
+                              type=str,default=None,
+                              choices=[None,'CW','SSB'])
         arg_proc.add_argument("-log", help="Log file name",
-                      type=str,default=None)
+                              type=str,default=None)
         arg_proc.add_argument("-rotor", help="Rotor connection Type",
-                      type=str,default="NONE",
-                      choices=['HAMLIB','NONE'])
+                              type=str,default="NONE",
+                              choices=['HAMLIB','NONE'])
         arg_proc.add_argument("-port2", help="Rotor onnection Port",
                               type=int,default=0)
-        arg_proc.add_argument('-server', action='store_true',help='Start hamlib server')
-        arg_proc.add_argument('-udp', action='store_true',help='Start UDP server')
-        arg_proc.add_argument('-use_log_hist', action='store_true',help='Use history from log')
-        arg_proc.add_argument('-use_adif_hist', action='store_true',help='Use history from adif log')
+        arg_proc.add_argument('-server', action='store_true',
+                              help='Start hamlib server')
+        arg_proc.add_argument('-udp', action='store_true',
+                              help='Start UDP server')
+        arg_proc.add_argument('-gps', action='store_true',
+                              help='Read GPS info from .gpsrc file')
+        arg_proc.add_argument('-use_log_hist', action='store_true',
+                              help='Use history from log')
+        arg_proc.add_argument('-use_adif_hist', action='store_true',
+                              help='Use history from adif log')
         args = arg_proc.parse_args()
 
         self.SPRINT        = args.sprint
@@ -143,9 +177,11 @@ class PARAMS:
         else:
             self.rig       = None
             
+        self.NUM_ROWS      = args.nrows
         self.PORT          = args.port
         self.HAMLIB_SERVER = args.server
         self.UDP_SERVER    = args.udp
+        self.GPS           = args.gps
         self.USE_LOG_HISTORY = args.use_log_hist
         self.USE_ADIF_HISTORY = args.use_adif_hist
         self.SIDETONE      = args.sidetone or self.PORT==1
@@ -231,22 +267,7 @@ class PARAMS:
             self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
             
         # Read config file
-        self.RCFILE=os.path.expanduser("~/.keyerrc")
-        self.SETTINGS=None
-        try:
-            with open(self.RCFILE) as json_data_file:
-                self.SETTINGS = json.load(json_data_file)
-        except:
-            print(self.RCFILE,' not found - need call!\n')
-            s=SETTINGS(None,self)
-            while not self.SETTINGS:
-                try:
-                    s.win.update()
-                except:
-                    pass
-                time.sleep(.01)
-            print('Settings:',self.SETTINGS)
-
+        self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
         #sys,exit(0)
 
 ################################################################################
