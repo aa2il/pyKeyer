@@ -162,6 +162,9 @@ class SAT_KEYING(DEFAULT_KEYING):
         gui.name_lab.grid(column=col,columnspan=cspan)
         gui.name.grid(column=col,columnspan=cspan)
 
+        col+=cspan
+        gui.qsl.grid(column=col,columnspan=1)
+        
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstout)
         gui.boxes.append(gui.rstin)
@@ -208,9 +211,13 @@ class SAT_KEYING(DEFAULT_KEYING):
         
         gui.qth.delete(0,END)
         gui.qth.insert(0,a[0])
+        gui.qsl_rcvd.set(0)
         if len(a)>=2:
             gui.name.delete(0,END)
             gui.name.insert(0,a[1])
+        if len(a)>=3:
+            if a[2]=='Y':
+                gui.qsl_rcvd.set(1)
 
     # Hint insertion
     def insert_hint(self,h):

@@ -293,6 +293,14 @@ class GUI():
         self.hint = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,fg='blue')
         self.hint.grid(row=row+1,rowspan=2,column=8,columnspan=1)
 
+        # Checkbox to indicate if we've received QSL
+        self.qsl_rcvd=tk.IntVar()
+        self.qsl_rcvd.set(0)
+        self.qsl=tk.Checkbutton(self.root,text='QSL Rcvd', \
+                                variable=self.qsl_rcvd)
+        self.qsl.grid(row=row+1,column=9,columnspan=1)
+        tip = ToolTip(self.qsl, ' QSL has been received ')
+        
         # Buttons to access FLDIGI logger
         if False:
             btn = Button(self.root, text='Get',command=self.Set_Log_Fields, \
@@ -619,6 +627,7 @@ class GUI():
 
         self.prec.delete(0, END)
         self.check.delete(0, END)
+        self.qsl_rcvd.set(0)
         
         self.prefill=False
         self.prev_call=''
@@ -1386,6 +1395,7 @@ class GUI():
             self.check.delete(0,END)
             self.exch.delete(0,END)
             self.cat.delete(0,END)
+            self.qsl_rcvd.set(0)
             
             self.rstin.delete(0,END)
             self.rstout.delete(0,END)
@@ -1585,7 +1595,8 @@ class GUI():
                         match2 = match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
                         
                     if self.P.contest_name=='SATELLITES':
-                        print('HEEEEEEEEYYYYYYYYYYYYYY')
+                        #print('HEEEEEEEEYYYYYYYYYYYYYY')
+                        #print(qso)
                         try:
                             qth=qso['QTH']
                         except:
@@ -1594,7 +1605,11 @@ class GUI():
                             name=qso['NAME']
                         except:
                             name=''
-                        last_exch = qth+','+name
+                        try:
+                            b4=qso['QSL_RCVD']
+                        except:
+                            b4='N'
+                        last_exch = qth+','+name+','+b4
                     else:
                         last_exch = qso['SRX_STRING']
 
@@ -1608,6 +1623,7 @@ class GUI():
                 a=last_exch.split(',')
                 print('last_exch - a=',a)
                 self.P.KEYING.dupe(a)
+
                 """
                 elif self.P.SPRINT:
                     #self.serial.delete(0,END)
@@ -1755,6 +1771,7 @@ class GUI():
                     self.prec.delete(0, END)
                     self.hint.delete(0, END)
                     self.check.delete(0, END)
+                    self.qsl_rcvd.set(0)
 
                     next_widget=self.call
                     self.call.focus_set()
