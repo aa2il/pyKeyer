@@ -52,6 +52,8 @@ import os
 from settings import *
 from tcp_server import *
 import xlrd
+from latlon2maiden import *
+from fileio import read_gps_coords
 
 ################################################################################
 
@@ -268,6 +270,19 @@ class PARAMS:
             
         # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
+        print('grid=',self.SETTINGS['MY_GRID'])
+        if self.GPS:
+            [lat,lon,alt,gridsq]=read_gps_coords()
+            print('loc=',[lat,lon,alt,gridsq])
+            #self.MY_GRID = latlon2maidenhead(lat,lon,12)
+            self.MY_GRID = gridsq[:4]
+        
+            self.SETTINGS['MY_LAT'] = lat        
+            self.SETTINGS['MY_LON'] = lon
+            self.SETTINGS['MY_ALT'] = alt        
+            self.SETTINGS['MY_GRID'] = self.MY_GRID        
+            print('grid=',self.SETTINGS['MY_GRID'])
+            
         #sys,exit(0)
 
 ################################################################################
