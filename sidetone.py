@@ -31,6 +31,23 @@ import sig_proc as dsp
 
 ###################################################################
 
+def sidetone_executive(P):
+    print('SIDETONE Exec')
+    q = P.q2
+
+    while not P.Stopper.isSet():
+        if q.qsize()>0:
+            msg = q.get()
+            q.task_done()
+            msg = msg.replace('[LOG]','')
+            print('SIDETONE Exec: msg=',msg)
+            P.osc.send_cw(msg,P.keyer.WPM,P.SIDETONE)
+        else:
+            time.sleep(0.1)
+                
+    print('SIDETONE Done.')
+        
+        
 # Prototype
 def SideToneCB(in_data, frame_count, time_info, status):
     global osc

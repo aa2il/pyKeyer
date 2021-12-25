@@ -1,6 +1,6 @@
 ############################################################################################
 #
-# keyer_hui.py - Rev 1.0
+# gui.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # GUI for CW keyer.
@@ -97,15 +97,17 @@ class GUI():
         self.keyer=P.keyer;
         self.start_time = datetime.utcnow().replace(tzinfo=UTC)
         self.nqsos_start = 0
+        self.sock = self.P.sock
 
         print(P.sock.rig_type2)
-        if P.sock.rig_type2:
+        if P.sock.rig_type2 and P.sock.rig_type2!='None':
             rig=' - '+P.sock.rig_type2
+            if P.sock2 and P.sock2.rig_type2 and P.sock2.rig_type2!='None':
+                rig+=' + '+P.sock2.rig_type2
         else:
             rig=''
         self.root.title("pyKeyer by AA2IL"+rig)
         self.tuning = False
-        self.rig_ctrl = False
         self.root.protocol("WM_DELETE_WINDOW", self.Quit)
 
         self.MACRO_TXT = StringVar()
@@ -115,7 +117,6 @@ class GUI():
         self.last_shift_key=''
         self.last_hint=''
 
-        self.sock = P.sock
         self.q = P.q
         self.exch_out=''
         self.ndigits=3
@@ -183,7 +184,7 @@ class GUI():
 
         # Keep an ADIF copy of the log as well
         self.fp_adif = open(P.LOG_FILE,"a+")
-        print("KEYER_GUI: ADIF file name=", self.fp_adif) 
+        print("GUI: ADIF file name=", self.fp_adif) 
 
         # Also save all sent text to a file
         self.fp_txt = open(MY_CALL.replace('/','_')+".TXT","a+")
@@ -393,52 +394,61 @@ class GUI():
         self.counter.insert(0,str(self.P.MY_CNTR))
         self.counter_lab.grid_remove()
         self.counter.grid_remove()
-        
+
+        # Radio button group to support SO2R
+        col += 2
+        self.iRadio = IntVar(value=1)
+        self.Radio1 = Radiobutton(self.root, text=P.sock1.rig_type2,
+                                  variable=self.iRadio,
+                                  value=1,command=self.SelectRadio)
+        self.Radio1.grid(row=row,column=col,sticky=E+W)
+        tip = ToolTip(self.Radio1, ' Rig 1 ' )
+
+        col += 1
+        if P.sock2:
+            self.Radio2 = Radiobutton(self.root,  text=P.sock2.rig_type2,
+                                      variable=self.iRadio,
+                                      value=2,command=self.SelectRadio)
+            self.Radio2.grid(row=row,column=col,sticky=E+W)
+            tip = ToolTip(self.Radio2, ' Rig 2 ' )
+
         # Other buttons - any buttons we need to modify, we need to grab handle to them
         # before we try to pack them.  Otherwise, all we get is the results of the packing
 
-        # Rig control sub-menu
-        col += 1
-        self.RigCtrlBtn = Button(self.root, text='Rig Ctrl', command=self.RigCtrlCB )
-        self.RigCtrlBtn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(self.RigCtrlBtn,' Show/Hide Rig Control Frame ')
-        self.rig = RIG_CONTROL(P)
-        
-        # Add a tab to manage Rotor
-        # This is actually rather difficult since there doesn't
-        # appear to be a tk equivalent to QLCDnumber
-        self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
-
         # Capture
-        col += 1
-        self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
-        self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
-        self.CaptureAudioCB(-1)
+        if False:
+            col += 2
+            self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
+            self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
+            tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
+            self.CaptureAudioCB(-1)
         
         # Practice button
-        col += 1
-        self.PracticeBtn = Button(self.root, text='Practice', command=self.PracticeCB )
-        self.PracticeBtn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(self.PracticeBtn,' Toggle Practice Mode ')
-        P.PRACTICE_MODE = not P.PRACTICE_MODE
-        self.PracticeCB()
+        if False:
+            col += 1
+            self.PracticeBtn = Button(self.root, text='Practice', command=self.PracticeCB )
+            self.PracticeBtn.grid(row=row,column=col,sticky=E+W)
+            tip = ToolTip(self.PracticeBtn,' Toggle Practice Mode ')
+            P.PRACTICE_MODE = not P.PRACTICE_MODE
+            self.PracticeCB()
 
         # Button to turn SIDETONE on and off
-        col += 1
-        self.SideToneBtn = Button(self.root, text='SideTone', command=self.SideToneCB )
-        self.SideToneBtn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(self.SideToneBtn,' Toggle Sidetone Osc ')
-        P.SIDETONE = not P.SIDETONE
-        self.SideToneCB()
+        if False:
+            col += 1
+            self.SideToneBtn = Button(self.root, text='SideTone', command=self.SideToneCB )
+            self.SideToneBtn.grid(row=row,column=col,sticky=E+W)
+            tip = ToolTip(self.SideToneBtn,' Toggle Sidetone Osc ')
+            P.SIDETONE = not P.SIDETONE
+            self.SideToneCB()
 
         # TUNE button
-        col += 1
-        self.TuneBtn = Button(self.root, text='Tune',bg='yellow',\
-                              highlightbackground= 'yellow', \
-                              command=self.Tune )
-        self.TuneBtn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(self.TuneBtn,' Key Radio to Ant Tuning ')
+        if False:
+            col += 1
+            self.TuneBtn = Button(self.root, text='Tune',bg='yellow',\
+                                  highlightbackground= 'yellow', \
+                                  command=self.Tune )
+            self.TuneBtn.grid(row=row,column=col,sticky=E+W)
+            tip = ToolTip(self.TuneBtn,' Key Radio to Ant Tuning ')
 
         # QRZ button
         col += 1
@@ -457,15 +467,14 @@ class GUI():
                         command=self.set_satellite).grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         self.set_satellite('None')
 
-        # Reset button
-        col = 8
-        if False:
-            btn = Button(self.root, text='Reset',command=self.Reset_Defaults ) 
-            btn.grid(row=row,column=col,sticky=E+W)
-            tip = ToolTip(btn, ' Reset to Default Params ' )
-
         """
         # Don't need these anymore
+
+        # Reset button
+        col = 8
+        btn = Button(self.root, text='Reset',command=self.Reset_Defaults ) 
+        btn.grid(row=row,column=col,sticky=E+W)
+        tip = ToolTip(btn, ' Reset to Default Params ' )
 
         # Save state button
         col += 1
@@ -498,6 +507,23 @@ class GUI():
         self.rate_lab.grid(row=row,columnspan=4,column=col,sticky=W)
         #Label(self.root, text="--- Spots ---",font=font1) \
         #    .grid(row=row,column=int(ncols/2),columnspan=2,sticky=E+W)
+
+        # Other capabilities accessed via menu
+        if False:
+            col += 4
+            self.RigCtrlBtn = Button(self.root, text='Rig Ctrl', command=self.RigCtrlCB )
+            self.RigCtrlBtn.grid(row=row,column=col,sticky=E+W)
+            tip = ToolTip(self.RigCtrlBtn,' Show/Hide Rig Control Frame ')
+        self.rig = RIG_CONTROL(P)
+        
+        # Add a tab to manage Rotor
+        # This is actually rather difficult since there doesn't
+        # appear to be a tk equivalent to QLCDnumber
+        self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
+
+        # Settings
+        self.SettingsWin = SETTINGS_GUI(self.root,self.P)
+        self.SettingsWin.hide()
         
         # Buttons to allow quick store & return to spotted freqs
         self.spots=[]
@@ -632,6 +658,19 @@ class GUI():
         self.prefill=False
         self.prev_call=''
 
+    # Callback to select a radio for SO2R
+    def SelectRadio(self):
+        iRadio=self.iRadio.get()
+        if iRadio==1:
+            self.P.sock=self.P.sock1
+            self.P.ser=self.P.ser1
+        else:
+            self.P.sock=self.P.sock2
+            self.P.ser=self.P.ser2
+        self.sock=self.P.sock
+        print("You selected radio " + str(iRadio),'\tP.sock=',P.sock)
+        rig=P.sock.rig_type2
+        self.root.title("pyKeyer by AA2IL"+rig)
         
     # callback to look up a call on qrz.com
     def Web_LookUp(self):
@@ -647,40 +686,26 @@ class GUI():
     def PracticeCB(self):
         self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
         print("Practice ...",self.P.PRACTICE_MODE)
-        if self.P.PRACTICE_MODE:
-            self.PracticeBtn.configure(background='red',highlightbackground= 'red')
-        else:
-            self.PracticeBtn.configure(background='green',highlightbackground= 'green')
 
     # callback to turn sidetone on and off
     def SideToneCB(self):
         print("Toggling Sidetone ...")
         self.P.SIDETONE = not self.P.SIDETONE
-        if self.P.SIDETONE:
-            self.SideToneBtn.configure(background='red',highlightbackground= 'red')
-        else:
-            self.SideToneBtn.configure(background='green',highlightbackground= 'green')
 
     # Callback to bring up rig control menu
     def RigCtrlCB(self):
         print("^^^^^^^^^^^^^^Rig Control...")
-        self.rig_ctrl = not self.rig_ctrl
-        if self.rig_ctrl:
-            # Show
-            self.rig.win.update()
-            self.rig.win.deiconify()
-        else:
-            # Hide
-            self.rig.win.withdraw()
+        self.rig.show()
 
     # Callback to key/unkey TX for tuning
     def Tune(self):
         print("Tuning...")
-        self.tuning = not self.tuning
-        if self.tuning:
-            self.TuneBtn.configure(background='red',highlightbackground= 'red')
-        else:
-            self.TuneBtn.configure(background='yellow',highlightbackground= 'yellow')
+        if False:
+            self.tuning = not self.tuning
+            if self.tuning:
+                self.TuneBtn.configure(background='red',highlightbackground= 'red')
+            else:
+                self.TuneBtn.configure(background='yellow',highlightbackground= 'yellow')
         txt='[TUNE]'
         self.q.put(txt)
 
@@ -828,11 +853,11 @@ class GUI():
             cntr = self.sock.get_serial_out()
             if not cntr or cntr=='':
                 cntr=self.P.MY_CNTR
-            print('KEYER_GUI: cntr=',cntr,'\tndigits=',self.ndigits)
+            print('GUI: cntr=',cntr,'\tndigits=',self.ndigits)
             self.cntr = cw_keyer.cut_numbers(cntr,ndigits=self.ndigits)
             txt = txt.replace('[SERIAL]',self.cntr)
             self.serial_out = self.cntr
-            print('KEYER_GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
+            print('GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
 
         # This should have already been handled when we loaded the macros
         #txt = self.Patch_Macro(txt)
@@ -875,6 +900,7 @@ class GUI():
         self.check.grid_remove()
         self.hint_lab.grid_remove()
         self.hint.grid_remove()
+        self.qsl.grid_remove()
 
     # Callback for Satellite list spinner
     def set_satellite(self,val):
@@ -924,7 +950,7 @@ class GUI():
         elif val=='Default':
             self.P.KEYING=DEFAULT_KEYING(self.P)
         else:
-            print('KEYER_GUI: *** ERROR *** Cant figure which contest !')
+            print('GUI: *** ERROR *** Cant figure which contest !')
             print(val)
             sys.exit(0)
             
@@ -1010,8 +1036,8 @@ class GUI():
             P.CAPTURE = not P.CAPTURE
         if (iopt==None and not P.CAPTURE) or iopt==1:
             if not P.CAPTURE:
-                self.CaptureBtn['text']='Stop Capture'
-                self.CaptureBtn.configure(background='red',highlightbackground= 'red')
+                #self.CaptureBtn['text']='Stop Capture'
+                #self.CaptureBtn.configure(background='red',highlightbackground= 'red')
                 P.CAPTURE = True
                 print('Capture rig audio started ...')
 
@@ -1032,8 +1058,8 @@ class GUI():
                 
         else:
             if P.CAPTURE:
-                self.CaptureBtn['text']='Capture'
-                self.CaptureBtn.configure(background='green',highlightbackground= 'green')
+                #self.CaptureBtn['text']='Capture'
+                #self.CaptureBtn.configure(background='green',highlightbackground= 'green')
                 if P.RIG_AUDIO_IDX:
                     P.rec.stop_recording()
                     P.rec.close()
@@ -1047,7 +1073,7 @@ class GUI():
         try:
             self.P.MY_CNTR = int( cntr )
         except:
-            print('*** KEYER_GUI  - ERROR *** Unable to convert counter entry to int:',cntr)
+            print('*** GUI  - ERROR *** Unable to convert counter entry to int:',cntr)
         return True
 
     # Read his call from the entry box
@@ -1297,8 +1323,9 @@ class GUI():
             errmsg='Missing one or more fields!'
             
         if valid:
-            print('LOG IT!',self.contest,self.P.contest_name)
-            #print self.sock.run_macro(-1)
+            print('LOG IT! contest=',self.contest,self.P.contest_name,\
+                  'P.sock=',self.P.sock,self.P.sock.rig_type2)
+            #print(self.sock.run_macro(-1))
 
             # Get time stamp, freq, mode, etc.
             UTC       = pytz.utc
@@ -1335,13 +1362,13 @@ class GUI():
 
             # Do some error checking                    
             if mode!=self.sock.mode and self.sock.connection!='NONE' and False:
-                txt='##### WARNING ##### Mode mismatch in keyer_gui - radio:'+mode+'\tWoof:'+self.sock.mode
+                txt='##### WARNING ##### Mode mismatch in gui - radio:'+mode+'\tWoof:'+self.sock.mode
                 print(txt)                          # Print error msg to terminal ...
                 self.txt.insert(END, txt+'\n')      # ... and put it in the console text window
                 self.txt.see(END)
 
             if band!=self.sock.band and self.sock.connection!='NONE' and False:
-                txt='##### WARNING ##### Band mismatch in keyer_gui - radio:'+band+'\tWoof:'+self.sock.band
+                txt='##### WARNING ##### Band mismatch in gui - radio:'+band+'\tWoof:'+self.sock.band
                 print(txt)
                 self.txt.insert(END, txt+'\n')
                 self.txt.see(END)
@@ -1358,11 +1385,11 @@ class GUI():
                             str(self.cntr),satellite,str(1e-3*freq_kHz_rx),band_rx] )))
 
             if self.P.sock3.connection=='FLLOG':
-                print('KEYER_GUI: =============== via FLLOG ...')
+                print('GUI: =============== via FLLOG ...')
                 self.P.sock3.Add_QSO(qso)
 
             elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE:
-                print('KEYER_GUI: =============== via FLDIGI ...')
+                print('GUI: =============== via FLDIGI ...')
                 fields = {'Call':call,'Name':name,'RST_out':rstout,'QTH':qth,'Exchange':exch}
                 self.sock.set_log_fields(fields)
                 self.sock.set_mode('CW')
@@ -1373,7 +1400,7 @@ class GUI():
             ClarReset(self)
             #self.sock.rit(0,0)
 
-            # Make sure partice exec gets what it needs
+            # Make sure practice exec gets what it needs
             if self.P.PRACTICE_MODE:
                 print('LOG_QSO: Waiting for handshake ...',self.keyer.evt.isSet() )
                 while self.keyer.evt.isSet():
@@ -1423,7 +1450,7 @@ class GUI():
             # Update ADIF file
             if not self.P.PRACTICE_MODE:
                 qso2 =  {key.upper(): val for key, val in list(qso.items())}
-                print("KEYER_GUI: ADIF writing QSO=",qso2)
+                print("GUI: ADIF writing QSO=",qso2)
                 write_adif_record(self.fp_adif,qso2,self.P)
 
             # Clobber any presets that have this call
@@ -1943,7 +1970,7 @@ class GUI():
                             self.Send_Macro(5)                     # Send my excahnge
 
                     else:
-                        print('!!!!!!!!!!!!! KEYER_GUI - should never get here !!!!!!!!!!')
+                        print('!!!!!!!!!!!!! GUI - should never get here !!!!!!!!!!')
                     """
                     
             """
@@ -2038,8 +2065,8 @@ class GUI():
 
      # Open dialog window for basic settings
     def Settings(self):
-        self.SettingsWin = SETTINGS_GUI(self.root,self.P)
-        return
+        #self.SettingsWin = SETTINGS_GUI(self.root,self.P)
+        self.SettingsWin.show()
 
     
     # Function to create menu bar
@@ -2049,33 +2076,42 @@ class GUI():
         menubar = Menu(self.root)
         Menu1 = Menu(menubar, tearoff=0)
 
-        """
-        Menu1.add_command(label="Clear", command=self.Clear_Spot_List)
-        Menu1.add_command(label="Reset", command=self.Reset)
-
-        self.dx_only = BooleanVar(value=self.P.DX_ONLY)
+        Menu1.add_command(label="Settings ...", command=self.Settings)
+        Menu1.add_command(label="Rig Control ...", command=self.RigCtrlCB)
+        Menu1.add_separator()
+        
+        self.Capturing = BooleanVar(value=self.P.CAPTURE)
         Menu1.add_checkbutton(
-            label="DX Only",
+            label="Capture Audio",
             underline=0,
-            variable=self.dx_only,
-            command=self.toggle_dx_only
+            variable=self.Capturing,
+            command=self.CaptureAudioCB
         )
         
-        nodemenu = Menu(self.root, tearoff=0)
-        self.node = StringVar(self.root)
-        self.node.set(self.P.SERVER)
-        #print( self.node.get() , self.P.SERVER )
-        for node in list(self.P.NODES.keys()):
-            nodemenu.add_radiobutton(label=node,
-                                     value=node,
-                                     variable=self.node,
-                                     command=lambda: self.SelectNode() )
+        self.Tuning = BooleanVar(value=False)
+        Menu1.add_checkbutton(
+            label="Tune",
+            underline=0,
+            variable=self.Tuning,
+            command=self.Tune
+        )
         
-        Menu1.add_cascade(label="Nodes", menu=nodemenu)
-        Menu1.add_separator()
-        """
+        self.Practice = BooleanVar(value=self.P.PRACTICE_MODE)
+        Menu1.add_checkbutton(
+            label="Practice Mode",
+            underline=0,
+            variable=self.Practice,
+            command=self.PracticeCB
+        )
         
-        Menu1.add_command(label="Settings ...", command=self.Settings)
+        self.SideTone = BooleanVar(value=self.P.SIDETONE)
+        Menu1.add_checkbutton(
+            label="SideTone",
+            underline=0,
+            variable=self.SideTone,
+            command=self.SideToneCB
+        )
+        
         Menu1.add_separator()
         Menu1.add_command(label="Exit", command=self.Quit)
         menubar.add_cascade(label="File", menu=Menu1)

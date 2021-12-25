@@ -12,7 +12,7 @@ set BAUD  = 38400
 ###############################################################################
 
 # Open list of anagrams
-xreader ~/Desktop/CW/1-sending.pdf &
+xreader ~/AA2IL/CW/1-sending.pdf &
 
 # Locate arduino device
 echo " "

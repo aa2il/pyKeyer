@@ -40,7 +40,7 @@ except:
 
 class ROTOR_CONTROL():
     def __init__(self,tabs,P):
-        self.sock = P.sock2
+        self.sock = P.sock3
         self.MY_GRID = P.SETTINGS['MY_GRID']
         if self.sock.connection == 'NONE' and False:
             return None

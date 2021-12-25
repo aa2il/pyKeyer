@@ -33,27 +33,29 @@ import sys
 import serial
 import practice 
 import rig_io.socket_io as socket_io
-import argparse
 import threading
 if sys.version_info[0]==3:
     import queue
 else:
     import Queue
 from subprocess import call
-from keyer_gui import *
+from gui import *
 from macros import *
-from nano_io import *
 from load_history import *
 from pprint import pprint
 import rig_io.hamlibserver as rigctl
 from sidetone import *
 import time
 import os
+from params import *
 from settings import *
 from tcp_server import *
 import xlrd
 from latlon2maiden import *
 from fileio import read_gps_coords
+from watchdog import *
+from keying import *
+from process_chars import *
 
 ################################################################################
 
@@ -62,443 +64,8 @@ FS = 48000              # Playback rate
 F0 = 700
 AMP=0.5
 HIST_DIR=os.path.expanduser('~/Python/history/data/')
-VERBOSITY=0
 
 ################################################################################
-
-# Structure to contain processing params
-class PARAMS:
-    def __init__(self):
-
-        # Process command line args
-        # Can add required=True to anything that is required
-        arg_proc = argparse.ArgumentParser()
-        arg_proc.add_argument('-ss', action='store_true',
-                              help='ARRL Sweepstakes')
-        arg_proc.add_argument('-naqp', action='store_true',
-                              help='NAQP')
-        arg_proc.add_argument('-sst', action='store_true',
-                              help='K1USN SST')
-        arg_proc.add_argument('-CWops', action='store_true',
-                              help='CWops')
-        arg_proc.add_argument('-cwopen', action='store_true',
-                              help='CWops CW Open')
-        arg_proc.add_argument('-wpx', action='store_true',
-                              help='CQ WPX')
-        arg_proc.add_argument('-arrl_dx', action='store_true',
-                              help='ARRL DX')
-        arg_proc.add_argument('-arrl_10m', action='store_true',
-                              help='ARRL 10m')
-        arg_proc.add_argument('-cqp', action='store_true',
-                              help='California QP')
-        arg_proc.add_argument('-fd', action='store_true',
-                              help='ARRL Field Day')
-        arg_proc.add_argument('-vhf', action='store_true',
-                              help='ARRL VHF')
-        arg_proc.add_argument('-stew', action='store_true',
-                              help='Stew Parry')
-        arg_proc.add_argument('-sat', action='store_true',
-                              help='Satellites')
-        arg_proc.add_argument('-sprint', action='store_true',
-                              help='NCCC CW Sprint')
-        arg_proc.add_argument('-cqww', action='store_true',
-                              help='CQ Worldwide')
-        arg_proc.add_argument('-iaru', action='store_true',
-                              help='IARU HF Championship')
-        arg_proc.add_argument('-test', action='store_true',
-                              help='Disable TX')
-        arg_proc.add_argument('-practice', action='store_true',
-                              help='Practice mode')
-        arg_proc.add_argument('-sidetone', action='store_true',
-                              help='Sidetone Osc')
-        arg_proc.add_argument('-nohints', action='store_true',
-                              help='No hints')
-        arg_proc.add_argument('-capture', action='store_true',
-                              help='Record Rig Audio')
-        arg_proc.add_argument('-force', action='store_true',
-                              help='Force rig connection (debugging)')
-        arg_proc.add_argument('-master', action='store_true',
-                              help='Use Master History File')
-        arg_proc.add_argument('-ca_only', action='store_true',
-                              help='Only use California Stations')
-        arg_proc.add_argument("-wpm", help="CW speed",type=int,default=20)
-        arg_proc.add_argument('-adjust', action='store_true',
-                              help='Adjust speed based on correct copy')
-        arg_proc.add_argument("-rig", help="Connection Type",
-                              type=str,default=["ANY"],nargs='+',
-                              choices=CONNECTIONS+['NONE']+RIGS)
-        arg_proc.add_argument("-port", help="Connection Port",
-                              type=int,default=0)
-        arg_proc.add_argument("-max_age", help="Max age in hours",
-                              type=int,default=9999)
-        arg_proc.add_argument("-nrows", help="No. STO/RCL rows",
-                              type=int,default=2)
-        arg_proc.add_argument('-nano', action='store_true',
-                              help="Use Nano IO Interface")
-        arg_proc.add_argument("-mode", help="Rig Mode",
-                              type=str,default=None,
-                              choices=[None,'CW','SSB'])
-        arg_proc.add_argument("-log", help="Log file name",
-                              type=str,default=None)
-        arg_proc.add_argument("-rotor", help="Rotor connection Type",
-                              type=str,default="NONE",
-                              choices=['HAMLIB','NONE'])
-        arg_proc.add_argument("-port2", help="Rotor onnection Port",
-                              type=int,default=0)
-        arg_proc.add_argument('-server', action='store_true',
-                              help='Start hamlib server')
-        arg_proc.add_argument('-udp', action='store_true',
-                              help='Start UDP server')
-        arg_proc.add_argument('-gps', action='store_true',
-                              help='Read GPS info from .gpsrc file')
-        arg_proc.add_argument('-use_log_hist', action='store_true',
-                              help='Use history from log')
-        arg_proc.add_argument('-use_adif_hist', action='store_true',
-                              help='Use history from adif log')
-        args = arg_proc.parse_args()
-
-        self.SPRINT        = args.sprint
-        self.CAPTURE       = args.capture
-        self.RIG_AUDIO_IDX = None
-        self.FORCE         = args.force
-        self.TEST_MODE     = args.test
-        self.NANO_IO       = args.nano
-        self.PRACTICE_MODE = args.practice
-        self.ADJUST_SPEED  = args.adjust and args.practice
-        self.NO_HINTS      = args.nohints
-        self.USE_MASTER    = args.master
-        self.CA_ONLY       = args.ca_only
-        #self.DIRECT_CONNECT = args.direct
-        self.WPM           = args.wpm
-        self.INIT_MODE     = args.mode
-        self.LOG_FILE      = args.log
-        
-        self.connection    = args.rig[0]
-        if len(args.rig)>=2:
-            self.rig       = args.rig[1]
-        else:
-            self.rig       = None
-            
-        self.NUM_ROWS      = args.nrows
-        self.PORT          = args.port
-        self.HAMLIB_SERVER = args.server
-        self.UDP_SERVER    = args.udp
-        self.GPS           = args.gps
-        self.USE_LOG_HISTORY = args.use_log_hist
-        self.USE_ADIF_HISTORY = args.use_adif_hist
-        self.SIDETONE      = args.sidetone or self.PORT==1
-
-        self.CONTEST       = CONTEST
-        self.MACROS        = MACROS
-        self.MY_CNTR       = 1
-        self.PRECS         = PRECS
-        self.SHUTDOWN      = False
-        self.DIRTY         = False
-
-        self.KEYING=None
-        self.HIST_DIR=HIST_DIR
-
-        self.CONTEST_LIST=['CW Ops Mini-Test','SST','CW Open','ARRL VHF','NAQP-CW', \
-                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
-                           'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES']
-        if self.SPRINT:
-            print('NEED TO FIX THIS!!!!!!!!!!!!!')
-            sys.exit(0)
-            self.KEYING=SPRINT_KEYING(self)
-            MAX_AGE_HOURS=1
-        elif args.CWops:
-            self.contest_name='CW Ops Mini-Test'
-            MAX_AGE_HOURS=1
-        elif args.sst:
-            self.contest_name='SST'
-            MAX_AGE_HOURS=1
-        elif args.vhf:
-            self.contest_name='ARRL VHF'
-            MAX_AGE_HOURS=33
-        elif args.naqp:
-            self.contest_name='NAQP-CW'
-            MAX_AGE_HOURS=12
-        elif args.ss:
-            self.contest_name='ARRL-SS-CW'
-            MAX_AGE_HOURS=30
-        elif args.cqp:
-            self.contest_name='CQP'
-            MAX_AGE_HOURS=48 #??
-        elif args.cwopen:
-            self.contest_name='CW Open'
-            MAX_AGE_HOURS=4
-        elif args.fd:
-            self.contest_name='ARRL-FD'
-            MAX_AGE_HOURS=48  #??
-        elif args.stew:
-            self.contest_name='STEW PERRY'
-            MAX_AGE_HOURS=24  #??
-        elif args.iaru:
-            self.contest_name='IARU-HF'
-            MAX_AGE_HOURS=48  #??
-        elif args.cqww:
-            self.contest_name='CQWW'
-            MAX_AGE_HOURS=48
-        elif args.wpx:
-            self.contest_name = 'CQ-WPX-CW'
-            MAX_AGE_HOURS=48
-        elif args.arrl_10m:
-            self.contest_name = 'ARRL-10M'
-            MAX_AGE_HOURS=48    #??
-        elif args.arrl_dx:
-            self.contest_name = 'ARRL-DX'
-            MAX_AGE_HOURS=48    #??
-        elif args.sat:
-            self.contest_name='SATELLITES'
-            MAX_AGE_HOURS=9999
-        else:
-            self.contest_name='Default'
-            self.HISTORY = HIST_DIR+'master.csv'
-            #self.HISTORY = ''
-            MAX_AGE_HOURS=9999
-        if self.USE_MASTER:
-            self.HISTORY = HIST_DIR+'master.csv'
-
-        self.ROTOR_CONNECTION = args.rotor
-        self.PORT2            = args.port2
-
-        # Compute length of contest
-        if args.max_age!=9999:
-            self.MAX_AGE       = args.max_age*60        # In minutes
-        else:
-            self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
-            
-        # Read config file
-        self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
-        print('grid=',self.SETTINGS['MY_GRID'])
-        if self.GPS:
-            [lat,lon,alt,gridsq]=read_gps_coords()
-            print('loc=',[lat,lon,alt,gridsq])
-            #self.MY_GRID = latlon2maidenhead(lat,lon,12)
-            self.MY_GRID = gridsq[:4]
-        
-            self.SETTINGS['MY_LAT'] = lat        
-            self.SETTINGS['MY_LON'] = lon
-            self.SETTINGS['MY_ALT'] = alt        
-            self.SETTINGS['MY_GRID'] = self.MY_GRID        
-            print('grid=',self.SETTINGS['MY_GRID'])
-            
-        #sys,exit(0)
-
-################################################################################
-
-# Set up separate process that actualy does the keying.
-# We do this so that the GUI process is not blocked by the keying.
-def process_chars(P):
-    last_time = 0
-    keyer     = P.keyer
-    lock      = P.lock1
-    q         = P.q
-    
-    while not P.Stopper.isSet():
-
-        # Anything available?
-        if q.qsize()>0:
-            txt=q.get()
-            q.task_done()
-
-            # Not sure whay this was here but it causes a problem when we get text from big box
-            if P.PRACTICE_MODE and False:
-                txt = ' '+txt
-
-            # Check keyer speed on radio 
-            this_time = time.time();
-            if this_time - last_time>0.1 and not P.PRACTICE_MODE:
-                last_time=this_time
-                #WPM = socket_io.read_speed(P.sock)
-                #print('PROCESS_CHARS: Reading speed')
-                WPM = P.sock.read_speed()
-                if WPM!=int( P.gui.WPM_TXT.get() ) and WPM>=5:
-                    keyer.set_wpm(WPM)
-                    P.gui.WPM_TXT.set(str(WPM))
-
-            print('PROCESSS_CHARS: txt=',txt,'\tWPM=',keyer.WPM)
-
-            # Timing is critical so we make sure we have control
-            #if P.SIDETONE and not P.PRACTICE_MODE:
-            if not P.PRACTICE_MODE:
-                print('=========================================')
-                P.q2.put(txt)
-            lock.acquire()
-            keyer.send_msg(txt)
-            lock.release()
-
-        else:
-            
-            if P.NANO_IO:
-                
-                if ser.in_waiting>0:
-                    txt=nano_read(ser)
-                    if False:
-                        # Put it in the big text box also
-                        P.gui.txt.insert(END, txt+'\n')
-                        P.gui.txt.see(END)
-                        P.gui.root.update_idletasks()
-                else:
-                    time.sleep(0.1)
-                    
-            else:
-                time.sleep(0.1)
-        
-    print('PROCESSS_CHARS Done.')
-
-
-
-def sidetone_executive(P):
-    print('SIDETONE Exec')
-    q = P.q2
-
-    while not P.Stopper.isSet():
-        if q.qsize()>0:
-            msg = q.get()
-            q.task_done()
-            msg = msg.replace('[LOG]','')
-            print('SIDETONE Exec: msg=',msg)
-            P.osc.send_cw(msg,P.keyer.WPM,P.SIDETONE)
-        else:
-            time.sleep(0.1)
-                
-    print('SIDETONE Done.')
-        
-        
-def WatchDog(P):
-    #print('Watch Dog ....')
-
-    # Check if another thread shut down - this isn't complete yet
-    if P.SHUTDOWN:
-        if P.CAPTURE:
-            P.rec.stop_recording()
-            P.rec.close()
-        if P.Timer:
-            print('WatchDog - Cancelling timer ...')
-            P.Timer.cancel()
-        #P.gui.Quit()
-        P.WATCHDOG = False
-        P.Timer=None
-        print('WatchDog - Shut down.')
-
-    # Read radio status
-    if P.sock.connection!='NONE':
-        print('Watch Dog - reading radio status ...', P.sock.connection)
-        if False:
-            socket_io.read_radio_status(P.sock)
-            #print('\tWoof Woof:',P.sock.freq, P.sock.band, P.sock.mode, P.sock.wpm)
-            
-            P.gui.rig.band.set(P.sock.band)
-            x=str(int(P.sock.freq*1e-3))+' KHz  '+str(P.sock.mode)
-            P.gui.rig.status.set(x)
-            P.gui.rig.frequency=P.sock.freq
-            P.gui.rig.mode.set(P.sock.mode)
-            #self.ant.set(ant)
-            #print('\tWoof Woof 2:',x)
-
-            if P.sock.mode=='FM':
-                gui_tone = P.gui.rig.SB_PL_TXT.get()
-                print('\tWoof Woof - PL tone=',P.sock.pl_tone,gui_tone)
-                if P.sock.pl_tone==0:
-                    tone='None'
-                else:
-                    tone=str(P.sock.pl_tone)
-                if tone!=gui_tone:
-                    #print('*** Tone Mismatch ***')
-                    P.gui.rig.SB_PL_TXT.set(tone)
-
-        else:
-            freq = P.sock.get_freq()
-            mode = P.sock.get_mode()
-            band = P.sock.get_band(freq * 1e-6)
-
-            P.gui.rig.band.set(band)
-            x=str(int(freq*1e-3))+' KHz  '+str(mode)
-            P.gui.rig.status.set(x)
-            P.gui.rig.frequency=freq
-            P.gui.rig.mode.set(mode)
-
-    # Let user adjust WPM from radio knob
-    if VERBOSITY>0:
-        print("WatchDog - Checking WPM ...")
-    if False:
-        wpm=P.sock.wpm
-    else:
-        wpm = P.sock.read_speed()
-    if wpm!=P.WPM and wpm>0:
-        print("WatchDog - Changing WPM to",wpm)
-        P.keyer.set_wpm(wpm)
-        P.gui.WPM_TXT.set(str(wpm))
-        P.WPM = wpm
-
-    # Save program state to disk
-    #print("WatchDog - Dirty Dozen ...")
-    if P.DIRTY:
-        P.gui.SaveState()
-
-    # Compute QSO Rate
-    if VERBOSITY>0:
-        print("WatchDog - QSO Rate ...")
-    P.gui.qso_rate()
-
-    # Send out heart beat
-    if P.UDP_SERVER:
-        P.udp_server.Broadcast('Keyer Heartbeat - Thump Thump - kerr chunk')
-    
-    # Read rotor position
-    #print('sock2=',P.sock2)
-    #print('sock2=',P.sock2.connection)
-    if P.sock2.connection!='NONE' or False:
-        gui2=P.gui.rotor_ctrl
-        pos=P.sock2.get_position()
-        #print('pos:',pos)
-        if pos[0]==None:
-            pos[0]=gui2.azlcd1.get()             # Temp
-        if pos[0]!=None:
-            if pos[0]>180:
-                pos[0]-=360
-            if pos[0]<-180:
-                pos[0]+=360
-            gui2.azlcd1.set(pos[0])
-            gui2.ellcd1.set(pos[1])
-            gui2.nominalBearing()
-    
-    # Reset timer
-    if VERBOSITY>0:
-        print("WatchDog - Timer ...")
-    if not P.gui.Done and not P.SHUTDOWN and not P.Stopper.isSet():
-        P.Timer = threading.Timer(1.0, WatchDog, args=(P,))
-        P.Timer.setDaemon(True)                       # This prevents timer thread from blocking shutdown
-        P.Timer.start()
-    else:
-        P.Timer=None
-        print('... Watch Dog quit')
-        P.WATCHDOG = False
-        
-        
-class serial_dummy():
-    def __init__(self):
-        print('Serial dummy object substituted')
-        return
-
-    def setDTR(self,a):
-        return
-
-def toggle_dtr(n=1):
-        print('Toggling DTR ...')
-        for i in range(n):
-            time.sleep(1)
-            print('DTR on')
-            ser.setDTR(True)
-            
-            time.sleep(1)
-            print('DTR off')
-            ser.setDTR(False)
-            
-        #sys.exit(0)
-
-
 
 def UDP_msg_handler(msg):
     print('UDP Message Handler: msg=',msg)
@@ -526,128 +93,36 @@ def UDP_msg_handler(msg):
 
 print("\n\n***********************************************************************************")
 print("\nStarting pyKeyer  ...")
-P=PARAMS()
+P=PARAMS(HIST_DIR)
 if True:
     print("P=")
     pprint(vars(P))
-    print(' ')
 
-# Open connection to rig
-P.sock = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',rig=P.rig,force=P.FORCE)
-if not P.sock.active and not P.PRACTICE_MODE:
+# Open connection to 1st rig
+print('\nPYKEYER: Opening connection to primary rig - connection=',P.connection,'\trig=',P.rig,'...')
+P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',rig=P.rig,force=P.FORCE)
+if not P.sock1.active and not P.PRACTICE_MODE:
     print('*** No connection available to rig ***')
     print('Perhaps you want practice mode?\n')
     sys.exit(0)
+P.sock=P.sock1
+print('P.sock1=',P.sock1)
 
-# Open keying control port
-print('Opening keying port ...',P.sock.rig_type,P.sock.rig_type2)
-if P.NANO_IO:
-    try:
-        ser = open_nano(baud=BAUD)
-    except Exception as e: 
-        print( str(e) )
-        print('\n*************************************')
-        print(  '*** Unable to open Nano IO device ***')
-        print(  '***  Make sure it is plugged in!  ***')
-        print(  '*************************************')
-        print(  '***          Giving up            ***')
-        print('*************************************\n')
-        sys.exit(0)
-    P.ser=ser
-
-#elif P.sock.rig_type=='Kenwood'  or (P.sock.rig_type=='Hamlib' and P.sock.rig_type2=='TS850'):
-elif P.sock.rig_type2=='TS850':
-    if P.PRACTICE_MODE and False:
-        ser=serial_dummy()
-    elif P.sock.connection=='DIRECT':
-        ser = P.sock.s
-    else:
-        ser = serial.Serial(SERIAL_PORT5,4800,timeout=0.1)
-        
-    ser.setDTR(False)
-    #toggle_dtr(5)
-    #sys.exit(0)
-        
-elif P.sock.rig_type=='Icom' or \
-     (P.sock.rig_type=='Hamlib' and P.sock.rig_type2=='IC9700') or \
-     (P.sock.rig_type=='FLRIG'  and P.sock.rig_type2=='IC9700'):
-
-    if P.PRACTICE_MODE:
-        ser=serial_dummy()
-    #elif P.sock.connection=='DIRECT' and False:
-    #ser = P.sock.s
-    
-    elif P.sock.rig_type2=='IC9700':
-        # If direct connect, could use USB A ...
-        #ser = P.sock.s
-        # but, in general, we'll use USB B in case we are using hamlib for rig control
-        ser = serial.Serial(SERIAL_PORT10,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
-        P.sock.init_keyer()
-        time.sleep(.02)
-        ser.setDTR(False)
-        ser.setRTS(False)  
-        
-    else:
-        # DTR keying does not work for the IC706
-        # Instead, we need to connect the TS850 interface to the keying line
-        # It looks like DTR keying is supported by the IC9700 - needs work
-        
-        print('Opening keying port on IC706 ...')
-        ser = serial.Serial(SERIAL_PORT5,19200,timeout=0.1)
-        ser.setDTR(False)
-        print('... Opened keying port on IC706 ...')
-
-    if False:
-        toggle_dtr()
-        
+# Open connection to 2nd rig
+if P.connection2 != "NONE":
+    print('\nPYKEYER: Opening connection to secondary rig - connection=',P.connection2,'\trig=',P.rig2,'...')
+    P.sock2 = socket_io.open_rig_connection(P.connection2,0,P.PORT2,0,'KEYER',rig=P.rig2,force=P.FORCE)
 else:
+    P.sock2=None
+print('P.sock2=',P.sock2)
+#sys.exit(0)
 
-    if not P.PRACTICE_MODE:
-
-        if P.sock.rig_type2=='FT991a':
-            ser = serial.Serial(SERIAL_PORT4,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
-            ser.setDTR(True)
-            time.sleep(.02)
-            ser.setDTR(False)
-            ser.setRTS(False)                       # Digi mode uses this for PTT?
-
-            if P.sock.connection=='DIRECT' or True:
-                # This type of command doesn't work for most versions of hamlib
-                cmd = 'BY;EX0603;EX0561;'               # Set DTR keying and full QSK
-                buf=P.sock.get_response(cmd)
-            
-            ser.PORT = SERIAL_PORT4
-            ser.BAUD = BAUD
-
-            if False:
-                print('buf=',buf)
-                time.sleep(1)
-                print('DTR off')
-                ser.setDTR(False)
-                time.sleep(1)
-                print('DTR on')
-                ser.setDTR(True)
-                time.sleep(1)
-                print('DTR off')
-                ser.setDTR(False)
-                time.sleep(1)
-                sys.exit(0)
-            
-        elif P.sock.rig_type2=='FTdx3000':
-            ser = serial.Serial(SERIAL_PORT2,BAUD,timeout=0.1)
-            ser.setDTR(False)
-            ser.PORT = SERIAL_PORT2
-            ser.BAUD = BAUD
-
-        else:
-            print('pyKeyer: Unknown rig type:',P.sock.rig_type,P.sock.rig_type2)
-            sys.exit(0)
-        
-    else:
-        print('### Unable to open serial port to rig ###')
-        ser=serial_dummy()
-
-
+# Open keying port(s)
+P.ser1=open_keying_port(P,P.sock1,1)
+P.ser2=open_keying_port(P,P.sock2,2)
+P.ser=P.ser1
+#sys.exit(0)
+    
 # Put rig and FLDIGI into initial mode
 if not P.PRACTICE_MODE:
     print('Initial mode=',P.INIT_MODE)
@@ -658,8 +133,8 @@ if not P.PRACTICE_MODE:
     #sys.exit(0)
 
 # Open connection to rotor
-P.sock2 = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT2,0,'ROTOR')
-if not P.sock2.active and P.sock2.connection!='NONE':
+P.sock3 = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT3,0,'ROTOR')
+if not P.sock3.active and P.sock3.connection!='NONE':
     print('*** No connection available to rotor ***')
     sys.exit(0)
 
@@ -690,7 +165,7 @@ else:
     #socket_io.set_speed(P.sock,wpm)
     P.sock.set_speed(wpm)
 
-P.keyer=cw_keyer.Keyer(P,ser,wpm)
+P.keyer=cw_keyer.Keyer(P,P.ser,wpm)
 if P.TEST_MODE:
     P.keyer.disable()           # Disable TX keying for debugging
 

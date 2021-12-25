@@ -7,25 +7,35 @@
 
 ############################################################################################
 
-set WPM=25
-set MASTER="-master"
-set HINTS="-nohints"
+# Primary rig
+set RIG="NONE"
+#set RIG="HAMLIB"
+set RIG="DIRECT"
 
 set RIG_TYPE="FTdx3000"
-#set RIG_TYPE="FT991a"
+set RIG_TYPE="FT991a"
+#set RIG_TYPE="IC9700"
+
+# Secondary rig for SO2R
+set RIG2="NONE"
+set RIG2="DIRECT"
+#set RIG_TYPE2="FT991a"
+set RIG_TYPE2="IC9700"
+
+############################################################################################
+
 set BAUD = 38400
 set PORT = 4532
 
-#set MASTER=""
-
 set PRACTICE=""
-set PRACTICE="-prac"
+#set PRACTICE="-prac"
 set NANO=""
 set NANO="-nano"
 
-set RIG="NONE"
-#set RIG="DIRECT"
-#set RIG="HAMLIB"
+set WPM=25
+set MASTER="-master"
+#set MASTER=""
+set HINTS="-nohints"
 
 set CONTEST="CWops"
 #set CONTEST="sst"
@@ -144,13 +154,13 @@ if( $RIG_TYPE == "FTdx3000" )then
     set DEVICE="/dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_AH046H3M120067-if00-port0"
     set MODEL = 129
 else if( $RIG_TYPE == "FT991a" )then
-   set DEVICE = "/dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_00A50791-if00-port0"
-   set MODEL = 135 
+    set DEVICE = "/dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_00A50791-if00-port0"
+    set MODEL = 135 
 else
-   echo " "
-   echo Error configuring HAMLIB - Unknown rig model $MODEL
-   echo " "
-   exit
+    echo " "
+    echo Error configuring HAMLIB - Unknown rig model $MODEL
+    echo " "
+    exit
 endif 
 
 # Start hamlib
@@ -166,7 +176,6 @@ if( $RIG == "HAMLIB" )then
     echo -$c-
     
     set EXE_DIR="~/hamlib-3.3/tests"
-    #~/hamlib-3.0.1/tests/rigctld -m $MODEL -r /dev/$c >&/tmp/HAMLIB &
     $EXE_DIR/rigctld -m $MODEL -r /dev/$c >&/tmp/HAMLIB &
     sleep 1
     
@@ -178,6 +187,7 @@ endif
 
 ################################################################################
 
+# Start keyer
 pkill pyKeyer
 if( "$PRACTICE" == "-prac" )then
     set RIG="NONE"
@@ -190,11 +200,12 @@ else
     popd
 endif
 
-set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $MASTER $HINTS $CAPTURE"
+set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $MASTER $HINTS $CAPTURE"
+if( $RIG2 != "NONE" )then
+    set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
+endif
 
 cd ~/Python/pyKeyer
-echo pyKeyer.py $OPTS 
-pyKeyer.py $OPTS
-
-
-
+echo pyKeyer.py $OPTS >& /tmp/KEYER
+pyKeyer.py $OPTS >>& /tmp/KEYER &
+#pyKeyer.py $OPTS

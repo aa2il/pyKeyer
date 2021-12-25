@@ -39,6 +39,7 @@ def nano_write(ser,txt):
     ser.write(bytes(txt, 'utf-8'))
 
 # Key down/key up for tuning
+# This isn't working - need to explore when updating nanoIO code
 def nano_tune(ser,tune):
     if tune:
         # Key down
@@ -46,6 +47,7 @@ def nano_tune(ser,tune):
     else:
         # Cancel - see nanoIO.ino for this little gem
         txt=']'
+    print('NANO_TUNE:',txt)
     ser.write(bytes(txt, 'utf-8'))
 
 # Open up comms to nano IO

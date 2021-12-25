@@ -25,9 +25,6 @@ from collections import OrderedDict
 
 ############################################################################################
 
-# Valid precidences for ARRL SS
-PRECS='QSABUMS'
-
 # Table of pre-defined macros
 MACROS = OrderedDict()
 CONTEST = OrderedDict()

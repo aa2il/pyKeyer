@@ -46,7 +46,8 @@ class RIG_CONTROL():
         self.win.title("Rig Control")
         self.tabs = ttk.Notebook(self.win)          # Create Tab Control
         self.win.withdraw()
-        self.win.protocol("WM_DELETE_WINDOW", self.CloseWindow)
+        #self.win.protocol("WM_DELETE_WINDOW", self.CloseWindow)
+        self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
         if self.sock.connection == 'NONE':
             return None
@@ -209,9 +210,18 @@ class RIG_CONTROL():
             self.SatModes(tab5)
         
         # Ready to rock & roll
+        self.hide()
         get_status(self)
-        #self.win.withdraw()
-            
+
+    def show(self):
+        print('Show Rig Control Window ...')
+        self.win.update()
+        self.win.deiconify()
+        
+    def hide(self):
+        print('Hide Rig Control Window ...')
+        self.win.withdraw()
+        
         
     ############################################################################################
 
