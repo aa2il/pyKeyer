@@ -397,8 +397,8 @@ class Keyer():
 
                 elif cmd2=="MYGRID":
                     # Substitute my state
-                    self.send_cw(MY_GRID)
-                    txt2+=MY_GRID
+                    self.send_cw(MY_GRID[0:4])
+                    txt2+=MY_GRID[0:4]
 
                 elif cmd2=="MYPREC":
                     # Substitute my precicence

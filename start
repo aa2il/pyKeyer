@@ -10,17 +10,17 @@
 # Primary rig
 set RIG="NONE"
 #set RIG="HAMLIB"
-set RIG="DIRECT"
+#set RIG="DIRECT"
 
 set RIG_TYPE="FTdx3000"
-set RIG_TYPE="FT991a"
+#set RIG_TYPE="FT991a"
 #set RIG_TYPE="IC9700"
 
 # Secondary rig for SO2R
 set RIG2="NONE"
-set RIG2="DIRECT"
+#set RIG2="DIRECT"
 #set RIG_TYPE2="FT991a"
-set RIG_TYPE2="IC9700"
+#set RIG_TYPE2="IC9700"
 
 ############################################################################################
 
@@ -28,7 +28,7 @@ set BAUD = 38400
 set PORT = 4532
 
 set PRACTICE=""
-#set PRACTICE="-prac"
+set PRACTICE="-prac"
 set NANO=""
 set NANO="-nano"
 

@@ -774,7 +774,7 @@ class GUI():
             self.qth_out = self.P.SETTINGS['MY_SEC'] 
             txt = txt.replace('[MYSEC]',self.qth_out)
         if '[MYGRID]' in txt:
-            self.qth_out = self.P.SETTINGS['MY_GRID']
+            self.qth_out = self.P.SETTINGS['MY_GRID'][0:4]
             txt = txt.replace('[MYGRID]',self.qth_out)
         if '[MYITUZ]' in txt:
             self.qth_out = self.P.SETTINGS['MY_ITU_ZONE'] 
