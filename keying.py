@@ -91,11 +91,25 @@ def open_keying_port(P,sock,rig_num):
             # If direct connect, could use USB A ...
             #ser = P.sock.s
             # but, in general, we'll use USB B in case we are using hamlib for rig control
-            ser = serial.Serial(SERIAL_PORT10,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
-            sock.init_keyer()
-            time.sleep(.02)
-            ser.setDTR(False)
-            ser.setRTS(False)  
+            print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
+            try:
+                ser = serial.Serial(SERIAL_PORT10,BAUD,
+                                    timeout=0.1,dsrdtr=0,rtscts=0)
+                print('OPEN KEYING PORT: Sock Init...')
+                sock.init_keyer()
+                time.sleep(.1)
+                ser.setDTR(False)
+                ser.setRTS(False)  
+                time.sleep(1)
+                ser.setDTR(False)
+                ser.setRTS(False)  
+            except Exception as e: 
+                print( str(e) )
+                print('\n*************************************')
+                print('Unable to open keying port for rig',rig_num)
+                print('*************************************')
+                ser=None
+                sys.exit(0)
         
         else:
             # DTR keying does not work for the IC706

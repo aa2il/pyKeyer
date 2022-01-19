@@ -52,7 +52,7 @@ from settings import *
 from tcp_server import *
 import xlrd
 from latlon2maiden import *
-from fileio import read_gps_coords
+#from fileio import read_gps_coords
 from watchdog import *
 from keying import *
 from process_chars import *
