@@ -910,7 +910,10 @@ class GUI():
         self.SAT_TXT.set(val)
 
     def get_satellite(self):
-        return self.SAT_TXT.get()
+        val=self.SAT_TXT.get()
+        if val=='UVSQ-SAT':
+            val='UVSQ'
+        return val
         
     # Callback for Macro list spinner
     def set_macros(self,val=None):
