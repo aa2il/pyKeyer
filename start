@@ -54,7 +54,7 @@ set CONTEST="CWops"
 #set CONTEST="arrl_dx"
 #set CONTEST="iaru"
 #set CONTEST="default"
-set CONTEST="ragchew"
+#set CONTEST="ragchew"
 #set CONTEST="dx"
 
 #set CAPTURE="-capture -sidetone"
