@@ -320,27 +320,27 @@ class GUI():
                          takefocus=0 ) 
             btn.grid(row=row+2,column=ncols-2)
             tip = ToolTip(btn, ' Clear FLDIGI Logger Fields ' )
-        
-        # Set up two text entry box with a scroll bar
-        # The upper box is so we can type in what we receive
-        row+=2
+
+        # Make sure all columns are adjusted when we resize the width of the window
         for i in range(12):
             Grid.columnconfigure(self.root, i, weight=1,uniform='twelve')
 
-        if True:
-            row+=1
-            Grid.rowconfigure(self.root, row, weight=1)             # Allows resizing
-            self.txt2 = Text(self.root, height=4, width=80, bg='white')
-            self.txt2.grid(row=row,column=0,columnspan=ncols,stick=N+S+E+W)
-            self.S2 = Scrollbar(self.root)
-            self.S2.grid(row=row,column=ncols,sticky=N+S)
-            self.S2.config(command=self.txt2.yview)
-            self.txt2.config(yscrollcommand=self.S2.set)
-
+        # Set up two text entry box with a scroll bar
+        # The upper box is so we can type in what we receive
+        row+=3
+        self.txt2_row=row
+        self.txt2 = Text(self.root, height=5, width=80, bg='white')
+        self.txt2.grid(row=row,column=0,columnspan=ncols,stick=N+S+E+W)
+        self.S2 = Scrollbar(self.root)
+        self.S2.grid(row=row,column=ncols,sticky=N+S)
+        self.S2.config(command=self.txt2.yview)
+        self.txt2.config(yscrollcommand=self.S2.set)
+        self.show_hide_txt2(self.P.SHOW_TEXT_BOX2)
+            
         # The lower box is so we can type in what we want to send
         row+=1
         Grid.rowconfigure(self.root, row, weight=1)             # Allows resizing
-        self.txt = Text(self.root, height=4, width=80, bg='white')
+        self.txt = Text(self.root, height=5, width=80, bg='white')
         self.txt.grid(row=row,column=0,columnspan=ncols,stick=N+S+E+W)
         self.S = Scrollbar(self.root)
         self.S.grid(row=row,column=ncols,sticky=N+S)
@@ -578,6 +578,19 @@ class GUI():
         self.set_macros()
         
 
+    # Callback to show or hide the upper text box
+    def show_hide_txt2(self,show):
+        if show:
+            wght=1
+            self.txt2.grid()
+            self.S2.grid()
+        else:
+            wght=0
+            self.txt2.grid_remove()
+            self.S2.grid_remove()
+        Grid.rowconfigure(self.root, self.txt2_row, weight=wght)             # Allows or disables resizing
+
+        
     # Callback to process mouse events on the spot buttons
     def Spots_Mouse(self,evt):
         #print 'HELLO!!!!!!!',evt.num

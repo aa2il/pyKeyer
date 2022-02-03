@@ -179,6 +179,7 @@ class PARAMS:
         self.CONTEST_LIST=['Default','Ragchew','CW Ops Mini-Test','SST','CW Open','ARRL VHF','NAQP-CW', \
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
                            'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']
+        self.SHOW_TEXT_BOX2=False
         if self.SPRINT:
             print('NEED TO FIX THIS!!!!!!!!!!!!!')
             sys.exit(0)
@@ -229,15 +230,19 @@ class PARAMS:
         elif args.sat:
             self.contest_name='SATELLITES'
             MAX_AGE_HOURS=9999
+            self.SHOW_TEXT_BOX2=True
         elif args.ragchew:
             self.contest_name='Ragchew'
             MAX_AGE_HOURS=9999
+            self.SHOW_TEXT_BOX2=True
         elif args.dx:
             self.contest_name='DX-QSO'
+            self.SHOW_TEXT_BOX2=True
             MAX_AGE_HOURS=9999
         else:
             self.contest_name='Default'
             MAX_AGE_HOURS=9999
+            self.SHOW_TEXT_BOX2=True
         if self.USE_MASTER:
             self.HISTORY = HIST_DIR+'master.csv'
 
