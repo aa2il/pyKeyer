@@ -23,7 +23,6 @@
 import argparse
 from rig_io.ft_tables import CONNECTIONS,RIGS,PRECS
 from settings import *
-from macros import CONTEST,MACROS
 
 ################################################################################
 
@@ -66,6 +65,12 @@ class PARAMS:
                               help='CQ Worldwide')
         arg_proc.add_argument('-iaru', action='store_true',
                               help='IARU HF Championship')
+        arg_proc.add_argument('-ragchew', action='store_true',
+                              help='Regular Ragchew QSO')
+        arg_proc.add_argument('-dx', action='store_true',
+                              help='DX QSO')
+        arg_proc.add_argument('-default', action='store_true',
+                              help='Default (quick) QSO')
         arg_proc.add_argument('-test', action='store_true',
                               help='Disable TX')
         arg_proc.add_argument('-practice', action='store_true',
@@ -157,12 +162,12 @@ class PARAMS:
         self.HAMLIB_SERVER = args.server
         self.UDP_SERVER    = args.udp
         self.GPS           = args.gps
-        self.USE_LOG_HISTORY = args.use_log_hist
+        self.USE_LOG_HISTORY  = args.use_log_hist
         self.USE_ADIF_HISTORY = args.use_adif_hist
         self.SIDETONE      = args.sidetone or self.PORT==1
 
-        self.CONTEST       = CONTEST
-        self.MACROS        = MACROS
+        #self.CONTEST       = CONTEST
+        #self.MACROS        = MACROS
         self.MY_CNTR       = 1
         self.PRECS         = PRECS
         self.SHUTDOWN      = False
@@ -171,9 +176,9 @@ class PARAMS:
         self.KEYING=None
         self.HIST_DIR=HIST_DIR
 
-        self.CONTEST_LIST=['CW Ops Mini-Test','SST','CW Open','ARRL VHF','NAQP-CW', \
+        self.CONTEST_LIST=['Default','Ragchew','CW Ops Mini-Test','SST','CW Open','ARRL VHF','NAQP-CW', \
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
-                           'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES']
+                           'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']
         if self.SPRINT:
             print('NEED TO FIX THIS!!!!!!!!!!!!!')
             sys.exit(0)
@@ -224,10 +229,14 @@ class PARAMS:
         elif args.sat:
             self.contest_name='SATELLITES'
             MAX_AGE_HOURS=9999
+        elif args.ragchew:
+            self.contest_name='Ragchew'
+            MAX_AGE_HOURS=9999
+        elif args.dx:
+            self.contest_name='DX-QSO'
+            MAX_AGE_HOURS=9999
         else:
             self.contest_name='Default'
-            self.HISTORY = HIST_DIR+'master.csv'
-            #self.HISTORY = ''
             MAX_AGE_HOURS=9999
         if self.USE_MASTER:
             self.HISTORY = HIST_DIR+'master.csv'
@@ -243,6 +252,7 @@ class PARAMS:
             
         # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
+        self.SETTINGS['MY_QTH']=self.SETTINGS['MY_CITY']+','+self.SETTINGS['MY_STATE']
         print('grid=',self.SETTINGS['MY_GRID'])
         if self.GPS:
             [lat,lon,alt,gridsq]=read_gps_coords()

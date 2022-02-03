@@ -22,9 +22,7 @@
 
 import time
 from nano_io import *
-
-################################################################################
-
+from tkinter import END
 
 ################################################################################
 
@@ -77,9 +75,12 @@ def process_chars(P):
                     txt=nano_read(P.ser)
                     if False:
                         # Put it in the big text box also
-                        P.gui.txt.insert(END, txt+'\n')
-                        P.gui.txt.see(END)
-                        P.gui.root.update_idletasks()
+                        try:
+                            P.gui.txt.insert(END, txt+'\n')
+                            P.gui.txt.see(END)
+                            P.gui.root.update_idletasks()
+                        except:
+                            pass
                 else:
                     time.sleep(0.1)
                     

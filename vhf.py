@@ -37,7 +37,7 @@ class VHF_KEYING(DEFAULT_KEYING):
     def __init__(self,P,contest_name):
         DEFAULT_KEYING.__init__(self,P,contest_name,'ARRLVHF*.txt')
 
-    # Routient to set macros for this contest
+    # Routine to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()

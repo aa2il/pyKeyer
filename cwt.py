@@ -1,6 +1,6 @@
 ############################################################################################
 #
-# cwops.py - Rev 1.0
+# cwt.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for CWops mini tests.
@@ -37,9 +37,8 @@ class CWOPS_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test','CWOPS_*.txt')
-        self.P=P
 
-    # Routient to set macros for this contest
+    # Routine to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
@@ -47,7 +46,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
         MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        if self.P.PRACTICE_MODE:
+        if self.P.PRACTICE_MODE or True:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
         else:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY EE [LOG]'}

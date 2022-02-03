@@ -57,7 +57,7 @@ def open_keying_port(P,sock,rig_num):
     print('Opening keying port ...',sock.rig_type,sock.rig_type2)
     if P.NANO_IO and rig_num==1:
         try:
-            ser = open_nano(baud=BAUD)
+            ser = open_nano(baud=NANO_BAUD)
         except Exception as e: 
             print( str(e) )
             print('\n*************************************')

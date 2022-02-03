@@ -28,7 +28,7 @@ set BAUD = 38400
 set PORT = 4532
 
 set PRACTICE=""
-set PRACTICE="-prac"
+set PRACTICE="-prac -nrows 0"
 set NANO=""
 set NANO="-nano"
 
@@ -53,6 +53,9 @@ set CONTEST="CWops"
 #set CONTEST="arrl_10m"
 #set CONTEST="arrl_dx"
 #set CONTEST="iaru"
+#set CONTEST="default"
+set CONTEST="ragchew"
+#set CONTEST="dx"
 
 #set CAPTURE="-capture -sidetone"
 #set CAPTURE="-capture"
@@ -142,8 +145,13 @@ else if( $CONTEST == "ss" )then
     set HINTS="-adjust"
     #set HINTS="-nohints -adjust"
 
+# Settings for Default Quick, Ragchew or QSOs
+else if( $CONTEST == "default" || $CONTEST == "ragchew"  || $CONTEST == "dx" )then
+    set WPM=25
+    set HINTS=""
+
 else
-    echo Unknown Contest:- $CONTEST-
+    echo START: Unknown Contest -$CONTEST-
     exit
 endif
 
@@ -207,5 +215,5 @@ endif
 
 cd ~/Python/pyKeyer
 echo pyKeyer.py $OPTS >& /tmp/KEYER
-pyKeyer.py $OPTS >>& /tmp/KEYER &
-#pyKeyer.py $OPTS
+#pyKeyer.py $OPTS >>& /tmp/KEYER &
+pyKeyer.py $OPTS

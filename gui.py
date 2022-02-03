@@ -46,7 +46,7 @@ from fileio import *
 from threading import enumerate
 from audio_io import WaveRecorder
 
-from cwops import *
+from cwt import *
 from cwopen import *
 from sst import *
 from cqp import *
@@ -60,12 +60,14 @@ from iaru import *
 from cqww import *
 from sats import *
 from settings import *
+from ragchew import *
+from dx_qso import *
+from qrz import *
 
 ############################################################################################
 
 UTC = pytz.utc
-WPM_STEP = 3                # Key speed step for up/dn buttons - was 4
-#NUM_ROWS=2                  # No. of spot rows, one is not quite enough for s&p
+WPM_STEP = 2                # Key speed step for up/dn buttons - was 4
 
 ############################################################################################
 
@@ -163,7 +165,7 @@ class GUI():
                 elif P.USE_MASTER:
                     call=qso['CALL']
                     if not call in P.calls:
-                        print('Call not in Master list:',call,'\t- Adding it')
+                        #print('Call not in Master list:',call,'\t- Adding it')
                         self.log_book.append(qso)
                         P.calls.append(call)
         except:
@@ -322,6 +324,9 @@ class GUI():
         # Set up text entry box with a scroll bar
         row+=3
         Grid.rowconfigure(self.root, row, weight=1)             # Allows resizing
+        for i in range(12):
+            Grid.columnconfigure(self.root, i, weight=1,uniform='twelve')
+        
         self.txt = Text(self.root, height=10, width=80, bg='white')
         self.S = Scrollbar(self.root)
         self.txt.grid(row=row,column=0,columnspan=ncols,stick=N+S+E+W)
@@ -452,7 +457,7 @@ class GUI():
 
         # QRZ button
         col += 1
-        btn = Button(self.root, text='QRZ.com',command=self.Web_LookUp,\
+        btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
                      takefocus=0 ) 
         btn.grid(row=row,column=ncols-1)
         tip = ToolTip(btn, ' Query QRZ.com ' )
@@ -536,7 +541,7 @@ class GUI():
                     c='indian red'
                 else:
                     c='slateblue1'
-                Grid.columnconfigure(self.root, i, weight=1,uniform='twelve')
+                #Grid.columnconfigure(self.root, i, weight=1,uniform='twelve')
                 btn = Button(self.root, text='--' , background=c)
                 btn.grid(row=row,column=i,sticky=E+W)
 
@@ -673,14 +678,19 @@ class GUI():
         self.root.title("pyKeyer by AA2IL"+rig)
         
     # callback to look up a call on qrz.com
-    def Web_LookUp(self):
+    def Call_LookUp(self):
         call = self.get_call()
         if len(call)>=3:
-            print('WEB_LOOKUP: Looking up '+call+' on QRZ.com')
-            link = 'https://www.qrz.com/db/' + call
-            webbrowser.open(link, new=2)
+            print('CALL_LOOKUP: Looking up '+call+' on QRZ.com')
+            if True:
+                link = 'https://www.qrz.com/db/' + call
+                webbrowser.open(link, new=2)
+
+            self.qrzWin = CALL_INFO_GUI(self.root,self.P,call)
+            #self.qrzWin.hide()
+            
         else:
-            print('WEB_LOOKUP: Need a valid call first')            
+            print('CALL_LOOKUP: Need a valid call first! ',call)
             
     # callback for practice with computer text
     def PracticeCB(self):
@@ -902,17 +912,21 @@ class GUI():
         self.hint.grid_remove()
         self.qsl.grid_remove()
 
-    # Callback for Satellite list spinner
+    # Callback to set Satellite list spinner
     def set_satellite(self,val):
         print('SET_SATELLITE: val=',val)
         #print SATELLITE_LIST
         #self.SAT_TXT.set(str(SATELLITE_LIST[val]))
         self.SAT_TXT.set(val)
 
+    # Callback to read Satellite list spinner
     def get_satellite(self):
         val=self.SAT_TXT.get()
+
+        # If necessary, Change name to be compatible with lotw
         if val=='UVSQ-SAT':
             val='UVSQ'
+            
         return val
         
     # Callback for Macro list spinner
@@ -950,6 +964,10 @@ class GUI():
             self.P.KEYING=WPX_KEYING(self.P)
         elif val=='ARRL-10M' or val=='ARRL-DX':
             self.P.KEYING=TEN_METER_KEYING(self.P,val)
+        elif val=='Ragchew':
+            self.P.KEYING=RAGCHEW_KEYING(self.P,val)
+        elif val=='DX-QSO':
+            self.P.KEYING=DX_KEYING(self.P,val)
         elif val=='Default':
             self.P.KEYING=DEFAULT_KEYING(self.P)
         else:
@@ -982,9 +1000,9 @@ class GUI():
                 self.btns2[i].grid_remove()
 
         #print( self.P.CONTEST)
-        for key in self.P.CONTEST.keys():
-            self.P.CONTEST[key]=False
-        self.P.CONTEST[val] = True
+        #for key in self.P.CONTEST.keys():
+        #    self.P.CONTEST[key]=False
+        #self.P.CONTEST[val] = True
         #print( self.P.CONTEST)
                 
         # Enable the specific input boxes
@@ -1081,21 +1099,21 @@ class GUI():
 
     # Read his call from the entry box
     def get_call(self):
-        return self.call.get()
+        return self.call.get().upper()
 
     # Read his name from the entry box
     def get_name(self):
         txt=self.name.get().strip()
         if txt=='' and not self.contest:
             txt='OM'
-        return txt
+        return txt.upper()
 
     # Read incoming RST from the entry box
     def get_rst_in(self):
         txt=self.rstin.get().strip()
         if txt=='':
             txt='5NN'
-        return txt
+        return txt.upper()
 
     # Read outgoing RST from the entry box
     def get_rst_out(self):
@@ -1106,35 +1124,35 @@ class GUI():
             txt=txt+'N'
         elif len(txt)==1:
             txt=txt+'NN'
-        return txt
+        return txt.upper()
 
     # Read exchange data from the entry box
     def get_exchange(self):
-        return self.exch.get()
+        return self.exch.get().upper()
 
     # Read qth from entry box
     def get_qth(self):
-        return self.qth.get()
+        return self.qth.get().upper()
 
     # Read category from entry box
     def get_cat(self):
-        return self.cat.get()
+        return self.cat.get().upper()
 
     # Read serial from entry box
     def get_serial(self):
-        return self.serial.get()
+        return self.serial.get().upper()
 
     # Read prec from entry box
     def get_prec(self):
-        return self.prec.get()
+        return self.prec.get().upper()
 
     # Read call2 from entry box
     def get_call2(self):
-        return self.call2.get()
+        return self.call2.get().upper()
 
     # Read check from entry box
     def get_check(self):
-        return self.check.get()
+        return self.check.get().upper()
 
     # Get a clue
     def get_hint(self,call):

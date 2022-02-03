@@ -26,17 +26,32 @@ import time
 
 ############################################################################################
 
+NANO_BAUD=38400
+#NANO_BAUD=19200
+
+############################################################################################
+
 # Read responses from the nano IO
 def nano_read(ser,echo=False):
     while ser.in_waiting>0:
-        txt = ser.read(256).decode("utf-8")
+        try:
+            txt = ser.read(256).decode("utf-8")
+        except:
+            txt=''
         if echo:
             print('Nano:',txt)
     return txt
 
 # Send chars/commands to the nano IO
 def nano_write(ser,txt):
-    ser.write(bytes(txt, 'utf-8'))
+    # Need to make sure serial buffer doesn't over run - h/w/ flow control doesn't seem to work
+    if ser.out_waiting>10:
+        print('WAITING ....')
+        while ser.out_waiting>0:
+            time.sleep(1)
+    cnt=ser.write(bytes(txt, 'utf-8'))
+    #nwait=ser.out_waiting
+    #print('cnt=',cnt,'\tnwait=',nwait)
 
 # Key down/key up for tuning
 # This isn't working - need to explore when updating nanoIO code
@@ -51,10 +66,12 @@ def nano_tune(ser,tune):
     ser.write(bytes(txt, 'utf-8'))
 
 # Open up comms to nano IO
-def open_nano(baud=38400):
+def open_nano(baud=NANO_BAUD):
 
     # Open port
     ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
+    #ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,\
+    #                    dsrdtr=True,rtscts=True)
  
     # Wait for nano to wake up
     print('Waiting for Nano IO to start-up ...')

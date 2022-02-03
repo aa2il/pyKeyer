@@ -52,7 +52,7 @@ class CODE_PRACTICE():
             for fname in glob.glob(P.HISTORY):
                 files.append(fname)
             files.sort()
-            print(files)
+            print('file=',files)
             print(files[-1])
             #sys.exit(0)
             P.HISTORY=files[-1]

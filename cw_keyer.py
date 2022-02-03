@@ -38,7 +38,8 @@ MAX_WPM=50
 ############################################################################################
 
 # Table of Morse code elements
-morse=["" for i in range(128)]
+#morse=["" for i in range(128)]
+morse=128*[""]
 morse[32]=" ";
 
 # Numbers
@@ -55,12 +56,13 @@ morse[57]="----."; # 9
 
 # Punc
 morse[33]="-.-.--";   # !
-morse[36]="...-..-";  # $
-morse[39]=".----.";   # '
-morse[40]="-.--.";    # (
-morse[41]="-.--.-";   # )
+morse[34]="";         # "     0b01010010
+morse[35]="";         # #     0b00000001
+morse[36]="...-..-";  # $     0b11001000
+morse[39]=".----.";   # '     0b01011110
+morse[40]="-.--.";    # (     0b00101101
+morse[41]="-.--.-";   # )     0b01101101
 morse[44]="--..--";   # ,
-morse[45]="-....-";   # -
 morse[46]=".-.-.-";   # .
 morse[47]="-..-.";    # /
 morse[58]="---...";   # :
@@ -98,16 +100,28 @@ morse[89]="-.--";    # Y
 morse[90]="--..";
 
 # Prosigns
-morse[37]=".-...";     # % = AS
-morse[38]="..-.-";     # & = INT
-morse[42]="...-.-";    # * = SK
-morse[43]=".-.-.";     # + = AR
-morse[60]="-.--.";     # < = KN
-morse[61]="-...-";     # = = BT
-#morse[62]="...-.-";    # > = SK - should be *
-#morse[123]="...-.";    # { = VE
-#morse[125]="....--";   # } = HM
-#morse[126]=".-.-";     # ~ = AA
+if False:
+    # Not sure where this table came from but this is what I had in the past
+    morse[37]=".-...";     # % = <AS>
+    morse[38]="..-.-";     # & = <INT> - not sure what this is?
+    morse[42]="...-.-";    # * = <SK>
+    morse[43]=".-.-.";     # + = <AR>
+    morse[60]="-.--.";     # < = <KN>
+    morse[61]="-...-";     # = = <BT>
+    #morse[62]="...-.-";    # > = <SK> - should be *
+    #morse[123]="...-.";    # { = <VE>
+    #morse[125]="....--";   # } = <HM>
+    #morse[126]=".-.-";     # ~ = <AA>
+else:
+    # This matches what is the nano IO uses
+    morse[37]="...-.-";    # % = <SK>	0b01101000
+    morse[38]=".-...";     # & = <AS>	0b00011010
+    morse[42]="";          # * 	        0b00000001
+    morse[43]="-.--.";     # + = <KN>	0b00101101
+    morse[45]="-....-";    # - = <BT>	0b00110001
+    morse[60]=".-...";     # < = <AS>	0b00100010
+    morse[61]="-...-";     # = = <BT>	0b00110001
+    morse[62]=".-.-.";     # > = <AR>	0b00101010
 
 ############################################################################################
 
@@ -183,9 +197,16 @@ class Keyer():
         self.enable = True
         self.stop   = False
 
-        #self.call = ''
-        #self.name = ''
-        #self.qth  = ''
+        # Compute weight (in dots) of each char
+        self.weight=128*[0]
+        for i in range(128):
+            for el in morse[i]:
+                if el in [' ','-']:
+                    self.weight[i]+=3
+                else:
+                    self.weight[i]+=1
+                self.weight[i]+=1
+                
 
     def abort(self):
         print('ABORT!')
@@ -209,8 +230,15 @@ class Keyer():
 
         # If using nano IO interface, send the char & let the nano do the rest
         if self.P.NANO_IO:
-            print('send_cw: msg=',msg,'\t@ wpm=',self.WPM)
+            wght=0
+            for char in msg.upper():
+                wght+=self.weight[ord(char)]
+
+            dt=dotlen*wght
+            print('send_cw: msg=',msg,'\t@ wpm=',self.WPM,'\twght=',wght,'\tdt=',dt)
             nano_write(ser,msg)
+            
+            time.sleep(dt)
             return
 
         # If in practice mode, use pc audio instead
@@ -302,6 +330,12 @@ class Keyer():
         print('SEND_MSG: ',msg,' at ',self.WPM,' wpm - evt=',self.evt.isSet())
         P=self.P
 
+        # Testing only
+        if self.P.NANO_IO and False:
+            print('send_msg: msg=',msg,'\t@ wpm=',self.WPM)
+            nano_write(self.ser,msg)
+            return
+        
         self.stop   = False
         Udp=False
         txt2=''

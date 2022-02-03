@@ -22,7 +22,6 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
-from macros import MACROS,CONTEST
 from cw_keyer import cut_numbers
 
 ############################################################################################
@@ -56,10 +55,12 @@ class DEFAULT_KEYING():
         MACROS[1]  = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
         MACROS[2]  = {'Label' : 'Reply'   , 'Text' : 'RTU [RST] [MYSTATE] '}
         MACROS[3]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
+        
         MACROS[4]  = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
         MACROS[5]  = {'Label' : '73'      , 'Text' : '73 '}
         MACROS[6]  = {'Label' : 'BK'      , 'Text' : 'BK '}
         MACROS[7]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
+        
         MACROS[8]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
         MACROS[9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
         MACROS[10] = {'Label' : 'V    '   , 'Text' : 'V'}
@@ -108,33 +109,7 @@ class DEFAULT_KEYING():
     def error_check(self):
         P=self.P
 
-        call2   = P.gui.get_call().upper()
-        serial2 = P.gui.get_serial().upper()
-        name2   = P.gui.get_name().upper()
-        match   = self.call==call2 and self.serial==serial2 and self.name==name2
-
-        if not match:
-            txt='********************** ERROR **********************'
-            print(txt)
-            P.gui.txt.insert(END, txt+'\n')
-
-            txt2='Call sent:'+self.call+'\t- received:'+call2
-            print(txt2)
-            P.gui.txt.insert(END, txt2+'\n')
-            
-            txt2='Serial sent:'+self.serial+'\t- received:'+serial2
-            print(txt2)
-            P.gui.txt.insert(END, txt2+'\n')
-
-            txt2='Name sent:'+self.name+'\t- received:'+name2
-            print(txt2)
-            P.gui.txt.insert(END, txt2+'\n')
-
-            print(txt+'\n')
-            P.gui.txt.insert(END, txt+'\n')
-            P.gui.txt.see(END)
-            
-        return match
+        return True
             
 
     # Highlight function keys that make sense in the current context

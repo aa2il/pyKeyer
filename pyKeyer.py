@@ -40,7 +40,6 @@ else:
     import Queue
 from subprocess import call
 from gui import *
-from macros import *
 from load_history import *
 from pprint import pprint
 import rig_io.hamlibserver as rigctl
