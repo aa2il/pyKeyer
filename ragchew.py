@@ -41,24 +41,27 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]  = {'Label'   : 'CQ'          , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
-        MACROS[1]  = {'Label'   : 'CQ Reply'    , 'Text' : '[CALL] de [MYCALL] = TNX FER THE CALL = ' \
-                      + 'UR [RST] [RST] IN [MYQTH] [MYQTH] = NAME IS [MYNAME] [MYNAME] = HW CPY? BK'}
-        MACROS[2]  = {'Label'   : 'Reply2'      , 'Text' : 'R FB [NAME], SOLID COPY = '\
-                      + 'RIG HR IS YAESU FTDX3K, ABT 100W TO A WIRE BEAM UP 30 FT ='}
-        MACROS[2+12]  = {'Label'   : 'Reply3'      , 'Text' : 'R FB [NAME], SOLID COPY = '\
-                      + 'AGE HR IS 59, BEEN A HAM OVER 40 YRS = I AM A RETIRED ELEC ENGINEER ='}
-        #                      + 'BEEN HAM SINCE LATE 1970s = I AM A RETIRED ELEC ENGINEER SO REALLY RADIO ='}
-        MACROS[3]  = {'Label'   : 'BTU'         , 'Text' : 'SO [NAME] BTU DE [MYCALL] > +'}
+        MACROS[0]     = {'Label'   : 'CQ'       , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
+        MACROS[1]     = {'Label'   : 'CQ Reply' , 'Text' : '[CALL] de [MYCALL] = TNX FER THE CALL = ' \
+                         + 'UR [RST] [RST] IN [MYQTH] [MYQTH] = NAME IS [MYNAME] [MYNAME] = HW CPY? BK'}
+        MACROS[2]     = {'Label'   : 'Meet You' , 'Text' : 'R FB [NAME], SOLID COPY = '\
+                         + 'GOOD TO MEET U ='}
+        MACROS[2+12]  = {'Label'   : 'Hear Agn' , 'Text' : 'R FB [NAME], SOLID COPY = '\
+                         + 'GOOD TO HEAR U AGN ='}
+        MACROS[3]     = {'Label'   : 'BTU'      , 'Text' : 'SO [NAME] BTU DE [MYCALL] > +'}
+        MACROS[3+12]  = {'Label'   : 'BK'       , 'Text' : 'HOW? BK '}
         
         MACROS[4]    = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] de [MYCALL] [MYCALL] '}
         MACROS[4+12] = {'Label' : '[MYCALL]'    , 'Text' : '[MYCALL] '}
         MACROS[5]  = {'Label'   : 'Report'      , 'Text' : 'FB [NAME] SOLID COPY = ' \
                       + 'UR [RST] [RST] IN [MYQTH] [MYQTH] = NAME HR IS [MYNAME] [MYNAME]'}
-        MACROS[6]  = {'Label'   : 'BK'          , 'Text' : 'HOW? BK '}
-        MACROS[7]  = {'Label'   : '?'           , 'Text' : '?'}
+        MACROS[6]     = {'Label'   : 'Rig'      , 'Text' : 'RIG HR IS YAESU FTDX3K, ABT 100W TO A WIRE BEAM UP 30 FT ='}
+        MACROS[6+12]  = {'Label'   : 'Age'      , 'Text' : 'AGE HR IS 59, BEEN A HAM OVER 40 YRS = I AM A RETIRED ELEC ENGINEER ='}
+        #                      + 'BEEN HAM SINCE LATE 1970s = I AM A RETIRED ELEC ENGINEER SO REALLY RADIO ='}
+        MACROS[7]     = {'Label'   : '?'           , 'Text' : '?'}
+        MACROS[7+12]  = {'Label'   : 'AGN ?'       , 'Text' : 'AGN?'}
         
-        MACROS[8]  = {'Label'   : '73'          , 'Text' : 'FB [NAME] MNY TNX FOR NICE QSO ES HPE CU AGN = '\
+        MACROS[8]     = {'Label'   : '73'          , 'Text' : 'FB [NAME] MNY TNX FOR NICE QSO ES HPE CU AGN = '\
                       + '73 73 % [CALL] DE [MYCALL] K'}
         MACROS[9]  = {'Label'   : 'LOG it'      , 'Text' : '[LOG]'}
         MACROS[10] = {'Label'   : 'V    '       , 'Text' : 'V'}

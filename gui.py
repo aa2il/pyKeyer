@@ -335,6 +335,7 @@ class GUI():
         self.S2.grid(row=row,column=ncols,sticky=N+S)
         self.S2.config(command=self.txt2.yview)
         self.txt2.config(yscrollcommand=self.S2.set)
+        self.txt2.bind("<Tab>", self.key_press )
         self.show_hide_txt2(self.P.SHOW_TEXT_BOX2)
             
         # The lower box is so we can type in what we want to send
@@ -346,11 +347,11 @@ class GUI():
         self.S.grid(row=row,column=ncols,sticky=N+S)
         self.S.config(command=self.txt.yview)
         self.txt.config(yscrollcommand=self.S.set)
+        self.txt.bind("<Tab>", self.key_press )
 
         # Bind a callback to be called whenever a key is pressed
         self.root.bind("<Key>", self.key_press )
         #self.root.bind("all", self.key_press )
-        self.txt.bind("<Tab>", self.key_press )
 
         # Function buttons for pre-defined macros
         row += 10
@@ -1816,14 +1817,19 @@ class GUI():
 
             # This works but seemed problematic in normal operating??
             if (key=='Delete' and False) or (key=='w' and alt):
-                print('Delete - clear box')
-                if event.widget!=self.txt:
+                #print('DELETE - CLEAR BOX ...')
+                if event.widget==self.txt or event.widget==self.txt2:
+                    #print('Text Box ...')
+                    event.widget.delete(1,END)     # Clear the entry box
+                else:
+                    #print('Not in Text Box ...')
                     event.widget.delete(0,END)     # Clear the entry box
                     if event.widget==self.call:
                         self.call.configure(background=self.default_color)
 
                 # Wipe all fields Alt-w
                 if (key=='w' or key=='e') and alt:
+                    #print('ALT-W')
                     self.call.delete(0, END)
                     self.call.configure(background=self.default_color)
                     self.call2.delete(0, END)
@@ -1882,25 +1888,30 @@ class GUI():
             # Move to next entry box
             if key=='Tab':
                 if event.widget==self.txt:
+                    self.txt2.focus_set()
+                elif event.widget==self.txt2:
+                    self.txt.focus_set()
+                elif event.widget==self.txt or event.widget==self.txt2:
                     print('Text box',key,len(key),key=='Tab')
                     self.call.focus_set()
-                    return("break")
                 elif self.contest:
                     self.P.KEYING.next_event(key,event)
-                    return("break")
-                    """
-                    elif self.P.SPRINT  and event.widget==self.qth:
-                        #print 'QTH box',key,len(key),key=='Tab'
-                        self.call.focus_set()
-                        return("break")
-                    """
+                return("break")
 
             elif key=='ISO_Left_Tab':
-                self.P.KEYING.next_event(key,event)
+                if event.widget==self.txt:
+                    self.txt2.focus_set()
+                elif event.widget==self.txt2:
+                    self.txt.focus_set()
+                elif event.widget==self.txt or event.widget==self.txt2:
+                    self.call.focus_set()
+                else:
+                    self.P.KEYING.next_event(key,event)
                 return("break")
                     
             # Return key in the text box - nothing to do
-            if (key=='Return' or key=='KP_Enter') and event.widget!=self.txt and True:
+            if (key=='Return' or key=='KP_Enter') and \
+               event.widget!=self.txt and event.widget!=self.txt2 and True:
                 pass
 
             # Check for function keys
@@ -1921,14 +1932,19 @@ class GUI():
                     print('Modified Function Key not supported',shift,control,alt)
                 return("break")
 
-        # Are we in the text window?
+        # Are we in a text window?
         next_widget=event.widget             # Next widget is by default the current widget
         if event.widget==self.txt:
-            # Don't send control chars
+            # Lower text window - Don't send control chars
             if len(ch)>0:
                 if ord(ch)>=32 and ord(ch)<127:
                     #print('KEY_PRESS: Q-Put',ch)
                     self.q.put(ch)
+
+        elif event.widget==self.txt2:
+            # Upper text window 
+            #print('UPPER TEXT WINDOW')
+            pass
 
         # Update info in fldigi
         elif event.widget==self.call:

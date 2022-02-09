@@ -137,7 +137,7 @@ class PARAMS:
         self.PRACTICE_MODE = args.practice
         self.ADJUST_SPEED  = args.adjust and args.practice
         self.NO_HINTS      = args.nohints
-        self.USE_MASTER    = args.master
+        self.USE_MASTER    = args.master or True      # Always set this for now - cant think of a reason not to?
         self.CA_ONLY       = args.ca_only
         #self.DIRECT_CONNECT = args.direct
         self.WPM           = args.wpm
