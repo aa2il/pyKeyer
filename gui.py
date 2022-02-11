@@ -113,6 +113,12 @@ class GUI():
         self.P = P
         self.P.LAST_MSG = -1
         self.P.root = self.root
+
+    # Function to actually construct the gui
+    def construct_gui(self):
+        P=self.P
+
+        # More inits
         self.keyer=P.keyer;
         self.start_time = datetime.utcnow().replace(tzinfo=UTC)
         self.nqsos_start = 0
@@ -142,7 +148,7 @@ class GUI():
         self.prev_call=''
         self.prefill=False
         self.cntr=0
-
+        
         # Open simple log file & read its contents
         MY_CALL = P.SETTINGS['MY_CALL']
         fname = MY_CALL.replace('/','_')+".LOG"

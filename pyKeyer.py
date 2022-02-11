@@ -96,6 +96,9 @@ if True:
     print("P=")
     pprint(vars(P))
 
+# Initialize GUI
+P.gui     = GUI(P)
+    
 # Open connection to 1st rig
 print('\nPYKEYER: Opening connection to primary rig - connection=',P.connection,'\trig=',P.rig,'...')
 P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',rig=P.rig,force=P.FORCE)
@@ -199,14 +202,15 @@ if False:
     P.threads.append(server)
 
 # Start sidetone osc in a separate thread
-if sys.version_info[0]==3:
-    P.q2     = queue.Queue(maxsize=0)
-else:
-    P.q2     = Queue.Queue(maxsize=0)
-sidetone = threading.Thread(target=sidetone_executive, args=(P,),name='Sidetone Osc')
-sidetone.setDaemon(True)
-sidetone.start()
-P.threads.append(sidetone)
+if P.SIDETONE:
+    if sys.version_info[0]==3:
+        P.q2     = queue.Queue(maxsize=0)
+    else:
+        P.q2     = Queue.Queue(maxsize=0)
+    sidetone = threading.Thread(target=sidetone_executive, args=(P,),name='Sidetone Osc')
+    sidetone.setDaemon(True)
+    sidetone.start()
+    P.threads.append(sidetone)
 
 # Load history from previous contests
 if P.USE_MASTER:
@@ -216,8 +220,8 @@ else:
     P.MASTER = {}
 P.calls = list(P.MASTER.keys())
 
-# Create GUI
-P.gui     = GUI(P)
+# Actually create the GUI
+P.gui.construct_gui()
 
 # Set up a thread for code practice
 P.practice = practice.CODE_PRACTICE(P)
