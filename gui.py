@@ -90,7 +90,24 @@ class GUI():
         self.root = Tk()
         # width_size x height_size + x_position + y_position
         self.root.geometry('1200x400+250+250')
-        
+
+        # Create spash screen
+        self.splash  = Toplevel(self.root)
+        self.splash.title("Splish Splash")
+        self.splash.attributes("-topmost", True,'-type', 'splash')
+
+        pic = tk.PhotoImage(file='splash.png')
+        lab=tk.Label(self.splash, bg='white', image=pic)
+        #lab=tk.Label(self.splash, image=pic)
+        lab.pack()
+        self.root.withdraw()
+        self.splash.deiconify()
+
+        #self.root.eval('tk::PlaceWindow . Center')
+        #splash.after(4000, splash.destroy)
+        self.root.update_idletasks()
+
+        # Init
         self.Done=False
         self.contest = False
         self.P = P
@@ -577,6 +594,10 @@ class GUI():
         
         # And away we go!
         self.set_macros()
+        self.root.deiconify()
+        #splash.withdraw()
+        self.splash.destroy()
+        self.root.update_idletasks()
         
 
     # Callback to show or hide the upper text box
@@ -1820,7 +1841,8 @@ class GUI():
                 #print('DELETE - CLEAR BOX ...')
                 if event.widget==self.txt or event.widget==self.txt2:
                     #print('Text Box ...')
-                    event.widget.delete(1,END)     # Clear the entry box
+                    event.widget.delete(1.0,END)     # Clear the entry box
+                    return("break")
                 else:
                     #print('Not in Text Box ...')
                     event.widget.delete(0,END)     # Clear the entry box

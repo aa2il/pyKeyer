@@ -51,7 +51,6 @@ from settings import *
 from tcp_server import *
 import xlrd
 from latlon2maiden import *
-#from fileio import read_gps_coords
 from watchdog import *
 from keying import *
 from process_chars import *
@@ -169,8 +168,9 @@ if P.TEST_MODE:
     P.keyer.disable()           # Disable TX keying for debugging
 
 # Create sidetone oscillator
-P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,F0,FS)
-P.keyer.sidetone = P.osc
+if P.SIDETONE:
+    P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,F0,FS)
+    P.keyer.sidetone = P.osc
 
 # We need a queue for sending messages to the keying thread
 # and a locks to coordinate time-critical sections of the keying & practice

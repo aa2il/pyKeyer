@@ -163,7 +163,7 @@ class SAT_KEYING(DEFAULT_KEYING):
         gui.name.grid(column=col,columnspan=cspan)
 
         col+=cspan
-        gui.qsl.grid(column=col,columnspan=1)
+        #gui.qsl.grid(column=col,columnspan=1)
         
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstout)
