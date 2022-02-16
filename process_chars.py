@@ -60,7 +60,7 @@ def process_chars(P):
 
             # Timing is critical so we make sure we have control
             #if P.SIDETONE and not P.PRACTICE_MODE:
-            if not P.PRACTICE_MODE:
+            if not P.PRACTICE_MODE and P.SIDETONE:
                 print('=========================================')
                 P.q2.put(txt)
             lock.acquire()

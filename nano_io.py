@@ -75,7 +75,9 @@ def open_nano(baud=NANO_BAUD):
  
     # Wait for nano to wake up
     print('Waiting for Nano IO to start-up ...')
-    while ser.in_waiting==0:
+    ntries=0
+    while ser.in_waiting==0 and ntries<100:
+        ntries += 1
         time.sleep(.1)
     nano_read(ser)
 
