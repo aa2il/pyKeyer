@@ -46,8 +46,8 @@ class SAT_KEYING(DEFAULT_KEYING):
         #MACROS[0+12]  = {'Label' : 'QRS '        , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'       , 'Text' : '[CALL] TU [RST] [MYGRID] [MYGRID] BK'}
         MACROS[1+12]  = {'Label' : 'Long'        , 'Text' : '[CALL] TU FER THE CALL [RST] [MYGRID] [MYGRID] OP [MYNAME] [MYNAME] BK'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] TNX FER FB QSO 73 73 ee [LOG]'}
-        #MACROS[2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] MNY TNX FER QSO ES 73 QRZ? [MYCALL] [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] RR TNX 73 73 ee [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'     , 'Text' : '[CALL_CHANGED] TNX FER FB QSO [NAME] 73 73 ee [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'       , 'Text' : '[CALL]? '}
         MACROS[3+12] = {'Label' : 'CALL? '       , 'Text' : 'CALL? '}
 
