@@ -49,6 +49,7 @@ from audio_io import WaveRecorder
 from cwt import *
 from cwopen import *
 from sst import *
+from skcc import *
 from cqp import *
 from wpx import *
 from fd import *
@@ -63,6 +64,7 @@ from settings import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
+from sidetone import init_sidetone
 
 ############################################################################################
 
@@ -359,7 +361,7 @@ class GUI():
         self.S2.config(command=self.txt2.yview)
         self.txt2.config(yscrollcommand=self.S2.set)
         self.txt2.bind("<Tab>", self.key_press )
-        self.show_hide_txt2(self.P.SHOW_TEXT_BOX2)
+        self.show_hide_txt2()
             
         # The lower box is so we can type in what we want to send
         row+=1
@@ -607,7 +609,8 @@ class GUI():
         
 
     # Callback to show or hide the upper text box
-    def show_hide_txt2(self,show):
+    def show_hide_txt2(self):
+        show = self.P.SHOW_TEXT_BOX2        
         if show:
             wght=1
             self.txt2.grid()
@@ -746,16 +749,6 @@ class GUI():
         else:
             print('CALL_LOOKUP: Need a valid call first! ',call)
             
-    # callback for practice with computer text
-    def PracticeCB(self):
-        self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
-        print("Practice ...",self.P.PRACTICE_MODE)
-
-    # callback to turn sidetone on and off
-    def SideToneCB(self):
-        print("Toggling Sidetone ...")
-        self.P.SIDETONE = not self.P.SIDETONE
-
     # Callback to bring up rig control menu
     def RigCtrlCB(self):
         print("^^^^^^^^^^^^^^Rig Control...")
@@ -858,6 +851,9 @@ class GUI():
         if '[MYCOUNTY]' in txt:
             self.qth_out = self.P.SETTINGS['MY_COUNTY'] 
             txt = txt.replace('[MYCOUNTY]', self.qth_out)
+        if '[MYSKCC]' in txt:
+            self.qth_out = self.P.SETTINGS['MY_SKCC']
+            txt = txt.replace('[MYSKCC]', self.qth_out )
 
         return txt
     
@@ -996,6 +992,8 @@ class GUI():
             self.P.KEYING=CWOPS_KEYING(self.P)
         elif val=='SST':
             self.P.KEYING=SST_KEYING(self.P)
+        elif val=='SKCC':
+            self.P.KEYING=SKCC_KEYING(self.P)
         elif val=='CW Open':
             self.P.KEYING=CWOPEN_KEYING(self.P)
         elif val=='SATELLITES':
@@ -1451,13 +1449,19 @@ class GUI():
             # Construct exchange out
             if self.contest and self.P.SPRINT:
                 self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
-                
+
+            # Construct QSO
             qso = dict( list(zip(['QSO_DATE_OFF','TIME_OFF','CALL','FREQ','BAND','MODE', \
                                   'SRX_STRING','STX_STRING','NAME','QTH','SRX',
                                   'STX','SAT_NAME','FREQ_RX','BAND_RX'],  \
                            [date_off,time_off,call,str(1e-3*freq_kHz),band,mode, \
                             exch,self.exch_out,name,qth,str(serial),
                             str(self.cntr),satellite,str(1e-3*freq_kHz_rx),band_rx] )))
+
+            # Anything special for this contest - eventually put this in class object
+            if self.P.contest_name=='SKCC':
+                qso['SKCC'] = exch.split(',')[0]
+            
 
             if self.P.sock3.connection=='FLLOG':
                 print('GUI: =============== via FLLOG ...')
@@ -2151,7 +2155,6 @@ class GUI():
         next_widget.focus_force()
         self.root.update_idletasks()
 
-
 ############################################################################################
 
      # Open dialog window for basic settings
@@ -2159,6 +2162,38 @@ class GUI():
         #self.SettingsWin = SETTINGS_GUI(self.root,self.P)
         self.SettingsWin.show()
 
+############################################################################################
+
+    # Callback for practice with computer text
+    def PracticeCB(self):
+        self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
+        print("Practice ...",self.P.PRACTICE_MODE)
+
+    # Callback to turn sidetone on and off
+    def SideToneCB(self):
+        print("Toggling Sidetone ...")
+        self.P.SIDETONE = not self.P.SIDETONE
+        if self.P.SIDETONE and not self.P.q2:
+            init_sidetone(self.P)
+
+    # Callback to turn split text window on & off
+    def SplitTextCB(self):
+        print("Toggling Split Text ...")
+        self.P.SHOW_TEXT_BOX2 = not self.P.SHOW_TEXT_BOX2
+        self.show_hide_txt2()
+               
+    # Callback to show/hide hints entry box
+    def ShowHintsCB(self):
+        show=self.ShowHints.get()
+        print("Toggling Show/Hide Hints ...", show)
+        if show:
+            self.hint_lab.grid()
+            self.hint.grid()
+        else:
+            self.hint_lab.grid_remove()
+            self.hint.grid_remove()
+               
+############################################################################################
     
     # Function to create menu bar
     def create_menu_bar(self):
@@ -2201,6 +2236,22 @@ class GUI():
             underline=0,
             variable=self.SideTone,
             command=self.SideToneCB
+        )
+        
+        self.SplitTxt = BooleanVar(value=self.P.SHOW_TEXT_BOX2)
+        Menu1.add_checkbutton(
+            label="Split Text Win",
+            underline=0,
+            variable=self.SplitTxt,
+            command=self.SplitTextCB
+        )
+        
+        self.ShowHints = BooleanVar(value=not self.P.NO_HINTS)
+        Menu1.add_checkbutton(
+            label="Show Hints",
+            underline=0,
+            variable=self.ShowHints,
+            command=self.ShowHintsCB
         )
         
         Menu1.add_separator()

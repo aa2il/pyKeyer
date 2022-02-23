@@ -39,6 +39,8 @@ class PARAMS:
                               help='NAQP')
         arg_proc.add_argument('-sst', action='store_true',
                               help='K1USN SST')
+        arg_proc.add_argument('-skcc', action='store_true',
+                              help='SKCC')
         arg_proc.add_argument('-CWops', action='store_true',
                               help='CWops')
         arg_proc.add_argument('-cwopen', action='store_true',
@@ -176,7 +178,8 @@ class PARAMS:
         self.KEYING=None
         self.HIST_DIR=HIST_DIR
 
-        self.CONTEST_LIST=['Default','Ragchew','CW Ops Mini-Test','SST','CW Open','ARRL VHF','NAQP-CW', \
+        self.CONTEST_LIST=['Default','Ragchew','CW Ops Mini-Test','SST','SKCC','CW Open',
+                           'ARRL VHF','NAQP-CW', \
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
                            'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']
         self.SHOW_TEXT_BOX2=False
@@ -191,6 +194,9 @@ class PARAMS:
         elif args.sst:
             self.contest_name='SST'
             MAX_AGE_HOURS=1
+        elif args.skcc:
+            self.contest_name='SKCC'
+            MAX_AGE_HOURS=2
         elif args.vhf:
             self.contest_name='ARRL VHF'
             MAX_AGE_HOURS=33

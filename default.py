@@ -38,6 +38,7 @@ class DEFAULT_KEYING():
         self.contest_name  = contest_name 
         self.aux_cb=None
 
+        P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
         if P.USE_MASTER or HISTORY==None:
             P.HISTORY = P.HIST_DIR+'master.csv'

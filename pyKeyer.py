@@ -58,9 +58,6 @@ from process_chars import *
 ################################################################################
 
 # User params
-FS = 48000              # Playback rate
-F0 = 700
-AMP=0.5
 HIST_DIR=os.path.expanduser('~/Python/history/data/')
 
 ################################################################################
@@ -170,11 +167,6 @@ P.keyer=cw_keyer.Keyer(P,P.ser,wpm)
 if P.TEST_MODE:
     P.keyer.disable()           # Disable TX keying for debugging
 
-# Create sidetone oscillator
-if P.SIDETONE:
-    P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,F0,FS)
-    P.keyer.sidetone = P.osc
-
 # We need a queue for sending messages to the keying thread
 # and a locks to coordinate time-critical sections of the keying & practice
 # threads
@@ -201,16 +193,8 @@ if False:
     server.start()
     P.threads.append(server)
 
-# Start sidetone osc in a separate thread
-if P.SIDETONE:
-    if sys.version_info[0]==3:
-        P.q2     = queue.Queue(maxsize=0)
-    else:
-        P.q2     = Queue.Queue(maxsize=0)
-    sidetone = threading.Thread(target=sidetone_executive, args=(P,),name='Sidetone Osc')
-    sidetone.setDaemon(True)
-    sidetone.start()
-    P.threads.append(sidetone)
+# Create sidetone oscillator & start in a separate thread
+init_sidetone(P)
 
 # Load history from previous contests
 if P.USE_MASTER:

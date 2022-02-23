@@ -404,6 +404,11 @@ class Keyer():
                     self.send_cw(MY_NAME)
                     txt2+=MY_NAME
 
+                elif cmd2=="MYSKCC":
+                    # Substitute my skcc no.
+                    self.send_cw(MY_SKCC)
+                    txt2+=MY_SKCC
+
                 elif cmd2=="MYQTH":
                     # Substitute my name
                     self.send_cw(MY_QTH)

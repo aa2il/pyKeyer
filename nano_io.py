@@ -33,7 +33,8 @@ NANO_BAUD=38400
 
 # Read responses from the nano IO
 def nano_read(ser,echo=False):
-    while ser.in_waiting>0:
+    txt=''
+    while ser and ser.in_waiting>0:
         try:
             txt = ser.read(256).decode("utf-8")
         except:
@@ -45,13 +46,12 @@ def nano_read(ser,echo=False):
 # Send chars/commands to the nano IO
 def nano_write(ser,txt):
     # Need to make sure serial buffer doesn't over run - h/w/ flow control doesn't seem to work
-    if ser.out_waiting>10:
-        print('WAITING ....')
-        while ser.out_waiting>0:
-            time.sleep(1)
-    cnt=ser.write(bytes(txt, 'utf-8'))
-    #nwait=ser.out_waiting
-    #print('cnt=',cnt,'\tnwait=',nwait)
+    if ser:
+        if ser.out_waiting>10:
+            print('WAITING ....')
+            while ser.out_waiting>0:
+                time.sleep(1)
+        cnt=ser.write(bytes(txt, 'utf-8'))
 
 # Key down/key up for tuning
 # This isn't working - need to explore when updating nanoIO code
@@ -63,7 +63,8 @@ def nano_tune(ser,tune):
         # Cancel - see nanoIO.ino for this little gem
         txt=']'
     print('NANO_TUNE:',txt)
-    ser.write(bytes(txt, 'utf-8'))
+    if ser:
+        ser.write(bytes(txt, 'utf-8'))
 
 # Open up comms to nano IO
 def open_nano(baud=NANO_BAUD):

@@ -59,8 +59,7 @@ def process_chars(P):
             print('PROCESSS_CHARS: txt=',txt,'\tWPM=',keyer.WPM)
 
             # Timing is critical so we make sure we have control
-            #if P.SIDETONE and not P.PRACTICE_MODE:
-            if not P.PRACTICE_MODE and P.SIDETONE:
+            if P.q2 and not P.PRACTICE_MODE and P.SIDETONE:
                 print('=========================================')
                 P.q2.put(txt)
             lock.acquire()
@@ -71,7 +70,7 @@ def process_chars(P):
             
             if P.NANO_IO:
                 
-                if P.ser.in_waiting>0:
+                if P.ser and P.ser.in_waiting>0:
                     txt=nano_read(P.ser)
                     if False:
                         # Put it in the big text box also

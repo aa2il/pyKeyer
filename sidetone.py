@@ -28,8 +28,42 @@ from cw_keyer import morse
 import sys
 import time
 import sig_proc as dsp
+import threading
+if sys.version_info[0]==3:
+    import queue
+else:
+    import Queue
 
 ###################################################################
+
+# User params
+FS = 48000              # Playback rate
+F0 = 700
+AMP=0.5
+
+################################################################################
+
+def init_sidetone(P):
+    
+    if P.SIDETONE:
+        print('Init SIDETONE ...')
+        P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,F0,FS)
+        P.keyer.sidetone = P.osc
+
+        if sys.version_info[0]==3:
+            P.q2     = queue.Queue(maxsize=0)
+        else:
+            P.q2     = Queue.Queue(maxsize=0)
+            
+        sidetone = threading.Thread(target=sidetone_executive, args=(P,),\
+                                    name='Sidetone Osc')
+        sidetone.setDaemon(True)
+        sidetone.start()
+        P.threads.append(sidetone)
+        
+    else:
+        P.q2=None
+
 
 def sidetone_executive(P):
     print('SIDETONE Exec')

@@ -53,8 +53,10 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
         
         MACROS[4]    = {'Label' : 'de [MYCALL]' , 'Text' : '[CALL] de [MYCALL] [MYCALL] '}
         MACROS[4+12] = {'Label' : '[MYCALL]'    , 'Text' : '[MYCALL] '}
-        MACROS[5]  = {'Label'   : 'Report'      , 'Text' : 'FB [NAME] SOLID COPY = ' \
+        MACROS[5]    = {'Label'   : 'Report'      , 'Text' : 'FB [NAME] SOLID COPY = ' \
                       + 'UR [RST] [RST] IN [MYQTH] [MYQTH] = NAME HR IS [MYNAME] [MYNAME]'}
+        MACROS[5+12]  = {'Label'   : 'Report'      , 'Text' : '[GDAY] [NAME] GUD TO MEET U = ' \
+                      + 'UR [RST] [RST] IN SAN DIEGO,CA SAN DIEGO, CA = OP [MYNAME] [MYNAME]'}
         MACROS[6]     = {'Label'   : 'Rig'      , 'Text' : 'RIG HR IS YAESU FTDX3K, ABT 100W TO A WIRE BEAM UP 30 FT ='}
         MACROS[6+12]  = {'Label'   : 'Age'      , 'Text' : 'AGE HR IS 59, BEEN A HAM OVER 40 YRS = I AM A RETIRED ELEC ENGINEER ='}
         #                      + 'BEEN HAM SINCE LATE 1970s = I AM A RETIRED ELEC ENGINEER SO REALLY RADIO ='}

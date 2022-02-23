@@ -3,7 +3,7 @@
 # ten.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for ARRL 10m and Intl DX contests
+# Keying routines for ARRL 10m and Intl DX contests.
 #
 ############################################################################################
 #
@@ -52,26 +52,34 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYSTATE] '}
+        MACROS[5]     = {'Label' : 'S&P Reply2' , 'Text' : 'TU 5NN [MYSTATE] [MYSTATE] '}
         MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[8]     = {'Label' : ' '     , 'Text' : ' '}
-        MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYSTATE] [MYSTATE] '}
-        MACROS[10]    = {'Label' : ' '       , 'Text' : ' '}
-        MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
-
+        MACROS[8]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[9]     = {'Label' : ' '         , 'Text' : ' '}
+        MACROS[10]    = {'Label' : ' '         , 'Text' : ' '}
+        if self.P.contest_name=='ARRL-DX':
+            MACROS[11]    = {'Label' : 'NR? '  , 'Text' : 'NR? '}
+        else:
+            MACROS[11]    = {'Label' : 'QTH? ' , 'Text' : 'QTH? '}
+        
         return MACROS
 
     # Routine to generate a hint for a given call
     def hint(self,call):
         P=self.P
 
-        state = P.MASTER[call]['state']
-        if state=='':
-            # Try deciphering from section info
-            sec   = P.MASTER[call]['fdsec']
-            state=arrl_sec2state(sec)
+        try:
+            state = P.MASTER[call]['state']
+            if state=='':
+                # Try deciphering from section info
+                sec   = P.MASTER[call]['fdsec']
+                state=arrl_sec2state(sec)
+        except:
+            state=''
+            
         return state
 
     # Routine to get practice qso info

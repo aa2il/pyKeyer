@@ -44,15 +44,16 @@ class SST_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SST [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [MYSTATE] '}
         #MACROS[1+12]  = {'Label' : 'Reply'     , 'Text' : '[CALL] TNX AGN [MYNAME] [MYSTATE] '}
-        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] 73 SST [MYCALL] [LOG]'}
+        
         #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 SST [MYCALL] [LOG]'}
         #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC ES HNY [NAME] EE [LOG]'}
         #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 EE [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] GL EE'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 [LOG]'}
+        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] 73 [LOG]'}
+        #MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] GL EE'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -70,6 +71,7 @@ class SST_KEYING(DEFAULT_KEYING):
         MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
         MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
 
