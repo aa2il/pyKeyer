@@ -37,9 +37,11 @@ set MASTER="-master"
 #set MASTER=""
 set HINTS="-nohints"
 
-set CONTEST="CWops"
+set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="cwopen"
+#set CONTEST="skcc"
+set CONTEST="calls"
 
 #set CONTEST="naqp"
 #set CONTEST="fd"
@@ -70,7 +72,7 @@ if( $CONTEST == "naqp" )then
     #set HINTS=""
 
 # Settings for CW Ops mini tests
-else if( $CONTEST == "CWops" )then
+else if( $CONTEST == "cwt" )then
     set WPM=30
     set HINTS="-nohints -adjust"
 
@@ -144,6 +146,16 @@ else if( $CONTEST == "ss" )then
     set HINTS=""
     set HINTS="-adjust"
     #set HINTS="-nohints -adjust"
+
+# Settings for SKCC practice
+else if( $CONTEST == "skcc" )then
+    set WPM=25
+    set HINTS="-adjust"
+
+# Settings for random calls practice
+else if( $CONTEST == "calls" )then
+    set WPM=25
+    set HINTS="-adjust"
 
 # Settings for Default Quick, Ragchew or QSOs
 else if( $CONTEST == "default" || $CONTEST == "ragchew"  || $CONTEST == "dx" )then

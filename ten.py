@@ -171,8 +171,10 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
 
         MY_STATE = self.P.SETTINGS['MY_STATE']
         exch_out = '599,'+MY_STATE
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):

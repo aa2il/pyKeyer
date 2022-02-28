@@ -160,8 +160,10 @@ class CQWW_KEYING(DEFAULT_KEYING):
 
         MY_CQ_ZONE = self.P.SETTINGS['MY_CQ_ZONE']
         exch_out = '599,'+MY_CQ_ZONE
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):

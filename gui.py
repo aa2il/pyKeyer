@@ -50,6 +50,7 @@ from cwt import *
 from cwopen import *
 from sst import *
 from skcc import *
+from calls import *
 from cqp import *
 from wpx import *
 from fd import *
@@ -988,12 +989,14 @@ class GUI():
         print('SET_MACROS: val=',val)
 
         # Initiate keying module for this contest
-        if val.find('CW Ops')>=0:
+        if val=='CWT':
             self.P.KEYING=CWOPS_KEYING(self.P)
         elif val=='SST':
             self.P.KEYING=SST_KEYING(self.P)
         elif val=='SKCC':
             self.P.KEYING=SKCC_KEYING(self.P)
+        elif val=='CALLS':
+            self.P.KEYING=CALLS_KEYING(self.P)
         elif val=='CW Open':
             self.P.KEYING=CWOPEN_KEYING(self.P)
         elif val=='SATELLITES':
@@ -1022,6 +1025,8 @@ class GUI():
             self.P.KEYING=DX_KEYING(self.P,val)
         elif val=='Default':
             self.P.KEYING=DEFAULT_KEYING(self.P)
+        elif val=='RANDOM CALLS':
+            self.P.KEYING=RANDOM_CALLS_KEYING(self.P)
         else:
             print('GUI: *** ERROR *** Cant figure which contest !')
             print(val)
@@ -1379,7 +1384,7 @@ class GUI():
         
         if self.contest:
             rst='5NN'
-            exch,valid,self.exch_out = self.P.KEYING.logging()
+            exch,valid,self.exch_out,qso2 = self.P.KEYING.logging()
         else:
             rstin =self.get_rst_in().upper()
             exch=str(rstin)+','+ name
@@ -1387,7 +1392,7 @@ class GUI():
             print('rst=',rstin)
             print('exch=',exch)
 
-        # Make sure a satellite is selected if needed
+        # Make sure a satellite is selected if needed - MOVE THIS TO LOGGING() IN SATS.PY
         satellite = self.get_satellite()
         if self.P.contest_name=='SATELLITES' and satellite=='None':
             errmsg='Need to Select a Satellite!'
@@ -1418,7 +1423,7 @@ class GUI():
             if band[-1]!='m':
                 band += 'm'
 
-            # For satellites, read vfo B also
+            # For satellites, read vfo B also  - MOVE THIS TO LOGGING() IN SATS.PY
             if self.P.contest_name=='SATELLITES':
                 freq_kHz_rx = freq_kHz
                 band_rx     = band
@@ -1457,11 +1462,7 @@ class GUI():
                            [date_off,time_off,call,str(1e-3*freq_kHz),band,mode, \
                             exch,self.exch_out,name,qth,str(serial),
                             str(self.cntr),satellite,str(1e-3*freq_kHz_rx),band_rx] )))
-
-            # Anything special for this contest - eventually put this in class object
-            if self.P.contest_name=='SKCC':
-                qso['SKCC'] = exch.split(',')[0]
-            
+            qso.update(qso2)
 
             if self.P.sock3.connection=='FLLOG':
                 print('GUI: =============== via FLLOG ...')
@@ -1475,9 +1476,7 @@ class GUI():
                 self.sock.run_macro(47)
 
             # Reset clarifier
-            #self.sock.send('RC;RT0;XT0;')
             ClarReset(self)
-            #self.sock.rit(0,0)
 
             # Make sure practice exec gets what it needs
             if self.P.PRACTICE_MODE:
@@ -1724,6 +1723,9 @@ class GUI():
             print('Call match:',call)
             if match2:
                 self.call.configure(background="coral")
+            else:
+                self.call.configure(background="lemon chiffon")
+                
             if len( self.exch.get() )==0:
                 self.prefill=True
                 a=last_exch.split(',')

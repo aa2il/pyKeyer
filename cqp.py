@@ -182,8 +182,10 @@ class CQP_KEYING(DEFAULT_KEYING):
         
         MY_COUNTY   = self.P.SETTINGS['MY_COUNTY']
         exch_out = str(gui.cntr)+','+MY_COUNTY
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):

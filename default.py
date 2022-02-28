@@ -181,16 +181,23 @@ class DEFAULT_KEYING():
 
         gui=self.P.gui
 
+        # Form exchange from other station
         call=gui.get_call().upper()
         serial = gui.get_serial().upper()
         name = gui.get_name().upper()
         exch   = serial+','+name
+
+        # Check validity of the exchange - in this case, just a valid call sign
         valid = len(call)>=3 
-        
+
+        # Form my exchagne tohim
         MY_NAME   = self.P.SETTINGS['MY_NAME']
         exch_out = str(gui.cntr)+','+MY_NAME
+
+        # Any special fields for this particular contest
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):
@@ -238,6 +245,8 @@ class DEFAULT_KEYING():
 
             # Send a macro if needed
             if key=='Return' or key=='KP_Enter':
+                #print('idx=',idx)
+                #print('macros=',self.macros)
                 n=self.macros[idx]
                 if n!=None:
                     gui.Send_Macro(n)

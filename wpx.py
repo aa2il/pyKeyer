@@ -167,8 +167,10 @@ class WPX_KEYING(DEFAULT_KEYING):
         valid = len(call)>=3 and len(rst)>0 and len(serial)>0
 
         exch_out = '599,'+str(gui.cntr)
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     def dupe(self,a):
         #gui=self.P.gui

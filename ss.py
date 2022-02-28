@@ -236,7 +236,10 @@ class SS_KEYING(DEFAULT_KEYING):
         MY_PREC     = self.P.SETTINGS['MY_PREC']
         MY_CHECK    = self.P.SETTINGS['MY_CHECK']
         exch_out = str(gui.cntr)+','+MY_PREC+','+MY_CALL+','+MY_CHECK+','+MY_SEC
-        return exch,valid,exch_out
+
+        qso2={}
+        
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):

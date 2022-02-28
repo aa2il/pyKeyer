@@ -41,8 +41,8 @@ class PARAMS:
                               help='K1USN SST')
         arg_proc.add_argument('-skcc', action='store_true',
                               help='SKCC')
-        arg_proc.add_argument('-CWops', action='store_true',
-                              help='CWops')
+        arg_proc.add_argument('-cwt', action='store_true',
+                              help='CWops Mini Tests')
         arg_proc.add_argument('-cwopen', action='store_true',
                               help='CWops CW Open')
         arg_proc.add_argument('-wpx', action='store_true',
@@ -71,6 +71,8 @@ class PARAMS:
                               help='Regular Ragchew QSO')
         arg_proc.add_argument('-dx', action='store_true',
                               help='DX QSO')
+        arg_proc.add_argument('-calls', action='store_true',
+                              help='Random Calls')
         arg_proc.add_argument('-default', action='store_true',
                               help='Default (quick) QSO')
         arg_proc.add_argument('-test', action='store_true',
@@ -79,6 +81,8 @@ class PARAMS:
                               help='Practice mode')
         arg_proc.add_argument('-sidetone', action='store_true',
                               help='Sidetone Osc')
+        arg_proc.add_argument('-split', action='store_true',
+                              help='Split Text Window')
         arg_proc.add_argument('-nohints', action='store_true',
                               help='No hints')
         arg_proc.add_argument('-capture', action='store_true',
@@ -182,20 +186,24 @@ class PARAMS:
                            'ARRL VHF','NAQP-CW', \
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
                            'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']
-        self.SHOW_TEXT_BOX2=False
+        self.SHOW_TEXT_BOX2=args.split
         if self.SPRINT:
             print('NEED TO FIX THIS!!!!!!!!!!!!!')
             sys.exit(0)
             self.KEYING=SPRINT_KEYING(self)
             MAX_AGE_HOURS=1
-        elif args.CWops:
-            self.contest_name='CW Ops Mini-Test'
+        elif args.cwt:
+            self.contest_name='CWT'
             MAX_AGE_HOURS=1
         elif args.sst:
             self.contest_name='SST'
             MAX_AGE_HOURS=1
         elif args.skcc:
             self.contest_name='SKCC'
+            MAX_AGE_HOURS=2
+            self.SHOW_TEXT_BOX2=True
+        elif args.calls:
+            self.contest_name='RANDOM CALLS'
             MAX_AGE_HOURS=2
         elif args.vhf:
             self.contest_name='ARRL VHF'

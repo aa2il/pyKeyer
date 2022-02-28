@@ -191,8 +191,10 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MY_NAME   = self.P.SETTINGS['MY_NAME']
         MY_STATE    = self.P.SETTINGS['MY_STATE']
         exch_out = MY_NAME+','+MY_STATE
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):

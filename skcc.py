@@ -86,21 +86,16 @@ class SKCC_KEYING(DEFAULT_KEYING):
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
+        print('QSO_INFO: call=',call,'\tiopt=',iopt,'\nhist=',HIST[call])
+
         name  = HIST[call]['name'].split(' ')
         name  = name[0]
         qth   = HIST[call]['state']
                 
         if iopt==1:
             
-            #name  = HIST[call]['name']
-            num   = HIST[call]['skcc']
-            
-            # Select criteria for a accepting a call
-            # Most of the time require a cwops number but once in a while use only state
-            # This seems to be most realistic of what in encountered in the tests.
-            done = len(name)>0 and len(num)>0                  # Need no. but some have state in no. field
-            x = random()
-            done =done and ((num not in SST_SECS) or (x<0.1))
+            num   = HIST[call]['skccnr']
+            done = len(name)>0  and len(qth)>0 and len(num)>0
                 
             return done
 
@@ -110,9 +105,11 @@ class SKCC_KEYING(DEFAULT_KEYING):
             self.name = name
             self.qth  = qth
 
-            num = HIST[call]['skcc']
-            self.serial=self.qth            # Need this bx the way the repeat keys are labeled
+            num = HIST[call]['skccnr']
+            self.num    = num
+            #self.serial = qth
             
+            txt2  = ' '+qth+' '+name+' '+num
             return txt2
 
     # Error checking
@@ -120,9 +117,10 @@ class SKCC_KEYING(DEFAULT_KEYING):
         P=self.P
 
         call2 = P.gui.get_call().upper()
+        qth2  = P.gui.get_qth().upper()
         name2 = P.gui.get_name().upper()
-        qth2  = P.gui.get_exchange().upper()
-        match = self.call==call2 and self.name==name2 and self.qth==qth2
+        num2  = P.gui.get_exchange().upper()
+        match = self.call==call2 and self.name==name2 and self.qth==qth2 and self.num==num2
 
         if not match:
             txt='********************** ERROR **********************'
@@ -138,6 +136,9 @@ class SKCC_KEYING(DEFAULT_KEYING):
             print('QTH  sent:',self.qth,' - received:',qth2)
             P.gui.txt.insert(END,'QTH  sent: '+self.qth+ ' - received: '+qth2+'\n')
 
+            print('NR   sent:',self.num,' - received:',num2)
+            P.gui.txt.insert(END,'NR   sent: '+self.num+ ' - received: '+num2+'\n')
+
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)
@@ -150,7 +151,6 @@ class SKCC_KEYING(DEFAULT_KEYING):
 
         gui.contest=True
         gui.hide_all()
-        self.macros=[1,None,2]
 
         col=0
         cspan=2
@@ -185,6 +185,9 @@ class SKCC_KEYING(DEFAULT_KEYING):
             gui.hint_lab.grid_remove()
             gui.hint.grid_remove()
 
+        # Indicate which macro to fire if return key is pressed while in each entry bos
+        self.macros=[1,None,None,None,None,2]
+
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstout)
         gui.boxes.append(gui.rstin)
@@ -212,8 +215,10 @@ class SKCC_KEYING(DEFAULT_KEYING):
         MY_STATE = self.P.SETTINGS['MY_STATE']
         MY_SKCC  = self.P.SETTINGS['MY_SKCC']
         exch_out = rstout+','+MY_STATE+','+MY_NAME+','+MY_SKCC
+
+        qso2 = {'SKCC':num}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):

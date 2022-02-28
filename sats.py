@@ -198,8 +198,10 @@ class SAT_KEYING(DEFAULT_KEYING):
 
         MY_GRID     = self.P.SETTINGS['MY_GRID']
         exch_out = rstout+','+MY_GRID
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):

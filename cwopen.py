@@ -173,8 +173,10 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         
         MY_NAME   = self.P.SETTINGS['MY_NAME']
         exch_out = str(gui.cntr)+','+MY_NAME
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):
