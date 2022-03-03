@@ -87,12 +87,15 @@ def open_nano(baud=NANO_BAUD):
     return ser
 
 # Command nano to change WPM
-def nano_set_wpm(ser,wpm):
-    txt='~S'+str(wpm).zfill(3)+'s'
-    #print('txt=',txt)
-    nano_write(ser,txt)
+def nano_set_wpm(ser,wpm,idev=1):
+
+    if idev==1 or idev==3:
+        # Set wpm of chars sent from the keyboard
+        txt='~S'+str(wpm).zfill(3)+'s'
+        nano_write(ser,txt)
             
-    txt='~U'+str(wpm).zfill(3)+'u'
-    #print('txt=',txt)
-    nano_write(ser,txt)
+    if idev==2 or idev==3:
+        # Set wpm for the paddles
+        txt='~U'+str(wpm).zfill(3)+'u'
+        nano_write(ser,txt)
             

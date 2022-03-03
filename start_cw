@@ -1,0 +1,479 @@
+#! /usr/bin/tcsh
+################################################################################
+#
+# start_cw - Rev 1.1
+# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+#
+# Script to startup everything for a CW contest.
+#
+# Notes:
+#  1) set HINTS="-use_log_hist"
+#     or otherwise dupe checking will not work if we restart
+#     Need to rethink this scheme, perhaps put a time limit on it?
+#
+#  2) Can have pyKeyer talk directly to rig and SDR as a client but
+#     this seems to be problematic for now. Instead, using FLRIG or HAMLIB 
+#     seems more stable.
+#
+#  3) How to combine capture & sidetone wave files:
+#     sox capture_20200625_183249.wav sidetone_20200625_183249.wav \
+#                              --channels 2 --combine merge stereo.ogg
+#     ... and to play it:
+#     audacity stereo.ogg
+#
+################################################################################
+#
+# Usual way to run this is to with FLRIG controling the radio & the keyer and
+# SDR working through it.
+#
+#     RIG <----------------> FLRIG
+#             USB Port       ^   ^
+#                            |   | Both via 
+#                            |   | xlmrpc 12345
+#                            |   |
+#                            |   |         
+#                 pyKeyer ---+   +---- SDR 
+#
+###############################################################################
+
+# Select codes to start
+set START_SDR     = 1       # 1
+set START_CLOCK   = 1       # 1
+set START_BANDMAP = 1       # 1
+
+# Select various processing options
+set SO2V          = 0
+set USE_NANO_IO   = 1       # 1
+set TEST_MODE     = 0       # 0
+set KILL_OLD      = 1       # 1
+
+# Development mode
+if( 0 )then
+    set START_SDR     = 0
+    set START_CLOCK   = 0
+    set START_BANDMAP = 0
+endif
+
+# Select a contest
+set CONTEST=""
+set CONTEST="ragchew"
+set CONTEST="cwt"
+#set CONTEST="cwopen"
+#set CONTEST="sst"
+#set CONTEST="skcc"
+#set CONTEST="cqww"
+#set CONTEST="ss"
+#set CONTEST="arrl_dx"
+#set CONTEST="vhf"
+#set CONTEST="fd"
+#set CONTEST="cqp"
+#set CONTEST="wpx"
+#set CONTEST="arrl_10m"
+#set CONTEST="iaru"
+#set CONTEST="naqp"
+
+# Various options for pyKeyer
+set CAPTURE=""
+#set CAPTURE="-capture"
+#set CAPTURE="-capture -sidetone"
+#set CAPTURE=""
+set MODE="-mode CW"
+
+set MASTER="-master"
+set PRACTICE=""
+set HINTS=""
+
+set BAUD = 38400
+set PORT = 0
+set PORT2 = 0
+
+set UDP="-udp"
+#set UDP=""
+
+# If no contest was selected, default to CWT or SST
+set d=`date`
+if( X$CONTEST == "X" && $d[1] == "Wed" )then
+    set CONTEST="cwt"
+else if( X$CONTEST == "X" && $d[1] != "Wed" )then
+    set CONTEST="sst"
+endif
+
+# VHF Contest
+if( 0 )then
+    set START_SDR     = 0
+    set START_CLOCK   = 0
+    set START_BANDMAP = 0
+    set CONTEST       = "vhf"
+endif
+
+echo CONTEST=$CONTEST
+#exit
+
+################################################################################
+
+# Select primary rig & middleware
+#set RIG1="FLDIGI"
+set RIG1="FLRIG"
+#set RIG1="HAMLIB"
+#set RIG1="DIRECT"
+
+#set RIG_TYPE1="TS850"
+#set RIG_TYPE1="IC706"
+set RIG_TYPE1="FTdx3000"
+#set RIG_TYPE1="FT991a"
+#set RIG_TYPE2="IC9700"
+#set RIG_TYPE1=`~/Python/findRig/findRig.py`
+
+# Select secondary rig & middleware
+# Very limited for now
+set RIG2="NONE"
+#set RIG2="DIRECT"
+#set RIG2="FLRIG"
+
+set RIG_TYPE2="NONE"
+#set RIG_TYPE2="TS850"
+#set RIG_TYPE2="IC706"
+#set RIG_TYPE2="FTdx3000"
+#set RIG_TYPE2="FT991a"
+#set RIG_TYPE2="IC9700"
+#set RIG_TYPE2=`~/Python/findRig/findRig.py`
+
+# Determine primary rig type
+echo RIG_TYPE1a=-$RIG_TYPE1-$#RIG_TYPE1-
+if( $RIG_TYPE1 == "" )then
+    sleep 1
+    set RIG_TYPE1=`~/Python/findRig/findRig.py`
+    echo RIG_TYPE1b=-$RIG_TYPE1-$#RIG_TYPE1-
+endif
+if( $RIG_TYPE1 == "" )then
+    sleep 1
+    set RIG_TYPE1=`~/Python/findRig/findRig.py`
+    echo RIG_TYPE1c=-$RIG_TYPE1-
+endif
+set RIG_TYPE1=`echo $RIG_TYPE1 | cut -f 1 -d ' '`
+echo RIG_TYPE1=-$RIG_TYPE1-
+#set RIG_TYPE=$RIG_TYPE1               # For now!!!
+#exit
+
+# Testing/development
+if( 0 )then
+    set START_SDR     = 0
+    set START_CLOCK   = 0
+    set START_BANDMAP = 0
+endif
+
+set BM_OPTS = $UDP                        # Enable UDP protocol to keyer
+#set BM_OPTS = "$UDP -buttons"            # Enable band switch buttons
+
+#########################################################################
+
+# Settings for NAQP contest, Jan 2019
+if( $CONTEST == "naqp" )then
+    set WPM=25
+    #set HINTS=""
+    set HINTS="-use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest"
+
+# Settings for Slow Speed Mini Test
+else if( $CONTEST == "sst" )then
+    set HINTS="-use_log_hist"
+    set WPM=20
+    set BM_OPTS = "$BM_OPTS -contest -hours 1"
+
+# Settings for SKCC sprint - FOR LOGGING ONLY!!
+else if( $CONTEST == "skcc" )then
+    set HINTS="-use_log_hist -split"
+    set WPM=20
+    set BM_OPTS = "$BM_OPTS -hours 2"
+
+# Settings for NCCC CW Sprints
+else if( $CONTEST == "sprint" )then
+    set WPM=25
+    set CONTEST="-sprint"
+    set HINTS=""
+
+# Setting for CQ WPX (or any contest that requires rst + serial number)
+else if( $CONTEST == "wpx" )then
+    set WPM=25
+    set HINTS="-nohints -use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest"
+
+# Setting for CQ World Wide
+else if( $CONTEST == "cqww" )then
+    # Hints and log hist
+    set WPM=25
+    #set PRACTICE="-prac"
+    set HINTS="-use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest -dx"
+
+# Settings for field day
+else if( $CONTEST == "fd" )then
+    set WPM=30
+    #set PRACTICE="-prac"
+    set HINTS="-nohints"
+
+# Settings for CW Ops mini tests
+else if( $CONTEST == "cwt" )then
+    set WPM=25
+    #set HINTS=""
+    #set HINTS="-use_log_hist"
+    set HINTS="-nohints"
+    set BM_OPTS = "$BM_OPTS -contest"
+
+# Settings for CW Ops cw open
+else if( $CONTEST == "cwopen" )then
+    set WPM=25
+    set HINTS="-use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest -hours 4"
+
+# Settings for IARU HF Champs
+else if( $CONTEST == "iaru" )then
+    set WPM=25
+    set HINTS="-use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest"
+
+# Settings for CA QSO Party
+else if( $CONTEST == "cqp" )then
+    set MASTER="-master -ca_only"
+    set HINTS="-use_log_hist"
+    set WPM=25
+
+# Settings for ARRL VHF
+else if( $CONTEST == "vhf" )then
+    set WPM=25
+    set HINTS="-nohints -use_log_hist"
+
+# Settings for ARRL 10m
+else if( $CONTEST == "arrl_10m" )then
+    set WPM=25
+    set HINTS="-use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest"
+
+# Settings for ARRL Sweepstakes
+# Since we can only work each station once, it doesn't make sense to use history
+# but we need it if we restart    
+else if( $CONTEST == "ss" )then
+    set WPM=25
+    #set HINTS=""
+    set HINTS="-use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest"
+
+# Reasonable defaults
+else
+    #echo Unknown Contest:- $CONTEST-
+    #exit
+    set WPM=20
+    set HINTS="-use_log_hist -split"
+    #set HINTS=""
+
+endif
+#exit
+
+###############################################################################
+
+# Not sure what this is all about?
+# Probably something to do with start hamlib server in pyKeyer?
+if( $RIG1 == "DIRECT" & $START_SDR )then
+    set SERVER="-server"
+else
+    set SERVER=""
+endif
+
+################################################################################
+
+# Kill stale stuff
+echo " "
+echo "Cleaning up old junk ..."
+if( $KILL_OLD )then
+    pkill pyKeyer
+    pkill miniterm               # This might be connected to NanoIO
+    pkill rigctl
+    pkill rigctld
+    pkill wsjt
+    pkill wsjtx
+    pkill bandmap
+    pkill flrig
+    rm -f /tmp/HAMLIB /tmp/FLDIGI /tmp/KEYER /tmp/WCLOCK /tmp/BANDMAP*
+    rm -f /tmp/SDR /tmp/FLRIG
+    sleep 1
+    #exit
+endif
+
+################################################################################
+
+# Start FLRIG
+if( $RIG1 == "FLRIG" )then
+    start_flrig $RIG_TYPE1
+    set PORT=12345                  # Port no. for FLRIG server
+endif 
+if( $RIG1 == "FLRIG" && $RIG_TYPE1 == "IC9700" )then
+    set PORT=12346                  # Port no. for FLRIG server
+endif 
+if( $RIG2 == "FLRIG" )then
+    start_flrig $RIG_TYPE2
+    set PORT2=12346                  # Port no. for 2nd FLRIG server
+endif 
+#exit
+
+################################################################################
+
+# Start hamlib server
+if( $RIG1 == "HAMLIB" )then
+    start_hamlib $RIG_TYPE1 $TEST_MODE
+    set PORT = 4532
+    
+    #exit
+endif
+
+################################################################################
+
+# Start FLDIGI
+if( $RIG1 == "FLDIGI" )then
+    start_fldigi $RIG_TYPE1 
+    exit
+endif
+
+################################################################################
+
+# Interface-dependent stuff
+sleep 1
+if( $USE_NANO_IO )then
+    set NANO="-nano"
+    set INTERNAL="w EX0190"
+else
+    set NANO=" "
+    set INTERNAL="w EX0192"
+endif
+
+################################################################################
+
+ps -A u | fgrep -i rig
+
+# This is here for code development purposes only
+if( 0 )then
+    echo "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Starting pyRIG ..."
+    pkill pyRig
+    sleep 1
+    pushd ~/Python/pyRig
+    pyRig.py -rig $RIG >& /tmp/PYRIG &
+    popd
+
+    #$HAMLIB_DIR/rigctl -vvv -m $MODEL -s $BAUD -r /dev/$c
+    tail -f /tmp/PYRIG
+    exit
+endif
+
+# Start keyer
+if( 1 )then
+    echo Starting keyer ...
+    cd ~/Python/pyKeyer
+
+    set OPTS="-wpm ${WPM} $PRACTICE $CAPTURE -${CONTEST} -rig $RIG1 $RIG_TYPE1 -port $PORT $MASTER $HINTS $SERVER $NANO $MODE $UDP"
+    if( $RIG2 != "NONE" )then
+        set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2 -port2 $PORT2"
+    endif
+    
+    set CMD="pyKeyer.py $OPTS"
+    echo $CMD >& /tmp/KEYER 
+    $CMD >>& /tmp/KEYER &
+    #exit
+
+    echo "Waiting for pyKeyer to start ..."
+    set id=`find_windows pyKeyer 20`
+    echo id=$id
+    if ( $#id == 0 ) then
+        echo "--- ERROR --- Never found pyKeyer after 20 tries - giving up"
+        exit
+    endif
+
+    #exit
+endif
+
+################################################################################
+
+# Start the SDR
+if( $SO2V )then
+    #set SDR_OPTS="-fc 600 600 -af_bw 1 -follow_freq -mute -save_demod -pan_dr 70"
+    set SDR_OPTS="-af_bw .5 -so2v -follow_band"
+else
+    #set LOOPBACK="-loopback -follow_freq"
+    set LOOPBACK="-follow_freq"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK"
+endif
+if( $START_SDR )then
+    echo Starting SDR ...
+    pkill pySDR
+    cd ~/Python/pySDR
+    start_loopback
+
+    # Add a delay to give hamlib server in the keyer time to come up
+    #sleep 1
+    echo Waiting for hamlib server to come alive ...
+    echo f | nc -w 1 localhost $PORT
+
+    set FS=48
+    set PY_SDR = "~/Python/pySDR/pySDR.py"
+    set PAN="-pan -pan_bw 10 -pan_dr 70"
+
+    set cmd="$PY_SDR -mode CW -fsout $FS -vid_bw 45 -ant B -rig $RIG1 -no_hamlib -no_rigctl -port $PORT $SDR_OPTS $PAN"
+    echo $cmd >& /tmp/SDR
+    $cmd >>& /tmp/SDR &
+
+    echo "Waiting for pySDR to start ..."
+    set id=`find_windows pySDR 20`
+    echo id=$id
+    if ( $#id == 0 ) then
+        echo "--- ERROR --- Never found pyKeyer after 20 tries - giving up"
+        exit
+    endif
+    
+    #exit
+endif
+
+################################################################################
+
+# Start World Clock
+if( $START_CLOCK )then
+    echo Starting World Clock ...
+    pkill wclock
+    pushd ../wclock
+    wclock.py >& /tmp/WCLOCK &
+    popd
+    
+    echo "Waiting for clock to start ..."
+    set id=`find_windows "World Clock" 20`
+    echo id=$id
+    if ( $#id == 0 ) then
+        echo "--- ERROR --- Never found wclock after 20 tries - giving up"
+        exit
+    endif
+endif
+
+################################################################################
+
+# Start Bandmap
+if( $START_BANDMAP )then
+    echo Starting Bandmap ...
+    pkill bandmap
+    pushd ../bandmap
+    set cmd="bandmap.py -rig $RIG1 -port $PORT $BM_OPTS "
+    echo $cmd  >& /tmp/BANDMAP
+    $cmd  >>& /tmp/BANDMAP &
+    popd
+
+    echo "Waiting for Bandmap to start ..."
+    set id=`find_windows "Band Map" 20`
+    echo id=$id
+    if ( $#id == 0 ) then
+        echo "--- ERROR --- Never found bandmap after 20 tries - giving up"
+        exit
+    endif
+    
+    #exit
+    
+endif
+    
+################################################################################
+
+organize_windows CW
+echo Done.

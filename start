@@ -3,7 +3,7 @@
 
 # Start - J.B.Attili - 2018
 
-# Script showing how to start the keyer for various contests and practice
+# Script showing how to start the keyer for various contests and practice.
 
 ############################################################################################
 
@@ -41,7 +41,7 @@ set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="cwopen"
 #set CONTEST="skcc"
-set CONTEST="calls"
+#set CONTEST="calls"
 
 #set CONTEST="naqp"
 #set CONTEST="fd"

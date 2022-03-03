@@ -99,29 +99,15 @@ morse[88]="-..-";
 morse[89]="-.--";    # Y
 morse[90]="--..";
 
-# Prosigns
-if False:
-    # Not sure where this table came from but this is what I had in the past
-    morse[37]=".-...";     # % = <AS>
-    morse[38]="..-.-";     # & = <INT> - not sure what this is?
-    morse[42]="...-.-";    # * = <SK>
-    morse[43]=".-.-.";     # + = <AR>
-    morse[60]="-.--.";     # < = <KN>
-    morse[61]="-...-";     # = = <BT>
-    #morse[62]="...-.-";    # > = <SK> - should be *
-    #morse[123]="...-.";    # { = <VE>
-    #morse[125]="....--";   # } = <HM>
-    #morse[126]=".-.-";     # ~ = <AA>
-else:
-    # This matches what is the nano IO uses
-    morse[37]="...-.-";    # % = <SK>	0b01101000
-    morse[38]=".-...";     # & = <AS>	0b00011010
-    morse[42]="";          # * 	        0b00000001
-    morse[43]="-.--.";     # + = <KN>	0b00101101
-    morse[45]="-....-";    # - = <BT>	0b00110001
-    morse[60]=".-...";     # < = <AS>	0b00100010
-    morse[61]="-...-";     # = = <BT>	0b00110001
-    morse[62]=".-.-.";     # > = <AR>	0b00101010
+# Prosigns - This matches what is the nano IO uses
+morse[37]="...-.-";    # % = <SK>	0b01101000
+morse[38]=".-...";     # & = <AS>	0b00011010
+morse[42]="";          # * 	        0b00000001
+morse[43]="-.--.";     # + = <KN>	0b00101101
+morse[45]="-....-";    # - = <BT>	0b00110001
+morse[60]=".-...";     # < = <AS>	0b00100010
+morse[61]="-...-";     # = = <BT>	0b00110001
+morse[62]=".-.-.";     # > = <AR>	0b00101010
 
 ############################################################################################
 
@@ -196,6 +182,8 @@ class Keyer():
         self.time=time.time();
         self.enable = True
         self.stop   = False
+        self.Udp=False
+        self.Cmd=[]
 
         # Compute weight (in dots) of each char
         self.weight=128*[0]
@@ -337,7 +325,6 @@ class Keyer():
             return
         
         self.stop   = False
-        Udp=False
         txt2=''
         for ch in msg:
             #print('ch=',ch)
@@ -350,19 +337,28 @@ class Keyer():
             
             # Check for any UDP commands - they are encapsolated by []
             if ch=='[':
-                # Start of a command
-                Udp=True
-                cmd=[]
+                # Start of a Udp command
+                self.Udp=True
+                self.Cmd=[]
 
             elif ch==']':
-                # End of a command
-                Udp=False
-                cmd2=''.join(cmd)
+                # End of a Udp command
+                self.Udp=False
+                cmd2=''.join(self.Cmd)
                 cmd2=cmd2.upper()
                 print("cmd2=",cmd2)   # ,'\t',cmd2[:4])
 
                 # Execute the command
-                if cmd2=="RESET":
+                if cmd2[0]=='~':
+                    # Direct command for the nano io
+                    cmd2=''.join(self.Cmd)
+                    print('Nano Cmd:',cmd2)
+                    self.send_cw(''.join(self.Cmd))
+
+                    # Allow the response to be echoed in process_chars
+                    P.NANO_ECHO=True
+
+                elif cmd2=="RESET":
                     # Reset defaults & reopen comm port
                     print("Reseting WPM to ",self.DEFAULT_WPM," wpm ...")
                     self.set_wpm(self.DEFAULT_WPM)
@@ -524,9 +520,9 @@ class Keyer():
                     #sys.exit(1)
 
             else:
-                if Udp:
+                if self.Udp:
                     # Collecting a command
-                    cmd.append(ch)
+                    self.Cmd.append(ch)
 
                 else:
                     # Nothing special - key tranmitter

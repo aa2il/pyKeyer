@@ -33,6 +33,7 @@ def process_chars(P):
     keyer     = P.keyer
     lock      = P.lock1
     q         = P.q
+    P.NANO_ECHO=False
     
     while not P.Stopper.isSet():
 
@@ -70,16 +71,20 @@ def process_chars(P):
             
             if P.NANO_IO:
                 
+                #print('PROCESSS_CHARS: Hey 1')
+                
                 if P.ser and P.ser.in_waiting>0:
+                    #print('PROCESSS_CHARS: Hey 2')
                     txt=nano_read(P.ser)
-                    if False:
+                    if P.NANO_ECHO:
+                        P.NANO_ECHO=False
                         # Put it in the big text box also
                         try:
                             P.gui.txt.insert(END, txt+'\n')
                             P.gui.txt.see(END)
                             P.gui.root.update_idletasks()
-                        except:
-                            pass
+                        except Exception as e: 
+                            print( str(e) )
                 else:
                     time.sleep(0.1)
                     
