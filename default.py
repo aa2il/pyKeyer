@@ -224,7 +224,7 @@ class DEFAULT_KEYING():
 
         gui=self.P.gui
 
-        if event.widget==gui.txt:
+        if event.widget==gui.txt or event.widget==gui.txt2:
             #print('txt->call')
             next_widget = gui.call
         else:
@@ -235,8 +235,12 @@ class DEFAULT_KEYING():
             # Determine adjacent (next) widget
             if key in ['Tab','Return','KP_Enter']:
                 idx2 = (idx+1) % nn
+                if gui.boxes[idx2]==gui.hint:
+                    idx2 = (idx+2) % nn
             elif key=='ISO_Left_Tab':
                 idx2 = (idx-1) % nn
+                if gui.boxes[idx2]==gui.hint:
+                    idx2 = (idx-2) % nn
             else:
                 print('We should never get here!!',idx,key,nn)
                 idx2=idx
