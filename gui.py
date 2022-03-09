@@ -123,7 +123,8 @@ class GUI():
 
         # More inits
         self.keyer=P.keyer;
-        self.start_time = datetime.utcnow().replace(tzinfo=UTC)
+        #self.start_time = datetime.utcnow().replace(tzinfo=UTC)
+        self.start_time = None
         self.nqsos_start = 0
         self.sock = self.P.sock
 
@@ -882,7 +883,8 @@ class GUI():
             txt = txt.replace('[CALL]',call)
             self.last_call=call
         
-        txt = txt.replace('[NAME]',self.get_name() )
+        his_name=self.get_name().replace('?','')
+        txt = txt.replace('[NAME]',his_name )
         txt = txt.replace('[RST]', self.get_rst_out() )
 
         if '[EXCH]' in txt:
@@ -1406,8 +1408,10 @@ class GUI():
             #print(self.sock.run_macro(-1))
 
             # Get time stamp, freq, mode, etc.
-            UTC       = pytz.utc
+            #UTC       = pytz.utc
             now       = datetime.utcnow().replace(tzinfo=UTC)
+            if not self.start_time:
+                self.start_time = now
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
             
@@ -1585,12 +1589,10 @@ class GUI():
 
     # Routine to compute QSO Rate
     def qso_rate(self):
-        now = datetime.utcnow().replace(tzinfo=UTC)
-        dt0 = (now - self.start_time).total_seconds()+1 # In seconds
-        #print 'QSO Rate:',now
-        if self.P.sock3.connection=='FLLOG' and False:
-            print('Need to add code for FLLOG???')
-        else:
+        if self.start_time:
+            now = datetime.utcnow().replace(tzinfo=UTC)
+            dt0 = (now - self.start_time).total_seconds()+1 # In seconds
+
             nqsos = 0
             dt = min(10*60.,dt0)         # Ten minutes
             for qso in self.log_book:

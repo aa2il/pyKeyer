@@ -30,6 +30,9 @@ from default import DEFAULT_KEYING
 
 VERBOSITY=0
 
+# Notes for next week:
+# 14.036.5  & 7,035.9
+
 ############################################################################################
 
 # Keying class for SST mini tests  - inherits base class
@@ -67,6 +70,7 @@ class SST_KEYING(DEFAULT_KEYING):
         MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[7+12]  = {'Label' : 'NIL'       , 'Text' : 'Nil '}
         
         MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
         MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}

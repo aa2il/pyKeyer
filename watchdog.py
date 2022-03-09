@@ -105,7 +105,7 @@ def WatchDog(P):
     P.gui.qso_rate()
 
     # Send out heart beat
-    if P.UDP_SERVER:
+    if P.UDP_SERVER and False:
         P.udp_server.Broadcast('Keyer Heartbeat - Thump Thump - kerr chunk')
     
     # Read rotor position
