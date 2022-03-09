@@ -222,7 +222,8 @@ class DEFAULT_KEYING():
     # Move on to next entry box & optionally play a macros
     def next_event(self,key,event):
 
-        gui=self.P.gui
+        P   = self.P
+        gui = P.gui
 
         if event.widget==gui.txt or event.widget==gui.txt2:
             #print('txt->call')
@@ -249,11 +250,12 @@ class DEFAULT_KEYING():
 
             # Send a macro if needed
             if key=='Return' or key=='KP_Enter':
-                #print('idx=',idx)
-                #print('macros=',self.macros)
-                n=self.macros[idx]
-                if n!=None:
-                    gui.Send_Macro(n)
+                if P.PRACTICE_STATE<6 or event.widget!=gui.call:
+                    #print('idx=',idx)
+                    #print('macros=',self.macros)
+                    n=self.macros[idx]
+                    if n!=None:
+                        gui.Send_Macro(n)
 
         # Do any extra stuff that might be special to this contest
         if self.aux_cb:

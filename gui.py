@@ -1988,8 +1988,10 @@ class GUI():
             self.sock.set_log_fields({'Call':call})
             self.dup_check(call)
 
-            # If we're in a contest and the return key was pressed, send response and get ready for the exchange
+            # If we're in a contest and the return key was pressed,
+            # send response and get ready for the exchange
             if (key=='Return' or key=='KP_Enter') and len(call)>0:
+                print('*_*_*_*_*_*_*_*_*_* PRACTICE_STATE=',self.P.PRACTICE_STATE)
                 next_widget = self.P.KEYING.next_event(key,event)
 
                 """

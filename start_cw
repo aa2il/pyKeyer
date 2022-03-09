@@ -56,10 +56,10 @@ endif
 
 # Select a contest
 set CONTEST=""
-set CONTEST="ragchew"
-set CONTEST="cwt"
+#set CONTEST="ragchew"
+#set CONTEST="cwt"
 #set CONTEST="cwopen"
-set CONTEST="sst"
+#set CONTEST="sst"
 #set CONTEST="skcc"
 #set CONTEST="cqww"
 #set CONTEST="ss"

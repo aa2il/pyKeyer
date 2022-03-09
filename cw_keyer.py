@@ -223,7 +223,7 @@ class Keyer():
                 wght+=self.weight[ord(char)]
 
             dt=dotlen*wght
-            print('send_cw: msg=',msg,'\t@ wpm=',self.WPM,'\twght=',wght,'\tdt=',dt)
+            #print('send_cw: msg=',msg,'\t@ wpm=',self.WPM,'\twght=',wght,'\tdt=',dt)
             nano_write(ser,msg)
             
             time.sleep(dt)
