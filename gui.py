@@ -62,6 +62,7 @@ from iaru import *
 from cqww import *
 from sats import *
 from settings import *
+from paddling import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
@@ -152,7 +153,7 @@ class GUI():
         self.prev_call=''
         self.prefill=False
         self.cntr=0
-        
+
         # Open simple log file & read its contents
         MY_CALL = P.SETTINGS['MY_CALL']
         fname = MY_CALL.replace('/','_')+".LOG"
@@ -218,6 +219,13 @@ class GUI():
         # Also save all sent text to a file
         self.fp_txt = open(MY_CALL.replace('/','_')+".TXT","a+")
 
+        # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
+        self.SettingsWin = SETTINGS_GUI(self.root,self.P)
+        self.SettingsWin.hide()
+        self.PaddlingWin = PADDLING_GUI(self.root,self.P)
+        #self.PaddlingWin.hide()
+        #self.PaddlingWin.show()
+        
         # Add menu bar
         ncols=12
         row=0
@@ -567,10 +575,6 @@ class GUI():
         # appear to be a tk equivalent to QLCDnumber
         self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
 
-        # Settings
-        self.SettingsWin = SETTINGS_GUI(self.root,self.P)
-        self.SettingsWin.hide()
-        
         # Buttons to allow quick store & return to spotted freqs
         self.spots=[]
         for j in range(self.P.NUM_ROWS):
@@ -608,7 +612,7 @@ class GUI():
         #splash.withdraw()
         self.splash.destroy()
         self.root.update_idletasks()
-        
+
 
     # Callback to show or hide the upper text box
     def show_hide_txt2(self):
@@ -2163,13 +2167,6 @@ class GUI():
 
 ############################################################################################
 
-     # Open dialog window for basic settings
-    def Settings(self):
-        #self.SettingsWin = SETTINGS_GUI(self.root,self.P)
-        self.SettingsWin.show()
-
-############################################################################################
-
     # Callback for practice with computer text
     def PracticeCB(self):
         self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
@@ -2208,8 +2205,9 @@ class GUI():
         menubar = Menu(self.root)
         Menu1 = Menu(menubar, tearoff=0)
 
-        Menu1.add_command(label="Settings ...", command=self.Settings)
+        Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Rig Control ...", command=self.RigCtrlCB)
+        Menu1.add_command(label="Paddling ...", command=self.PaddlingWin.show)
         Menu1.add_separator()
         
         self.Capturing = BooleanVar(value=self.P.CAPTURE)
