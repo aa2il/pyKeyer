@@ -38,6 +38,15 @@ class PADDLING_GUI():
     def __init__(self,root,P):
         self.P = P
 
+        # Inits
+        self.letters=[]
+        for i in range(26):
+            self.letters.append( chr(i+ord('A')) )
+        self.numbers=[]
+        for i in range(10):
+            self.numbers.append(chr(i+ord('0')))
+        self.specials=['/',',','.','?','<AR>','<KN>','<BT>']
+
         # Open main or pop-up window depending on if "root" is given
         if root:
             self.win=Toplevel(root)
@@ -57,14 +66,15 @@ class PADDLING_GUI():
         row=0
         lab = Label(self.win, text="",font=font1)
         lab.grid(row=row,rowspan=1,column=0,columnspan=12,sticky=E+W)
-        self.txt = Entry(self.win,font=font2)
+        #self.txt = Entry(self.win,font=font2)
+        self.txt = Text(self.win, height=2, width=60, bg='white',font=font2)
         self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=12,sticky=E+W)
 
         # Radio button group to select type of practice
         row+=3
         self.Selection = IntVar(value=1)
         col=0
-        for itype in ['Panagrams','Call Signs']:
+        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars','All Chars']:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
@@ -131,10 +141,6 @@ class PADDLING_GUI():
     def KeyPress(self,event,id=None):
 
         key   = event.keysym
-        #num   = event.keysym_num
-        #ch    = event.char
-        #state = event.state
-
         print('Key Press:',key)
 
         if key=='Return' or key=='KP_Enter' or key=='space':
@@ -146,19 +152,44 @@ class PADDLING_GUI():
         print("You selected",Selection)
 
         if Selection==0:
+            # Panagrams
             print('There are',self.Ngrams,'panagrams loaded')
             i = random.randint(0, self.Ngrams-1)
             txt = self.panagrams[i]
             print('Panagram=',txt)
 
-        else:
+        elif Selection==1:
+            # Call signs
             print('There are',self.Ncalls,'call signs loaded')
             i = random.randint(0, self.Ncalls-1)
             txt = self.calls[i]
             print('call=',txt)
+            
+        elif Selection>=2 and Selection<=5:
+            # Letter/number/char groups
+            if Selection==2:
+                items=self.letters
+            elif Selection==3:
+                items=self.letters+self.numbers
+            elif Selection==4:
+                items=self.specials
+            elif Selection==5:
+                items=self.letters+self.numbers+self.specials
 
-        self.txt.delete(0, END)
-        self.txt.insert(0,txt.strip())
+            txt=''
+            for j in range(5):
+                i = random.randint(0, len(items)-1)
+                txt += items[i]
+            print('letters=',txt)
+            
+        else:
+            print('Unknown selection')
+            txt='*** ERROR *** ERROR *** ERROR ***'
+            
+        #self.txt.delete(0, END)
+        #self.txt.insert(0,txt.strip())
+        self.txt.delete(1.0, END)
+        self.txt.insert(1.0,txt.strip())
         
     def show(self):
         print('Show Settings Window ...')
