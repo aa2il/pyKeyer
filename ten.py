@@ -21,7 +21,6 @@
 
 from tkinter import END,E,W
 from collections import OrderedDict
-from cw_keyer import cut_numbers
 from default import DEFAULT_KEYING
 from rig_io.ft_tables import CA_COUNTIES,arrl_sec2state
 

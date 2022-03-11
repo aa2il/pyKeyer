@@ -34,7 +34,6 @@ else:
 from load_history import *
 from sidetone import *
 from nano_io import nano_write
-from cw_keyer import cut_numbers
 
 ############################################################################################
 

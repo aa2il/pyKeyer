@@ -33,29 +33,35 @@ from nano_io import nano_set_wpm
 
 #########################################################################################
 
+# GUI for paddle (sending) practice
 class PADDLING_GUI():
     def __init__(self,root,P):
         self.P = P
 
+        # Open main or pop-up window depending on if "root" is given
         if root:
             self.win=Toplevel(root)
         else:
             self.win = Tk()
         self.win.title("Sending Practice")
 
+        # Load fonts we want to use
         if sys.version_info[0]==3:
             font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
             font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
         else:
             font1 = tkFont.Font(family="monospace",size=12,weight="bold")
             font2 = tkFont.Font(family="monospace",size=28,weight="bold")
-        
+
+        # Put up a box for the practice text - use large font
         row=0
+        lab = Label(self.win, text="",font=font1)
+        lab.grid(row=row,rowspan=1,column=0,columnspan=12,sticky=E+W)
         self.txt = Entry(self.win,font=font2)
-        self.txt.grid(row=row,rowspan=2,column=0,columnspan=12,sticky=E+W)
+        self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=12,sticky=E+W)
 
         # Radio button group to select type of practice
-        row+=2
+        row+=3
         self.Selection = IntVar(value=1)
         col=0
         for itype in ['Panagrams','Call Signs']:

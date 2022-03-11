@@ -111,58 +111,6 @@ morse[62]=".-.-.";     # > = <AR>	0b00101010
 
 ############################################################################################
 
-def cut_numbers(n,ndigits=-3,ALL=False):
-
-    n=int(n)
-
-    if n<0:
-        print('CUT_NUMBERS - ERROR - Positive number only duffess',n)
-        return str(n)
-
-    if False:
-    
-        if n<10:
-            txt = 'TT'+'{:,d}'.format(n)
-        elif n<100:
-            txt = 'T'+'{:,d}'.format(n)
-        else:
-            txt = '{:,d}'.format(n)
-
-    elif ALL:
-
-        nn=str(n)
-        txt=''
-        for i in range(len(nn)):
-            d=nn[i]
-            if d=='0':
-                d='T'
-            elif d=='1':
-                d='A'
-            elif d=='9':
-                d='N'
-            txt=txt+d
-
-        while len(txt)<ndigits:
-            txt = 'T'+txt
-            
-        return txt
-
-    else:
-        #if ndigits<0:
-        #    ndigits=-ndigits
-        if True:
-            if n>9 and n<100 and n!=73 and n!=88:
-                ndigits=2
-        
-        txt = '{:d}'.format(n)
-        #print('Cut Numbers: n=',n,'\tndigits=',ndigits,'\ttxt=',txt,'\tlen=',len(txt))
-        while len(txt)<ndigits:
-            txt = 'T'+txt
-        #print('Cut Numbers: n=',n,'\tndigits=',ndigits,'\ttxt=',txt,'\tlen=',len(txt))
-        
-    return txt
-    
-
 # The key object - this is where all the hard work is really done
 class Keyer():
 

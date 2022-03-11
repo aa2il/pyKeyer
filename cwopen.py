@@ -22,7 +22,7 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
-from cw_keyer import cut_numbers
+from utilities import cut_numbers
 from default import DEFAULT_KEYING
 
 ############################################################################################
@@ -36,6 +36,7 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CW Open','CWOPS_*.txt')
+        self.number_key='cwops'
 
     # Routient to set macros for this contest
     def macros(self):

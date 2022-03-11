@@ -22,7 +22,7 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from macros import MACROS,CONTEST
-from cw_keyer import cut_numbers
+from utilities import cut_numbers
 
 ############################################################################################
 

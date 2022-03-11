@@ -75,6 +75,7 @@ if( $CONTEST == "naqp" )then
 else if( $CONTEST == "cwt" )then
     set WPM=30
     set HINTS="-nohints -adjust"
+    #set HINTS=""
 
 # Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then

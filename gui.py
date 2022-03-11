@@ -223,8 +223,7 @@ class GUI():
         self.SettingsWin = SETTINGS_GUI(self.root,self.P)
         self.SettingsWin.hide()
         self.PaddlingWin = PADDLING_GUI(self.root,self.P)
-        #self.PaddlingWin.hide()
-        #self.PaddlingWin.show()
+        self.PaddlingWin.hide()
         
         # Add menu bar
         ncols=12
@@ -1162,7 +1161,12 @@ class GUI():
 
     # Read his call from the entry box
     def get_call(self):
-        return self.call.get().upper()
+        call = self.call.get()
+        call2 = call.replace(' ','').upper()
+        if call!=call2:
+            self.call.delete(0, END)
+            self.call.insert(0,call2)
+        return call2
 
     # Read his name from the entry box
     def get_name(self):
@@ -1219,7 +1223,7 @@ class GUI():
 
     # Get a clue
     def get_hint(self,call):
-        #print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! call=',call)
+        #print('GET_HINT: call=',call)
 
         #if len(call)>=3 and not self.P.NO_HINTS:
         if len(call)>=3:
@@ -1232,10 +1236,12 @@ class GUI():
             h=None
             
         self.hint.delete(0, END)
+        #print('GET_HINT: h=',h)
         if h:
             self.hint.insert(0,h)
         self.last_hint=h
-        #print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! h=',h)
+
+        return h
 
 
     # Save program state
@@ -1850,12 +1856,16 @@ class GUI():
                 return("break")
 
             # Quick way to send '?'
-            if (key=='slash' or key=='question') and (alt or control):
+            if key in ['slash','question'] and (alt or control):
                 self.q.put('?')
                 return("break")
 
+            # Reverse call sign lookup
+            if key=='r' and (alt or control):
+                self.P.KEYING.reverse_call_lookup()
+
             # This works but seemed problematic in normal operating??
-            if (key=='Delete' and False) or (key=='w' and alt):
+            if (key=='Delete' and False) or (key=='w' and (alt or control)):
                 #print('DELETE - CLEAR BOX ...')
                 if event.widget==self.txt or event.widget==self.txt2:
                     #print('Text Box ...')
@@ -1868,7 +1878,7 @@ class GUI():
                         self.call.configure(background=self.default_color)
 
                 # Wipe all fields Alt-w
-                if (key=='w' or key=='e') and alt:
+                if (key=='w' or key=='e') and (alt or control):
                     #print('ALT-W')
                     self.call.delete(0, END)
                     self.call.configure(background=self.default_color)
@@ -1898,7 +1908,7 @@ class GUI():
                     return("break")
 
             # Copy hints to fields
-            if key=='Insert' or (key=='i' and alt):
+            if key=='Insert' or (key=='i' and (alt or control)):
                 h = self.hint.get()
                 print('h=',h,len(h))
                 if len(h)==0:
@@ -2233,6 +2243,14 @@ class GUI():
             variable=self.Practice,
             command=self.PracticeCB
         )
+
+        self.ShowHints = BooleanVar(value=not self.P.NO_HINTS)
+        Menu1.add_checkbutton(
+            label="Show Hints",
+            underline=0,
+            variable=self.ShowHints,
+            command=self.ShowHintsCB
+        )
         
         self.SideTone = BooleanVar(value=self.P.SIDETONE)
         Menu1.add_checkbutton(
@@ -2248,14 +2266,6 @@ class GUI():
             underline=0,
             variable=self.SplitTxt,
             command=self.SplitTextCB
-        )
-        
-        self.ShowHints = BooleanVar(value=not self.P.NO_HINTS)
-        Menu1.add_checkbutton(
-            label="Show Hints",
-            underline=0,
-            variable=self.ShowHints,
-            command=self.ShowHintsCB
         )
         
         Menu1.add_separator()

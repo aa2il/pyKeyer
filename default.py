@@ -22,7 +22,8 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
-from cw_keyer import cut_numbers
+from utilities import cut_numbers,reverse_cut_numbers
+from dx.spot_processing import Station
 
 ############################################################################################
 
@@ -37,6 +38,7 @@ class DEFAULT_KEYING():
         self.P=P
         self.contest_name  = contest_name 
         self.aux_cb=None
+        self.number_key=None
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
@@ -264,3 +266,72 @@ class DEFAULT_KEYING():
         next_widget.focus_set()
         return next_widget
             
+
+
+    # Routine to do a "reverse call sign lookup" from a member number
+    def reverse_call_lookup(self):
+
+        P=self.P
+
+        # This is a no-op for most contests
+        if self.number_key==None:
+            print('\nREVERSE_LOOKUP: Nothing to do for this contest')
+            return
+
+        # Get number from gui
+        num = P.gui.get_exchange().upper()
+        num = reverse_cut_numbers(num)
+        print('\nREVERSE_LOOKUP: num=',num)
+        if num=='':
+            return
+
+        # Look at all known calls
+        calls=[]
+        for call in P.MASTER.keys():
+            num2 = P.MASTER[call][self.number_key]
+            if num==num2:
+                dx_station = Station(call)
+                call2 = dx_station.homecall
+                print('call=',call,'home call=',call2)
+                calls.append(call2)
+
+        # Find most common (i.e. "mode") of home calls
+        print(calls)
+        calls2 = list(set(calls))
+        counts = []
+        for call in calls2:
+            cnt=calls.count(call)
+            counts.append(cnt)
+            #print(call,cnt)
+        print(calls2)
+        print(counts)
+
+        P.gui.txt.insert(END, '\n')
+        P.gui.txt.insert(END, calls2)
+        P.gui.txt.insert(END, '\n')
+        P.gui.txt.insert(END, counts)
+        P.gui.txt.insert(END, '\n')
+
+        if len(calls)>0:
+            m=max(set(calls), key=calls.count)
+        else:
+            m=''
+        print('Most likely call=',m)
+
+        # Put it into call boxx
+        P.gui.call.delete(0, END)
+        P.gui.call.insert(0,m)
+
+        # Plug in hints also
+        if True:
+            # Fill in fields - probably want this eventually
+            h=self.hint(m)
+            self.insert_hint(h.split(' '))
+        else:
+            # Just fill in hint box
+            h=P.gui.get_hint(m)
+        print('REVERSE_LOOKUP: h=',h)
+        
+        #return m
+        
+        

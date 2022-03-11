@@ -19,7 +19,7 @@
 #
 ############################################################################################
 
-from rig_io.ft_tables import CA_COUNTIES        #,arrl_sec2state
+from rig_io.ft_tables import CA_COUNTIES   
 
 ############################################################################################
 
@@ -27,7 +27,8 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Routine to sift through previous contest lists to get a hint of qth
+# Routine to sift through previous contest lists to get a hint of exhcange
+# info (qth, member no. etc.)
 def master(P,call,dx_station=None):
 
     # Check for DX calls
@@ -52,8 +53,6 @@ def master(P,call,dx_station=None):
                 return dx_station.cqz
         return None
 
-
-    
 
 # Routine to give a hint of QTH of a CA station
 def commie_fornia(dx_station,qth):
@@ -137,3 +136,4 @@ def oh_canada(dx_station):
         
     return qth
     
+

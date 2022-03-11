@@ -22,7 +22,6 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from rig_io.ft_tables import SST_SECS
-from cw_keyer import cut_numbers
 from default import DEFAULT_KEYING
 
 ############################################################################################

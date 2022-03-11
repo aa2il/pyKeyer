@@ -23,8 +23,8 @@ from tkinter import END,E,W
 from collections import OrderedDict
 from random import random
 from rig_io.ft_tables import SST_SECS
-from cw_keyer import cut_numbers
 from default import DEFAULT_KEYING
+from utilities import cut_numbers,reverse_cut_numbers
 
 ############################################################################################
 
@@ -39,6 +39,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test','CWOPS_*.txt')
 
         P.CONTEST_ID='CWOPS-CWT'
+        self.number_key='cwops'
         
 
     # Routine to set macros for this contest
@@ -75,11 +76,18 @@ class CWOPS_KEYING(DEFAULT_KEYING):
     # Routine to generate a hint for a given call
     def hint(self,call):
         P=self.P
-        name  = P.MASTER[call]['name']
-        state = P.MASTER[call]['state']
-        num   = P.MASTER[call]['cwops']
+        try:
+            name  = P.MASTER[call]['name']
+            state = P.MASTER[call]['state']
+            num   = P.MASTER[call]['cwops']
+        except:
+            name  = ' '
+            state  = ' '
+            num   = ' '
+            
         if VERBOSITY>0:
             print('CWOPS_KEYEING - Hint:',name+' '+state+' '+num)
+            
         return name+' '+state+' '+num
 
     # Routine to get practice qso info
@@ -130,7 +138,11 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         call2   = P.gui.get_call().upper()
         name2    = P.gui.get_name().upper()
         qth2  = P.gui.get_exchange().upper()
-        match = self.call==call2 and self.name==name2 and self.qth==qth2
+
+        qth1  = reverse_cut_numbers(self.qth)
+        qth3  = reverse_cut_numbers(qth2)
+            
+        match = self.call==call2 and self.name==name2 and (self.qth==qth2 or qth1==qth3)
 
         if not match:
             txt='********************** ERROR **********************'
@@ -215,9 +227,9 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         gui.name.delete(0, END)
         gui.name.insert(0,h[0])
         gui.exch.delete(0, END)
-        if len( h[2] )>0:
+        if len(h)>2 and len( h[2] )>0:
             gui.exch.insert(0,h[2])
-        else:
+        elif len(h)>=2:
             gui.exch.insert(0,h[1])
 
 
