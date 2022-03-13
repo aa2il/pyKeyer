@@ -40,6 +40,7 @@ class SST_KEYING(DEFAULT_KEYING):
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'SST','K1USNSST*.txt')
 
+        P.CONTEST_ID='K1USN-SST'
 
     # Routient to set macros for this contest
     def macros(self):

@@ -52,7 +52,8 @@ class PADDLING_GUI():
             self.win=Toplevel(root)
         else:
             self.win = Tk()
-        self.win.title("Sending Practice")
+        self.win.title("Sending Practice by AA2IL")
+        self.win.geometry('1300x200+200+20')
 
         # Load fonts we want to use
         if sys.version_info[0]==3:
@@ -67,7 +68,7 @@ class PADDLING_GUI():
         lab = Label(self.win, text="",font=font1)
         lab.grid(row=row,rowspan=1,column=0,columnspan=12,sticky=E+W)
         #self.txt = Entry(self.win,font=font2)
-        self.txt = Text(self.win, height=2, width=60, bg='white',font=font2)
+        self.txt = Text(self.win, height=2, width=60, bg='white', font=font2)
         self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=12,sticky=E+W)
 
         # Radio button group to select type of practice
@@ -90,6 +91,7 @@ class PADDLING_GUI():
         SB=Spinbox(self.win,
                    from_=15, to=50,\
                    textvariable=self.WPM_TXT,\
+                   bg='white',\
                    command=lambda j=0: self.SetWpm(0))
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
         self.WPM_TXT.set('20')
@@ -125,7 +127,7 @@ class PADDLING_GUI():
         # Start the ball rolling 
         self.NewItem()
         
-        self.show()
+        self.hide()
         
 
     # Callback for WPM spinner

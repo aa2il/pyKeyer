@@ -38,6 +38,7 @@ class SS_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,'ARRL-SS-CW','SS_Call_History_Aug2018.txt')
 
         self.aux_cb = self.copy_call
+        P.CONTEST_ID='ARRL-SS-CW'
 
     # Routient to set macros for this contest
     def macros(self):

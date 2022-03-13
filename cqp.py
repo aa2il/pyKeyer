@@ -40,6 +40,8 @@ class CQP_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,'CQP','QSOP_CA*.txt')
         #self.aux_cb=self.qth_hints
 
+        P.CONTEST_ID='CQ-QSO-PARTY'
+        
     # Routient to set macros for this contest
     def macros(self):
 

@@ -36,7 +36,9 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CW Open','CWOPS_*.txt')
+
         self.number_key='cwops'
+        P.CONTEST_ID='CWOPS-CWOPEN'
 
     # Routient to set macros for this contest
     def macros(self):

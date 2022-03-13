@@ -34,7 +34,7 @@ class IARU_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'IARU-HF')
-
+        P.CONTEST_ID='IARU-HF'
 
     # Routient to set macros for this contest
     def macros(self):

@@ -37,6 +37,8 @@ class WPX_KEYING(DEFAULT_KEYING):
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CQWW')
 
+        P.CONTEST_ID='CQ-WPX-CW'
+        
     # Routient to set macros for this contest
     def macros(self):
 

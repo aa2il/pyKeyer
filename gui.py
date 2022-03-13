@@ -415,17 +415,23 @@ class GUI():
 
         # Set up a spin box to control select macro set
         Label(self.root, text='Macros:').grid(row=row,column=col,sticky=E+W)
-        SB = OptionMenu(self.root,self.MACRO_TXT,*self.P.CONTEST_LIST, \
-             command=self.set_macros).grid(row=row,column=col+1,columnspan=2,sticky=E+W)
+        SB = OptionMenu(self.root, \
+                        self.MACRO_TXT, \
+                        *self.P.CONTEST_LIST, \
+                        command=self.set_macros)
+        SB.grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         col += 3
 
         # Set up a spin box to control keying speed (WPM)
         self.WPM_TXT = StringVar()
         Label(self.root, text='Speed:').grid(row=row,column=col,sticky=E+W)
-        SB = Spinbox(self.root, from_=cw_keyer.MIN_WPM, to=cw_keyer.MAX_WPM,\
-                     textvariable=self.WPM_TXT,\
-                     command=lambda j=0: self.set_wpm(0))\
-                     .grid(row=row,column=col+1,columnspan=1,sticky=E+W)
+        SB = Spinbox(self.root,                 \
+                     from_=cw_keyer.MIN_WPM,    \
+                     to=cw_keyer.MAX_WPM,       \
+                     textvariable=self.WPM_TXT, \
+                     bg='white',                \
+                     command=lambda j=0: self.set_wpm(0))
+        SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
         self.WPM_TXT.set(str(self.keyer.WPM))
         self.set_wpm(0)
 

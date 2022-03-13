@@ -36,6 +36,10 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
     def __init__(self,P,contest_name):
         DEFAULT_KEYING.__init__(self,P,contest_name)
 
+        if self.P.contest_name=='ARRL-DX':
+            P.CONTEST_ID='ARRL-DX-CW'
+        else:
+            P.CONTEST_ID='ARRL-10'
 
     # Routient to set macros for this contest
     def macros(self):

@@ -45,7 +45,7 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
                          + 'UR [RST] [RST] IN [MYQTH] [MYQTH] = NAME IS [MYNAME] [MYNAME] = HW CPY? BK'}
         MACROS[2]     = {'Label'   : 'Meet You' , 'Text' : 'R FB [NAME], SOLID COPY = '\
                          + 'GOOD TO MEET U ='}
-        MACROS[2+12]  = {'Label'   : 'Hear Agn' , 'Text' : 'R FB [NAME], SOLID COPY = '\
+        MACROS[2+12]  = {'Label'   : 'Hear U Agn' , 'Text' : 'R FB [NAME], SOLID COPY = '\
                          + 'GOOD TO HEAR U AGN ='}
         MACROS[3]     = {'Label'   : 'BTU'      , 'Text' : 'SO [NAME] BTU DE [MYCALL] > +'}
         MACROS[3+12]  = {'Label'   : 'BK'       , 'Text' : 'HOW? BK '}
@@ -63,10 +63,11 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
         MACROS[7+12]  = {'Label'   : 'AGN ?'       , 'Text' : 'AGN?'}
         
         MACROS[8]     = {'Label'   : '73'          , 'Text' : 'FB [NAME] MNY TNX FOR NICE QSO ES HPE CU AGN = '\
-                      + '73 73 % [CALL] DE [MYCALL] K'}
-        MACROS[9]  = {'Label'   : 'LOG it'      , 'Text' : '[LOG]'}
-        MACROS[10] = {'Label'   : 'V    '       , 'Text' : 'V'}
-        MACROS[11] = {'Label'   : 'Test '       , 'Text' : 'VVV ^^^^^VVV||||| VVV'}    # This works
+                         + '73 73 % [CALL] DE [MYCALL] K'}
+        MACROS[8+12]  = {'Label'   : 'Solid Cpy' , 'Text' : 'R FB [NAME], SOLID COPY = '}
+        MACROS[9]     = {'Label'   : 'LOG it'      , 'Text' : '[LOG]'}
+        MACROS[10]    = {'Label'   : 'V    '       , 'Text' : 'V'}
+        MACROS[11]    = {'Label'   : 'Test '       , 'Text' : 'VVV ^^^^^VVV||||| VVV'}    # This works
         MACROS[11+12] = {'Label'   : 'Test '       , 'Text' : 'VVV [+10]VVV[-10] VVV'}   # This doesn't work - bug in nanoIO code
             
         return MACROS
