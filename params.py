@@ -75,6 +75,8 @@ class PARAMS:
                               help='Random Calls')
         arg_proc.add_argument('-default', action='store_true',
                               help='Default (quick) QSO')
+        arg_proc.add_argument('-sending', action='store_true',
+                              help='Sending Practice')
         arg_proc.add_argument('-test', action='store_true',
                               help='Disable TX')
         arg_proc.add_argument('-practice', action='store_true',
@@ -140,6 +142,7 @@ class PARAMS:
         self.FORCE         = args.force
         self.TEST_MODE     = args.test
         self.NANO_IO       = args.nano
+        self.SENDING_PRACTICE = args.sending
         self.PRACTICE_MODE = args.practice
         self.ADJUST_SPEED  = args.adjust and args.practice
         self.NO_HINTS      = args.nohints

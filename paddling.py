@@ -33,6 +33,29 @@ from nano_io import nano_set_wpm
 
 #########################################################################################
 
+QSO_TEMPLATE = ['CQ CQ CQ DE [MYCALL] [MYCALL] [MYCALL] K',          \
+                \
+                '[CALL] DE [MYCALL] TNX FER CALL = '+                \
+                'UR RST [RST] [RST] IN [MYQTH] [MYQTH] = '+          \
+                'NAME HR IS [MYNAME] [MYNAME] = SO HW? <AR> KN',     \
+                \
+                'RR FB [NAME] TNX FER RPRT ES GUD TO MEET U = '+     \
+                'RIG HR IS [MYRIG] 100W TO A [MYANT] = '+            \
+                'WX HR TODAY ?? AND ?? TEMP ABT ?? DEG ='+           \
+                'SO BTU [NAME] <AR> [CALL] DE [MYCALL]  KN',         \
+                \
+                'FB [NAME] SOLID CPY = FB ON UR RIG = '+             \
+                'AGE HR IS [MYAGE] ES BEEN HAM [HAMAGE] YRS = '+     \
+                'I AM A [MYOCCUPATION] = SO BTU [NAME] <AR><KN>',    \
+                \
+                'VRY GUD [NAME] SOLID AGN = '+                       \
+                'MNY TNX FER NICE CHAT ES HPE CU '+                  \
+                'AGN SOON 73 73 <SK> [CALL] DE [MYCALL]  K'          \
+]
+
+
+
+
 # GUI for paddle (sending) practice
 class PADDLING_GUI():
     def __init__(self,root,P):
@@ -46,6 +69,7 @@ class PADDLING_GUI():
         for i in range(10):
             self.numbers.append(chr(i+ord('0')))
         self.specials=['/',',','.','?','<AR>','<KN>','<BT>']
+        self.num_line=0
 
         # Open main or pop-up window depending on if "root" is given
         if root:
@@ -53,7 +77,7 @@ class PADDLING_GUI():
         else:
             self.win = Tk()
         self.win.title("Sending Practice by AA2IL")
-        self.win.geometry('1300x200+200+20')
+        self.win.geometry('1500x200+100+20')
 
         # Load fonts we want to use
         if sys.version_info[0]==3:
@@ -75,7 +99,7 @@ class PADDLING_GUI():
         row+=3
         self.Selection = IntVar(value=1)
         col=0
-        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars','All Chars']:
+        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars','All Chars','QSO']:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
@@ -136,8 +160,6 @@ class PADDLING_GUI():
         print('SetWpm: WPM=',WPM)
         if WPM>=15:
             nano_set_wpm(self.P.ser,WPM,idev=2)
-
-        
         
     # Callback when a key is pressed 
     def KeyPress(self,event,id=None):
@@ -150,6 +172,7 @@ class PADDLING_GUI():
            
     # Callback to push a new item into entry box
     def NewItem(self):
+        P=self.P
         Selection=self.Selection.get()
         print("You selected",Selection)
 
@@ -183,6 +206,35 @@ class PADDLING_GUI():
                 i = random.randint(0, len(items)-1)
                 txt += items[i]
             print('letters=',txt)
+            
+        elif Selection==6:
+            # Normal QSO
+            print('There are',self.Ncalls,'call signs loaded')
+
+            # Pick a call at random
+            done = False
+            while not done:
+                i = random.randint(0, self.Ncalls-1)
+                call = self.calls[i]
+                name = P.MASTER[call]['name']
+                done = len(call)>2 and len(name)>2
+
+            P.gui.call.delete(0,END)
+            P.gui.call.insert(0,call)
+
+            P.gui.name.delete(0,END)
+            P.gui.name.insert(0,name)
+
+            i = random.randint(2, 9)
+            rst='5'+str(i)+'9'
+            P.gui.rstout.delete(0,END)
+            P.gui.rstout.insert(0,rst)
+
+            print('num_line=',self.num_line)
+            line=QSO_TEMPLATE[self.num_line]
+            txt = self.P.gui.Patch_Macro(line)
+            txt = self.P.gui.Patch_Macro2(txt)
+            self.num_line = (self.num_line+1) % len(QSO_TEMPLATE)
             
         else:
             print('Unknown selection')

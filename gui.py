@@ -223,7 +223,10 @@ class GUI():
         self.SettingsWin = SETTINGS_GUI(self.root,self.P)
         self.SettingsWin.hide()
         self.PaddlingWin = PADDLING_GUI(self.root,self.P)
-        self.PaddlingWin.hide()
+        if P.SENDING_PRACTICE:
+            self.PaddlingWin.show()
+        else:
+            self.PaddlingWin.hide()
         
         # Add menu bar
         ncols=12
@@ -865,6 +868,30 @@ class GUI():
         if '[MYSKCC]' in txt:
             self.qth_out = self.P.SETTINGS['MY_SKCC']
             txt = txt.replace('[MYSKCC]', self.qth_out )
+        if '[MYRIG]' in txt:
+            rig = self.P.SETTINGS['MY_RIG']
+            txt = txt.replace('[MYRIG]', rig )
+        if '[MYANT]' in txt:
+            ant = self.P.SETTINGS['MY_ANT']
+            txt = txt.replace('[MYANT]', ant )
+        if '[MYAGE]' in txt:
+            age = self.P.SETTINGS['MY_AGE']
+            txt = txt.replace('[MYAGE]', age )
+        if '[HAMAGE]' in txt:
+            age = self.P.SETTINGS['MY_HAM_AGE']
+            txt = txt.replace('[HAMAGE]', age )
+        if '[MYOCCUPATION]' in txt:
+            occ = self.P.SETTINGS['MY_OCCUPATION']
+            txt = txt.replace('[MYOCCUPATION]', occ )
+
+        """
+        if '[CALL]' in txt:
+            call=self.get_call()
+            txt = txt.replace('[CALL]', call )
+        if '[NAME]' in txt:
+            name=self.get_name()
+            txt = txt.replace('[NAME]', name )
+        """
 
         return txt
     
@@ -1169,9 +1196,16 @@ class GUI():
     def get_call(self):
         call = self.call.get()
         call2 = call.replace(' ','').upper()
-        if call!=call2:
+
+        # Insert large caps call into entry box - this causes the insertion
+        # point to change which is a problem if we're correcting the call on
+        # the fly so it is disabled for now.  Can probably try to remember
+        # the insertion point and make adjustment but this is more than I
+        # really care to do right now.
+        if call!=call2 and False:
             self.call.delete(0, END)
             self.call.insert(0,call2)
+            
         return call2
 
     # Read his name from the entry box

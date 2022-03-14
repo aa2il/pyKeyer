@@ -29,6 +29,7 @@ set PORT = 4532
 
 set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
+set PRACTICE="-prac -nrows 0 -sending"
 set NANO=""
 set NANO="-nano"
 
