@@ -185,7 +185,7 @@ class PARAMS:
         self.KEYING=None
         self.HIST_DIR=HIST_DIR
 
-        self.CONTEST_LIST=['Default','Ragchew','CW Ops Mini-Test','SST','SKCC','CW Open',
+        self.CONTEST_LIST=['Default','Ragchew','CWT','SST','SKCC','CW Open',
                            'ARRL VHF','NAQP-CW', \
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
                            'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']

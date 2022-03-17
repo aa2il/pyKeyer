@@ -1021,10 +1021,14 @@ class GUI():
     # Callback for Macro list spinner
     def set_macros(self,val=None):
 
+        print('SET_MACROS: val=',val)
         if not val:
             val=self.P.contest_name
             self.MACRO_TXT.set(val)
         print('SET_MACROS: val=',val)
+
+        #idx = self.P.CONTEST_LIST.index(val)
+        #print('SET_MACROS: val=',val,'\tidx=',idx,'\t)
 
         # Initiate keying module for this contest
         if val=='CWT':
@@ -1066,8 +1070,8 @@ class GUI():
         elif val=='RANDOM CALLS':
             self.P.KEYING=RANDOM_CALLS_KEYING(self.P)
         else:
-            print('GUI: *** ERROR *** Cant figure which contest !')
-            print(val)
+            print('SET_MACROS: *** ERROR *** Cant figure which contest !')
+            print('val=',val)
             sys.exit(0)
             
         self.P.SPRINT   = val.find('Sprint')         >= 0
