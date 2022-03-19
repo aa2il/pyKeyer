@@ -30,31 +30,9 @@ else:
 import time
 import random
 from nano_io import nano_set_wpm
+from fileio import read_text_file
 
 #########################################################################################
-
-QSO_TEMPLATE = ['CQ CQ CQ DE [MYCALL] [MYCALL] [MYCALL] K',          \
-                \
-                '[CALL] DE [MYCALL] TNX FER CALL = '+                \
-                'UR RST [RST] [RST] IN [MYQTH] [MYQTH] = '+          \
-                'NAME HR IS [MYNAME] [MYNAME] = SO HW? <AR> KN',     \
-                \
-                'RR FB [NAME] TNX FER RPRT ES GUD TO MEET U = '+     \
-                'RIG HR IS [MYRIG] 100W TO A [MYANT] = '+            \
-                'WX HR TODAY ?? AND ?? TEMP ABT ?? DEG ='+           \
-                'SO BTU [NAME] <AR> [CALL] DE [MYCALL]  KN',         \
-                \
-                'FB [NAME] SOLID CPY = FB ON UR RIG = '+             \
-                'AGE HR IS [MYAGE] ES BEEN HAM [HAMAGE] YRS = '+     \
-                'I AM A [MYOCCUPATION] = SO BTU [NAME] <AR><KN>',    \
-                \
-                'VRY GUD [NAME] SOLID AGN = '+                       \
-                'MNY TNX FER NICE CHAT ES HPE CU '+                  \
-                'AGN SOON 73 73 <SK> [CALL] DE [MYCALL]  K'          \
-]
-
-
-
 
 # GUI for paddle (sending) practice
 class PADDLING_GUI():
@@ -69,7 +47,7 @@ class PADDLING_GUI():
         for i in range(10):
             self.numbers.append(chr(i+ord('0')))
         self.specials=['/',',','.','?','<AR>','<KN>','<BT>']
-        self.num_line=0
+        self.stack=[]
 
         # Open main or pop-up window depending on if "root" is given
         if root:
@@ -99,7 +77,8 @@ class PADDLING_GUI():
         row+=3
         self.Selection = IntVar(value=1)
         col=0
-        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars','All Chars','QSO']:
+        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars', \
+                      'All Chars','Stumble','QSO']:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
@@ -122,12 +101,17 @@ class PADDLING_GUI():
         self.SetWpm(0)
 
         row+=1
-        self.NextButton = Button(self.win, text="Next",command=self.NewItem)
-        self.NextButton.grid(row=row,column=0,sticky=E+W)
-        #self.NextButton.focus_set()            # Grab focus
+        col=0
+        Button(self.win, text="Previous",command=self.PrevItem) \
+            .grid(row=row,column=col,sticky=E+W)
+
+        col+=1
+        Button(self.win, text="Next",command=self.NewItem) \
+            .grid(row=row,column=col,sticky=E+W)
         
-        button = Button(self.win, text="Quit",command=self.hide)
-        button.grid(row=row,column=1,sticky=E+W)
+        col+=1
+        Button(self.win, text="Quit",command=self.hide) \
+            .grid(row=row,column=col,sticky=E+W)
 
         # Make sure all columns are adjusted when we resize the width of the window
         for i in range(12):
@@ -140,9 +124,13 @@ class PADDLING_GUI():
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
         # Read list of Panagrams
-        with open('Panagrams.txt') as f:
-            self.panagrams = f.readlines()
-        self.Ngrams=len( self.panagrams )
+        self.panagrams = read_text_file('Panagrams.txt')
+        
+        # Read qso template
+        self.QSO_Template = read_text_file('QSO_Template.txt')
+        
+        # Read words we stumble with
+        self.Stumble = read_text_file('Stumble.txt')
         
         # Form list of calls - just use what we loaded from the master list
         self.calls = P.calls
@@ -170,6 +158,16 @@ class PADDLING_GUI():
         if key=='Return' or key=='KP_Enter' or key=='space':
            self.NewItem()
            
+    # Callback to push a prior item into entry box
+    def PrevItem(self):
+        if len(self.stack)>0:
+            txt=self.stack.pop()
+            print('pop=',txt)
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,txt)
+        else:
+            print('Empty stack')
+            
     # Callback to push a new item into entry box
     def NewItem(self):
         P=self.P
@@ -178,8 +176,9 @@ class PADDLING_GUI():
 
         if Selection==0:
             # Panagrams
-            print('There are',self.Ngrams,'panagrams loaded')
-            i = random.randint(0, self.Ngrams-1)
+            n=len(self.panagrams)
+            print('There are',n,'panagrams loaded')
+            i = random.randint(0,n-1)
             txt = self.panagrams[i]
             print('Panagram=',txt)
 
@@ -208,10 +207,15 @@ class PADDLING_GUI():
             print('letters=',txt)
             
         elif Selection==6:
-            # Normal QSO
-            print('There are',self.Ncalls,'call signs loaded')
-
-            # Pick a call at random
+            # Words I stumble on
+            n=len(self.Stumble)
+            print('There are',n,'stumble-bumblers loaded')
+            i = random.randint(0,n-1)
+            txt = self.Stumble[i]
+            print('Stumble=',txt)
+            
+        elif Selection==7:
+            # Normal QSO - Pick a call at random
             done = False
             while not done:
                 i = random.randint(0, self.Ncalls-1)
@@ -225,25 +229,32 @@ class PADDLING_GUI():
             P.gui.name.delete(0,END)
             P.gui.name.insert(0,name)
 
-            i = random.randint(2, 9)
-            rst='5'+str(i)+'9'
+            # Pick RST at random
+            i = random.randint(2, 10)
+            if i==10:
+                rst='5NN Plus'
+            else:
+                rst='5'+str(i)+'9'
             P.gui.rstout.delete(0,END)
             P.gui.rstout.insert(0,rst)
 
-            print('num_line=',self.num_line)
-            line=QSO_TEMPLATE[self.num_line]
-            txt = self.P.gui.Patch_Macro(line)
+            # Select one of the template lines
+            n=len(self.QSO_Template)
+            i = random.randint(0,n-1)
+            txt = self.QSO_Template[i]
+            print('QSO=',txt)
+            txt = self.P.gui.Patch_Macro(txt)
             txt = self.P.gui.Patch_Macro2(txt)
-            self.num_line = (self.num_line+1) % len(QSO_TEMPLATE)
+            print('QSO=',txt)
             
         else:
             print('Unknown selection')
             txt='*** ERROR *** ERROR *** ERROR ***'
             
-        #self.txt.delete(0, END)
-        #self.txt.insert(0,txt.strip())
         self.txt.delete(1.0, END)
-        self.txt.insert(1.0,txt.strip())
+        txt=txt.strip()
+        self.txt.insert(1.0,txt)
+        self.stack.insert(0,txt)
         
     def show(self):
         print('Show Settings Window ...')
