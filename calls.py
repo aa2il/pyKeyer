@@ -141,7 +141,7 @@ class RANDOM_CALLS_KEYING(DEFAULT_KEYING):
 
 
     # Hint insertion
-    def insert_hint(self,h):
+    def insert_hint(self,h=None):
 
         gui=self.P.gui
 

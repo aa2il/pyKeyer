@@ -215,9 +215,8 @@ else if( $CONTEST == "fd" )then
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=25
-    #set HINTS=""
-    #set HINTS="-use_log_hist"
     set HINTS="-nohints"
+    set HINTS="-nohints -autofill"
     set BM_OPTS = "$BM_OPTS -contest"
 
 # Settings for CW Ops cw open

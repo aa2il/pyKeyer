@@ -77,6 +77,8 @@ class PARAMS:
                               help='Default (quick) QSO')
         arg_proc.add_argument('-sending', action='store_true',
                               help='Sending Practice')
+        arg_proc.add_argument('-autofill', action='store_true',
+                              help='Auto fill known information')
         arg_proc.add_argument('-test', action='store_true',
                               help='Disable TX')
         arg_proc.add_argument('-practice', action='store_true',
@@ -143,6 +145,7 @@ class PARAMS:
         self.TEST_MODE     = args.test
         self.NANO_IO       = args.nano
         self.SENDING_PRACTICE = args.sending
+        self.AUTOFILL      = args.autofill
         self.PRACTICE_MODE = args.practice
         self.ADJUST_SPEED  = args.adjust and args.practice
         self.NO_HINTS      = args.nohints

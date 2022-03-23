@@ -145,7 +145,8 @@ class Keyer():
                 
 
     def abort(self):
-        print('ABORT!')
+        print('CW_KEYER - ABORT!')
+        self.evt.clear()
         self.stop=True
         if self.P.NANO_IO:
             nano_write(self.ser,'\\')

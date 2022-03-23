@@ -24,6 +24,7 @@ from collections import OrderedDict
 from random import randint
 from utilities import cut_numbers,reverse_cut_numbers
 from dx.spot_processing import Station
+import Levenshtein
 
 ############################################################################################
 
@@ -213,9 +214,14 @@ class DEFAULT_KEYING():
             gui.name.insert(0,a[1])
 
     # Hint insertion
-    def insert_hint(self,h):
+    def insert_hint(self,h=None):
 
         gui=self.P.gui
+
+        if h==None:
+            h = gui.hint.get()
+        if type(h) == str:
+            h = h.split(' ')
 
         gui.name.delete(0, END)
         gui.name.insert(0,h[0])
@@ -295,38 +301,49 @@ class DEFAULT_KEYING():
                 print('call=',call,'home call=',call2)
                 calls.append(call2)
 
+        # Look for call closest to what we copied
+        call_in=P.gui.get_call()
+        print('CALL_IN=',call_in)
+
         # Find most common (i.e. "mode") of home calls
         print(calls)
         calls2 = list(set(calls))
         counts = []
+        dist=[]
         for call in calls2:
+            dx=Levenshtein.distance(call,call_in)
+            dist.append(dx)
             cnt=calls.count(call)
             counts.append(cnt)
             #print(call,cnt)
-        print(calls2)
-        print(counts)
+        print('Known calls=',calls2)
+        print('Distances=',dist)
+        print('Counts=',counts)
 
         P.gui.txt.insert(END, '\n')
         P.gui.txt.insert(END, calls2)
         P.gui.txt.insert(END, '\n')
+        P.gui.txt.insert(END, dist)
+        P.gui.txt.insert(END, '\n')
         P.gui.txt.insert(END, counts)
         P.gui.txt.insert(END, '\n')
+        P.gui.txt.see(END)
 
+        # Put best call into call box
         if len(calls)>0:
-            m=max(set(calls), key=calls.count)
-        else:
-            m=''
-        print('Most likely call=',m)
-
-        # Put it into call boxx
-        P.gui.call.delete(0, END)
-        P.gui.call.insert(0,m)
+            if len(call_in)>0:
+                idx=dist.index(min(dist))
+                m=calls2[idx]
+            else:
+                m=max(set(calls), key=calls.count)
+            print('Most likely call=',m)
+            P.gui.call.delete(0, END)
+            P.gui.call.insert(0,m)
 
         # Plug in hints also
         if True:
-            # Fill in fields - probably want this eventually
-            h=self.hint(m)
-            self.insert_hint(h.split(' '))
+            # Fill in fields
+            self.insert_hint()
         else:
             # Just fill in hint box
             h=P.gui.get_hint(m)

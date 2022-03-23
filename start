@@ -75,7 +75,7 @@ if( $CONTEST == "naqp" )then
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=30
-    set HINTS="-nohints -adjust"
+    set HINTS="-nohints -adjust -autofill"
     #set HINTS=""
 
 # Settings for K1USN slow speed tests

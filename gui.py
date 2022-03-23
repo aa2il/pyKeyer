@@ -1458,7 +1458,7 @@ class GUI():
             
         if valid:
             print('LOG IT! contest=',self.contest,self.P.contest_name,\
-                  'P.sock=',self.P.sock,self.P.sock.rig_type2)
+                  '\nP.sock=',self.P.sock,self.P.sock.rig_type2)
             #print(self.sock.run_macro(-1))
 
             # Get time stamp, freq, mode, etc.
@@ -1478,7 +1478,9 @@ class GUI():
             elif mode=='AMN':
                 mode='AM'
             band     = str( self.sock.get_band() )
-            if band[-1]!='m':
+            if band=='None':
+                print('*** WARNING - Cant determine band - no rig connection?')
+            elif band[-1]!='m':
                 band += 'm'
 
             # For satellites, read vfo B also  - MOVE THIS TO LOGGING() IN SATS.PY
@@ -1538,10 +1540,14 @@ class GUI():
 
             # Make sure practice exec gets what it needs
             if self.P.PRACTICE_MODE:
-                print('LOG_QSO: Waiting for handshake ...',self.keyer.evt.isSet() )
+                print('LOG_QSO - PRACTICE MODE: Waiting for handshake ...',\
+                      self.keyer.evt.isSet(),\
+                      '\nIf you want to log an actual contact, exit PRACTICE_MODE and try again')
                 while self.keyer.evt.isSet():
+                    #print( self.keyer.evt.isSet(), self.keyer.stop )
                     time.sleep(0.1)
-                print('LOG_QSO: Got handshake ...')
+                print('LOG_QSO: Got handshake ...',\
+                      self.keyer.evt.isSet(), self.keyer.stop )
 
             # Clear fields
             self.prefill=False
@@ -1953,14 +1959,15 @@ class GUI():
 
             # Copy hints to fields
             if key=='Insert' or (key=='i' and (alt or control)):
-                h = self.hint.get()
-                print('h=',h,len(h))
-                if len(h)==0:
-                    return "break"
-                h = h.split(' ')
-                print('h=',h)
-                
-                self.P.KEYING.insert_hint(h)
+                if False:
+                    h = self.hint.get()
+                    print('h=',h,len(h))
+                    if len(h)==0:
+                        return "break"
+                    h = h.split(' ')
+                    print('h=',h)
+                    
+                self.P.KEYING.insert_hint()
                 """
                 elif self.P.SPRINT:
                     self.name.delete(0, END)
@@ -2064,7 +2071,9 @@ class GUI():
             # Take care of hints
             if self.contest:
                 self.get_hint(call)
-                                        
+                if self.P.AUTOFILL:
+                    self.P.KEYING.insert_hint()
+                
             if self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.serial)
@@ -2224,7 +2233,11 @@ class GUI():
     # Callback for practice with computer text
     def PracticeCB(self):
         self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
-        print("Practice ...",self.P.PRACTICE_MODE)
+        #print("Practice ...",self.P.PRACTICE_MODE)
+
+    # Callback to toggle auto filling of hints info
+    def AutoFillCB(self):
+        self.P.AUTOFILL = not self.P.AUTOFILL
 
     # Callback to turn sidetone on and off
     def SideToneCB(self):
@@ -2288,6 +2301,14 @@ class GUI():
             command=self.PracticeCB
         )
 
+        self.AutoFill = BooleanVar(value=self.P.AUTOFILL)
+        Menu1.add_checkbutton(
+            label="Auto Fill",
+            underline=0,
+            variable=self.AutoFill,
+            command=self.AutoFillCB
+        )
+        
         self.ShowHints = BooleanVar(value=not self.P.NO_HINTS)
         Menu1.add_checkbutton(
             label="Show Hints",

@@ -222,10 +222,15 @@ class SAT_KEYING(DEFAULT_KEYING):
                 gui.qsl_rcvd.set(1)
 
     # Hint insertion
-    def insert_hint(self,h):
+    def insert_hint(self,h=None):
 
         gui=self.P.gui
 
+        if h==None:
+            h = gui.hint.get()
+        if type(h) == str:
+            h = h.split(' ')
+        
         #gui.exch.delete(0, END)
         #gui.exch.insert(0,h[0])
         gui.qth.delete(0, END)

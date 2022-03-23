@@ -220,9 +220,14 @@ class CWOPS_KEYING(DEFAULT_KEYING):
             gui.exch.insert(0,a[1])
 
     # Hint insertion
-    def insert_hint(self,h):
+    def insert_hint(self,h=None):
 
         gui=self.P.gui
+
+        if h==None:
+            h = gui.hint.get()
+        if type(h) == str:
+            h = h.split(' ')
 
         gui.name.delete(0, END)
         gui.name.insert(0,h[0])

@@ -267,13 +267,20 @@ class SS_KEYING(DEFAULT_KEYING):
 
 
     # Hint insertion
-    def insert_hint(self,h):
+    def insert_hint(self,h=None):
 
         gui=self.P.gui
+
+        if h==None:
+            h = gui.hint.get()
+        if type(h) == str:
+            h = h.split(' ')
+        
         gui.check.delete(0, END)
         gui.check.insert(0,h[0])
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[1])
+        
 
     # Copy call into call2 box
     def copy_call(self,key,event):

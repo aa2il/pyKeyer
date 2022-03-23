@@ -181,7 +181,8 @@ class WPX_KEYING(DEFAULT_KEYING):
         return
 
     # Hint insertion
-    def insert_hint(self,h):
-        #gui=self.P.gui
-        return
+    def insert_hint(self,h=None):
+        
+        gui=self.P.gui
+
 
