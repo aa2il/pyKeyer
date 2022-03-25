@@ -205,9 +205,11 @@ class SST_KEYING(DEFAULT_KEYING):
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
-        
-        gui.name.delete(0, END)
-        gui.name.insert(0,h[0])
-        gui.qth.delete(0, END)
-        gui.qth.insert(0,h[1])
 
+        if len(h)>1:
+            gui.name.delete(0, END)
+            gui.name.insert(0,h[0])
+            if len(h)>2:
+                gui.qth.delete(0, END)
+                gui.qth.insert(0,h[1])
+        

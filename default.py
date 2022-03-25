@@ -343,7 +343,8 @@ class DEFAULT_KEYING():
         # Plug in hints also
         if True:
             # Fill in fields
-            self.insert_hint()
+            h=P.gui.get_hint(m)
+            self.insert_hint(h)
         else:
             # Just fill in hint box
             h=P.gui.get_hint(m)

@@ -27,7 +27,7 @@
 # SDR working through it.
 #
 #     RIG <----------------> FLRIG
-#             USB Port       ^   ^
+#             USB Port       ^   ^  
 #                            |   | Both via 
 #                            |   | xlmrpc 12345
 #                            |   |
@@ -174,9 +174,23 @@ if( $CONTEST == "naqp" )then
     set HINTS="-use_log_hist"
     set BM_OPTS = "$BM_OPTS -contest"
 
+# Settings for CW Ops mini tests
+else if( $CONTEST == "cwt" )then
+    set WPM=25
+    set HINTS="-nohints"
+    set HINTS="-nohints -autofill"
+    set BM_OPTS = "$BM_OPTS -contest"
+
+# Settings for CW Ops cw open
+else if( $CONTEST == "cwopen" )then
+    set WPM=25
+    set HINTS="-use_log_hist"
+    set BM_OPTS = "$BM_OPTS -contest -hours 4"
+
 # Settings for Slow Speed Mini Test
 else if( $CONTEST == "sst" )then
     set HINTS="-use_log_hist"
+    set HINTS="-use_log_hist -nohints -autofill"
     set WPM=20
     set BM_OPTS = "$BM_OPTS -contest -hours 1"
 
@@ -211,19 +225,6 @@ else if( $CONTEST == "fd" )then
     set WPM=30
     #set PRACTICE="-prac"
     set HINTS="-nohints"
-
-# Settings for CW Ops mini tests
-else if( $CONTEST == "cwt" )then
-    set WPM=25
-    set HINTS="-nohints"
-    set HINTS="-nohints -autofill"
-    set BM_OPTS = "$BM_OPTS -contest"
-
-# Settings for CW Ops cw open
-else if( $CONTEST == "cwopen" )then
-    set WPM=25
-    set HINTS="-use_log_hist"
-    set BM_OPTS = "$BM_OPTS -contest -hours 4"
 
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then
@@ -292,6 +293,8 @@ if( $KILL_OLD )then
     pkill wsjtx
     pkill bandmap
     pkill flrig
+    pkill wclock
+    pkill bandmap
     rm -f /tmp/HAMLIB /tmp/FLDIGI /tmp/KEYER /tmp/WCLOCK /tmp/BANDMAP*
     rm -f /tmp/SDR /tmp/FLRIG
     sleep 1
@@ -376,8 +379,11 @@ if( 1 )then
     echo $CMD >& /tmp/KEYER 
     $CMD >>& /tmp/KEYER &
     #exit
+    sleep 1
 
     echo "Waiting for pyKeyer to start ..."
+    #find_windows pyKeyer 20
+    #exit
     set id=`find_windows pyKeyer 20`
     echo id=$id
     if ( $#id == 0 ) then
@@ -406,7 +412,7 @@ if( $START_SDR )then
     start_loopback
 
     # Add a delay to give hamlib server in the keyer time to come up
-    #sleep 1
+    #sleep 5
     echo Waiting for hamlib server to come alive ...
     echo f | nc -w 1 localhost $PORT
 
@@ -417,6 +423,7 @@ if( $START_SDR )then
     set cmd="$PY_SDR -mode CW -fsout $FS -vid_bw 45 -ant B -rig $RIG1 -no_hamlib -no_rigctl -port $PORT $SDR_OPTS $PAN"
     echo $cmd >& /tmp/SDR
     $cmd >>& /tmp/SDR &
+    sleep 1
 
     echo "Waiting for pySDR to start ..."
     set id=`find_windows pySDR 20`
@@ -476,3 +483,5 @@ endif
 
 organize_windows CW
 echo Done.
+
+wmctrl -l

@@ -78,6 +78,8 @@ def UDP_msg_handler(msg):
             if P.gui.contest:
                 #print('UDP Message Handler: Update hints')
                 self.get_hint(call)
+                if P.AUTOFILL:
+                    P.KEYING.insert_hint()
         
     elif msg[:4]=='Sat:':
         sat=msg[4:]

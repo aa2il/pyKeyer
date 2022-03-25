@@ -65,6 +65,19 @@ class PADDLING_GUI():
             font1 = tkFont.Font(family="monospace",size=12,weight="bold")
             font2 = tkFont.Font(family="monospace",size=28,weight="bold")
 
+        # Read list of Panagrams
+        self.panagrams = read_text_file('Panagrams.txt')
+        
+        # Read qso template
+        self.QSO_Template = read_text_file('QSO_Template.txt')
+        
+        # Read words we stumble with
+        self.Stumble = read_text_file('Stumble.txt')
+        
+        # Form list of calls - just use what we loaded from the master list
+        self.calls = P.calls
+        self.Ncalls = len(self.calls)
+            
         # Put up a box for the practice text - use large font
         row=0
         lab = Label(self.win, text="",font=font1)
@@ -75,7 +88,7 @@ class PADDLING_GUI():
 
         # Radio button group to select type of practice
         row+=3
-        self.Selection = IntVar(value=1)
+        self.Selection = IntVar(value=0)
         col=0
         for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars', \
                       'All Chars','Stumble','QSO']:
@@ -98,7 +111,6 @@ class PADDLING_GUI():
                    command=lambda j=0: self.SetWpm(0))
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
         self.WPM_TXT.set('20')
-        self.SetWpm(0)
 
         row+=1
         col=0
@@ -123,21 +135,9 @@ class PADDLING_GUI():
         
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
-        # Read list of Panagrams
-        self.panagrams = read_text_file('Panagrams.txt')
-        
-        # Read qso template
-        self.QSO_Template = read_text_file('QSO_Template.txt')
-        
-        # Read words we stumble with
-        self.Stumble = read_text_file('Stumble.txt')
-        
-        # Form list of calls - just use what we loaded from the master list
-        self.calls = P.calls
-        self.Ncalls = len(self.calls)
-
         # Start the ball rolling 
-        self.NewItem()
+        #self.NewItem()
+        self.SetWpm(0)
         
         self.hide()
         
@@ -148,6 +148,9 @@ class PADDLING_GUI():
         print('SetWpm: WPM=',WPM)
         if WPM>=15:
             nano_set_wpm(self.P.ser,WPM,idev=2)
+
+        # Get a new panagram or call, etc.
+        self.NewItem()
         
     # Callback when a key is pressed 
     def KeyPress(self,event,id=None):

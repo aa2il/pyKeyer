@@ -229,12 +229,13 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         if type(h) == str:
             h = h.split(' ')
 
-        gui.name.delete(0, END)
-        gui.name.insert(0,h[0])
-        gui.exch.delete(0, END)
-        if len(h)>2 and len( h[2] )>0:
-            gui.exch.insert(0,h[2])
-        elif len(h)>=2:
-            gui.exch.insert(0,h[1])
+        if len(h)>1:
+            gui.name.delete(0, END)
+            gui.name.insert(0,h[0])
+            gui.exch.delete(0, END)
+            if len(h)>2 and len( h[2] )>0:
+                gui.exch.insert(0,h[2])
+            elif len(h)>=2:
+                gui.exch.insert(0,h[1])
 
 
