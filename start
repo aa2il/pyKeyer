@@ -39,7 +39,7 @@ set MASTER="-master"
 set HINTS="-nohints"
 
 set CONTEST="cwt"
-#set CONTEST="sst"
+set CONTEST="sst"
 #set CONTEST="cwopen"
 #set CONTEST="skcc"
 #set CONTEST="calls"
@@ -75,13 +75,14 @@ if( $CONTEST == "naqp" )then
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=30
-    set HINTS="-nohints -adjust -autofill"
+    set HINTS="-nohints -adjust"
     #set HINTS=""
 
 # Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then
     set WPM=25
     set HINTS="-nohints -adjust"
+    #set HINTS="-autofill"
 
 # Settings for NCCC CW Sprints
 else if( $CONTEST == "sprint" )then

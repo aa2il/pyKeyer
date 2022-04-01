@@ -146,8 +146,9 @@ class PADDLING_GUI():
     def SetWpm(self,dWPM=0):
         WPM=int( self.WPM_TXT.get() ) + dWPM
         print('SetWpm: WPM=',WPM)
-        if WPM>=15:
+        if WPM>15:
             nano_set_wpm(self.P.ser,WPM,idev=2)
+            self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram or call, etc.
         self.NewItem()
@@ -158,8 +159,12 @@ class PADDLING_GUI():
         key   = event.keysym
         print('Key Press:',key)
 
-        if key=='Return' or key=='KP_Enter' or key=='space':
+        if key in ['Return','KP_Enter','space']:
            self.NewItem()
+        elif key in ['plus','KP_Add']:
+            self.SetWpm(+1)
+        elif key in ['minus','KP_Subtrack']:
+            self.SetWpm(-1)
            
     # Callback to push a prior item into entry box
     def PrevItem(self):

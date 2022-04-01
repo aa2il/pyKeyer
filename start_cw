@@ -349,6 +349,49 @@ endif
 
 ################################################################################
 
+# Start the SDR
+if( $SO2V )then
+    #set SDR_OPTS="-fc 600 600 -af_bw 1 -follow_freq -mute -save_demod -pan_dr 70"
+    set SDR_OPTS="-af_bw .5 -so2v -follow_band"
+else
+    #set LOOPBACK="-loopback -follow_freq"
+    set LOOPBACK="-follow_freq"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK"
+endif
+if( $START_SDR )then
+    echo Starting SDR ...
+    pkill pySDR
+    cd ~/Python/pySDR
+    start_loopback
+
+    # Add a delay to give hamlib server in the keyer time to come up
+    #sleep 5
+    echo Waiting for hamlib server to come alive ...
+    echo f | nc -w 1 localhost $PORT
+
+    set FS=48
+    set PY_SDR = "~/Python/pySDR/pySDR.py"
+    set PAN="-pan -pan_bw 10 -pan_dr 90"
+    #set PAN="-pan_bw 10 -pan_dr 90"
+
+    set cmd="$PY_SDR -mode CW -fsout $FS -vid_bw 45 -ant B -rig $RIG1 -no_hamlib -no_rigctl -port $PORT $SDR_OPTS $PAN"
+    echo $cmd >& /tmp/SDR
+    $cmd >>& /tmp/SDR &
+    sleep 1
+
+    echo "Waiting for pySDR to start ..."
+    set id=`find_windows pySDR 20`
+    echo id=$id
+    if ( $#id == 0 ) then
+        echo "--- ERROR --- Never found pyKeyer after 20 tries - giving up"
+        exit
+    endif
+    
+    #exit
+endif
+
+################################################################################
+
 ps -A u | fgrep -i rig
 
 # This is here for code development purposes only
@@ -396,52 +439,11 @@ endif
 
 ################################################################################
 
-# Start the SDR
-if( $SO2V )then
-    #set SDR_OPTS="-fc 600 600 -af_bw 1 -follow_freq -mute -save_demod -pan_dr 70"
-    set SDR_OPTS="-af_bw .5 -so2v -follow_band"
-else
-    #set LOOPBACK="-loopback -follow_freq"
-    set LOOPBACK="-follow_freq"
-    set SDR_OPTS="-af_bw .5 $LOOPBACK"
-endif
-if( $START_SDR )then
-    echo Starting SDR ...
-    pkill pySDR
-    cd ~/Python/pySDR
-    start_loopback
-
-    # Add a delay to give hamlib server in the keyer time to come up
-    #sleep 5
-    echo Waiting for hamlib server to come alive ...
-    echo f | nc -w 1 localhost $PORT
-
-    set FS=48
-    set PY_SDR = "~/Python/pySDR/pySDR.py"
-    set PAN="-pan -pan_bw 10 -pan_dr 70"
-
-    set cmd="$PY_SDR -mode CW -fsout $FS -vid_bw 45 -ant B -rig $RIG1 -no_hamlib -no_rigctl -port $PORT $SDR_OPTS $PAN"
-    echo $cmd >& /tmp/SDR
-    $cmd >>& /tmp/SDR &
-    sleep 1
-
-    echo "Waiting for pySDR to start ..."
-    set id=`find_windows pySDR 20`
-    echo id=$id
-    if ( $#id == 0 ) then
-        echo "--- ERROR --- Never found pyKeyer after 20 tries - giving up"
-        exit
-    endif
-    
-    #exit
-endif
-
-################################################################################
-
 # Start World Clock
 if( $START_CLOCK )then
     echo Starting World Clock ...
     pkill wclock
+    sleep 1
     pushd ../wclock
     wclock.py >& /tmp/WCLOCK &
     popd
@@ -481,6 +483,7 @@ endif
     
 ################################################################################
 
+sleep 1
 organize_windows CW
 echo Done.
 

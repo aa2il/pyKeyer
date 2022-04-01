@@ -45,6 +45,7 @@ import pickle
 from fileio import *
 from threading import enumerate
 from audio_io import WaveRecorder
+import platform
 
 from cwt import *
 from cwopen import *
@@ -98,7 +99,13 @@ class GUI():
         # Create spash screen
         self.splash  = Toplevel(self.root)
         self.splash.title("Splish Splash")
-        self.splash.attributes("-topmost", True,'-type', 'splash')
+        if platform.system()=='Linux':
+            self.splash.attributes("-topmost", True,'-type', 'splash')
+        elif platform.system()=='Windows':
+            self.splash.attributes("-topmost", True)
+        else:
+            print('GUI INIT: Unknown OS',platform.system())
+            sys.exit(0)
 
         pic = tk.PhotoImage(file='splash.png')
         lab=tk.Label(self.splash, bg='white', image=pic)
@@ -1855,15 +1862,23 @@ class GUI():
         shift     = ((state & 0x0001) != 0)
         #caps_lock = state & 0x0002
         control   = (state & 0x0004) != 0
-        alt       = (state & 0x0088) != 0                 # Both left and right ALTs
-        #num_lock  = state & 0x0010
+
+        # Well this is screwy - there seems to be a difference between
+        # linux and windoz
+        if platform.system()=='Linux':
+            #alt       = (state & 0x0088) != 0     # Both left and right ALTs
+            alt       = (state & 0x0008) != 0 
+            #num_lock  = state & 0x0010
+        elif platform.system()=='Windows':
+            alt       = (state & 0x20000) != 0 
+            #num_lock  = state & 0x008
+            
         #mouse1 = state & 0x0100
         #mouse2 = state & 0x0200
         #mouse3 = state & 0x0400
 
-        if False:
-            print("Key Press:",key) #,ch,len(key),num
-            print('State:',state,shift,control,alt)
+        if True:
+            print("Key Press:",key,'\tState:',hex(state),shift,control,alt)
             #print event
 
         # This should never happen

@@ -160,10 +160,12 @@ class SST_KEYING(DEFAULT_KEYING):
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.qth)
-
-        if not self.P.NO_HINTS:
-            gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-            gui.hint.grid(column=7,columnspan=3)
+        
+        gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
+        gui.hint.grid(column=7,columnspan=3)
+        if self.P.NO_HINTS:
+            gui.hint_lab.grid_remove()
+            gui.hint.grid_remove()
             
         
     # Gather together logging info for this contest
@@ -200,16 +202,18 @@ class SST_KEYING(DEFAULT_KEYING):
     def insert_hint(self,h=None):
 
         gui=self.P.gui
+        #print('SST INSERT_HINT: h=',h)
 
         if h==None:
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
+        #print('SST INSERT_HINT: h2=',h)
 
-        if len(h)>1:
+        if len(h)>=1:
             gui.name.delete(0, END)
             gui.name.insert(0,h[0])
-            if len(h)>2:
+            if len(h)>=2:
                 gui.qth.delete(0, END)
                 gui.qth.insert(0,h[1])
         

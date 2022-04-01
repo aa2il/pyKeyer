@@ -29,9 +29,13 @@ from rig_io.ft_tables import *
 class serial_dummy():
     def __init__(self):
         print('Serial dummy object substituted')
+        self.out_waiting=0
         return
 
     def setDTR(self,a):
+        return
+
+    def write(self,a=None,b=None):
         return
 
 def toggle_dtr(n=1):

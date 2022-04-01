@@ -229,7 +229,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         if type(h) == str:
             h = h.split(' ')
 
-        if len(h)>1:
+        if len(h)>=1:
             gui.name.delete(0, END)
             gui.name.insert(0,h[0])
             gui.exch.delete(0, END)
