@@ -339,6 +339,7 @@ class DEFAULT_KEYING():
             print('Most likely call=',m)
             P.gui.call.delete(0, END)
             P.gui.call.insert(0,m)
+            P.gui.dup_check(m)
 
         # Plug in hints also
         if True:

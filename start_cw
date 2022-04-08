@@ -172,14 +172,14 @@ if( $CONTEST == "naqp" )then
     set WPM=25
     #set HINTS=""
     set HINTS="-use_log_hist"
-    set BM_OPTS = "$BM_OPTS -contest"
+    set BM_OPTS = "$BM_OPTS -contest -hours 12"
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=25
     set HINTS="-nohints"
     set HINTS="-nohints -autofill"
-    set BM_OPTS = "$BM_OPTS -contest"
+    set BM_OPTS = "$BM_OPTS -contest -hours 1"
 
 # Settings for CW Ops cw open
 else if( $CONTEST == "cwopen" )then
@@ -306,6 +306,14 @@ endif
 # Start FLRIG
 if( $RIG1 == "FLRIG" )then
     start_flrig $RIG_TYPE1
+    #echo status=$status
+    #set id=`pids flrig`
+    #echo id=$id
+    #if ( $#id == 0 ) then
+    if ( $status != 0 ) then
+        echo "--- ERROR --- Never started FLRIG - giving up"
+        exit 1
+    endif
     set PORT=12345                  # Port no. for FLRIG server
 endif 
 if( $RIG1 == "FLRIG" && $RIG_TYPE1 == "IC9700" )then
@@ -314,7 +322,7 @@ endif
 if( $RIG2 == "FLRIG" )then
     start_flrig $RIG_TYPE2
     set PORT2=12346                  # Port no. for 2nd FLRIG server
-endif 
+endif
 #exit
 
 ################################################################################
@@ -356,7 +364,7 @@ if( $SO2V )then
 else
     #set LOOPBACK="-loopback -follow_freq"
     set LOOPBACK="-follow_freq"
-    set SDR_OPTS="-af_bw .5 $LOOPBACK"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK -mute"
 endif
 if( $START_SDR )then
     echo Starting SDR ...
