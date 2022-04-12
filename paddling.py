@@ -163,7 +163,7 @@ class PADDLING_GUI():
            self.NewItem()
         elif key in ['plus','KP_Add']:
             self.SetWpm(+1)
-        elif key in ['minus','KP_Subtrack']:
+        elif key in ['minus','KP_Subtract']:
             self.SetWpm(-1)
            
     # Callback to push a prior item into entry box
@@ -268,6 +268,10 @@ class PADDLING_GUI():
         print('Show Settings Window ...')
         self.win.update()
         self.win.deiconify()
+        self.win.focus_set()      
+        self.win.focus_force()      
+        self.txt.focus_set()      
+        self.txt.focus_force()      
         
     def hide(self):
         print('Hide Settings Window ...')
