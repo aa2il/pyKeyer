@@ -34,6 +34,11 @@ from fileio import read_text_file
 
 #########################################################################################
 
+TEST_MODE=True
+TEST_MODE=False
+
+#########################################################################################
+
 # GUI for paddle (sending) practice
 class PADDLING_GUI():
     def __init__(self,root,P):
@@ -48,6 +53,7 @@ class PADDLING_GUI():
             self.numbers.append(chr(i+ord('0')))
         self.specials=['/',',','.','?','<AR>','<KN>','<BT>']
         self.stack=[]
+        self.stack_ptr=-1
 
         # Open main or pop-up window depending on if "root" is given
         if root:
@@ -118,7 +124,7 @@ class PADDLING_GUI():
             .grid(row=row,column=col,sticky=E+W)
 
         col+=1
-        Button(self.win, text="Next",command=self.NewItem) \
+        Button(self.win, text="Next",command=self.NextItem) \
             .grid(row=row,column=col,sticky=E+W)
         
         col+=1
@@ -136,7 +142,6 @@ class PADDLING_GUI():
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
         # Start the ball rolling 
-        #self.NewItem()
         self.SetWpm(0)
         
         self.hide()
@@ -150,7 +155,7 @@ class PADDLING_GUI():
             nano_set_wpm(self.P.ser,WPM,idev=2)
             self.WPM_TXT.set(str(WPM))
 
-        # Get a new panagram or call, etc.
+        # Get a new panagram, call, etc.
         self.NewItem()
         
     # Callback when a key is pressed 
@@ -168,13 +173,30 @@ class PADDLING_GUI():
            
     # Callback to push a prior item into entry box
     def PrevItem(self):
-        if len(self.stack)>0:
-            txt=self.stack.pop()
-            print('pop=',txt)
+        if TEST_MODE:
+            print('stack=',self.stack)
+            print('stack_ptr=',self.stack_ptr)
+        if self.stack_ptr>0:
+            self.stack_ptr-=1
+            txt=self.stack[self.stack_ptr]
             self.txt.delete(1.0, END)
             self.txt.insert(1.0,txt)
         else:
             print('Empty stack')
+            
+    # Callback to push next or new item into entry box
+    def NextItem(self):
+        if TEST_MODE:
+            print('stack=',self.stack)
+            print('stack_ptr=',self.stack_ptr)
+        if self.stack_ptr<len(self.stack)-1:
+            self.stack_ptr+=1
+            txt=self.stack[self.stack_ptr]
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,txt)
+        else:
+            print('End of stack --> new item')
+            self.NewItem()
             
     # Callback to push a new item into entry box
     def NewItem(self):
@@ -187,7 +209,11 @@ class PADDLING_GUI():
             n=len(self.panagrams)
             print('There are',n,'panagrams loaded')
             i = random.randint(0,n-1)
+            if len(self.stack)==0:
+                i=132                        # The quick brown fox ...
             txt = self.panagrams[i]
+            if TEST_MODE:
+                txt=str(i)+'. '+txt
             print('Panagram=',txt)
 
         elif Selection==1:
@@ -262,7 +288,11 @@ class PADDLING_GUI():
         self.txt.delete(1.0, END)
         txt=txt.strip()
         self.txt.insert(1.0,txt)
-        self.stack.insert(0,txt)
+        #self.stack.insert(0,txt)
+        self.stack.append(txt)
+        if len(self.stack)>100:
+            self.stack.pop(0)
+        self.stack_ptr=len(self.stack)-1
         
     def show(self):
         print('Show Settings Window ...')
