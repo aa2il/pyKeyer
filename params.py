@@ -277,7 +277,7 @@ class PARAMS:
             
         # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
-        self.SETTINGS['MY_QTH']=self.SETTINGS['MY_CITY']+','+self.SETTINGS['MY_STATE']
+        self.SETTINGS['MY_QTH']=self.SETTINGS['MY_CITY']+', '+self.SETTINGS['MY_STATE']
         print('grid=',self.SETTINGS['MY_GRID'])
         if self.GPS:
             [lat,lon,alt,gridsq]=read_gps_coords()

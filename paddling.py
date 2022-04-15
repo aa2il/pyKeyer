@@ -54,6 +54,7 @@ class PADDLING_GUI():
         self.specials=['/',',','.','?','<AR>','<KN>','<BT>']
         self.stack=[]
         self.stack_ptr=-1
+        self.qso_ptr=-1
 
         # Open main or pop-up window depending on if "root" is given
         if root:
@@ -209,7 +210,7 @@ class PADDLING_GUI():
             n=len(self.panagrams)
             print('There are',n,'panagrams loaded')
             i = random.randint(0,n-1)
-            if len(self.stack)==0:
+            if len(self.stack)==0 and False:
                 i=132                        # The quick brown fox ...
             txt = self.panagrams[i]
             if TEST_MODE:
@@ -274,7 +275,13 @@ class PADDLING_GUI():
 
             # Select one of the template lines
             n=len(self.QSO_Template)
-            i = random.randint(0,n-1)
+            if False:
+                i = random.randint(0,n-1)
+            else:
+                self.qso_ptr+=1
+                if self.qso_ptr>n-1:
+                    self.qso_ptr=0
+                i=self.qso_ptr
             txt = self.QSO_Template[i]
             print('QSO=',txt)
             txt = self.P.gui.Patch_Macro(txt)
