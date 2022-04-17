@@ -39,7 +39,7 @@ set MASTER="-master"
 set HINTS="-nohints"
 
 set CONTEST="cwt"
-set CONTEST="sst"
+#set CONTEST="sst"
 #set CONTEST="cwopen"
 #set CONTEST="skcc"
 #set CONTEST="calls"

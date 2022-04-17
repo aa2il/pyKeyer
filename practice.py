@@ -159,7 +159,7 @@ class CODE_PRACTICE():
             if self.P.NANO_IO:
                 nano_write(self.P.ser,txt1)
             else:
-                P.osc.send_cw(txt1,keyer.WPM,True)
+                P.osc.send_cw(txt1,keyer.WPM,1,True)
 
             lock.release()
 
@@ -201,7 +201,7 @@ class CODE_PRACTICE():
             if self.P.NANO_IO:
                 nano_write(self.P.ser,txt2)
             else:
-                P.osc.send_cw(txt2,keyer.WPM,True)
+                P.osc.send_cw(txt2,keyer.WPM,1,True)
             lock.release()
 
             # Wait for op to answer

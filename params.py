@@ -23,12 +23,14 @@
 import argparse
 from rig_io.ft_tables import CONNECTIONS,RIGS,PRECS
 from settings import *
+import os
+import platform
 
 ################################################################################
 
 # Structure to contain processing params
 class PARAMS:
-    def __init__(self,HIST_DIR):
+    def __init__(self):
 
         # Process command line args
         # Can add required=True to anything that is required
@@ -186,7 +188,6 @@ class PARAMS:
         self.DIRTY         = False
 
         self.KEYING=None
-        self.HIST_DIR=HIST_DIR
 
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','SKCC','CW Open',
                            'ARRL VHF','NAQP-CW', \
@@ -263,9 +264,6 @@ class PARAMS:
             self.contest_name='Default'
             MAX_AGE_HOURS=9999
             self.SHOW_TEXT_BOX2=True
-        if self.USE_MASTER:
-            self.HISTORY = HIST_DIR+'master.csv'
-
         self.ROTOR_CONNECTION = args.rotor
         self.PORT3            = args.port3
 
@@ -290,6 +288,14 @@ class PARAMS:
             self.SETTINGS['MY_ALT'] = alt        
             self.SETTINGS['MY_GRID'] = self.MY_GRID        
             print('grid=',self.SETTINGS['MY_GRID'])
-            
+
+        # Where to find/put data files
+        self.PLATFORM=platform.system()
+        MY_CALL = self.SETTINGS['MY_CALL'].replace('/','_')
+        self.HIST_DIR=os.path.expanduser('~/'+MY_CALL+'/')
+        self.DATA_DIR=os.path.expanduser('~/'+MY_CALL+'/')
+        if self.USE_MASTER:
+            self.HISTORY = self.HIST_DIR+'master.csv'
+                    
         #sys,exit(0)
 

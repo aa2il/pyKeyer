@@ -38,7 +38,8 @@ else:
 
 # User params
 FS = 48000              # Playback rate
-F0 = 700
+F1 = 680                # My pitch
+F2 = 700                # Caller's pitch
 AMP=0.5
 
 ################################################################################
@@ -47,7 +48,7 @@ def init_sidetone(P):
     
     if P.SIDETONE:
         print('Init SIDETONE ...')
-        P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,F0,FS)
+        P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
         P.keyer.sidetone = P.osc
 
         if sys.version_info[0]==3:
@@ -75,7 +76,7 @@ def sidetone_executive(P):
             q.task_done()
             msg = msg.replace('[LOG]','')
             print('SIDETONE Exec: msg=',msg)
-            P.osc.send_cw(msg,P.keyer.WPM,P.SIDETONE)
+            P.osc.send_cw(msg,P.keyer.WPM,0,P.SIDETONE)
         else:
             time.sleep(0.1)
                 
@@ -101,7 +102,10 @@ class SIDETONE_OSC():
         print("\nCreating code practice osc ...")
         self.enable=False
         self.AMP=AMP
-        self.F0=F0
+        if type(F0) is list:
+            self.F0=F0
+        else:
+            self.F0=[F0]
         self.FS=float(FS)
 
         # Use non-blocking audio player
@@ -110,26 +114,21 @@ class SIDETONE_OSC():
         self.player = dsp.AudioIO(None,int(self.FS),self.rb,None,'B',True)
         self.player.start_playback(0,False)
 
-        # Open PyAudio stream - blocking
-        if False:
-            self.p = pyaudio.PyAudio()
-            self.stream = self.p.open(format=pyaudio.paFloat32,
-                                      channels=1,
-                                      rate=FS,
-                                      output=True)
-            #                                  stream_callback=SideToneSB)
-
         # Generate sigs
-        self.gen_elements(WPM)
+        self.gen_elements(WPM,0)
 
+    #def change_freq():
+    #    self.gen_elements(self.WPM,1-self.nfrq)
+        
     # Signal generation 
-    def gen_elements(self,WPM):
+    def gen_elements(self,WPM,nfrq):
         self.WPM=WPM
+        self.nfrq=nfrq
 
         dotlen=1.2/self.WPM
         Ndit = int( self.FS*dotlen + 0.5)
         tt = np.arange(3*Ndit) / self.FS
-        self.dah = self.AMP*np.sin(2 * np.pi * self.F0 * tt)
+        self.dah = self.AMP*np.sin(2 * np.pi * self.F0[self.nfrq] * tt)
         self.dit = self.dah[0:Ndit]
         #print('Gen elements:',dotlen,Ndit,len(self.dit))
         self.space = 0*self.dit
@@ -159,12 +158,12 @@ class SIDETONE_OSC():
     #    3. The space between symbols (dots and dashes) of the same letter is 1 time unit.
     #    4. The space between letters is 3 time units.
     #    5. The space between words is 7 time units.
-    def send_cw(self,msg,WPM,AUDIO_ACTIVE):
+    def send_cw(self,msg,WPM,nfrq,AUDIO_ACTIVE):
         #print('SIDETONE->SEND_CW:  msg=',msg,len(msg))
 
-        # Check for speed change
-        if WPM != self.WPM:
-            self.gen_elements(WPM)
+        # Check for speed or freq change
+        if WPM != self.WPM or nfrq!=self.nfrq:
+            self.gen_elements(WPM,nfrq)
 
         # Loop over all chars
         for char in msg.upper():
@@ -217,10 +216,7 @@ if __name__ == '__main__':
     print('Hey!')
 
     WPM=25
-    AMP=0.5
-    FS = 48000              # Playback rate
-    F0 = 700
-    osc = SIDETONE_OSC(WPM,AMP,F0,FS)
+    osc = SIDETONE_OSC(WPM,AMP,F1,FS)
     
     osc.send_cw('Test',WPM)
     time.sleep(5)

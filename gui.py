@@ -45,7 +45,6 @@ import pickle
 from fileio import *
 from threading import enumerate
 from audio_io import WaveRecorder
-import platform
 
 from cwt import *
 from cwopen import *
@@ -99,15 +98,15 @@ class GUI():
         # Create spash screen
         self.splash  = Toplevel(self.root)
         self.splash.title("Splish Splash")
-        if platform.system()=='Linux':
+        if P.PLATFORM=='Linux':
             self.splash.attributes("-topmost", True,'-type', 'splash')
-        elif platform.system()=='Windows':
+        elif P.PLATFORM=='Windows':
             self.splash.attributes("-topmost", True)
         else:
-            print('GUI INIT: Unknown OS',platform.system())
+            print('GUI INIT: Unknown OS',P.PLATFORM)
             sys.exit(0)
 
-        pic = tk.PhotoImage(file='splash.png')
+        pic = tk.PhotoImage(file='keyer_splash.png')
         lab=tk.Label(self.splash, bg='white', image=pic)
         #lab=tk.Label(self.splash, image=pic)
         lab.pack()
@@ -163,7 +162,7 @@ class GUI():
 
         # Open simple log file & read its contents
         MY_CALL = P.SETTINGS['MY_CALL']
-        fname = MY_CALL.replace('/','_')+".LOG"
+        fname = P.DATA_DIR+MY_CALL.replace('/','_')+".LOG"
         print('Opening log file',fname,'...')
         try:
             self.fp_log = open(fname,"r+")
@@ -208,7 +207,7 @@ class GUI():
 
         # Read adif log also
         if P.LOG_FILE==None:
-            P.LOG_FILE = MY_CALL.replace('/','_')+".adif"
+            P.LOG_FILE = P.DATA_DIR+MY_CALL.replace('/','_')+".adif"
         if P.USE_ADIF_HISTORY:
             print('fname_adif=',P.LOG_FILE)
             qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
@@ -224,7 +223,7 @@ class GUI():
         print("GUI: ADIF file name=", self.fp_adif) 
 
         # Also save all sent text to a file
-        self.fp_txt = open(MY_CALL.replace('/','_')+".TXT","a+")
+        self.fp_txt = open(P.DATA_DIR+MY_CALL.replace('/','_')+".TXT","a+")
 
         # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
         self.SettingsWin = SETTINGS_GUI(self.root,self.P)
@@ -2248,11 +2247,14 @@ class GUI():
     # Callback for practice with computer text
     def PracticeCB(self):
         self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
-        #print("Practice ...",self.P.PRACTICE_MODE)
 
     # Callback to toggle auto filling of hints info
     def AutoFillCB(self):
         self.P.AUTOFILL = not self.P.AUTOFILL
+
+    # Callback to toggle speed adjustment
+    def AdjustSpeedCB(self):
+        self.P.ADJUST_SPEED = not self.P.ADJUST_SPEED
 
     # Callback to turn sidetone on and off
     def SideToneCB(self):
@@ -2338,6 +2340,14 @@ class GUI():
             underline=0,
             variable=self.SideTone,
             command=self.SideToneCB
+        )
+        
+        self.AdjustSpeed = BooleanVar(value=self.P.ADJUST_SPEED)
+        Menu1.add_checkbutton(
+            label="Adjust Speed",
+            underline=0,
+            variable=self.AdjustSpeed,
+            command=self.AdjustSpeedCB
         )
         
         self.SplitTxt = BooleanVar(value=self.P.SHOW_TEXT_BOX2)

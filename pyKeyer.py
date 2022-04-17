@@ -57,11 +57,6 @@ from process_chars import *
 
 ################################################################################
 
-# User params
-HIST_DIR=os.path.expanduser('~/Python/history/data/')
-
-################################################################################
-
 def UDP_msg_handler(msg):
     print('UDP Message Handler: msg=',msg)
     self=P.gui
@@ -90,7 +85,7 @@ def UDP_msg_handler(msg):
 
 print("\n\n***********************************************************************************")
 print("\nStarting pyKeyer  ...")
-P=PARAMS(HIST_DIR)
+P=PARAMS()
 if True:
     print("P=")
     pprint(vars(P))
@@ -104,7 +99,13 @@ P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',rig=P.ri
 if not P.sock1.active and not P.PRACTICE_MODE:
     print('*** No connection available to rig ***')
     print('Perhaps you want practice mode?\n')
-    sys.exit(0)
+    if P.PLATFORM=='Linux' and False:
+        sys.exit(0)
+    else:
+        # Windows - go into practice mode since we haven't got rig control working yet anyway
+        P.gui.PracticeCB()
+        P.SIDETONE=True
+        
 P.sock=P.sock1
 print('P.sock1=',P.sock1)
 
@@ -201,7 +202,7 @@ init_sidetone(P)
 # Load history from previous contests
 if P.USE_MASTER:
     print('Loading Master History file ...')
-    P.MASTER = load_history(HIST_DIR+'master.csv')
+    P.MASTER = load_history(P.HIST_DIR+'master.csv')
 else:
     P.MASTER = {}
 P.calls = list(P.MASTER.keys())
@@ -242,8 +243,8 @@ if P.sock.active:
     # Set sub-dial
     P.sock.set_sub_dial('CLAR')
 
-# Read satellite grids confirmed    
-FNAME = os.path.expanduser('~/Python/data/states.xls')
+# Read satellite grids confirmed - this will be used to alert station in new grid
+FNAME = P.DATA_DIR+'states.xls'
 print('Reading Sat Grids - fname=',FNAME)
 book  = xlrd.open_workbook(FNAME,formatting_info=True)
 sheet1 = book.sheet_by_name('6-meters')

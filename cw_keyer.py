@@ -181,7 +181,7 @@ class Keyer():
         # If in practice mode, use pc audio instead
         elif self.P.PRACTICE_MODE:
             #print('KEYER->SEND_CW: msg=',msg,len(msg))
-            self.sidetone.send_cw(msg,self.WPM,True)
+            self.sidetone.send_cw(msg,self.WPM,0,True)
             return
 
         #elif not self.enable and not TEST_MODE:
