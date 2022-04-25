@@ -190,7 +190,7 @@ else if( $CONTEST == "cwopen" )then
 # Settings for Slow Speed Mini Test
 else if( $CONTEST == "sst" )then
     set HINTS="-use_log_hist"
-    set HINTS="-use_log_hist -nohints -autofill"
+    set HINTS="-use_log_hist -nohints -autofill -nrows 1"
     set WPM=20
     set BM_OPTS = "$BM_OPTS -contest -hours 1"
 

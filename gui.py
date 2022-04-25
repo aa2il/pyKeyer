@@ -49,6 +49,7 @@ from audio_io import WaveRecorder
 from cwt import *
 from cwopen import *
 from sst import *
+from mst import *
 from skcc import *
 from calls import *
 from cqp import *
@@ -67,6 +68,7 @@ from ragchew import *
 from dx_qso import *
 from qrz import *
 from sidetone import init_sidetone
+from utilities import cut_numbers
 
 ############################################################################################
 
@@ -959,7 +961,7 @@ class GUI():
             if not cntr or cntr=='':
                 cntr=self.P.MY_CNTR
             print('GUI: cntr=',cntr,'\tndigits=',self.ndigits)
-            self.cntr = cw_keyer.cut_numbers(cntr,ndigits=self.ndigits)
+            self.cntr = cut_numbers(cntr,ndigits=self.ndigits)
             txt = txt.replace('[SERIAL]',self.cntr)
             self.serial_out = self.cntr
             print('GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
@@ -1041,6 +1043,8 @@ class GUI():
             self.P.KEYING=CWOPS_KEYING(self.P)
         elif val=='SST':
             self.P.KEYING=SST_KEYING(self.P)
+        elif val=='MST':
+            self.P.KEYING=MST_KEYING(self.P)
         elif val=='SKCC':
             self.P.KEYING=SKCC_KEYING(self.P)
         elif val=='CALLS':

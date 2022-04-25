@@ -40,6 +40,7 @@ set HINTS="-nohints"
 
 set CONTEST="cwt"
 #set CONTEST="sst"
+set CONTEST="mst"
 #set CONTEST="cwopen"
 #set CONTEST="skcc"
 #set CONTEST="calls"
@@ -80,6 +81,12 @@ else if( $CONTEST == "cwt" )then
 
 # Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then
+    set WPM=20
+    set HINTS="-nohints -adjust"
+    #set HINTS="-autofill"
+
+# Settings for ICWC Medium speed tests
+else if( $CONTEST == "mst" )then
     set WPM=25
     set HINTS="-nohints -adjust"
     #set HINTS="-autofill"

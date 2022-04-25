@@ -99,7 +99,7 @@ P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',rig=P.ri
 if not P.sock1.active and not P.PRACTICE_MODE:
     print('*** No connection available to rig ***')
     print('Perhaps you want practice mode?\n')
-    if P.PLATFORM=='Linux' and False:
+    if P.PLATFORM=='Linux' and True:
         sys.exit(0)
     else:
         # Windows - go into practice mode since we haven't got rig control working yet anyway
