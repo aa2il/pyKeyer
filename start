@@ -83,7 +83,8 @@ else if( $CONTEST == "cwt" )then
 else if( $CONTEST == "sst" )then
     set WPM=20
     set HINTS="-nohints -adjust"
-    #set HINTS="-autofill"
+    #set HINTS="-nohints -adjust -autofill"
+    #set HINTS="-use_log_hist -nohints -autofill -nrows 1"
 
 # Settings for ICWC Medium speed tests
 else if( $CONTEST == "mst" )then

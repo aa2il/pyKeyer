@@ -151,9 +151,12 @@ class PADDLING_GUI():
     # Callback for WPM spinner
     def SetWpm(self,dWPM=0):
         WPM=int( self.WPM_TXT.get() ) + dWPM
-        print('SetWpm: WPM=',WPM)
-        if WPM>15:
-            nano_set_wpm(self.P.ser,WPM,idev=2)
+        print('Paddling-SetWpm: WPM=',WPM)
+        if WPM>5:
+            if self.P.LOCK_SPEED:
+                self.P.keyer.set_wpm(WPM)
+            else:
+                nano_set_wpm(self.P.ser,WPM,idev=2)
             self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram, call, etc.

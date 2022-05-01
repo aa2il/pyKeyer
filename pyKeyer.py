@@ -30,6 +30,7 @@
 ################################################################################
 
 import sys
+import re
 import serial
 import practice 
 import rig_io.socket_io as socket_io
@@ -61,9 +62,11 @@ def UDP_msg_handler(msg):
     print('UDP Message Handler: msg=',msg)
     self=P.gui
 
-    if msg[:5]=='Call:':
-        call=msg[5:]
-        #print('UDP Message Handler: Setting call to:',call,P.gui.contest)
+    #idx = msg.count('Call:')
+    idx = [m.start() for m in re.finditer('Call:', msg)]
+    if len(idx)>0:
+        call=msg[idx[-1]+5:]
+        print('UDP Message Handler: Setting call to:',call,idx,P.gui.contest)
         call2=self.get_call()
         if call!=call2:
             self.Clear_Log_Fields()

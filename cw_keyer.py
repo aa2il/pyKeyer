@@ -240,7 +240,14 @@ class Keyer():
             self.dotlen=1.2/self.WPM
 
             if self.P.NANO_IO:
-                nano_set_wpm(self.ser,wpm)
+                if self.P.LOCK_SPEED:  
+                    nano_set_wpm(self.ser,wpm,idev=3)
+                    #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
+                    self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
+                    #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
+                else:
+                    nano_set_wpm(self.ser,wpm)
+                self.P.gui.WPM_TXT.set(str(wpm))
 
     # Get speed
     def get_wpm(self):

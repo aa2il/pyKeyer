@@ -21,7 +21,7 @@
 
 from tkinter import END,E,W
 from collections import OrderedDict
-from random import randint
+from random import randint, random
 from utilities import cut_numbers
 from default import DEFAULT_KEYING
 
@@ -45,7 +45,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ MST [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU  [MYNAME] [SERIAL] '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [SERIAL] '}
         #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 MST [MYCALL] [LOG]'}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -88,10 +88,16 @@ class MST_KEYING(DEFAULT_KEYING):
             self.call = call
             self.name = name
 
-            serial = cut_numbers( randint(0, 999) )
-            self.serial = serial
+            # Half the time, send serial as cut numbers 
+            serial = randint(0, 199)
+            x = random()
+            print('Serial in=',serial,x)
+            if x<=0.5:
+                serial = cut_numbers( serial, ALL=True )
+                print('Serial out=',serial)
+            self.serial = str(serial)
             
-            txt2  = ' '+name+' '+serial
+            txt2  = ' '+name+' '+self.serial
             return txt2
 
         

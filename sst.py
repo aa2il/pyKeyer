@@ -146,7 +146,6 @@ class SST_KEYING(DEFAULT_KEYING):
         return match
             
 
-
     # Specific contest exchange for SST
     def enable_boxes(self,gui):
 

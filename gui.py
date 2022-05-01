@@ -1324,6 +1324,16 @@ class GUI():
         #print('SaveState:',frqs)
         #print('SaveState:',flds)
 
+    # Clear store/recall butons
+    def ClearState(self):
+
+        for i in range(len(self.spots)):
+            self.spots[i]['Button']['text'] = '--'
+            self.spots[i]['Freq']=None
+            self.spots[i]['Fields']=None
+            self.P.DIRTY = True
+                
+    
     # Restore program state
     def RestoreState(self):
         try:
@@ -2260,6 +2270,10 @@ class GUI():
     def AdjustSpeedCB(self):
         self.P.ADJUST_SPEED = not self.P.ADJUST_SPEED
 
+    # Callback to toggle lock speed adjustment
+    def LockSpeedCB(self):
+        self.P.LOCK_SPEED = not self.P.LOCK_SPEED
+
     # Callback to turn sidetone on and off
     def SideToneCB(self):
         print("Toggling Sidetone ...")
@@ -2296,6 +2310,7 @@ class GUI():
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Rig Control ...", command=self.RigCtrlCB)
         Menu1.add_command(label="Paddling ...", command=self.PaddlingWin.show)
+        Menu1.add_command(label="Clear Stores ...", command=self.ClearState)
         Menu1.add_separator()
         
         self.Capturing = BooleanVar(value=self.P.CAPTURE)
@@ -2354,6 +2369,14 @@ class GUI():
             command=self.AdjustSpeedCB
         )
         
+        self.LockSpeed = BooleanVar(value=self.P.LOCK_SPEED)
+        Menu1.add_checkbutton(
+            label="Lock Speed",
+            underline=0,
+            variable=self.LockSpeed,
+            command=self.LockSpeedCB
+        )
+        
         self.SplitTxt = BooleanVar(value=self.P.SHOW_TEXT_BOX2)
         Menu1.add_checkbutton(
             label="Split Text Win",
@@ -2368,4 +2391,6 @@ class GUI():
 
         self.root.config(menu=menubar)
 
+
+        
         

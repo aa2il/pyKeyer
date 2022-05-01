@@ -120,6 +120,8 @@ class PARAMS:
                               type=int,default=2)
         arg_proc.add_argument('-nano', action='store_true',
                               help="Use Nano IO Interface")
+        arg_proc.add_argument('-lock', action='store_true',
+                              help="Lock Paddle Speed to Computer Speed")
         arg_proc.add_argument("-mode", help="Rig Mode",
                               type=str,default=None,
                               choices=[None,'CW','SSB'])
@@ -147,7 +149,10 @@ class PARAMS:
         self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force
         self.TEST_MODE     = args.test
+        
         self.NANO_IO       = args.nano
+        self.LOCK_SPEED    = args.lock
+        
         self.SENDING_PRACTICE = args.sending
         self.AUTOFILL      = args.autofill
         self.PRACTICE_MODE = args.practice
@@ -277,7 +282,7 @@ class PARAMS:
             self.MAX_AGE       = args.max_age*60        # In minutes
         else:
             self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
-            
+
         # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
         self.SETTINGS['MY_QTH']=self.SETTINGS['MY_CITY']+', '+self.SETTINGS['MY_STATE']

@@ -79,7 +79,10 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
         name  = P.MASTER[call]['name']
         state = P.MASTER[call]['state']
         num   = P.MASTER[call]['cwops']
+        if len(num)==0:
+            num='-'
         if VERBOSITY>0:
-            print('CWOPS_KEYEING - Hint:',name+' '+state+' '+num)
+            print('RAGCHEW_KEYEING - Hint:',name+' '+state+' '+num)
         return name+' '+state+' '+num
+
 

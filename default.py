@@ -165,12 +165,21 @@ class DEFAULT_KEYING():
         cspan=2
         gui.qth_lab.grid(column=col,columnspan=cspan)
         gui.qth.grid(column=col,columnspan=cspan)
-        
+
+        col+=cspan
+        cspan=2
+        gui.hint_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+        gui.hint.grid(column=col,columnspan=cspan)
+        if self.P.NO_HINTS:
+            gui.hint_lab.grid_remove()
+            gui.hint.grid_remove()
+
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstout)
         gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.qth)
+        gui.boxes.append(gui.hint)
             
         if not gui.P.NO_HINTS:
             col+=cspan
@@ -223,8 +232,12 @@ class DEFAULT_KEYING():
         if type(h) == str:
             h = h.split(' ')
 
-        gui.name.delete(0, END)
-        gui.name.insert(0,h[0])
+        if len(h)>=1:
+            gui.name.delete(0, END)
+            gui.name.insert(0,h[0])
+            if len(h)>=2:
+                gui.qth.delete(0,END)
+                gui.qth.insert(0,h[1])
 
 
     # Move on to next entry box & optionally play a macros
