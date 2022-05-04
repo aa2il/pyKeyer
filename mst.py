@@ -48,6 +48,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [SERIAL] '}
         #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 MST [MYCALL] [LOG]'}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -63,6 +64,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[9]     = {'Label' : 'NR 2x'     , 'Text' : '[SERIAL] [SERIAL] '}
         MACROS[10]    = {'Label' : 'NAME? '    , 'Text' : 'NAME? '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
 
@@ -191,14 +193,9 @@ class MST_KEYING(DEFAULT_KEYING):
     def dupe(self,a):
 
         gui=self.P.gui
-
-        #return
-        #gui.serial.delete(0,END)
-        #gui.serial.insert(0,a[0])
-        
-        if len(a)>=2:
+        if len(a)>=1:
             gui.name.delete(0,END)
-            gui.name.insert(0,a[1])
+            gui.name.insert(0,a[0])
 
     # Hint insertion
     def insert_hint(self,h=None):
@@ -209,7 +206,8 @@ class MST_KEYING(DEFAULT_KEYING):
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
-        
+
+        #print('MST INSERT_HINT: h=',h)
         gui.name.delete(0, END)
         gui.name.insert(0,h[0])
 

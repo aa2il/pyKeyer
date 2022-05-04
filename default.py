@@ -180,13 +180,7 @@ class DEFAULT_KEYING():
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.qth)
         gui.boxes.append(gui.hint)
-            
-        if not gui.P.NO_HINTS:
-            col+=cspan
-            cspan=3
-            gui.hint_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-            gui.hint.grid(column=col,columnspan=cspan,sticky=E+W)
-            
+
         
     # Gather together logging info for this contest
     def logging(self):

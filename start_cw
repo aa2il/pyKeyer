@@ -92,10 +92,18 @@ set UDP="-udp"
 
 # If no contest was selected, default to CWT or SST
 set d=`date`
-if( X$CONTEST == "X" && $d[1] == "Wed" )then
+if( X$CONTEST == "X" && $d[1] == "Mon" )then
+    set CONTEST="mst"
+else if( X$CONTEST == "X" && $d[1] == "Wed" )then
     set CONTEST="cwt"
-else if( X$CONTEST == "X" && $d[1] != "Wed" )then
+else if( X$CONTEST == "X" && ($d[1] == "Fri" || $d[1] == "Sun"))then
     set CONTEST="sst"
+else
+    echo " "
+    echo "--- Can't figure out contest - defaulting to ragchew ---"
+    echo " "
+    set CONTEST="ragchew"
+    #exit
 endif
 
 # VHF Contest
@@ -193,6 +201,19 @@ else if( $CONTEST == "sst" )then
     set HINTS="-use_log_hist -nohints -autofill -nrows 1"
     set WPM=20
     set BM_OPTS = "$BM_OPTS -contest -hours 1"
+
+# Settings for Medium Speed Mini Test
+else if( $CONTEST == "mst" )then
+    set HINTS="-use_log_hist"
+    set HINTS="-use_log_hist -nohints -autofill -nrows 1"
+    set WPM=23
+    set BM_OPTS = "$BM_OPTS -contest -hours 1"
+
+# Settings for Ragchews
+else if( $CONTEST == "sst" )then
+    set HINTS="-use_log_hist"
+    set HINTS="-use_log_hist -nohints -autofill -nrows 1"
+    set WPM=20
 
 # Settings for SKCC sprint - FOR LOGGING ONLY!!
 else if( $CONTEST == "skcc" )then

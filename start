@@ -11,6 +11,7 @@
 set RIG="NONE"
 #set RIG="HAMLIB"
 #set RIG="DIRECT"
+set RIG="ANY"
 
 set RIG_TYPE="FTdx3000"
 #set RIG_TYPE="FT991a"
@@ -30,6 +31,7 @@ set PORT = 4532
 set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
 set PRACTICE="-prac -nrows 0 -sending"
+set PRACTICE="-prac -nrows 0 -sending -lock"
 set NANO=""
 set NANO="-nano"
 
@@ -238,5 +240,6 @@ endif
 
 cd ~/Python/pyKeyer
 echo pyKeyer.py $OPTS >& /tmp/KEYER
+echo pyKeyer.py $OPTS 
 #pyKeyer.py $OPTS >>& /tmp/KEYER &
 pyKeyer.py $OPTS

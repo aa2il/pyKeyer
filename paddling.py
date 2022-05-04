@@ -62,7 +62,7 @@ class PADDLING_GUI():
         else:
             self.win = Tk()
         self.win.title("Sending Practice by AA2IL")
-        self.win.geometry('1500x200+100+20')
+        self.win.geometry('1500x220+100+10')
 
         # Load fonts we want to use
         if sys.version_info[0]==3:
@@ -102,23 +102,34 @@ class PADDLING_GUI():
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
+            button.grid(row=row,column=col,sticky=E+W)
             col+=1
-            button.grid(row=row,column=col+1,sticky=E+W)
-            #tip = ToolTip(self.Radio1, ' Rig 1 ' )
 
-
-        # Set up a spin box to control keying speed (WPM)
+        # Spin box to control keying speed (WPM)
         row+=1
+        col=0
         self.WPM_TXT = StringVar()
         Label(self.win, text='Speed:').grid(row=row,column=col,sticky=E+W)
-        SB=Spinbox(self.win,
-                   from_=15, to=50,\
-                   textvariable=self.WPM_TXT,\
-                   bg='white',\
+        SB=Spinbox(self.win,              
+                   from_=15, to=50,       
+                   textvariable=self.WPM_TXT, 
+                   bg='white',                
                    command=lambda j=0: self.SetWpm(0))
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
         self.WPM_TXT.set('20')
 
+        # Slider to control rig monitor level (i.e. sidetone volume)
+        col+=2
+        Label(self.win, text='Monitor:').grid(row=row,column=col,sticky=E+W)
+        self.Slider2 = Scale(self.win,
+                       from_=0, to=100,
+                       orient=HORIZONTAL,
+                       length=300,       
+                       command=self.SetMonitorLevel )
+        #label="Monitor Level",       
+        self.Slider2.grid(row=row,column=col+1,columnspan=4,sticky=E+W)
+        self.SetMonitorLevel()
+        
         row+=1
         col=0
         Button(self.win, text="Previous",command=self.PrevItem) \
@@ -142,10 +153,22 @@ class PADDLING_GUI():
         
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
-        # Start the ball rolling 
-        self.SetWpm(0)
-        
+        # Start the ball rolling
+        try:
+            self.SetWpm(0)
+        except:
+            pass
+            
         self.hide()
+
+    # Callback for monitor level setter
+    def SetMonitorLevel(self,level=None):
+        print('\nSet Monitor Level ...',level)
+        if level==None:
+            level=self.P.sock.get_monitor_gain()
+            print(("LEVEL: %d" % level))
+            self.Slider2.set(level)
+        self.P.sock.set_monitor_gain(level)
         
 
     # Callback for WPM spinner
@@ -211,21 +234,21 @@ class PADDLING_GUI():
         if Selection==0:
             # Panagrams
             n=len(self.panagrams)
-            print('There are',n,'panagrams loaded')
+            #print('There are',n,'panagrams loaded')
             i = random.randint(0,n-1)
             if len(self.stack)==0 and False:
                 i=132                        # The quick brown fox ...
             txt = self.panagrams[i]
             if TEST_MODE:
                 txt=str(i)+'. '+txt
-            print('Panagram=',txt)
+            #print('Panagram=',txt)
 
         elif Selection==1:
             # Call signs
-            print('There are',self.Ncalls,'call signs loaded')
+            #print('There are',self.Ncalls,'call signs loaded')
             i = random.randint(0, self.Ncalls-1)
             txt = self.calls[i]
-            print('call=',txt)
+            #print('call=',txt)
             
         elif Selection>=2 and Selection<=5:
             # Letter/number/char groups
@@ -242,15 +265,15 @@ class PADDLING_GUI():
             for j in range(5):
                 i = random.randint(0, len(items)-1)
                 txt += items[i]
-            print('letters=',txt)
+            #print('letters=',txt)
             
         elif Selection==6:
             # Words I stumble on
             n=len(self.Stumble)
-            print('There are',n,'stumble-bumblers loaded')
+            #print('There are',n,'stumble-bumblers loaded')
             i = random.randint(0,n-1)
             txt = self.Stumble[i]
-            print('Stumble=',txt)
+            #print('Stumble=',txt)
             
         elif Selection==7:
             # Normal QSO - Pick a call at random
@@ -286,10 +309,10 @@ class PADDLING_GUI():
                     self.qso_ptr=0
                 i=self.qso_ptr
             txt = self.QSO_Template[i]
-            print('QSO=',txt)
+            #print('QSO=',txt)
             txt = self.P.gui.Patch_Macro(txt)
             txt = self.P.gui.Patch_Macro2(txt)
-            print('QSO=',txt)
+            #print('QSO=',txt)
             
         else:
             print('Unknown selection')
