@@ -182,6 +182,14 @@ endif
 
 ########################################################################
 
+# Clean-up
+pkill pyKeyer
+pkill flrig
+pkill rigctl
+pkill rigctld
+
+########################################################################
+
 # Setup for Hamlib
 if( $RIG_TYPE == "FTdx3000" )then
     set DEVICE="/dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_AH046H3M120067-if00-port0"
@@ -198,9 +206,6 @@ endif
 
 # Start hamlib
 if( $RIG == "HAMLIB" )then
-    pkill rigctl
-    pkill rigctld
-    
     set a=`ls -l $DEVICE`
     echo -$a-
     set b=`echo $a | cut -f 2 -d '>'`
@@ -221,16 +226,15 @@ endif
 ################################################################################
 
 # Start keyer
-pkill pyKeyer
-if( "$PRACTICE" == "-prac" )then
-    set RIG="NONE"
-    set CAPTURE=""
-else
+if( "X$PRACTICE" == "" )then
     set CAPTURE="-capture"
     pkill wclock
     pushd ../wclock
     #wclock.py >& /tmp/WCLOCK &
     popd
+else
+    #set RIG="NONE"
+    set CAPTURE=""
 endif
 
 set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $MASTER $HINTS $CAPTURE"

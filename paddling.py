@@ -31,6 +31,7 @@ import time
 import random
 from nano_io import nano_set_wpm
 from fileio import read_text_file
+from utilities import cut_numbers
 
 #########################################################################################
 
@@ -178,6 +179,9 @@ class PADDLING_GUI():
         if WPM>5:
             if self.P.LOCK_SPEED:
                 self.P.keyer.set_wpm(WPM)
+                self.P.sock.set_speed(WPM)
+                #self.P.gui.WPM_TXT.set(str(WPM))
+                #self.P.gui.set_wpm()
             else:
                 nano_set_wpm(self.P.ser,WPM,idev=2)
             self.WPM_TXT.set(str(WPM))
@@ -276,26 +280,31 @@ class PADDLING_GUI():
             #print('Stumble=',txt)
             
         elif Selection==7:
-            # Normal QSO - Pick a call at random
-            done = False
-            while not done:
-                i = random.randint(0, self.Ncalls-1)
-                call = self.calls[i]
-                name = P.MASTER[call]['name']
-                done = len(call)>2 and len(name)>2
+            # Normal QSO
+            if False:
+                # Pick a call at random
+                done = False
+                while not done:
+                    i = random.randint(0, self.Ncalls-1)
+                    call = self.calls[i]
+                    name = P.MASTER[call]['name']
+                    done = len(call)>2 and len(name)>2
 
-            P.gui.call.delete(0,END)
-            P.gui.call.insert(0,call)
+                P.gui.call.delete(0,END)
+                P.gui.call.insert(0,call)
 
-            P.gui.name.delete(0,END)
-            P.gui.name.insert(0,name)
+                P.gui.name.delete(0,END)
+                P.gui.name.insert(0,name)
 
             # Pick RST at random
             i = random.randint(2, 10)
             if i==10:
                 rst='5NN Plus'
             else:
-                rst='5'+str(i)+'9'
+                #rst='5'+str(i)+'9'
+                #print('rst1=',rst)
+                rst=cut_numbers('5'+str(i)+'9',3,True)
+                #print('rst2=',rst)
             P.gui.rstout.delete(0,END)
             P.gui.rstout.insert(0,rst)
 

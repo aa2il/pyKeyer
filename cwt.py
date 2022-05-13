@@ -51,10 +51,11 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
         MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
         if self.P.PRACTICE_MODE or True:
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
+            #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
         else:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY EE [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ'    , 'Text' : '[CALL_CHANGED] 73 [NAME] CWT [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ'    , 'Text' : '[CALL_CHANGED] 73 [NAME] [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -70,6 +71,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
         MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
         

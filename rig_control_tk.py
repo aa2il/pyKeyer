@@ -138,6 +138,10 @@ class RIG_CONTROL():
         print(("GAIN: %d" % self.gain))
         self.slider1.set(self.gain)
 
+        Button(SliderFrame,
+               text="Auto Adj Mic", 
+               command=lambda: Auto_Adjust_Mic_Gain(self) ).pack()
+
         self.slider2 = Scale(SliderFrame, 
                              from_=0, to=100, 
                              orient=HORIZONTAL,

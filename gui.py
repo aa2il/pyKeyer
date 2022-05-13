@@ -1145,7 +1145,6 @@ class GUI():
         #print('SET_WPM: WPM,dWPM=',WPM,dWPM)
         if WPM>=5:
             self.keyer.set_wpm(WPM)
-            #set_speed(self.P.sock,WPM)
             self.sock.set_speed(WPM)
             self.WPM_TXT.set(str(WPM))
 
@@ -2009,6 +2008,9 @@ class GUI():
             # Immediately stop sending
             if key=='Escape':
                 print('Escape!')
+                self.fp_txt.write('ESCAPE!!!!!\n')
+                self.fp_txt.flush()
+                
                 self.keyer.abort()     
                 if not self.q.empty():
                     self.q.get(False)
