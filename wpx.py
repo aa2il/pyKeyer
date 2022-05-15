@@ -38,38 +38,35 @@ class WPX_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,'CQWW')
 
         P.CONTEST_ID='CQ-WPX-CW'
-        
+
     # Routient to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [SERIAL] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] TEST [LOG]'}
+        MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+        MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [SERIAL]'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [SERIAL] [SERIAL]'}
         MACROS[6]     = {'Label' : '?'         , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN? '     , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-
+        MACROS[7+12]  = {'Label' : '73'        , 'Text' : '73 GL ee'}
+        
         MACROS[8]     = {'Label' : 'Serial 2x' , 'Text' : '[-2][SERIAL] [SERIAL][+2]'}
         MACROS[9]     = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[10]    = {'Label' : '-'         , 'Text' : ' '}
         MACROS[11]    = {'Label' : '-'         , 'Text' : ' '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
-        
-    # Routine to generate a hint for a given call
-    def hint(self,call):
-        P=self.P
-
-        return None
 
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
@@ -87,7 +84,7 @@ class WPX_KEYING(DEFAULT_KEYING):
             
             txt2  = ' 5NN '+serial
             return txt2
-            
+
     # Routine to process qso element repeats
     def repeat(self,label,exch2):
 
@@ -99,12 +96,12 @@ class WPX_KEYING(DEFAULT_KEYING):
             txt2=exch2
 
             return txt2
-            
+        
     # Error checking
     def error_check(self):
         P=self.P
 
-        call2 = P.gui.get_call().upper()
+        call2   = P.gui.get_call().upper()
         rst2  = P.gui.get_rst_in().upper()
         serial2 = P.gui.get_serial().upper()
         match = self.call==call2 and self.rst==rst2 and self.serial==serial2
@@ -119,8 +116,8 @@ class WPX_KEYING(DEFAULT_KEYING):
             
             print('RST sent:',self.rst,' - received:',rst2)
             P.gui.txt.insert(END,'RST sent: '+self.rst+' - received: '+rst2+'\n')
-            
-            print('Serial sent:',self.name,' - received:',name2)
+
+            print('Serial sent:',self.serial,' - received:',serial2)
             P.gui.txt.insert(END,'Serial sent: '+self.serial+' - received: '+serial2+'\n')
 
             print(txt+'\n')
@@ -137,37 +134,49 @@ class WPX_KEYING(DEFAULT_KEYING):
         gui.ndigits=-3
         gui.hide_all()
         self.macros=[1,None,2]
-
-        gui.rstin_lab.grid(columnspan=1,column=4,sticky=E+W)
-        gui.rstin.grid(column=4,columnspan=1)
+        
+        col=0
+        cspan=3
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+        
+        col+=cspan
+        cspan=1
+        gui.rstin_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.rstin.grid(column=col,columnspan=cspan)
         gui.rstin.delete(0,END)
         gui.rstin.insert(0,'5NN')
         
-        gui.serial_lab.grid(columnspan=1,column=5,sticky=E+W)
-        gui.serial.grid(column=5,columnspan=1)
-        gui.counter_lab.grid()
-        gui.counter.grid()
-
+        col+=cspan
+        cspan=2
+        gui.serial_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.serial.grid(column=col,columnspan=cspan)
+        
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.serial)
-
-        if not gui.P.NO_HINTS:
-            gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-            gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-            gui.hint.grid(column=6,columnspan=2)
             
+        gui.counter_lab.grid()
+        gui.counter.grid()
+
+        # I dont think this makes any sense for the WPX contest?
+        if not gui.P.NO_HINTS and False:
+            col+=cspan
+            cspan=2
+            gui.hint_lab.grid(column=col,columnspan=1,sticky=E+W)
+            gui.hint.grid(column=col,columnspan=2)
+        
     # Gather together logging info for this contest
     def logging(self):
 
         gui=self.P.gui
-        
-        call = gui.get_call().upper()
+
+        call   = gui.get_call().upper()
         rst  = gui.get_rst_in().upper()
         serial = gui.get_serial().upper()
         exch='5NN,'+serial
         valid = len(call)>=3 and len(rst)>0 and len(serial)>0
-
+        
         exch_out = '599,'+str(gui.cntr)
 
         qso2={}
@@ -182,7 +191,7 @@ class WPX_KEYING(DEFAULT_KEYING):
 
     # Hint insertion
     def insert_hint(self,h=None):
-        
+
         gui=self.P.gui
 
 

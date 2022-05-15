@@ -30,8 +30,7 @@ set PORT = 4532
 
 set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
-set PRACTICE="-prac -nrows 0 -sending"
-set PRACTICE="-prac -nrows 0 -sending -lock"
+set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
 
@@ -42,7 +41,7 @@ set HINTS="-nohints"
 
 set CONTEST="cwt"
 #set CONTEST="sst"
-set CONTEST="mst"
+#set CONTEST="mst"
 #set CONTEST="cwopen"
 #set CONTEST="skcc"
 #set CONTEST="calls"
@@ -53,7 +52,7 @@ set CONTEST="mst"
 #set CONTEST="stew"
 #set CONTEST="sat"
 #set CONTEST="cqp"
-#set CONTEST="wpx"
+set CONTEST="wpx"
 #set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="arrl_10m"
@@ -108,6 +107,7 @@ else if( $CONTEST == "cwopen" )then
 # Setting for CQ WPX (or any contest that requires rst + serial number)
 else if( $CONTEST == "wpx" )then
     set WPM=30
+    set HINTS="-adjust"
 
 # Setting for CQ World Wide
 else if( $CONTEST == "cqww" )then
@@ -172,8 +172,9 @@ else if( $CONTEST == "calls" )then
 
 # Settings for Default Quick, Ragchew or QSOs
 else if( $CONTEST == "default" || $CONTEST == "ragchew"  || $CONTEST == "dx" )then
-    set WPM=25
+    set WPM=22
     set HINTS=""
+    set HINTS="-use_log_hist -nohints -autofill -nrows 0 -lock -sending"
 
 else
     echo START: Unknown Contest -$CONTEST-

@@ -336,6 +336,11 @@ class GUI():
         self.check = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
         self.check.grid(row=row+1,rowspan=2,column=7,columnspan=1)
         
+        self.notes_lab = Label(self.root, text="Notes",font=font1)
+        self.notes_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
+        self.notes = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,fg='blue')
+        self.notes.grid(row=row+1,rowspan=2,column=8,columnspan=1)
+
         self.hint_lab = Label(self.root, text="Hint",font=font1)
         self.hint_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
         self.hint = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,fg='blue')
@@ -765,8 +770,16 @@ class GUI():
                 link = 'https://www.qrz.com/db/' + call
                 webbrowser.open(link, new=2)
 
-            self.qrzWin = CALL_INFO_GUI(self.root,self.P,call)
+            self.qrzWin = CALL_INFO_GUI(self.root,self.P,call,self.last_qso)
             #self.qrzWin.hide()
+
+        if self.match1:
+            print('\nWorked B4:')
+            print(self.last_qso,'\n')
+            #for qso in self.log_book:
+            #    if qso['CALL']==call:
+            #        print(qso)
+            #print(' ')
             
         else:
             print('CALL_LOOKUP: Need a valid call first! ',call)
@@ -1005,6 +1018,8 @@ class GUI():
         self.call2.grid_remove()
         self.check_lab.grid_remove()
         self.check.grid_remove()
+        self.notes_lab.grid_remove()
+        self.notes.grid_remove()
         self.hint_lab.grid_remove()
         self.hint.grid_remove()
         self.qsl.grid_remove()
@@ -1254,6 +1269,10 @@ class GUI():
     def get_qth(self):
         return self.qth.get().upper()
 
+    # Read notes from entry box
+    def get_notes(self):
+        return self.notes.get()
+
     # Read category from entry box
     def get_cat(self):
         return self.cat.get().upper()
@@ -1451,6 +1470,7 @@ class GUI():
         valid = len(call)>=3
         name=self.get_name().upper()
         qth =self.get_qth().upper()
+        notes =self.get_notes()
         print('LOG_QSO:',call,name,qth)
         serial=0
 
@@ -1534,13 +1554,13 @@ class GUI():
             if self.contest and self.P.SPRINT:
                 self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
 
-            # Construct QSO
+            # Construct QSO record
             qso = dict( list(zip(['QSO_DATE_OFF','TIME_OFF','CALL','FREQ','BAND','MODE', \
                                   'SRX_STRING','STX_STRING','NAME','QTH','SRX',
-                                  'STX','SAT_NAME','FREQ_RX','BAND_RX'],  \
+                                  'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES'],  \
                            [date_off,time_off,call,str(1e-3*freq_kHz),band,mode, \
                             exch,self.exch_out,name,qth,str(serial),
-                            str(self.cntr),satellite,str(1e-3*freq_kHz_rx),band_rx] )))
+                            str(self.cntr),satellite,str(1e-3*freq_kHz_rx),band_rx,notes] )))
             qso.update(qso2)
 
             if self.P.sock3.connection=='FLLOG':
@@ -1576,6 +1596,7 @@ class GUI():
             self.call.configure(background=self.default_color)
             self.name.delete(0,END)
             self.qth.delete(0,END)
+            self.notes.delete(0,END)
             self.hint.delete(0,END)
             self.serial.delete(0,END)
             self.prec.delete(0,END)
@@ -1711,18 +1732,19 @@ class GUI():
         print('DUP_CHECK: call=',call,self.P.MAX_AGE)
 
         # Look for dupes
-        match1=False                # True if there is matching call
-        match2=False                # True if the match is within the last 48 hours on current band and mode
+        self.match1=False                # True if there is matching call
+        self.match2=False                # True if the match is within the last 48 hours on current band and mode
         last_exch=''
+        self.last_qso=None
         now = datetime.utcnow().replace(tzinfo=UTC)
         if self.P.sock3.connection=='FLLOG' and True:
             freq   = self.sock.get_freq()
             mode   = self.sock.get_mode()
-            match1 = self.P.sock3.Dupe_Check(call)
-            print('match1=',match1)
-            if match1:
-                match2 = self.P.sock3.Dupe_Check(call,mode,self.P.MAX_AGE,freq)
-                print('match2=',match2)
+            self.match1 = self.P.sock3.Dupe_Check(call)
+            print('match1=',self.match1)
+            if self.match1:
+                self.match2 = self.P.sock3.Dupe_Check(call,mode,self.P.MAX_AGE,freq)
+                print('match2=',self.match2)
                 qso = self.P.sock3.Get_Last_QSO(call)
                 print('last qso=',qso)
                 if 'SRX_STRING' in qso :
@@ -1734,13 +1756,15 @@ class GUI():
                     band = str( self.sock.get_band() )
                     if band[-1]!='m':
                         band += 'm'
-                    match2 = match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
-                    print('match 1&22:',match1,match2)
+                    self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
+                    print('match 1 & 2:',self.match1,self.match2)
 
         else:
+
             for qso in self.log_book:
                 if qso['CALL']==call:
-                    match1 = True
+                    self.match1 = True
+                    self.last_qso=qso
                     date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
                                        .replace(tzinfo=UTC)
                     age = (now - date_off).total_seconds() # In seconds
@@ -1753,7 +1777,7 @@ class GUI():
                     if self.P.contest_name=='SATELLITES':
                         # Need to add more logic to this going forward
                         print(call,'- Worked before on sats')
-                        match2 = True
+                        self.match2 = True
                         
                     elif self.P.contest_name=='ARRL VHF' and True:
                         # Group phone mode together
@@ -1771,14 +1795,14 @@ class GUI():
                             match4 = True
 
                         # Combine it all together
-                        match2 = match2 or (age<self.P.MAX_AGE*60 and match3 and match4)
+                        self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and match3 and match4)
                         
                     elif self.P.contest_name=='ARRL-SS-CW':
                         # Can only work each station once regardless of band
-                        match2 = match2 or (age<self.P.MAX_AGE*60 and qso['MODE']==mode)
+                        self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['MODE']==mode)
                     else:
                         # Most of the time, we can work each station on each band and mode
-                        match2 = match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
+                        self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
                         
                     if self.P.contest_name=='SATELLITES':
                         #print('HEEEEEEEEYYYYYYYYYYYYYY')
@@ -1800,9 +1824,9 @@ class GUI():
                         last_exch = qso['SRX_STRING']
 
         # If there was a dupe, change color of call entry box & show last exchange
-        if match1:
+        if self.match1:
             print('Call match:',call)
-            if match2:
+            if self.match2:
                 self.call.configure(background="coral")
             else:
                 self.call.configure(background="lemon chiffon")

@@ -36,7 +36,7 @@ from collections import OrderedDict
 #########################################################################################
 
 class CALL_INFO_GUI():
-    def __init__(self,root,P,call):
+    def __init__(self,root,P,call,qso):
         self.P = P
         
         if call in P.calls:
@@ -55,10 +55,19 @@ class CALL_INFO_GUI():
             self.win = Tk()
         self.win.title("Call Info -"+call)
 
+        self.tabs = ttk.Notebook(self.win)
+        self.tab1 = Frame(self.tabs)
+        self.tabs.add(self.tab1, text='Info')
+        if qso:
+            self.tab2 = Frame(self.tabs)
+            self.tabs.add(self.tab2, text='Last QSO')
+        self.tabs.pack(expand=1, fill="both")
+
+        # Info from master list
         row=0
-        lb=Label(self.win, text='Call: ',justify=LEFT)
+        lb=Label(self.tab1, text='Call: ',justify=LEFT)
         lb.grid(row=row,column=0,sticky=W)
-        self.call = Entry(self.win,justify=CENTER)
+        self.call = Entry(self.tab1,justify=CENTER)
         self.call.grid(row=row,column=1,sticky=E+W)
         #self.call.delete(0, END)
         self.call.insert(0,call)
@@ -66,18 +75,31 @@ class CALL_INFO_GUI():
         for key in info.keys():
             row+=1
             txt=key[0].upper() + key[1:] +': '
-            lb=Label(self.win, text=txt,justify=LEFT)
+            lb=Label(self.tab1, text=txt,justify=LEFT)
             lb.grid(row=row, column=0,sticky=W)
-            e = Entry(self.win,justify=CENTER)
+            e = Entry(self.tab1,justify=CENTER)
             e.grid(row=row,column=1,sticky=E+W)
             e.insert(0,info[key])
         
         row+=1
-        button = Button(self.win, text="Dismiss",command=self.Dismiss)
+        button = Button(self.tab1, text="Dismiss",command=self.Dismiss)
         button.grid(row=row,column=0,columnspan=2,sticky=E+W)
 
+        # Info from last qso
+        if qso:
+            row=0
+            for key in qso.keys():
+                lb=Label(self.tab2, text=key,justify=LEFT)
+                lb.grid(row=row, column=0,sticky=W)
+                e = Entry(self.tab2,justify=CENTER)
+                e.grid(row=row,column=1,sticky=E+W)
+                e.insert(0,qso[key])
+                row+=1
+                
+            button = Button(self.tab2, text="Dismiss",command=self.Dismiss)
+            button.grid(row=row,column=0,columnspan=2,sticky=E+W)
+        
         self.win.protocol("WM_DELETE_WINDOW", self.Dismiss)        
-        #self.win.show()
 
         
     def Dismiss(self):

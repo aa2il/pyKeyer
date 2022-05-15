@@ -260,6 +260,7 @@ for i in range(1, sheet1.nrows):
     if len(grid)>0 and 'Paper' not in grid:
         P.grids.append( grid.upper() )
 print('Grids:',P.grids)
+
 #sys.exit(0)
 
 # Spin

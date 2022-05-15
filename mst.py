@@ -144,7 +144,6 @@ class MST_KEYING(DEFAULT_KEYING):
         gui.ndigits=-3
         gui.hide_all()
         self.macros=[1,None,2]
-        #self.box_names=['call','serial','name']
         
         col=0
         cspan=3
@@ -162,6 +161,7 @@ class MST_KEYING(DEFAULT_KEYING):
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.serial)
+        
         gui.counter_lab.grid()
         gui.counter.grid()
         

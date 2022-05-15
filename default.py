@@ -165,6 +165,10 @@ class DEFAULT_KEYING():
         cspan=2
         gui.qth_lab.grid(column=col,columnspan=cspan)
         gui.qth.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.notes_lab.grid(column=col,columnspan=cspan)
+        gui.notes.grid(column=col,columnspan=cspan)
 
         col+=cspan
         cspan=2
@@ -179,6 +183,7 @@ class DEFAULT_KEYING():
         gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.qth)
+        gui.boxes.append(gui.notes)
         gui.boxes.append(gui.hint)
 
         

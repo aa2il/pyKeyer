@@ -37,6 +37,7 @@ from utilities import cut_numbers
 
 TEST_MODE=True
 TEST_MODE=False
+RANDOM_QSO_MODE=False
 
 #########################################################################################
 
@@ -77,7 +78,9 @@ class PADDLING_GUI():
         self.panagrams = read_text_file('Panagrams.txt')
         
         # Read qso template
-        self.QSO_Template = read_text_file('QSO_Template.txt')
+        self.QSO_Template = read_text_file('QSO_Template.txt',
+                                           KEEP_BLANKS=not RANDOM_QSO_MODE)
+        #print('QSO_Template=',self.QSO_Template )
         
         # Read words we stumble with
         self.Stumble = read_text_file('Stumble.txt')
@@ -117,7 +120,10 @@ class PADDLING_GUI():
                    bg='white',                
                    command=lambda j=0: self.SetWpm(0))
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
-        self.WPM_TXT.set('20')
+        if self.P.LOCK_SPEED:
+            self.WPM_TXT.set(self.P.WPM)
+        else:
+            self.WPM_TXT.set('20')
 
         # Slider to control rig monitor level (i.e. sidetone volume)
         col+=2
@@ -187,7 +193,9 @@ class PADDLING_GUI():
             self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram, call, etc.
-        self.NewItem()
+        Selection=self.Selection.get()
+        if Selection!=7 or RANDOM_QSO_MODE:
+            self.NewItem()
         
     # Callback when a key is pressed 
     def KeyPress(self,event,id=None):
@@ -281,7 +289,7 @@ class PADDLING_GUI():
             
         elif Selection==7:
             # Normal QSO
-            if False:
+            if RANDOM_QSO_MODE:
                 # Pick a call at random
                 done = False
                 while not done:
