@@ -132,8 +132,8 @@ class GUI():
 
         # More inits
         self.keyer=P.keyer;
-        #self.start_time = datetime.utcnow().replace(tzinfo=UTC)
         self.start_time = None
+        self.time_on = None
         self.nqsos_start = 0
         self.sock = self.P.sock
 
@@ -845,6 +845,7 @@ class GUI():
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
                 self.dup_check(call)
+                self.time_on = datetime.utcnow().replace(tzinfo=UTC)
                 if self.contest:
                     self.get_hint(call)
             except:
@@ -1409,10 +1410,13 @@ class GUI():
         self.P.SHUTDOWN=True
 
         # Immediately stop sending
-        self.keyer.abort()     
-        if not self.q.empty():
-            self.q.get(False)
-            self.q.task_done()
+        try:
+            self.keyer.abort()     
+            if not self.q.empty():
+                self.q.get(False)
+                self.q.task_done()
+        except:
+            pass                
 
         # Loop through all the threads and close (join) them
         #print "Waiting for WatchDog to quit..."
@@ -1507,7 +1511,13 @@ class GUI():
                 self.start_time = now
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
-            
+            if self.P.contest_name=='Ragchew':
+                date_on = self.time_on.strftime('%Y%m%d')
+                time_on = self.time_on.strftime('%H%M%S')
+            else:
+                date_on = date_off
+                time_on = time_off
+                
             # Read the radio 
             freq_kHz = 1e-3*self.sock.get_freq()
             freq     = int( freq_kHz )
@@ -1555,12 +1565,16 @@ class GUI():
                 self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
 
             # Construct QSO record
-            qso = dict( list(zip(['QSO_DATE_OFF','TIME_OFF','CALL','FREQ','BAND','MODE', \
+            qso = dict( list(zip(['QSO_DATE_ON','TIME_ON',
+                                  'QSO_DATE_OFF','TIME_OFF',
+                                  'CALL','FREQ','BAND','MODE', 
                                   'SRX_STRING','STX_STRING','NAME','QTH','SRX',
-                                  'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES'],  \
-                           [date_off,time_off,call,str(1e-3*freq_kHz),band,mode, \
-                            exch,self.exch_out,name,qth,str(serial),
-                            str(self.cntr),satellite,str(1e-3*freq_kHz_rx),band_rx,notes] )))
+                                  'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES'],
+                                 [date_on,time_on,date_off,time_off,
+                                  call,str(1e-3*freq_kHz),band,mode, 
+                                  exch,self.exch_out,name,qth,str(serial),
+                                  str(self.cntr),satellite,
+                                  str(1e-3*freq_kHz_rx),band_rx,notes] )))
             qso.update(qso2)
 
             if self.P.sock3.connection=='FLLOG':
@@ -2106,6 +2120,7 @@ class GUI():
             call=self.get_call().upper()
             self.sock.set_log_fields({'Call':call})
             self.dup_check(call)
+            self.time_on = datetime.utcnow().replace(tzinfo=UTC)
 
             # If we're in a contest and the return key was pressed,
             # send response and get ready for the exchange
