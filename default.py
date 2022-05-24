@@ -40,6 +40,7 @@ class DEFAULT_KEYING():
         self.contest_name  = contest_name 
         self.aux_cb=None
         self.number_key=None
+        self.contest_duration = None
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
@@ -68,7 +69,7 @@ class DEFAULT_KEYING():
         MACROS[8]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
         MACROS[9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
         MACROS[10] = {'Label' : 'V    '   , 'Text' : 'V'}
-        MACROS[11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV[-10] VVV'}
+        MACROS[11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV [-10]VVV'}
 
         return MACROS
         

@@ -942,6 +942,8 @@ class GUI():
             self.last_call=call
         
         his_name=self.get_name().replace('?','')
+        if '?' in his_name:
+            his_name=' '
         txt = txt.replace('[NAME]',his_name )
         txt = txt.replace('[RST]', self.get_rst_out() )
 
@@ -1337,8 +1339,9 @@ class GUI():
         pickle.dump(frqs, fp)
         pickle.dump(flds, fp)
         fp.close()
+        
         self.P.DIRTY=False
-        #print('SaveState:',self.P.MY_CNTR)
+        print('SaveState: cntr=',self.P.MY_CNTR)
         #print('SaveState:',spots)
         #print('SaveState:',frqs)
         #print('SaveState:',flds)
@@ -1364,7 +1367,8 @@ class GUI():
         now        = datetime.utcnow().replace(tzinfo=UTC)
         time_stamp = pickle.load(fp)
         age = (now - time_stamp).total_seconds()/60  
-        #print('RestoreState: Age=',age,' Mins')
+        print('RestoreState: now=',now,'\ntime_stamp=',time_stamp,
+              '\nAge=',age,' mins.')
 
         # If we're in a long contest, restore the serail counter
         if age<self.P.MAX_AGE:

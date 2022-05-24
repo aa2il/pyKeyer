@@ -38,7 +38,8 @@ class WPX_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,'CQWW')
 
         P.CONTEST_ID='CQ-WPX-CW'
-
+        self.contest_duration = 48
+        
     # Routient to set macros for this contest
     def macros(self):
 
@@ -60,7 +61,7 @@ class WPX_KEYING(DEFAULT_KEYING):
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : '73'        , 'Text' : '73 GL ee'}
         
-        MACROS[8]     = {'Label' : 'Serial 2x' , 'Text' : '[-2][SERIAL] [SERIAL][+2]'}
+        MACROS[8]     = {'Label' : 'Serial 2x' , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
         MACROS[9]     = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[10]    = {'Label' : '-'         , 'Text' : ' '}
         MACROS[11]    = {'Label' : '-'         , 'Text' : ' '}
