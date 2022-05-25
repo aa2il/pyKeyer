@@ -57,6 +57,7 @@ class PADDLING_GUI():
         self.stack=[]
         self.stack_ptr=-1
         self.qso_ptr=-1
+        self.book_ptr=-1
 
         # Open main or pop-up window depending on if "root" is given
         if root:
@@ -83,7 +84,10 @@ class PADDLING_GUI():
         #print('QSO_Template=',self.QSO_Template )
         
         # Read words we stumble with
-        self.Stumble = read_text_file('Stumble.txt')
+        self.Stumble = read_text_file('Stumble.txt',KEEP_BLANKS=False)
+
+        # Read Book
+        self.Book = read_text_file('Book.txt',KEEP_BLANKS=False)
         
         # Form list of calls - just use what we loaded from the master list
         self.calls = P.calls
@@ -102,7 +106,7 @@ class PADDLING_GUI():
         self.Selection = IntVar(value=0)
         col=0
         for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars', \
-                      'All Chars','Stumble','QSO']:
+                      'All Chars','Stumble','QSO','Book']:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
@@ -330,6 +334,20 @@ class PADDLING_GUI():
             txt = self.P.gui.Patch_Macro(txt)
             txt = self.P.gui.Patch_Macro2(txt)
             #print('QSO=',txt)
+            
+        elif Selection==8:
+            # Nook
+            n=len(self.Book)
+            #print('There are',n,'line from the book loaded')
+            if False:
+                i = random.randint(0,n-1)
+            else:
+                self.book_ptr+=1
+                if self.book_ptr>n-1:
+                    self.book_ptr=0
+                i=self.book_ptr
+            txt = self.Book[i]
+            #print('Book=',txt)
             
         else:
             print('Unknown selection')

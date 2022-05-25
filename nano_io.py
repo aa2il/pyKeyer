@@ -92,10 +92,18 @@ def nano_set_wpm(ser,wpm,idev=1):
     if idev==1 or idev==3:
         # Set wpm of chars sent from the keyboard
         txt='~S'+str(wpm).zfill(3)+'s'
-        nano_write(ser,txt)
+        try:
+            nano_write(ser,txt)
+        except Exception as e: 
+            print('NANO SET WPM: Problem with write - giving up')
+            print( str(e) )
             
     if idev==2 or idev==3:
         # Set wpm for the paddles
         txt='~U'+str(wpm).zfill(3)+'u'
-        nano_write(ser,txt)
+        try:
+            nano_write(ser,txt)
+        except Exception as e: 
+            print('NANO SET WPM: Problem with write - giving up')
+            print( str(e) )
             
