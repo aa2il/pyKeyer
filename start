@@ -52,7 +52,7 @@ set CONTEST="cwt"
 #set CONTEST="stew"
 #set CONTEST="sat"
 #set CONTEST="cqp"
-set CONTEST="wpx"
+#set CONTEST="wpx"
 #set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="arrl_10m"
@@ -244,7 +244,7 @@ if( $RIG2 != "NONE" )then
 endif
 
 cd ~/Python/pyKeyer
-echo pyKeyer.py $OPTS >& /tmp/KEYER
+#echo pyKeyer.py $OPTS >& /tmp/KEYER
 echo pyKeyer.py $OPTS 
 #pyKeyer.py $OPTS >>& /tmp/KEYER &
 pyKeyer.py $OPTS

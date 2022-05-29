@@ -67,7 +67,7 @@ set CONTEST=""
 #set CONTEST="vhf"
 #set CONTEST="fd"
 #set CONTEST="cqp"
-#set CONTEST="wpx"
+set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
 #set CONTEST="naqp"
@@ -98,7 +98,7 @@ else if( X$CONTEST == "X" && $d[1] == "Wed" )then
     set CONTEST="cwt"
 else if( X$CONTEST == "X" && ($d[1] == "Fri" || $d[1] == "Sun"))then
     set CONTEST="sst"
-else
+else if( X$CONTEST == "X" )then
     echo " "
     echo "--- Can't figure out contest - defaulting to ragchew ---"
     echo " "

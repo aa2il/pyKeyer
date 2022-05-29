@@ -1216,11 +1216,18 @@ class GUI():
     # Read counter from the entry box
     def update_counter(self):
         cntr = self.counter.get()
-        print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UPDATE COUNTER ^^^^^^^^^^^^^^^^^^^^',cntr)
+        #print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UPDATE COUNTER ^^^^^^^^^^^^^^^^^^^^',cntr)
         try:
-            self.P.MY_CNTR = int( cntr )
-        except:
+            if cntr=='':
+                self.P.MY_CNTR = 1
+                self.counter.delete(0, END)
+                self.counter.insert(0,str(self.P.MY_CNTR))
+            else:
+                self.P.MY_CNTR = int( cntr )
+        except Exception as e: 
             print('*** GUI  - ERROR *** Unable to convert counter entry to int:',cntr)
+            print( str(e) )
+            
         return True
 
     # Read his call from the entry box
@@ -1334,6 +1341,7 @@ class GUI():
         now = datetime.utcnow().replace(tzinfo=UTC)
         pickle.dump(now, fp)
 
+        pickle.dump(self.PaddlingWin.bookmark-1, fp)
         pickle.dump(self.P.MY_CNTR, fp)
         pickle.dump(spots, fp)
         pickle.dump(frqs, fp)
@@ -1370,7 +1378,11 @@ class GUI():
         print('RestoreState: now=',now,'\ntime_stamp=',time_stamp,
               '\nAge=',age,' mins.')
 
-        # If we're in a long contest, restore the serail counter
+        # Restore the book mark
+        self.PaddlingWin.bookmark = max( pickle.load(fp) ,0 )
+        print('RestoreState: Bookmark=',self.PaddlingWin.bookmark)
+
+        # If we're in a long contest, restore the serial counter
         if age<self.P.MAX_AGE:
             self.P.MY_CNTR = pickle.load(fp)
             print('RestoreState: Counter=',self.P.MY_CNTR)
@@ -1973,6 +1985,14 @@ class GUI():
                 ClarReset(self)
                 #self.sock.rit(0,0)
                 return("break")
+
+            if key=='Prior':
+                print('WPM Up')
+                self.set_wpm(dWPM=+WPM_STEP)
+                
+            if key=='Next':
+                print('WPM Down')
+                self.set_wpm(dWPM=-WPM_STEP)
 
             # Quick way to send '?'
             if key in ['slash','question'] and (alt or control):

@@ -57,7 +57,7 @@ class PADDLING_GUI():
         self.stack=[]
         self.stack_ptr=-1
         self.qso_ptr=-1
-        self.book_ptr=-1
+        self.bookmark=0
 
         # Open main or pop-up window depending on if "root" is given
         if root:
@@ -336,18 +336,8 @@ class PADDLING_GUI():
             #print('QSO=',txt)
             
         elif Selection==8:
-            # Nook
-            n=len(self.Book)
-            #print('There are',n,'line from the book loaded')
-            if False:
-                i = random.randint(0,n-1)
-            else:
-                self.book_ptr+=1
-                if self.book_ptr>n-1:
-                    self.book_ptr=0
-                i=self.book_ptr
-            txt = self.Book[i]
-            #print('Book=',txt)
+            txt = self.Book[self.bookmark]
+            self.bookmark= (self.bookmark+1) % len(self.Book)
             
         else:
             print('Unknown selection')
