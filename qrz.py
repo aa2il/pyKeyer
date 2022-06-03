@@ -21,7 +21,7 @@
 
 import sys
 import os
-import json
+#import json
 if sys.version_info[0]==3:
     from tkinter import *
     import tkinter.font

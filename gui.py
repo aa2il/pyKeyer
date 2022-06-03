@@ -41,10 +41,9 @@ from rig_io.socket_io import ClarReset
 from rig_control_tk import *
 from rotor_control_tk import *
 from ToolTip import *
-import pickle
+#import pickle
 from fileio import *
 from threading import enumerate
-from audio_io import WaveRecorder
 
 from cwt import *
 from cwopen import *
@@ -490,14 +489,6 @@ class GUI():
         # Other buttons - any buttons we need to modify, we need to grab handle to them
         # before we try to pack them.  Otherwise, all we get is the results of the packing
 
-        # Capture
-        if False:
-            col += 2
-            self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
-            self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
-            tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
-            self.CaptureAudioCB(-1)
-        
         # Practice button
         if False:
             col += 1
@@ -1174,45 +1165,6 @@ class GUI():
         WPM=self.keyer.get_wpm()
         self.WPM_TXT.set(str(WPM))
 
-    # Callback to toggle audio recording on & off
-    def CaptureAudioCB(self,iopt=None):
-        P=self.P
-        print("============================================== Capture Audio ...",iopt,P.CAPTURE)
-        if iopt==-1:
-            iopt=None
-            P.CAPTURE = not P.CAPTURE
-        if (iopt==None and not P.CAPTURE) or iopt==1:
-            if not P.CAPTURE:
-                #self.CaptureBtn['text']='Stop Capture'
-                #self.CaptureBtn.configure(background='red',highlightbackground= 'red')
-                P.CAPTURE = True
-                print('Capture rig audio started ...')
-
-                s=time.strftime("_%Y%m%d_%H%M%S", time.gmtime())      # UTC
-                dirname=''
-                P.wave_file = dirname+'capture'+s+'.wav'
-                print('\nOpening',P.wave_file,'...')
-
-                if P.sock.rig_type2=='FT991a':
-                    gain=[4,1]
-                else:
-                    gain=[1,1]
-                P.rec = WaveRecorder(P.wave_file, 'wb',channels=1,wav_rate=8000,rb2=P.osc.rb2,GAIN=gain)
-                
-                if not P.RIG_AUDIO_IDX:
-                    P.RIG_AUDIO_IDX = P.rec.list_input_devices('USB Audio CODEC')
-                P.rec.start_recording(P.RIG_AUDIO_IDX)
-                
-        else:
-            if P.CAPTURE:
-                #self.CaptureBtn['text']='Capture'
-                #self.CaptureBtn.configure(background='green',highlightbackground= 'green')
-                if P.RIG_AUDIO_IDX:
-                    P.rec.stop_recording()
-                    P.rec.close()
-                P.CAPTURE = False
-                print('Capture rig audio stopped ...')
-
     # Read counter from the entry box
     def update_counter(self):
         cntr = self.counter.get()
@@ -1336,17 +1288,30 @@ class GUI():
             spots.append( spot['Button']['text'] )
             frqs.append( spot['Freq'] )
             flds.append( spot['Fields'] )
-        fp = open('state.pcl', 'wb')
-
         now = datetime.utcnow().replace(tzinfo=UTC)
-        pickle.dump(now, fp)
 
+        #obj.strftime('%Y-%m-%d %H:%M:%S')
+        
+        STATE={'now' : now.strftime('%Y-%m-%d %H:%M:%S'), 
+               'bookmark' : self.PaddlingWin.bookmark-1,
+               'serial' : self.P.MY_CNTR,
+               'spots' : spots,
+               'freqs' : frqs,
+               'fields' : flds }
+        print('STATE=',STATE)
+        with open('state.json', "w") as outfile:
+            json.dump(STATE, outfile)
+
+        """
+        fp = open('state.pcl', 'wb')
+        pickle.dump(now, fp)
         pickle.dump(self.PaddlingWin.bookmark-1, fp)
         pickle.dump(self.P.MY_CNTR, fp)
         pickle.dump(spots, fp)
         pickle.dump(frqs, fp)
         pickle.dump(flds, fp)
         fp.close()
+        """
         
         self.P.DIRTY=False
         print('SaveState: cntr=',self.P.MY_CNTR)
@@ -1367,44 +1332,58 @@ class GUI():
     # Restore program state
     def RestoreState(self):
         try:
-            fp = open('state.pcl', 'rb')
+            #fp = open('state.pcl', 'rb')
+            with open('state.json') as json_data_file:
+                STATE = json.load(json_data_file)
+            print('STATE=',STATE)
         except:
-            print('RestoreState: state.pcl not found')
+            print('RestoreState: state.json not found')
             return
             
         now        = datetime.utcnow().replace(tzinfo=UTC)
-        time_stamp = pickle.load(fp)
+
+        #time_stamp = pickle.load(fp)
+        time_stamp = datetime.strptime( STATE['now'] , '%Y-%m-%d %H:%M:%S').replace(tzinfo=UTC)
+        
         age = (now - time_stamp).total_seconds()/60  
         print('RestoreState: now=',now,'\ntime_stamp=',time_stamp,
               '\nAge=',age,' mins.')
 
         # Restore the book mark
-        self.PaddlingWin.bookmark = max( pickle.load(fp) ,0 )
+        #self.PaddlingWin.bookmark = max( pickle.load(fp) ,0 )
+        #print('BOOKMARK=',self.PaddlingWin.bookmark)
+        #sys.exit(0)
+        self.PaddlingWin.bookmark = max( STATE['bookmark'] ,0 )
         print('RestoreState: Bookmark=',self.PaddlingWin.bookmark)
 
         # If we're in a long contest, restore the serial counter
         if age<self.P.MAX_AGE:
-            self.P.MY_CNTR = pickle.load(fp)
+            #self.P.MY_CNTR = pickle.load(fp)
+            self.P.MY_CNTR = STATE['serial']
             print('RestoreState: Counter=',self.P.MY_CNTR)
             self.counter.delete(0, END)
             self.counter.insert(0,str(self.P.MY_CNTR))
 
         # If not too much time has elapsed, restore the spots 
         if age<30:
-            spots = pickle.load(fp)
+            #spots = pickle.load(fp)
+            spots = STATE['spots']
             if len(spots)>12*self.P.NUM_ROWS:
                 spots=spots[:12*self.P.NUM_ROWS]
             print('RestoreState: Spots=',spots)
-            frqs = pickle.load(fp)
-            flds = pickle.load(fp)
+            #frqs = pickle.load(fp)
+            #flds = pickle.load(fp)
+            frqs = STATE['freqs']
+            flds = STATE['fields']
             for i in range(len(spots)):
                 print(i,len(spots),len(self.spots))
                 self.spots[i]['Button']['text'] = spots[i]
                 self.spots[i]['Freq']=frqs[i]
                 self.spots[i]['Fields']=flds[i]
                 
-        fp.close()
+        #fp.close()
         self.P.DIRTY=False
+        #sys.exit(0)
 
     # Exit
     def Quit(self):
@@ -2383,7 +2362,7 @@ class GUI():
             label="Capture Audio",
             underline=0,
             variable=self.Capturing,
-            command=self.CaptureAudioCB
+            command=self.P.capture.CaptureAudioCB
         )
         
         self.Tuning = BooleanVar(value=False)

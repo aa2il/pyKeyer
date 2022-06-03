@@ -33,6 +33,7 @@ import sys
 import re
 import serial
 import practice 
+import capture
 import rig_io.socket_io as socket_io
 import threading
 if sys.version_info[0]==3:
@@ -152,6 +153,7 @@ P.SO2V=False
 P.NUM_RX=0
 P.Stopper = threading.Event()
 if not P.PRACTICE_MODE and P.sock.connection!='HAMLIB' and P.HAMLIB_SERVER:
+    print('Creating HAMLIB servers ...')
     for port in [4532, 4632]:
         #th = threading.Thread(target=rigctl.HamlibServer(P,HAMLIB_PORT).Run, args=(),name='Hamlib Server')
         th = threading.Thread(target=rigctl.HamlibServer(P,port).Run, args=(),name='Hamlib Server')
@@ -186,6 +188,7 @@ P.keyer.evt =  threading.Event()
 P.keyer.evt.clear()
 
 # Start a thread that controls keying of TX
+print('Creating thread to Process Chars ...')
 worker = threading.Thread(target=process_chars, args=(P,),name='Process Chars')
 worker.setDaemon(True)
 worker.start()
@@ -193,6 +196,7 @@ P.threads.append(worker)
 
 # Start listener in a separate thread - not sure if we really use anymore
 if False:
+    print('Creating Listener thread ...')
     server = threading.Thread(target=cw_keyer.cw_server, \
                               args=(P,HOST,KEYER_PORT),name='CW Server')
     server.setDaemon(True)
@@ -200,7 +204,16 @@ if False:
     P.threads.append(server)
 
 # Create sidetone oscillator & start in a separate thread
+print('Creating Sidetone ...')
 init_sidetone(P)
+
+# Set up a thread for audio capture
+print('Creating thread to Capture Audio ...')
+P.capture = capture.AUDIO_CAPTURE(P)
+worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
+worker.setDaemon(True)
+worker.start()
+P.threads.append(worker)
 
 # Load history from previous contests
 if P.USE_MASTER:
@@ -214,6 +227,7 @@ P.calls = list(P.MASTER.keys())
 P.gui.construct_gui()
 
 # Set up a thread for code practice
+print('Creating Practice Exec thread ...')
 P.practice = practice.CODE_PRACTICE(P)
 worker = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
 worker.setDaemon(True)

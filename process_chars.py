@@ -60,7 +60,7 @@ def process_chars(P):
             print('PROCESSS_CHARS: txt=',txt,'\tWPM=',keyer.WPM)
 
             # Timing is critical so we make sure we have control
-            if P.q2 and not P.PRACTICE_MODE and P.SIDETONE:
+            if P.q2 and not P.PRACTICE_MODE and (P.SIDETONE or P.CAPTURE):
                 print('=========================================')
                 P.q2.put(txt)
             lock.acquire()

@@ -67,7 +67,7 @@ set CONTEST=""
 #set CONTEST="vhf"
 #set CONTEST="fd"
 #set CONTEST="cqp"
-set CONTEST="wpx"
+#set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
 #set CONTEST="naqp"
@@ -184,7 +184,7 @@ if( $CONTEST == "naqp" )then
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
-    set WPM=25
+    set WPM=30
     set HINTS="-nohints"
     set HINTS="-nohints -autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 1"

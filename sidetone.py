@@ -46,7 +46,7 @@ AMP=0.5
 
 def init_sidetone(P):
     
-    if P.SIDETONE:
+    if P.SIDETONE or True:
         print('Init SIDETONE ...')
         P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
         P.keyer.sidetone = P.osc
@@ -64,10 +64,11 @@ def init_sidetone(P):
         
     else:
         P.q2=None
+        P.osc=None
 
 
 def sidetone_executive(P):
-    print('SIDETONE Exec')
+    print('SIDETONE Exec started ...')
     q = P.q2
 
     while not P.Stopper.isSet():
@@ -159,7 +160,7 @@ class SIDETONE_OSC():
     #    4. The space between letters is 3 time units.
     #    5. The space between words is 7 time units.
     def send_cw(self,msg,WPM,nfrq,AUDIO_ACTIVE):
-        #print('SIDETONE->SEND_CW:  msg=',msg,len(msg))
+        print('SIDETONE->SEND_CW:  msg=',msg,len(msg),AUDIO_ACTIVE)
 
         # Check for speed or freq change
         if WPM != self.WPM or nfrq!=self.nfrq:
