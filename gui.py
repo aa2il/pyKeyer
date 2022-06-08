@@ -133,6 +133,7 @@ class GUI():
         self.keyer=P.keyer;
         self.start_time = None
         self.time_on = None
+        print('TiMe On=',self.time_on)
         self.nqsos_start = 0
         self.sock = self.P.sock
 
@@ -836,7 +837,6 @@ class GUI():
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
                 self.dup_check(call)
-                self.time_on = datetime.utcnow().replace(tzinfo=UTC)
                 if self.contest:
                     self.get_hint(call)
             except:
@@ -1507,8 +1507,14 @@ class GUI():
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
             if self.P.contest_name=='Ragchew':
-                date_on = self.time_on.strftime('%Y%m%d')
-                time_on = self.time_on.strftime('%H%M%S')
+                print('TIME ON=',self.time_on)
+                if self.time_on:
+                    date_on = self.time_on.strftime('%Y%m%d')
+                    time_on = self.time_on.strftime('%H%M%S')
+                else:
+                    print('\nFile &&&&&&&&&&&&&&&&&&&&&&&&&&&& EXPECTED TIME ON &&&&&&&&&&&&&&&&&&')
+                    date_on = date_off
+                    time_on = time_off
             else:
                 date_on = date_off
                 time_on = time_off
@@ -1739,6 +1745,8 @@ class GUI():
     # Routine to check & flag dupes
     def dup_check(self,call):
         print('DUP_CHECK: call=',call,self.P.MAX_AGE)
+        self.time_on = datetime.utcnow().replace(tzinfo=UTC)
+        print('Time on=',self.time_on)
 
         # Look for dupes
         self.match1=False                # True if there is matching call
@@ -2123,7 +2131,6 @@ class GUI():
             call=self.get_call().upper()
             self.sock.set_log_fields({'Call':call})
             self.dup_check(call)
-            self.time_on = datetime.utcnow().replace(tzinfo=UTC)
 
             # If we're in a contest and the return key was pressed,
             # send response and get ready for the exchange

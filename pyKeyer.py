@@ -33,7 +33,7 @@ import sys
 import re
 import serial
 import practice 
-import capture
+import audio_capture
 import rig_io.socket_io as socket_io
 import threading
 if sys.version_info[0]==3:
@@ -209,7 +209,7 @@ init_sidetone(P)
 
 # Set up a thread for audio capture
 print('Creating thread to Capture Audio ...')
-P.capture = capture.AUDIO_CAPTURE(P)
+P.capture = audio_capture.AUDIO_CAPTURE(P)
 worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
 worker.setDaemon(True)
 worker.start()

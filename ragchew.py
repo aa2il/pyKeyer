@@ -36,6 +36,8 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
     def __init__(self,P,contest_name):
         DEFAULT_KEYING.__init__(self,P,contest_name)  #,'RAGCHEW*.txt')
 
+        P.CONTEST_ID='RAGCHEW'
+
     # Routine to set macros for this contest
     def macros(self):
 
