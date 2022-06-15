@@ -50,7 +50,7 @@ class VHF_KEYING(DEFAULT_KEYING):
         
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MGRID] [MYGRID]'}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID] [MYGRID]'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYGRID] [MYGRID] '}
         MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}

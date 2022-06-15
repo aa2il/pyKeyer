@@ -117,6 +117,11 @@ endif
 echo CONTEST=$CONTEST
 #exit
 
+# Rig settings
+set FIND_RIG="~/Python/findRig/findRig.py"
+set IF_SHIFT="0000"
+set MON=35  
+
 ################################################################################
 
 # Select primary rig & middleware
@@ -130,7 +135,7 @@ set RIG1="FLRIG"
 set RIG_TYPE1="FTdx3000"
 #set RIG_TYPE1="FT991a"
 #set RIG_TYPE2="IC9700"
-#set RIG_TYPE1=`~/Python/findRig/findRig.py`
+#set RIG_TYPE1=`$FIND_RIG`
 
 # Select secondary rig & middleware
 # Very limited for now
@@ -144,18 +149,18 @@ set RIG_TYPE2="NONE"
 #set RIG_TYPE2="FTdx3000"
 #set RIG_TYPE2="FT991a"
 #set RIG_TYPE2="IC9700"
-#set RIG_TYPE2=`~/Python/findRig/findRig.py`
+#set RIG_TYPE2=`$FIND_RIG`
 
 # Determine primary rig type
 echo RIG_TYPE1a=-$RIG_TYPE1-$#RIG_TYPE1-
 if( $RIG_TYPE1 == "" )then
     sleep 1
-    set RIG_TYPE1=`~/Python/findRig/findRig.py`
+    set RIG_TYPE1=`$FIND_RIG`
     echo RIG_TYPE1b=-$RIG_TYPE1-$#RIG_TYPE1-
 endif
 if( $RIG_TYPE1 == "" )then
     sleep 1
-    set RIG_TYPE1=`~/Python/findRig/findRig.py`
+    set RIG_TYPE1=`$FIND_RIG`
     echo RIG_TYPE1c=-$RIG_TYPE1-
 endif
 set RIG_TYPE1=`echo $RIG_TYPE1 | cut -f 1 -d ' '`
@@ -336,6 +341,7 @@ if( $RIG1 == "FLRIG" )then
         exit 1
     endif
     set PORT=12345                  # Port no. for FLRIG server
+    set RIG = "FLRIG"
 endif 
 if( $RIG1 == "FLRIG" && $RIG_TYPE1 == "IC9700" )then
     set PORT=12346                  # Port no. for FLRIG server
@@ -352,7 +358,6 @@ endif
 if( $RIG1 == "HAMLIB" )then
     start_hamlib $RIG_TYPE1 $TEST_MODE
     set PORT = 4532
-    
     #exit
 endif
 
@@ -363,6 +368,32 @@ if( $RIG1 == "FLDIGI" )then
     start_fldigi $RIG_TYPE1 
     exit
 endif
+
+################################################################################
+
+# Set basic rig configuration
+# This capability is now in findRig
+echo " "
+echo Setting basic rig config ...
+echo Setting CW Mode, Narrow Filtering and Power on port $PORT ...
+
+set CMD="$FIND_RIG -rig $RIG $RIG_TYPE1 -port $PORT -M CW -FILT Narrow -PWR 99 -MON $MON -TUNER 1"
+if( ($RIG_TYPE1 == "FTdx3000") )then
+
+    # Cancel any IF SHIFT 
+    set CMD="$CMD -w 'IS0+$IF_SHIFT'"
+
+    # Select antenna, break-in and turn off lock
+    set CMD="$CMD -w 'AN01;BI1;LK4'"
+
+    # Make sure these get propagated to VFO-B also
+    set CMD="$CMD -w 'SV;AN01;BI1;SV'"
+    
+endif
+
+echo CMD=$CMD
+$CMD
+#exit
 
 ################################################################################
 

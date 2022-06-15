@@ -48,7 +48,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CWT [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYCWOPS] '}
         MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
         if self.P.PRACTICE_MODE or True:
             #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
@@ -61,14 +61,14 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYCWOPS]'}
+        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYCWOPS] [MYCWOPS]'}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
 
         MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
-        MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[9]     = {'Label' : 'No. 2x'    , 'Text' : '[MYCWOPS] [MYCWOPS] '}
         MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
@@ -203,8 +203,8 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         valid = len(call)>=3 and len(name)>0 and len(qth)>0
         
         MY_NAME   = self.P.SETTINGS['MY_NAME']
-        MY_STATE    = self.P.SETTINGS['MY_STATE']
-        exch_out = MY_NAME+','+MY_STATE
+        MY_NUM    = self.P.SETTINGS['MY_CWOPS']
+        exch_out = MY_NAME+','+MY_NUM
 
         qso2={}
         

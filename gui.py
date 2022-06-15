@@ -854,6 +854,9 @@ class GUI():
         if '[MYQTH]' in txt:
             self.qth_out = self.P.SETTINGS['MY_QTH']
             txt = txt.replace('[MYQTH]',self.qth_out)
+        if '[MYCWOPS]' in txt:
+            self.cwops = self.P.SETTINGS['MY_CWOPS'] 
+            txt = txt.replace('[MYCWOPS]',self.cwops)
         if '[MYSEC]' in txt:
             self.qth_out = self.P.SETTINGS['MY_SEC'] 
             txt = txt.replace('[MYSEC]',self.qth_out)
