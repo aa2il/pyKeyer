@@ -94,6 +94,8 @@ class FD_KEYING(DEFAULT_KEYING):
             return txt2
             
     # Routine to process qso element repeats
+    # Override default routine since NR is category for this contest
+    # Perhaps there is a better name? Category? Need to Check FD rules
     def repeat(self,label,exch2):
             
         if 'CALL' in label:
@@ -102,12 +104,10 @@ class FD_KEYING(DEFAULT_KEYING):
             txt2=self.cat+' '+self.cat
         elif 'QTH?' in label or  'SEC?' in label:
             txt2=self.qth+' '+self.qth
-        elif 'NR?' in label:
-            txt2=self.qth+' '+self.qth
         else:
             txt2=exch2
 
-            return txt2
+        return txt2
             
     # Error checking
     def error_check(self):

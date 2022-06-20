@@ -198,7 +198,7 @@ class PARAMS:
 
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL VHF','NAQP-CW', \
-                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX' \
+                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX', \
                            'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']
         self.SHOW_TEXT_BOX2=args.split
         if self.SPRINT:

@@ -276,7 +276,7 @@ class GUI():
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
         self.call.focus_set()            # Grab focus
         self.default_color = self.call.cget("background")
-
+        
         # For normal operating, these will be visible
         vcmd = (self.root.register(self.take_focus),'%W')
         self.name_lab = Label(self.root, text="Name",font=font1)
@@ -490,33 +490,6 @@ class GUI():
         # Other buttons - any buttons we need to modify, we need to grab handle to them
         # before we try to pack them.  Otherwise, all we get is the results of the packing
 
-        # Practice button
-        if False:
-            col += 1
-            self.PracticeBtn = Button(self.root, text='Practice', command=self.PracticeCB )
-            self.PracticeBtn.grid(row=row,column=col,sticky=E+W)
-            tip = ToolTip(self.PracticeBtn,' Toggle Practice Mode ')
-            P.PRACTICE_MODE = not P.PRACTICE_MODE
-            self.PracticeCB()
-
-        # Button to turn SIDETONE on and off
-        if False:
-            col += 1
-            self.SideToneBtn = Button(self.root, text='SideTone', command=self.SideToneCB )
-            self.SideToneBtn.grid(row=row,column=col,sticky=E+W)
-            tip = ToolTip(self.SideToneBtn,' Toggle Sidetone Osc ')
-            P.SIDETONE = not P.SIDETONE
-            self.SideToneCB()
-
-        # TUNE button
-        if False:
-            col += 1
-            self.TuneBtn = Button(self.root, text='Tune',bg='yellow',\
-                                  highlightbackground= 'yellow', \
-                                  command=self.Tune )
-            self.TuneBtn.grid(row=row,column=col,sticky=E+W)
-            tip = ToolTip(self.TuneBtn,' Key Radio to Ant Tuning ')
-
         # QRZ button
         col += 1
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
@@ -533,36 +506,7 @@ class GUI():
         SB = OptionMenu(self.root,self.SAT_TXT,*sat_list, \
                         command=self.set_satellite).grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         self.set_satellite('None')
-
-        """
-        # Don't need these anymore
-
-        # Reset button
-        col = 8
-        btn = Button(self.root, text='Reset',command=self.Reset_Defaults ) 
-        btn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(btn, ' Reset to Default Params ' )
-
-        # Save state button
-        col += 1
-        btn = Button(self.root, text='Save State',command=self.SaveState ) 
-        btn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(btn, ' Save State ' )
-
-        # Restore state button
-        col += 1
-        btn = Button(self.root, text='Restore State',command=self.RestoreState ) 
-        btn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(btn, ' Restore State ' )
-
-        # Quit button
-        col += 1
-        btn = Button(self.root, text='Quit',command=self.Quit ) 
-        btn.grid(row=row,column=col,sticky=E+W)
-        tip = ToolTip(btn, ' Exit Program ' )
-
-        """
-            
+        
         # Reset clarifier
         ClarReset(self)
 
@@ -572,15 +516,8 @@ class GUI():
         col=8
         self.rate_lab = Label(self.root, text="QSO Rate:",font=font1)
         self.rate_lab.grid(row=row,columnspan=4,column=col,sticky=W)
-        #Label(self.root, text="--- Spots ---",font=font1) \
-        #    .grid(row=row,column=int(ncols/2),columnspan=2,sticky=E+W)
 
         # Other capabilities accessed via menu
-        if False:
-            col += 4
-            self.RigCtrlBtn = Button(self.root, text='Rig Ctrl', command=self.RigCtrlCB )
-            self.RigCtrlBtn.grid(row=row,column=col,sticky=E+W)
-            tip = ToolTip(self.RigCtrlBtn,' Show/Hide Rig Control Frame ')
         self.rig = RIG_CONTROL(P)
         
         # Add a tab to manage Rotor
@@ -2235,6 +2172,8 @@ class GUI():
             
         elif event.widget==self.cat:
             cat=self.get_cat().upper()
+            if key=='Return' or key=='KP_Enter':
+                next_widget = self.P.KEYING.next_event(key,event)
 
         elif event.widget==self.rstin:
             rst=self.get_rst_in().upper()

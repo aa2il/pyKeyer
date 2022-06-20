@@ -191,6 +191,9 @@ class CODE_PRACTICE():
 
             # Check if call is correct
             call2 = P.gui.get_call().upper()
+            if call2==None or txt2==None:
+                print('\n@@@@@@@@@@@@@@@@@ CODE_PRACTICE: Unexpected string(s):\ncall=',call,
+                      '\ncall2=',call2,'\ntxt2=',txt2)
             if call2!=call:
                 txt2 = call+' '+txt2
             
@@ -222,9 +225,9 @@ class CODE_PRACTICE():
             print('CODE PRACTICE: Waiting 3b - Answered ... done=',done,'\tlabel=',label)
             if not done:
                 repeats=repeats or ('?' in label)
-                #print('Repeats=',repeats)
+                #print('Repeats=',repeats,'\tKEYING=',P.KEYING)
                 
-                # Determine next element
+                # Determine next elementx
                 if P.KEYING:
                     txt2 = P.KEYING.repeat(label,exch2)
                 elif 'CALL' in label:
