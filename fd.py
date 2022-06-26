@@ -53,15 +53,15 @@ class FD_KEYING(DEFAULT_KEYING):
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYCAT] [MYSEC]'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYCAT] [MYCAT] [MYSEC] [MYSEC]'}
-        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[8]     = {'Label' : 'Cat 2x'    , 'Text' : '[MYCAT] [MYCAT] '}
-        MACROS[9]     = {'Label' : 'Sec 2x'    , 'Text' : '[MYSEC] [MYSEC] '}
+        MACROS[8]     = {'Label' : 'Cat 2x'    , 'Text' : '[-2][MYCAT] [MYCAT] [+2]'}
+        MACROS[9]     = {'Label' : 'Sec 2x'    , 'Text' : '[-2][MYSEC] [MYSEC] [+2]'}
         MACROS[10]    = {'Label' : 'NR?  '     , 'Text' : 'NR? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'SEC? '}
-        MACROS[11+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
 

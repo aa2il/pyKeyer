@@ -65,7 +65,7 @@ set CONTEST=""
 #set CONTEST="ss"
 #set CONTEST="arrl_dx"
 #set CONTEST="vhf"
-#set CONTEST="fd"
+set CONTEST="fd"
 #set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
@@ -248,9 +248,9 @@ else if( $CONTEST == "cqww" )then
 
 # Settings for field day
 else if( $CONTEST == "fd" )then
-    set WPM=30
-    #set PRACTICE="-prac"
-    set HINTS="-nohints"
+    set WPM=25
+    #set HINTS="-nohints"
+    set HINTS="-use_log_hist"
 
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then
