@@ -65,7 +65,7 @@ set CONTEST=""
 #set CONTEST="ss"
 #set CONTEST="arrl_dx"
 #set CONTEST="vhf"
-set CONTEST="fd"
+#set CONTEST="fd"
 #set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
@@ -134,7 +134,7 @@ set RIG1="FLRIG"
 #set RIG_TYPE1="IC706"
 set RIG_TYPE1="FTdx3000"
 #set RIG_TYPE1="FT991a"
-#set RIG_TYPE2="IC9700"
+#set RIG_TYPE1="IC9700"
 #set RIG_TYPE1=`$FIND_RIG`
 
 # Select secondary rig & middleware
@@ -242,14 +242,12 @@ else if( $CONTEST == "wpx" )then
 else if( $CONTEST == "cqww" )then
     # Hints and log hist
     set WPM=25
-    #set PRACTICE="-prac"
     set HINTS="-use_log_hist"
     set BM_OPTS = "$BM_OPTS -contest -dx"
 
 # Settings for field day
 else if( $CONTEST == "fd" )then
     set WPM=25
-    #set HINTS="-nohints"
     set HINTS="-use_log_hist"
 
 # Settings for IARU HF Champs
