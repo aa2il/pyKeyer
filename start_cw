@@ -69,7 +69,7 @@ set CONTEST=""
 #set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
-#set CONTEST="iaru"
+set CONTEST="iaru"
 #set CONTEST="naqp"
 
 # Various options for pyKeyer
@@ -253,7 +253,7 @@ else if( $CONTEST == "fd" )then
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then
     set WPM=25
-    set HINTS="-use_log_hist"
+    set HINTS="-use_log_hist -nohints -autofill"
     set BM_OPTS = "$BM_OPTS -contest"
 
 # Settings for CA QSO Party

@@ -1204,6 +1204,8 @@ class GUI():
             self.dx_station = Station(call)
             #pprint(vars(self.dx_station))
             h = hint.master(self.P,call,self.dx_station)
+            #if not h:
+            #    h = self.P.KEYING.hint(call)
             if not h:
                 h = hint.oh_canada(self.dx_station)
         else:

@@ -34,7 +34,7 @@ VERBOSITY=0
 class RAGCHEW_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P,contest_name):
-        DEFAULT_KEYING.__init__(self,P,contest_name)  #,'RAGCHEW*.txt')
+        DEFAULT_KEYING.__init__(self,P,contest_name) 
 
         P.CONTEST_ID='RAGCHEW'
 

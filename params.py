@@ -187,8 +187,6 @@ class PARAMS:
         self.USE_ADIF_HISTORY = args.use_adif_hist
         self.SIDETONE      = args.sidetone or self.PORT==1
 
-        #self.CONTEST       = CONTEST
-        #self.MACROS        = MACROS
         self.MY_CNTR       = 1
         self.PRECS         = PRECS
         self.SHUTDOWN      = False

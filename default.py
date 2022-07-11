@@ -140,7 +140,12 @@ class DEFAULT_KEYING():
     # Specific contest exchange for default qsos
     def enable_boxes(self,gui):
 
-        gui.contest=True
+        contest=self.contest_name 
+        if 'Default' in contest or 'Ragchew' in contest or \
+           'SATELLITES' in contest or 'DX-QSO' in contest_name:
+            gui.contest=False
+        else:
+            gui.contest=True
         gui.ndigits=3
         gui.hide_all()
         self.macros=[1,None,2]
@@ -257,7 +262,7 @@ class DEFAULT_KEYING():
             # Determine adjacent (next) widget
             if key in ['Tab','Return','KP_Enter']:
                 idx2 = (idx+1) % nn
-                if gui.boxes[idx2]==gui.hint:
+                if gui.boxes[idx2]==gui.hint or (gui.contest and gui.boxes[idx2]==gui.rstin):
                     idx2 = (idx+2) % nn
             elif key=='ISO_Left_Tab':
                 idx2 = (idx-1) % nn

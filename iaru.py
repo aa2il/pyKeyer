@@ -22,6 +22,7 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from default import DEFAULT_KEYING
+from dx.spot_processing import Station
 
 ############################################################################################
 
@@ -43,22 +44,23 @@ class IARU_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
         MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYITUZ] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] QRZ? [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYITUZ]'}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYITUZ] [MYITUZ]'}
+        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '5NN [MYITUZ] [MYITUZ]'}
         MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
 
-        MACROS[8]     = {'Label' : 'Zone 2x'   , 'Text' : '[MYITUZ] [MYITUZ] '}
-        MACROS[9]     = {'Label' : 'Zone 2x'   , 'Text' : '[MYITUZ] [MYITUZ] '}
+        MACROS[8]     = {'Label' : 'Zone 2x'   , 'Text' : '[-2][MYITUZ] [MYITUZ] [+2]'}
+        MACROS[9]     = {'Label' : 'Zone 2x'   , 'Text' : '[-2][MYITUZ] [MYITUZ] [+2]'}
         MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
 
@@ -130,18 +132,28 @@ class IARU_KEYING(DEFAULT_KEYING):
         gui.hide_all()
         self.macros=[1,None,2]
 
-        gui.rstin_lab.grid(columnspan=1,column=4,sticky=E+W)
-        gui.rstin.grid(column=4,columnspan=1)
+        col=0
+        cspan=3
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+        
+        col+=cspan
+        cspan=1
+        gui.rstin_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.rstin.grid(column=col,columnspan=cspan)
         gui.rstin.delete(0,END)
         gui.rstin.insert(0,'5NN')
         
-        gui.qth_lab.grid(columnspan=1,column=5,sticky=E+W)
-        gui.qth.grid(column=5,columnspan=1)
+        col+=cspan
+        cspan=2
+
+        gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.qth.grid(column=col,columnspan=cspan)
 
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.qth)
-
+        
         if not gui.P.NO_HINTS:
             gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
             gui.hint.grid(column=6,columnspan=2)
@@ -177,13 +189,19 @@ class IARU_KEYING(DEFAULT_KEYING):
     # Hint insertion
     def insert_hint(self,h=None):
 
+        print('IARU->INSERT_HINTa: h=',h)
+
         gui=self.P.gui
 
         if h==None:
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
+        print('IARU->INSERT_HINTb: h=',h)
+        if h[0] in ['DX','HI']:
+            h = [str( gui.dx_station.ituz )]
         
+        print('IARU->INSERT_HINTc: h=',h)
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 

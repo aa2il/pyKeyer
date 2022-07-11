@@ -74,8 +74,8 @@ class SST_KEYING(DEFAULT_KEYING):
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'NIL'       , 'Text' : 'Nil '}
         
-        MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
-        MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[8]     = {'Label' : 'My Name 2x', 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
+        MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[-2][MYSTATE] [MYSTATE] [+2]'}
         MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
