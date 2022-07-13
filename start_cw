@@ -69,7 +69,7 @@ set CONTEST=""
 #set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
-set CONTEST="iaru"
+#set CONTEST="iaru"
 #set CONTEST="naqp"
 
 # Various options for pyKeyer

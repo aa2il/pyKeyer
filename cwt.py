@@ -174,21 +174,44 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         gui.hide_all()
         self.macros=[1,None,2]
         
-        gui.name_lab.grid(columnspan=1,column=4,sticky=E+W)
-        gui.name.grid(column=4,columnspan=2)
-        gui.exch_lab.grid(columnspan=1,column=6,sticky=E+W)
-        gui.exch.grid(column=6,columnspan=2)
-        
-        gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-        gui.hint.grid(column=7,columnspan=3)
+        col=0
+        cspan=3
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.name_lab.grid(columnspan=cspan,column=col)
+        gui.name.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.exch_lab.grid(columnspan=cspan,column=col)
+        gui.exch.grid(column=col,columnspan=cspan)
+
+        print('CWT->Enable Boxes A:',col,cspan)
+        col+=cspan
+        cspan=2
+        gui.hint_lab.grid(column=col,columnspan=cspan)
+        gui.hint.grid(column=col,columnspan=cspan)
         if self.P.NO_HINTS:
             gui.hint_lab.grid_remove()
             gui.hint.grid_remove()
+        else:
+            col+=cspan
+            
+        print('CWT->Enable Boxes B:',col,cspan)
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+        print('CWT->Enable Boxes C:',col,cspan)
             
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.exch)
         gui.boxes.append(gui.hint)
+        gui.boxes.append(gui.scp)
         
         
     # Gather together logging info for this contest

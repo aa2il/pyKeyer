@@ -287,12 +287,12 @@ class GUI():
         self.rstin_lab = Label(self.root, text="RST in",font=font1)
         self.rstin_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
         self.rstin = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.rstin.grid(row=row+1,rowspan=2,column=8,columnspan=1)
+        self.rstin.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
 
         self.rstout_lab = Label(self.root, text="RST out",font=font1)
         self.rstout_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
         self.rstout = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.rstout.grid(row=row+1,rowspan=2,column=9,columnspan=1)
+        self.rstout.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
         if self.P.contest_name=='SATELLITES':
             self.rstin.insert(0,'5')
             self.rstout.insert(0,'5nn')
@@ -309,42 +309,48 @@ class GUI():
         self.qth_lab = Label(self.root, text="QTH",font=font1)
         self.qth_lab.grid(row=row,columnspan=3,column=8,sticky=E+W)
         self.qth = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.qth.grid(row=row+1,rowspan=2,column=8,columnspan=2)
+        self.qth.grid(row=row+1,rowspan=2,column=8,columnspan=2,sticky=E+W)
 
         self.serial_lab = Label(self.root, text="Serial",font=font1)
         self.serial_lab.grid(row=row,columnspan=1,column=4,sticky=E+W)
         self.serial = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.serial.grid(row=row+1,rowspan=2,column=4,columnspan=1)
+        self.serial.grid(row=row+1,rowspan=2,column=4,columnspan=1,sticky=E+W)
 
         self.prec_lab = Label(self.root, text="Prec",font=font1)
         self.prec_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
         self.prec = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.prec.grid(row=row+1,rowspan=2,column=5,columnspan=1)
+        self.prec.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
 
         self.cat_lab = Label(self.root, text="Category",font=font1)
         self.cat_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
         self.cat = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.cat.grid(row=row+1,rowspan=2,column=5,columnspan=1)
+        self.cat.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
 
         self.call2_lab = Label(self.root, text="Call",font=font1)
         self.call2_lab.grid(row=row,columnspan=1,column=6,sticky=E+W)
         self.call2 = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.call2.grid(row=row+1,rowspan=2,column=6,columnspan=1)
+        self.call2.grid(row=row+1,rowspan=2,column=6,columnspan=1,sticky=E+W)
 
         self.check_lab = Label(self.root, text="Check",font=font1)
         self.check_lab.grid(row=row,columnspan=1,column=7,sticky=E+W)
         self.check = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.check.grid(row=row+1,rowspan=2,column=7,columnspan=1)
+        self.check.grid(row=row+1,rowspan=2,column=7,columnspan=1,sticky=E+W)
         
         self.notes_lab = Label(self.root, text="Notes",font=font1)
         self.notes_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
         self.notes = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,fg='blue')
-        self.notes.grid(row=row+1,rowspan=2,column=8,columnspan=1)
+        self.notes.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
 
         self.hint_lab = Label(self.root, text="Hint",font=font1)
         self.hint_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
         self.hint = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,fg='blue')
-        self.hint.grid(row=row+1,rowspan=2,column=8,columnspan=1)
+        self.hint.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
+
+        self.scp_lab = Label(self.root, text="Super Check Partial",font=font1)
+        self.scp_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
+        self.scp = Entry(self.root,font=font2,validate='focusin',
+                         validatecommand=vcmd,fg='blue')
+        self.scp.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
 
         # Checkbox to indicate if we've received QSL
         self.qsl_rcvd=tk.IntVar()
@@ -605,7 +611,7 @@ class GUI():
             fields  = self.sock.get_log_fields()
         print("Set Log Fields =",fields)
         self.call.delete(0, END)
-        self.call.insert(0,fields['Call'])
+        self.call.insert(0,fields['Call'],fg='black')
         self.name.delete(0, END)
         self.name.insert(0,fields['Name'])
         self.qth.delete(0, END)
@@ -657,6 +663,7 @@ class GUI():
     # callback to wipe out log fields
     def Clear_Log_Fields(self):
         self.call.delete(0, END)
+        self.call.configure(bg=self.default_color,fg='black')
         self.name.delete(0, END)
         self.qth.delete(0, END)
         self.rstin.delete(0, END)
@@ -956,6 +963,8 @@ class GUI():
         self.notes.grid_remove()
         self.hint_lab.grid_remove()
         self.hint.grid_remove()
+        self.scp_lab.grid_remove()
+        self.scp.grid_remove()
         self.qsl.grid_remove()
 
     # Callback to set Satellite list spinner
@@ -1134,7 +1143,7 @@ class GUI():
         # really care to do right now.
         if call!=call2 and False:
             self.call.delete(0, END)
-            self.call.insert(0,call2)
+            self.call.insert(0,call2,fg='black')
             
         return call2
 
@@ -1550,7 +1559,7 @@ class GUI():
             self.call.delete(0,END)
             self.prev_call=''
             self.call.focus_set()
-            self.call.configure(background=self.default_color)
+            self.call.configure(bg=self.default_color,fg='black')
             self.name.delete(0,END)
             self.qth.delete(0,END)
             self.notes.delete(0,END)
@@ -1688,7 +1697,7 @@ class GUI():
     def dup_check(self,call):
         print('DUP_CHECK: call=',call,self.P.MAX_AGE)
         self.time_on = datetime.utcnow().replace(tzinfo=UTC)
-        print('Time on=',self.time_on)
+        #print('Time on=',self.time_on)
 
         # Look for dupes
         self.match1=False                # True if there is matching call
@@ -2073,6 +2082,15 @@ class GUI():
             call=self.get_call().upper()
             self.sock.set_log_fields({'Call':call})
             self.dup_check(call)
+            if self.P.USE_SCP:
+                scps=self.P.KEYING.SCP.match(call)
+                self.scp.delete(0, END)
+                self.scp.insert(0, scps)
+                if len(scps)>0 and call==scps[0]:
+                    self.call.configure(fg='red')
+                else:
+                    self.call.configure(fg='black')
+                
 
             # If we're in a contest and the return key was pressed,
             # send response and get ready for the exchange
@@ -2284,14 +2302,25 @@ class GUI():
                
     # Callback to show/hide hints entry box
     def ShowHintsCB(self):
-        show=self.ShowHints.get()
-        print("Toggling Show/Hide Hints ...", show)
-        if show:
+        self.P.NO_HINTS = not self.ShowHints.get()
+        print("Toggling Show/Hide Hints ...",self.P.NO_HINTS)
+        if not self.P.NO_HINTS:
             self.hint_lab.grid()
             self.hint.grid()
         else:
             self.hint_lab.grid_remove()
             self.hint.grid_remove()
+               
+    # Callback to show/hide Super Check Partialentry box
+    def ShowScpCB(self):
+        self.P.USE_SCP = self.ShowSCP.get()
+        print("Toggling Show/Hide SCP ...",self.P.USE_SCP)
+        if self.P.USE_SCP:
+            self.scp_lab.grid()
+            self.scp.grid()
+        else:
+            self.scp_lab.grid_remove()
+            self.scp.grid_remove()
                
 ############################################################################################
     
@@ -2346,6 +2375,14 @@ class GUI():
             underline=0,
             variable=self.ShowHints,
             command=self.ShowHintsCB
+        )
+        
+        self.ShowSCP = BooleanVar(value=self.P.USE_SCP)
+        Menu1.add_checkbutton(
+            label="Show SCP",
+            underline=0,
+            variable=self.ShowSCP,
+            command=self.ShowScpCB
         )
         
         self.SideTone = BooleanVar(value=self.P.SIDETONE)

@@ -47,7 +47,7 @@ set CONTEST="cwt"
 #set CONTEST="calls"
 
 #set CONTEST="naqp"
-set CONTEST="fd"
+#set CONTEST="fd"
 #set CONTEST="vhf"
 #set CONTEST="stew"
 #set CONTEST="sat"

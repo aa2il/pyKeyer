@@ -104,6 +104,8 @@ class PARAMS:
         arg_proc.add_argument("-wpm", help="CW speed",type=int,default=20)
         arg_proc.add_argument('-adjust', action='store_true',
                               help='Adjust speed based on correct copy')
+        arg_proc.add_argument('-scp', action='store_true',
+                              help='Enable Super Check partial')
         arg_proc.add_argument("-rig", help="Connection Type - 1st rig",
                               type=str,default=["ANY"],nargs='+',
                               choices=CONNECTIONS+['NONE']+RIGS)
@@ -191,8 +193,8 @@ class PARAMS:
         self.PRECS         = PRECS
         self.SHUTDOWN      = False
         self.DIRTY         = False
-
-        self.KEYING=None
+        self.KEYING        = None
+        self.USE_SCP       = args.scp
 
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL VHF','NAQP-CW', \

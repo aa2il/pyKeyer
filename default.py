@@ -25,6 +25,7 @@ from random import randint
 from utilities import cut_numbers,reverse_cut_numbers
 from dx.spot_processing import Station
 import Levenshtein
+from scp import *
 
 ############################################################################################
 
@@ -51,6 +52,8 @@ class DEFAULT_KEYING():
         else:
             P.HISTORY = None
             
+        # Init super check partial
+        self.SCP=SUPER_CHECK_PARTIAL()
 
     # Routient to set macros for this contest
     def macros(self):
