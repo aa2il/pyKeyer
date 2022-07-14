@@ -611,7 +611,8 @@ class GUI():
             fields  = self.sock.get_log_fields()
         print("Set Log Fields =",fields)
         self.call.delete(0, END)
-        self.call.insert(0,fields['Call'],fg='black')
+        self.call.insert(0,fields['Call'])
+        self.call.configure(fg='black')
         self.name.delete(0, END)
         self.name.insert(0,fields['Name'])
         self.qth.delete(0, END)
@@ -1143,7 +1144,8 @@ class GUI():
         # really care to do right now.
         if call!=call2 and False:
             self.call.delete(0, END)
-            self.call.insert(0,call2,fg='black')
+            self.call.insert(0,call2)
+            self.call.configure(fg='black')
             
         return call2
 
@@ -1795,9 +1797,9 @@ class GUI():
         if self.match1:
             print('Call match:',call)
             if self.match2:
-                self.call.configure(background="coral")
+                self.call.configure(bg="coral")
             else:
-                self.call.configure(background="lemon chiffon")
+                self.call.configure(bg="lemon chiffon")
                 
             if len( self.exch.get() )==0:
                 self.prefill=True
