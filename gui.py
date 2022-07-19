@@ -694,7 +694,7 @@ class GUI():
             self.P.sock=self.P.sock2
             self.P.ser=self.P.ser2
         self.sock=self.P.sock
-        print("You selected radio " + str(iRadio),'\tP.sock=',P.sock)
+        print("You selected radio " + str(iRadio),'\tP.sock=',self.P.sock)
         rig=P.sock.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
         
@@ -1012,7 +1012,7 @@ class GUI():
             self.P.KEYING=CWOPEN_KEYING(self.P)
         elif val=='SATELLITES':
             self.P.KEYING=SAT_KEYING(self.P)
-        elif val=='ARRL VHF' or val=='STEW PERRY':
+        elif val=='ARRL-VHF' or val=='CQ-VHF' or val=='STEW PERRY':
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
@@ -1215,8 +1215,6 @@ class GUI():
             self.dx_station = Station(call)
             #pprint(vars(self.dx_station))
             h = hint.master(self.P,call,self.dx_station)
-            #if not h:
-            #    h = self.P.KEYING.hint(call)
             if not h:
                 h = hint.oh_canada(self.dx_station)
         else:
@@ -1749,7 +1747,7 @@ class GUI():
                         print(call,'- Worked before on sats')
                         self.match2 = True
                         
-                    elif self.P.contest_name=='ARRL VHF' and True:
+                    elif self.P.contest_name in ['ARRL-VHF','CQ-VHF']:
                         # Group phone mode together
                         #PHONE_MODES=['FM','SSB','USB','LSB']
                         #match3 = qso['MODE']==mode or (qso['MODE'] in PHONE_MODES and mode in PHONE_MODES)

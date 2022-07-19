@@ -69,6 +69,8 @@ class PARAMS:
                               help='NCCC CW Sprint')
         arg_proc.add_argument('-cqww', action='store_true',
                               help='CQ Worldwide')
+        arg_proc.add_argument('-cqvhf', action='store_true',
+                              help='CQ VHF')
         arg_proc.add_argument('-iaru', action='store_true',
                               help='IARU HF Championship')
         arg_proc.add_argument('-ragchew', action='store_true',
@@ -197,8 +199,9 @@ class PARAMS:
         self.USE_SCP       = args.scp
 
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
-                           'ARRL VHF','NAQP-CW', \
-                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','ARRL-10M','ARRL-DX', \
+                           'ARRL-VHF','NAQP-CW', \
+                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF',
+                           'ARRL-10M','ARRL-DX', \
                            'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']
         self.SHOW_TEXT_BOX2=args.split
         if self.SPRINT:
@@ -223,7 +226,10 @@ class PARAMS:
             self.contest_name='RANDOM CALLS'
             MAX_AGE_HOURS=2
         elif args.vhf:
-            self.contest_name='ARRL VHF'
+            self.contest_name='ARRL-VHF'
+            MAX_AGE_HOURS=33
+        elif args.cqvhf:
+            self.contest_name='CQ-VHF'
             MAX_AGE_HOURS=33
         elif args.naqp:
             self.contest_name='NAQP-CW'

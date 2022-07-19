@@ -49,6 +49,7 @@ set CONTEST="cwt"
 #set CONTEST="naqp"
 #set CONTEST="fd"
 #set CONTEST="vhf"
+#set CONTEST="cqvhf"
 #set CONTEST="stew"
 #set CONTEST="sat"
 #set CONTEST="cqp"
@@ -131,8 +132,8 @@ else if( $CONTEST == "cqp" )then
     set MASTER="-master -ca_only"
     set HINTS="-nohints -adjust"
 
-# Settings for ARRL VHF
-else if( $CONTEST == "vhf" )then
+# Settings for ARRL & CQ VHF
+else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
     set WPM=25
 
 # Settings for Stew Perry - need to test this out

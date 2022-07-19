@@ -171,7 +171,7 @@ else:
     #socket_io.set_speed(P.sock,wpm)
     P.sock.set_speed(wpm)
 
-P.keyer=cw_keyer.Keyer(P,P.ser,wpm)
+P.keyer=cw_keyer.Keyer(P,wpm)
 if P.TEST_MODE:
     P.keyer.disable()           # Disable TX keying for debugging
 

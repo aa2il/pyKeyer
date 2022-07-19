@@ -3,7 +3,7 @@
 # vhf.py - Rev 1.0
 # Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for ARRL VHF and Stew Perry 160m contests
+# Keying routines for ARRL VHF, CQ VHF and Stew Perry 160m contests
 #
 ############################################################################################
 #
@@ -30,7 +30,7 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Keying class for ARRL VHF contests
+# Keying class for ARRL & CQ VHF contests
 class VHF_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P,contest_name):
@@ -43,7 +43,7 @@ class VHF_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
         MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] TEST [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         #MACROS[3+12]  = {'Label' : '?'         , 'Text' : '? '}
         MACROS[3+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
@@ -56,10 +56,11 @@ class VHF_KEYING(DEFAULT_KEYING):
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[8]     = {'Label' : 'Grid 2x'   , 'Text' : '[MYGRID] [MYGRID] '}
-        MACROS[9]     = {'Label' : 'Grid 2x'   , 'Text' : '[MYGRID] [MYGRID] '}
+        MACROS[8]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
+        MACROS[9]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
         MACROS[10]    = {'Label' : 'GRID?  '   , 'Text' : 'GRID? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
         
         return MACROS
 

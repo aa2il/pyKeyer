@@ -65,6 +65,7 @@ set CONTEST=""
 #set CONTEST="ss"
 #set CONTEST="arrl_dx"
 #set CONTEST="vhf"
+#set CONTEST="cqvhf"
 #set CONTEST="fd"
 #set CONTEST="cqp"
 #set CONTEST="wpx"
@@ -262,8 +263,8 @@ else if( $CONTEST == "cqp" )then
     set HINTS="-use_log_hist"
     set WPM=25
 
-# Settings for ARRL VHF
-else if( $CONTEST == "vhf" )then
+# Settings for ARRL & CQ VHF
+else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
     set WPM=25
     set HINTS="-nohints -use_log_hist"
 

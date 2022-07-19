@@ -114,10 +114,9 @@ morse[62]=".-.-.";     # > = <AR>	0b00101010
 # The key object - this is where all the hard work is really done
 class Keyer():
 
-    def __init__(self,P,ser,DEFAULT_WPM=25,KEY_DOWN=False):
+    def __init__(self,P,DEFAULT_WPM=25,KEY_DOWN=False):
 
         self.P = P
-        self.ser = ser         # An open serial port
         if DEFAULT_WPM<5:
             self.DEFAULT_WPM=25
         else:
@@ -149,7 +148,7 @@ class Keyer():
         self.evt.clear()
         self.stop=True
         if self.P.NANO_IO:
-            nano_write(self.ser,'\\')
+            nano_write(self.P.ser,'\\')
             return
 
     # Routine to send a message in cw by toggling DTR line
@@ -161,7 +160,7 @@ class Keyer():
     def send_cw(self,msg):
 
         # Init
-        ser = self.ser
+        ser = self.P.ser
         WPM = self.WPM
         dotlen = self.dotlen
 
@@ -234,6 +233,8 @@ class Keyer():
 
     # Set speed
     def set_wpm(self,wpm):
+        ser = self.P.ser
+        
         if wpm>0:
             print("SET_WPM: Setting speed to ",wpm)
             self.WPM = wpm
@@ -241,12 +242,12 @@ class Keyer():
 
             if self.P.NANO_IO:
                 if self.P.LOCK_SPEED:  
-                    nano_set_wpm(self.ser,wpm,idev=3)
+                    nano_set_wpm(ser,wpm,idev=3)
                     #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
                     self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
                     #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
                 else:
-                    nano_set_wpm(self.ser,wpm)
+                    nano_set_wpm(ser,wpm)
                 self.P.gui.WPM_TXT.set(str(wpm))
 
     # Get speed
@@ -273,11 +274,12 @@ class Keyer():
 
         print('SEND_MSG: ',msg,' at ',self.WPM,' wpm - evt=',self.evt.isSet())
         P=self.P
+        ser = self.P.ser
 
         # Testing only
         if self.P.NANO_IO and False:
             print('send_msg: msg=',msg,'\t@ wpm=',self.WPM)
-            nano_write(self.ser,msg)
+            nano_write(ser,msg)
             return
         
         self.stop   = False
@@ -320,8 +322,8 @@ class Keyer():
                     self.set_wpm(self.DEFAULT_WPM)
 
                     print("Reseting serial port ...")
-                    self.ser = serial.Serial(self.ser.PORT,self.ser.BAUD,timeout=0.1)
-                    self.ser.setDTR(False)
+                    self.P.ser = serial.Serial(ser.PORT,ser.BAUD,timeout=0.1)
+                    self.P.ser.setDTR(False)
 
                 #elif cmd2=="EXIT":
                     # Exit server
@@ -437,25 +439,25 @@ class Keyer():
                         SEC=int(cmd2[4:])
                         print("Keying TX for ",SEC)
                         if self.P.NANO_IO:
-                            nano_tune(self.ser,True)
+                            nano_tune(ser,True)
                             time.sleep(SEC)
-                            nano_tune(self.ser,False)
+                            nano_tune(ser,False)
                         else:
-                            self.ser.setDTR(True)
+                            ser.setDTR(True)
                             time.sleep(SEC)
-                            self.ser.setDTR(False)
+                            ser.setDTR(False)
                     elif self.KEY_DOWN:
                         if self.P.NANO_IO:
-                            nano_tune(self.ser,False)
+                            nano_tune(ser,False)
                         else:
-                            self.ser.setDTR(False)
+                            ser.setDTR(False)
                         self.KEY_DOWN=False
                         print('TUNE - key up')
                     else:
                         if self.P.NANO_IO:
-                            nano_tune(self.ser,True)
+                            nano_tune(ser,True)
                         else:
-                            self.ser.setDTR(True)
+                            ser.setDTR(True)
                         self.KEY_DOWN=True
                         print('TUNE - key down')
 
