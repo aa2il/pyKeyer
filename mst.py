@@ -158,20 +158,33 @@ class MST_KEYING(DEFAULT_KEYING):
         cspan=2
         gui.serial_lab.grid(column=col,columnspan=cspan)
         gui.serial.grid(column=col,columnspan=cspan)
-        
+
+        col+=cspan
+        cspan=2
+        gui.hint_lab.grid(column=col,columnspan=cspan)
+        gui.hint.grid(column=col,columnspan=cspan)
+        if self.P.NO_HINTS:
+            gui.hint_lab.grid_remove()
+            gui.hint.grid_remove()
+        else:
+            col+=cspan
+                    
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+            
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.hint)
+        gui.boxes.append(gui.scp)
         
         gui.counter_lab.grid()
         gui.counter.grid()
         
-        if not gui.P.NO_HINTS:
-            col+=cspan
-            cspan=3
-            gui.hint_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-            gui.hint.grid(column=col,columnspan=cspan,sticky=E+W)
-            
         
     # Gather together logging info for this contest
     def logging(self):

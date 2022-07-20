@@ -282,6 +282,7 @@ class PARAMS:
             self.SHOW_TEXT_BOX2=True
         self.ROTOR_CONNECTION = args.rotor
         self.PORT3            = args.port3
+        self.Immediate_TX     = False
 
         # Compute length of contest
         if args.max_age!=9999:

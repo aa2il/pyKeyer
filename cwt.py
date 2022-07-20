@@ -187,7 +187,6 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         gui.exch_lab.grid(columnspan=cspan,column=col)
         gui.exch.grid(column=col,columnspan=cspan)
 
-        print('CWT->Enable Boxes A:',col,cspan)
         col+=cspan
         cspan=2
         gui.hint_lab.grid(column=col,columnspan=cspan)
@@ -198,14 +197,12 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         else:
             col+=cspan
             
-        print('CWT->Enable Boxes B:',col,cspan)
         cspan=12-col
         gui.scp_lab.grid(column=col,columnspan=cspan)
         gui.scp.grid(column=col,columnspan=cspan)
         if not self.P.USE_SCP:
             gui.scp_lab.grid_remove()
             gui.scp.grid_remove()
-        print('CWT->Enable Boxes C:',col,cspan)
             
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)

@@ -136,19 +136,41 @@ class NAQP_KEYING(DEFAULT_KEYING):
         gui.hide_all()
         self.macros=[1,None,2]
 
-        gui.name_lab.grid(columnspan=1,column=4,sticky=E+W)
-        gui.name.grid(column=4,columnspan=2)
-        gui.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
-        gui.qth.grid(column=6,columnspan=2)
+        col=0
+        cspan=3
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.name_lab.grid(columnspan=cspan,column=col)
+        gui.name.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.qth.grid(column=col,columnspan=cspan)
 
+        col+=cspan
+        cspan=2
+        gui.hint_lab.grid(column=col,columnspan=cspan)
+        gui.hint.grid(column=col,columnspan=cspan)
+        if self.P.NO_HINTS:
+            gui.hint_lab.grid_remove()
+            gui.hint.grid_remove()
+        else:
+            col+=cspan
+                    
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+            
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)
         gui.boxes.append(gui.qth)
-
-        if not self.P.NO_HINTS:
-            gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-            gui.hint.grid(column=7,columnspan=3)
-            
+        gui.boxes.append(gui.hint)
+        gui.boxes.append(gui.scp)
         
     # Gather together logging info for this contest
     def logging(self):

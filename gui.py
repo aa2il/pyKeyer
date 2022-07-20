@@ -124,6 +124,7 @@ class GUI():
         self.P = P
         self.P.LAST_MSG = -1
         self.P.root = self.root
+        self.text_buff=''
 
     # Function to actually construct the gui
     def construct_gui(self):
@@ -496,8 +497,17 @@ class GUI():
         # Other buttons - any buttons we need to modify, we need to grab handle to them
         # before we try to pack them.  Otherwise, all we get is the results of the packing
 
+        # Enable/Disable TX button - should be sufficient to just press <CR> in the txt box
+        # Put in a pull-down menu if we really need this
+        if True:
+            self.P.Immediate_TX = True
+            self.SendBtn = Button(self.root, text='Send',command=self.Toggle_Immediate_TX,\
+                                  takefocus=0 ) 
+            self.SendBtn.grid(row=row,column=ncols-2)
+            tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
+            self.Toggle_Immediate_TX()
+        
         # QRZ button
-        col += 1
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
                      takefocus=0 ) 
         btn.grid(row=row,column=ncols-1)
@@ -698,7 +708,18 @@ class GUI():
         rig=P.sock.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
         
-    # callback to look up a call on qrz.com
+    # Callback to toggle sending of text
+    def Toggle_Immediate_TX(self):
+        self.P.Immediate_TX = not self.P.Immediate_TX 
+        print('Toggle_Text_TX:',self.P.Immediate_TX,self.text_buff)
+        if self.P.Immediate_TX:
+            self.SendBtn.configure(background='red',highlightbackground= 'red')
+            self.q.put(self.text_buff)
+            self.text_buff=''
+        else:
+            self.SendBtn.configure(background='Green',highlightbackground= 'Green')
+        
+    # Callback to look up a call on qrz.com
     def Call_LookUp(self):
         call = self.get_call()
         if len(call)>=3:
@@ -729,12 +750,6 @@ class GUI():
     # Callback to key/unkey TX for tuning
     def Tune(self):
         print("Tuning...")
-        if False:
-            self.tuning = not self.tuning
-            if self.tuning:
-                self.TuneBtn.configure(background='red',highlightbackground= 'red')
-            else:
-                self.TuneBtn.configure(background='yellow',highlightbackground= 'yellow')
         txt='[TUNE]'
         self.q.put(txt)
 
@@ -1564,6 +1579,7 @@ class GUI():
             self.qth.delete(0,END)
             self.notes.delete(0,END)
             self.hint.delete(0,END)
+            self.scp.delete(0,END)
             self.serial.delete(0,END)
             self.prec.delete(0,END)
             self.call2.delete(0,END)
@@ -2068,9 +2084,17 @@ class GUI():
         if event.widget==self.txt:
             # Lower text window - Don't send control chars
             if len(ch)>0:
-                if ord(ch)>=32 and ord(ch)<127:
-                    #print('KEY_PRESS: Q-Put',ch)
-                    self.q.put(ch)
+                if ord(ch)==13:
+                    if self.P.Immediate_TX:
+                        self.q.put(' ')
+                    else:
+                        self.q.put(self.text_buff+' ')
+                        self.text_buff=''
+                elif ord(ch)>=32 and ord(ch)<127:
+                    if self.P.Immediate_TX:
+                        self.q.put(ch)
+                    else:
+                        self.text_buff+=ch
 
         elif event.widget==self.txt2:
             # Upper text window 

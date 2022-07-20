@@ -266,11 +266,16 @@ class DEFAULT_KEYING():
             if key in ['Tab','Return','KP_Enter']:
                 idx2 = (idx+1) % nn
                 if gui.boxes[idx2]==gui.hint or (gui.contest and gui.boxes[idx2]==gui.rstin):
-                    idx2 = (idx+2) % nn
+                    idx2 = (idx2+1) % nn
+                if gui.boxes[idx2]==gui.scp:
+                    idx2 = (idx2+1) % nn
             elif key=='ISO_Left_Tab':
                 idx2 = (idx-1) % nn
+                if gui.boxes[idx2]==gui.scp:
+                    idx2 = (idx2-1) % nn
                 if gui.boxes[idx2]==gui.hint:
-                    idx2 = (idx-2) % nn
+                    idx2 = (idx2-1) % nn
+                print(idx,idx2,nn)
             else:
                 print('We should never get here!!',idx,key,nn)
                 idx2=idx

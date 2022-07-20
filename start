@@ -46,6 +46,7 @@ set CONTEST="cwt"
 #set CONTEST="skcc"
 #set CONTEST="calls"
 
+set CONTEST="iaru"
 #set CONTEST="naqp"
 #set CONTEST="fd"
 #set CONTEST="vhf"
@@ -58,7 +59,6 @@ set CONTEST="cwt"
 #set CONTEST="cqww"
 #set CONTEST="arrl_10m"
 #set CONTEST="arrl_dx"
-#set CONTEST="iaru"
 #set CONTEST="default"
 #set CONTEST="ragchew"
 #set CONTEST="dx"
@@ -71,8 +71,8 @@ set CONTEST="cwt"
 
 # Settings for NAQP contest, Jan 2019
 if( $CONTEST == "naqp" )then
-    #set CONTEST="-naqp"
-    #set WPM=22
+    set WPM=25
+    set HINTS="-nohints -adjust"
     #set HINTS=""
 
 # Settings for CW Ops mini tests
