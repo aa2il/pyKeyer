@@ -9,11 +9,11 @@ echo            pip install scipy levenshtein
 echo.
 echo To compile - this can take a while - Spews a bunch of errors but works anyways:
 echo.
-            pyinstaller --onefile pyKeyer.py
+echo         pyinstaller --onefile pyKeyer.py
 echo.
 echo To run (example):
 echo.
-echo pyKeyer -prac -sidetone -cwt -adjust -wpm 30
+echo pyKeyer.py -prac -sidetone -cwt -adjust -wpm 30
 echo dist\pyKeyer -prac -sidetone -cwt -adjust -wpm 30
 echo.
 echo Known issue(s):
@@ -24,7 +24,7 @@ echo.
 echo Run Inno Setup Compiler & follow the prompts to create an installer
 echo This installer works on Windoz 10 & Bottles!
 echo Be sure to include the following files:
-echo      splash.png   - need to rename this to be program specific
-echo      Pnagrams.txt, Stumble.txt & QSO_Template.txt
+echo      keyer_splash.png   - need to rename this to be program specific
+echo      Book.txt, Panagrams.txt, Stumble.txt & QSO_Template.txt
 echo.
 

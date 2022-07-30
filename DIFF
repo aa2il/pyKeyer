@@ -41,8 +41,8 @@ foreach i (*.py AA2IL.adif sats.adif start* DIFF *.txt *.bat *.md)
         diff -w $old/$i $i >> DIFFS
         echo " " >> DIFFS
         
-        kompare $old/$i $i
-        #kompare $i $old/$i
+        #kompare $old/$i $i
+        kompare $i $old/$i
     endif
 end
 

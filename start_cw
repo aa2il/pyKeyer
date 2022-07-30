@@ -95,7 +95,7 @@ set UDP="-udp"
 set d=`date`
 if( X$CONTEST == "X" && $d[1] == "Mon" )then
     set CONTEST="mst"
-else if( X$CONTEST == "X" && $d[1] == "Wed" )then
+else if( X$CONTEST == "X" && ($d[1] == "Wed" || $d[1] == "Thu"))then
     set CONTEST="cwt"
 else if( X$CONTEST == "X" && ($d[1] == "Fri" || $d[1] == "Sun"))then
     set CONTEST="sst"

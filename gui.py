@@ -1451,6 +1451,7 @@ class GUI():
             print('name=',name)
             print('rst=',rstin)
             print('exch=',exch)
+            qso2={}
 
         # Make sure a satellite is selected if needed - MOVE THIS TO LOGGING() IN SATS.PY
         satellite = self.get_satellite()
