@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
@@ -45,13 +46,15 @@ class DEFAULT_KEYING():
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
-        if P.USE_MASTER or HISTORY==None:
+        if HISTORY==None:
             P.HISTORY = P.HIST_DIR+'master.csv'
         elif HISTORY:
             P.HISTORY = P.HIST_DIR+HISTORY
         else:
             P.HISTORY = None
-            
+        P.HISTORY=os.path.expanduser(P.HISTORY)
+        P.HISTORY2 = P.HISTORY
+        
         # Init super check partial
         self.SCP=SUPER_CHECK_PARTIAL()
 

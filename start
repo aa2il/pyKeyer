@@ -35,8 +35,6 @@ set NANO=""
 set NANO="-nano"
 
 set WPM=25
-set MASTER="-master"
-#set MASTER=""
 set HINTS="-nohints"
 
 set CONTEST="cwt"
@@ -60,7 +58,7 @@ set CONTEST="naqp"
 #set CONTEST="arrl_10m"
 #set CONTEST="arrl_dx"
 #set CONTEST="default"
-set CONTEST="ragchew"
+#set CONTEST="ragchew"
 #set CONTEST="dx"
 
 #set CAPTURE="-capture -sidetone"
@@ -71,9 +69,9 @@ set CONTEST="ragchew"
 
 # Settings for NAQP contest, Jan 2019
 if( $CONTEST == "naqp" )then
-    set WPM=25
+    set WPM=30
     set HINTS="-nohints -adjust"
-    #set HINTS=""
+    #set HINTS="-nohints -adjust -autofill -scp"
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
@@ -129,8 +127,7 @@ else if( $CONTEST == "iaru" )then
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then
     set WPM=30
-    set MASTER="-master -ca_only"
-    set HINTS="-nohints -adjust"
+    set HINTS="-nohints -adjust -ca_only"
 
 # Settings for ARRL & CQ VHF
 else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
@@ -239,7 +236,7 @@ else
     set CAPTURE=""
 endif
 
-set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $MASTER $HINTS $CAPTURE"
+set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE"
 if( $RIG2 != "NONE" )then
     set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
 endif

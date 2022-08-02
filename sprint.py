@@ -68,16 +68,13 @@ N6RO: N6RO N6RO
 
 ############################################################################################
 
-# Keyin class for ARRL Field Day
+# Keying class for NCCC sprints - WAY OUT OF DATE!!!!!
 class SPRINT_KEYING():
 
     def __init__(self,P):
         self.P=P
 
-        if P.USE_MASTER:
-            P.HISTORY = P.HIST_DIR+'master.csv'
-        else:
-            P.HISTORY = HIST_DIR+'NAQPCW.txt'
+        P.HISTORY = P.HIST_DIR+'master.csv'
             
         self.contest_name  = 'NCCC-Sprint'
         self.macros()

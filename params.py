@@ -99,8 +99,6 @@ class PARAMS:
                               help='Record Rig Audio')
         arg_proc.add_argument('-force', action='store_true',
                               help='Force rig connection (debugging)')
-        arg_proc.add_argument('-master', action='store_true',
-                              help='Use Master History File')
         arg_proc.add_argument('-ca_only', action='store_true',
                               help='Only use California Stations')
         arg_proc.add_argument("-wpm", help="CW speed",type=int,default=20)
@@ -162,9 +160,7 @@ class PARAMS:
         self.PRACTICE_MODE = args.practice
         self.ADJUST_SPEED  = args.adjust and args.practice
         self.NO_HINTS      = args.nohints
-        self.USE_MASTER    = args.master or True      # Always set this for now - cant think of a reason not to?
         self.CA_ONLY       = args.ca_only
-        #self.DIRECT_CONNECT = args.direct
         self.WPM           = args.wpm
         self.INIT_MODE     = args.mode
         self.LOG_FILE      = args.log
@@ -197,6 +193,7 @@ class PARAMS:
         self.DIRTY         = False
         self.KEYING        = None
         self.USE_SCP       = args.scp
+        self.HIST          = {}
 
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', \
@@ -311,8 +308,7 @@ class PARAMS:
         MY_CALL = self.SETTINGS['MY_CALL'].replace('/','_')
         self.HIST_DIR=os.path.expanduser('~/'+MY_CALL+'/')
         self.DATA_DIR=os.path.expanduser('~/'+MY_CALL+'/')
-        if self.USE_MASTER:
-            self.HISTORY = self.HIST_DIR+'master.csv'
+        self.HISTORY = self.HIST_DIR+'master.csv'
                     
         #sys,exit(0)
 

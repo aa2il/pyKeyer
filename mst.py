@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint, random
@@ -35,8 +36,9 @@ VERBOSITY=0
 class MST_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'MST','CWOPS_*.txt')
+        DEFAULT_KEYING.__init__(self,P,'MST')
 
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/ICWC-MST*.txt')
         P.CONTEST_ID='ICWC-MST'
         self.contest_duration = 1
 

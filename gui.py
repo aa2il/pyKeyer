@@ -199,7 +199,7 @@ class GUI():
                 #print 'qso=',qso
                 if P.USE_LOG_HISTORY:
                     self.log_book.append(qso)
-                elif P.USE_MASTER:
+                else:
                     call=qso['CALL']
                     if not call in P.calls:
                         #print('Call not in Master list:',call,'\t- Adding it')

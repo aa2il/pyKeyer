@@ -93,7 +93,8 @@ P=PARAMS()
 if True:
     print("P=")
     pprint(vars(P))
-
+    #sys.exit(0)
+    
 # Initialize GUI
 P.gui     = GUI(P)
     
@@ -216,11 +217,8 @@ worker.start()
 P.threads.append(worker)
 
 # Load history from previous contests
-if P.USE_MASTER:
-    print('Loading Master History file ...')
-    P.MASTER = load_history(P.HIST_DIR+'master.csv')
-else:
-    P.MASTER = {}
+print('Loading Master History file ...')
+P.MASTER = load_history(P.HIST_DIR+'master.csv')
 P.calls = list(P.MASTER.keys())
 
 # Actually create the GUI

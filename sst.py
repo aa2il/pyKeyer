@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import random
@@ -29,17 +30,15 @@ from default import DEFAULT_KEYING
 
 VERBOSITY=0
 
-# Notes for next week:
-# 14.036.5  & 7,035.9
-
 ############################################################################################
 
 # Keying class for SST mini tests  - inherits base class
 class SST_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'SST','K1USNSST*.txt')
+        DEFAULT_KEYING.__init__(self,P,'SST')
 
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/K1USNSST*.txt')
         P.CONTEST_ID='K1USN-SST'
 
     # Routient to set macros for this contest

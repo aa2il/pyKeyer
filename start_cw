@@ -80,7 +80,6 @@ set CAPTURE=""
 #set CAPTURE=""
 set MODE="-mode CW"
 
-set MASTER="-master"
 set PRACTICE=""
 set HINTS=""
 
@@ -183,9 +182,8 @@ set BM_OPTS = $UDP                        # Enable UDP protocol to keyer
 
 # Settings for NAQP contest, Jan 2019
 if( $CONTEST == "naqp" )then
-    set WPM=25
-    #set HINTS=""
-    set HINTS="-use_log_hist"
+    set WPM=30
+    set HINTS="-use_log_hist -autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 12"
 
 # Settings for CW Ops mini tests
@@ -259,8 +257,7 @@ else if( $CONTEST == "iaru" )then
 
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then
-    set MASTER="-master -ca_only"
-    set HINTS="-use_log_hist"
+    set HINTS="-use_log_hist -ca_only"
     set WPM=25
 
 # Settings for ARRL & CQ VHF
@@ -472,7 +469,7 @@ if( 1 )then
     echo Starting keyer ...
     cd ~/Python/pyKeyer
 
-    set OPTS="-wpm ${WPM} $PRACTICE $CAPTURE -${CONTEST} -rig $RIG1 $RIG_TYPE1 -port $PORT $MASTER $HINTS $SERVER $NANO $MODE $UDP"
+    set OPTS="-wpm ${WPM} $PRACTICE $CAPTURE -${CONTEST} -rig $RIG1 $RIG_TYPE1 -port $PORT $HINTS $SERVER $NANO $MODE $UDP"
     if( $RIG2 != "NONE" )then
         set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2 -port2 $PORT2"
     endif

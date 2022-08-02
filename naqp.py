@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from rig_io.ft_tables import SST_SECS
@@ -26,7 +27,7 @@ from default import DEFAULT_KEYING
 
 ############################################################################################
 
-VERBOSITY=0
+VERBOSITY=1
 
 ############################################################################################
 
@@ -34,8 +35,9 @@ VERBOSITY=0
 class NAQP_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'SST','NAQPCW.txt')
+        DEFAULT_KEYING.__init__(self,P,'NAQP-CW')
         P.CONTEST_ID='NAQP-CW'
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/NAQPCW.txt')
 
     # Routient to set macros for this contest
     def macros(self):
@@ -53,8 +55,8 @@ class NAQP_KEYING(DEFAULT_KEYING):
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
-        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
         MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[MYNAME] [MYNAME] '}
@@ -141,7 +143,7 @@ class NAQP_KEYING(DEFAULT_KEYING):
         gui.call_lab.grid(column=col,columnspan=cspan)
         gui.call.grid(column=col,columnspan=cspan)
         col+=cspan
-        cspan=2
+        cspan=3
         gui.name_lab.grid(columnspan=cspan,column=col)
         gui.name.grid(column=col,columnspan=cspan)
         col+=cspan
@@ -207,13 +209,39 @@ class NAQP_KEYING(DEFAULT_KEYING):
 
         gui=self.P.gui
 
+        if VERBOSITY>0:
+            print('INSERT HINT: h1=',h)
+
         if h==None:
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
+            
+        if VERBOSITY>0:
+            print('INSERT HINT: h2=',h)
         
-        gui.name.delete(0, END)
-        gui.name.insert(0,h[0])
-        gui.qth.delete(0, END)
-        gui.qth.insert(0,h[1])
+        if len(h)>=1:
+            gui.name.delete(0, END)
+            gui.name.insert(0,h[0])
+            if len(h)>=2:
+                gui.qth.delete(0, END)
+                gui.qth.insert(0,h[1])
+
+    def insert_hint_CWT(self,h=None):
+
+        gui=self.P.gui
+
+        if h==None:
+            h = gui.hint.get()
+        if type(h) == str:
+            h = h.split(' ')
+
+        if len(h)>=1:
+            gui.name.delete(0, END)
+            gui.name.insert(0,h[0])
+            gui.exch.delete(0, END)
+            if len(h)>2 and len( h[2] )>0:
+                gui.exch.insert(0,h[2])
+            elif len(h)>=2:
+                gui.exch.insert(0,h[1])
 

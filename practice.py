@@ -41,24 +41,25 @@ from nano_io import nano_write
 class CODE_PRACTICE():
     def __init__(self,P):
 
-        print('CODE_PRACTICE: Init ...')
+        print('CODE_PRACTICE INIT: History=',P.HISTORY2)
         self.P = P
 
         # Load history file providing a bunch of calls to play with
-        print('CODE_PRACTICE: History=',P.HISTORY)
-        if '*' in P.HISTORY:
+        if '*' in P.HISTORY2:
             files=[]
-            for fname in glob.glob(P.HISTORY):
+            for fname in glob.glob(P.HISTORY2):
                 files.append(fname)
             files.sort()
             print('file=',files)
             print(files[-1])
             #sys.exit(0)
-            P.HISTORY=files[-1]
-            print('CODE_PRACTICE: History=',P.HISTORY)
+            P.HISTORY2=files[-1]
+            print('CODE_PRACTICE: History=',P.HISTORY2)
   
-        if len(P.HISTORY)>0:
-            self.HIST = load_history(P.HISTORY)
+        if P.HISTORY2==P.HISTORY:
+            self.HIST = self.P.HIST
+        elif len(P.HISTORY2)>0:
+            self.HIST = load_history(P.HISTORY2)
         else:
             print('Need a history file for practice mode')
             P.SHUTDOWN=True

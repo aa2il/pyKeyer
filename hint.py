@@ -23,7 +23,7 @@ from rig_io.ft_tables import CA_COUNTIES
 
 ############################################################################################
 
-VERBOSITY=0
+VERBOSITY=1
 
 ############################################################################################
 
@@ -31,6 +31,9 @@ VERBOSITY=0
 # info (qth, member no. etc.)
 def master(P,call,dx_station=None):
 
+    if VERBOSITY>0:
+        print('HINT-MASTER: call=',call,len(P.calls))
+    
     # Check for DX calls
     if (call not in P.calls) and dx_station and ('/' in call):
         call=dx_station.homecall

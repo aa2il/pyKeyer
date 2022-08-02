@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import random
@@ -36,8 +37,9 @@ VERBOSITY=0
 class CWOPS_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test','CWOPS_*.txt')
+        DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test')
 
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/CWOPS_*.txt')
         P.CONTEST_ID='CWOPS-CWT'
         self.number_key='cwops'
         
