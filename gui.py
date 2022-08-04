@@ -499,13 +499,12 @@ class GUI():
 
         # Enable/Disable TX button - should be sufficient to just press <CR> in the txt box
         # Put in a pull-down menu if we really need this
-        if True:
-            self.P.Immediate_TX = True
-            self.SendBtn = Button(self.root, text='Send',command=self.Toggle_Immediate_TX,\
+        self.P.Immediate_TX = True
+        self.SendBtn = Button(self.root, text='Send',command=self.Toggle_Immediate_TX,\
                                   takefocus=0 ) 
-            self.SendBtn.grid(row=row,column=ncols-2)
-            tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
-            self.Toggle_Immediate_TX()
+        self.SendBtn.grid(row=row,column=ncols-2)
+        tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
+        self.Toggle_Immediate_TX()
         
         # QRZ button
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
@@ -2440,6 +2439,14 @@ class GUI():
             underline=0,
             variable=self.SplitTxt,
             command=self.SplitTextCB
+        )
+        
+        self.ImmediateTX = BooleanVar(value=self.P.Immediate_TX)
+        Menu1.add_checkbutton(
+            label="Immediate TX",
+            underline=0,
+            variable=self.ImmediateTX,
+            command=self.Toggle_Immediate_TX
         )
         
         Menu1.add_separator()
