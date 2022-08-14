@@ -120,7 +120,7 @@ echo CONTEST=$CONTEST
 # Rig settings
 set FIND_RIG="~/Python/findRig/findRig.py"
 set IF_SHIFT="0000"
-set MON=35  
+set MON=25                      # Monitor level
 
 ################################################################################
 

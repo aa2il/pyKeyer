@@ -12,10 +12,12 @@
 
 #######################################################################################
 
+import os
 import wave
 import sys
 import argparse
 import datetime
+from fileio import parse_file_name
 
 CHUNK = 1024
 
@@ -23,15 +25,28 @@ CHUNK = 1024
 
 # Get command line args
 arg_proc = argparse.ArgumentParser()
-arg_proc.add_argument("-i", help="Input WAVE file",
-                              type=str,default=None)
+
+# Unflagged arg with input file name
+arg_proc.add_argument('File', metavar='File',
+                      type=str, default='',
+                      help='Input Wave File')
+#arg_proc.add_argument("-i", help="Input WAVE file",
+#                              type=str,default=None)
 args = arg_proc.parse_args()
 
 # Work on input file
-fname_in = args.i
+fname_in = os.path.expanduser(args.File)
+p,n,ext  = parse_file_name(fname_in)
+
 print('fname_in=',fname_in)
+print('p=',p,'\tn=',n,'ext=',ext)
 if not fname_in:
     print("Split a wave file into hour long segments.\n\nUsage: %s -i filename.wav" % sys.argv[0])
+    sys.exit(-1)
+
+elif ext=='.mp3':
+    print('\nNeed to convert to wave file first:')
+    print('mpg123 -v -w '+n+'.wav '+n+'.mp3')
     sys.exit(-1)
 
 a=fname_in.split('_')
@@ -42,6 +57,7 @@ print(b)
 #start_time=b[0]
 start_time = datetime.datetime.strptime( a[1]+' '+b[0], "%Y%m%d %H%M%S")
 print('start_time=',start_time)
+#sys.exit(0)
 
 # Open wave file
 wf = wave.open(fname_in, 'rb')

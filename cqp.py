@@ -47,25 +47,27 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CQP [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYCOUNTY] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 CQP [MYCALL] [LOG]'}
+        MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYCOUNTY] '}
-        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[8]     = {'Label' : 'NR 2x'    , 'Text' : '[SERIAL] [SERIAL] '}
-        MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYCOUNTY] [MYCOUNTY] '}
-        MACROS[10]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
-        MACROS[10+12] = {'Label' : 'COUNTY? ' , 'Text' : 'COUNTY? '}
-        MACROS[11]    = {'Label' : 'QTH? '    , 'Text' : 'QTH? '}
-        MACROS[11+12] = {'Label' : 'STATE?'   , 'Text' : 'STATE? '}
+        MACROS[8]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
+        MACROS[8+12]  = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
+        MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[-2][MYCOUNTY] [MYCOUNTY] [+2]'}
+        MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+        MACROS[10+12] = {'Label' : 'COUNTY? '  , 'Text' : 'COUNTY? '}
+        MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
+        MACROS[11+12] = {'Label' : 'STATE?'    , 'Text' : 'STATE? '}
 
         return MACROS
 
