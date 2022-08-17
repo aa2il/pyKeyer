@@ -120,7 +120,7 @@ echo CONTEST=$CONTEST
 # Rig settings
 set FIND_RIG="~/Python/findRig/findRig.py"
 set IF_SHIFT="0000"
-set MON=25                      # Monitor level
+set MON=5                      # Monitor level
 
 ################################################################################
 
@@ -196,7 +196,7 @@ else if( $CONTEST == "cwt" )then
 # Settings for CW Ops cw open
 else if( $CONTEST == "cwopen" )then
     set WPM=25
-    set HINTS="-use_log_hist"
+    set HINTS="-use_log_hist -nohints -autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 4"
 
 # Settings for Slow Speed Mini Test
@@ -373,7 +373,7 @@ echo " "
 echo Setting basic rig config ...
 echo Setting CW Mode, Narrow Filtering and Power on port $PORT ...
 
-set CMD="$FIND_RIG -rig $RIG $RIG_TYPE1 -port $PORT -M CW -FILT Narrow -PWR 99 -MON $MON -TUNER 1"
+set CMD="$FIND_RIG -rig $RIG $RIG_TYPE1 -port $PORT -M CW -FILT Narrow -PWR 99 -MON $MON -TUNER 1 -BREAK 1"
 if( ($RIG_TYPE1 == "FTdx3000") )then
 
     # Cancel any IF SHIFT 

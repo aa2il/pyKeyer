@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
@@ -37,26 +38,27 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CW Open','CWOPS_*.txt')
 
-        self.number_key='cwops'
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/CWOPS_*.txt')
         P.CONTEST_ID='CWOPS-CWOPEN'
+        self.number_key='cwops'
 
     # Routient to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYNAME] '}
         MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [+2]73 [-2][MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [SERIAL] [MYNAME] '}
-        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : '73'        , 'Text' : '73 GL ee'}
         

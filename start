@@ -23,6 +23,9 @@ set RIG2="NONE"
 #set RIG_TYPE2="FT991a"
 #set RIG_TYPE2="IC9700"
 
+set KILL_OLD = 0
+set FIND_RIG="~/Python/findRig/findRig.py"
+
 ############################################################################################
 
 set BAUD = 38400
@@ -37,15 +40,16 @@ set NANO="-nano"
 set WPM=25
 set HINTS="-nohints"
 
-set CONTEST="cwt"
+set CONTEST="sending"
+#set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="mst"
-#set CONTEST="cwopen"
+set CONTEST="cwopen"
 #set CONTEST="skcc"
 #set CONTEST="calls"
 
 #set CONTEST="iaru"
-set CONTEST="naqp"
+#set CONTEST="naqp"
 #set CONTEST="fd"
 #set CONTEST="vhf"
 #set CONTEST="cqvhf"
@@ -67,8 +71,16 @@ set CONTEST="naqp"
 
 ########################################################################
 
-# Settings for NAQP contest, Jan 2019
-if( $CONTEST == "naqp" )then
+# Settings for sending practice
+if( $CONTEST == "sending" )then
+    set CMD="$FIND_RIG -BREAK 0"
+    $CMD
+    set WPM=20
+    set CONTEST="ragchew"
+    set HINTS="-nohints -adjust -sending"
+
+# Settings for NAQP contest
+else if( $CONTEST == "naqp" )then
     set WPM=30
     set HINTS="-nohints -adjust"
     #set HINTS="-nohints -adjust -autofill -scp"
@@ -90,7 +102,6 @@ else if( $CONTEST == "sst" )then
 else if( $CONTEST == "mst" )then
     set WPM=25
     set HINTS="-nohints -adjust"
-    #set HINTS="-autofill"
 
 # Settings for NCCC CW Sprints
 else if( $CONTEST == "sprint" )then
@@ -100,8 +111,8 @@ else if( $CONTEST == "sprint" )then
 
 # Settings for CW Ops cw open
 else if( $CONTEST == "cwopen" )then
-    set WPM=30
-    set HINTS="-adjust"
+    set WPM=25
+    set HINTS="-nohints -adjust"
 
 # Setting for CQ WPX (or any contest that requires rst + serial number)
 else if( $CONTEST == "wpx" )then
@@ -182,10 +193,12 @@ endif
 ########################################################################
 
 # Clean-up
-pkill pyKeyer
-pkill flrig
-pkill rigctl
-pkill rigctld
+if( $KILL_OLD )then
+    pkill pyKeyer
+    pkill flrig
+    pkill rigctl
+    pkill rigctld
+endif
 
 ########################################################################
 
