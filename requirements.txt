@@ -1,0 +1,15 @@
+# pip3 install -r requirements.txt
+
+pyqt5
+matplotlib
+pyqtgraph
+basemap
+pyserial
+xlrd
+unidecode
+pyhamtools
+
+pandas
+scipy
+levenshtein
+

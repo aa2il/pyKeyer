@@ -13,6 +13,7 @@ set ROOT="/media/${USER}/marconi"
 #set ROOT="/media/${USER}/3D76-ECB1"
 #set ROOT="/media/${USER}/acer"
 #set ROOT="../clone"
+set ROOT="/media/${USER}/cartman"
 if( !(-e $ROOT) )then
     set ROOT="${ROOT}2"
 endif

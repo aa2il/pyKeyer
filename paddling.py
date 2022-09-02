@@ -344,7 +344,8 @@ class PADDLING_GUI():
             txt='*** ERROR *** ERROR *** ERROR ***'
             
         self.txt.delete(1.0, END)
-        txt=txt.strip()
+        #txt=txt.strip()
+        txt=str(self.bookmark)+' '+txt.strip()
         self.txt.insert(1.0,txt)
         #self.stack.insert(0,txt)
         self.stack.append(txt)

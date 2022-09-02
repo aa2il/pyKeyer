@@ -42,7 +42,7 @@ set START_CLOCK   = 1       # 1
 set START_BANDMAP = 1       # 1
 
 # Select various processing options
-set SO2V          = 0
+set SO2V          = 0       # 0
 set USE_NANO_IO   = 1       # 1
 set TEST_MODE     = 0       # 0
 set KILL_OLD      = 1       # 1
@@ -191,7 +191,7 @@ else if( $CONTEST == "cwt" )then
     set WPM=30
     set HINTS="-nohints"
     set HINTS="-nohints -autofill"
-    set BM_OPTS = "$BM_OPTS -contest -hours 1"
+    set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 
 # Settings for CW Ops cw open
 else if( $CONTEST == "cwopen" )then
@@ -204,17 +204,17 @@ else if( $CONTEST == "sst" )then
     set HINTS="-use_log_hist"
     set HINTS="-use_log_hist -nohints -autofill -nrows 1"
     set WPM=20
-    set BM_OPTS = "$BM_OPTS -contest -hours 1"
+    set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 
 # Settings for Medium Speed Mini Test
 else if( $CONTEST == "mst" )then
     set HINTS="-use_log_hist"
     set HINTS="-use_log_hist -nohints -autofill -nrows 1"
     set WPM=23
-    set BM_OPTS = "$BM_OPTS -contest -hours 1"
+    set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 
 # Settings for Ragchews
-else if( $CONTEST == "sst" )then
+else if( $CONTEST == "ragchew" )then
     set HINTS="-use_log_hist"
     set HINTS="-use_log_hist -nohints -autofill -nrows 1"
     set WPM=20
