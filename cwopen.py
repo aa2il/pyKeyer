@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cwopen.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for CW Ops CW Open.
 #
@@ -46,7 +46,7 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CWO [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYNAME] '}
         MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
@@ -136,7 +136,7 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
     def enable_boxes(self,gui):
 
         gui.contest=True
-        gui.ndigits=-3
+        gui.ndigits=2
         gui.hide_all()
         self.macros=[1,None,2]
         #self.box_names=['call','serial','name']

@@ -58,7 +58,7 @@ endif
 set CONTEST=""
 #set CONTEST="ragchew"
 #set CONTEST="cwt"
-#set CONTEST="cwopen"
+set CONTEST="cwopen"
 #set CONTEST="sst"
 #set CONTEST="skcc"
 #set CONTEST="cqww"
@@ -195,9 +195,9 @@ else if( $CONTEST == "cwt" )then
 
 # Settings for CW Ops cw open
 else if( $CONTEST == "cwopen" )then
-    set WPM=25
+    set WPM=30
     set HINTS="-use_log_hist -nohints -autofill"
-    set BM_OPTS = "$BM_OPTS -contest -hours 4"
+    set BM_OPTS = "$BM_OPTS -contest -hours 4  -cwops"
 
 # Settings for Slow Speed Mini Test
 else if( $CONTEST == "sst" )then
