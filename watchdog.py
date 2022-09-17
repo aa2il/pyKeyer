@@ -109,11 +109,9 @@ def WatchDog(P):
         P.udp_server.Broadcast('Keyer Heartbeat - Thump Thump - kerr chunk')
     
     # Read rotor position
-    #print('sock3=',P.sock3)
-    #print('sock3=',P.sock3.connection)
-    if P.sock3.connection!='NONE' or False:
+    if P.sock_rotor.connection!='NONE' or False:
         gui2=P.gui.rotor_ctrl
-        pos=P.sock3.get_position()
+        pos=P.sock_rotor.get_position()
         #print('pos:',pos)
         if pos[0]==None:
             pos[0]=gui2.azlcd1.get()             # Temp

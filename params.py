@@ -89,6 +89,8 @@ class PARAMS:
                               help='Disable TX')
         arg_proc.add_argument('-practice', action='store_true',
                               help='Practice mode')
+        arg_proc.add_argument('-immediate', action='store_true',
+                              help='Send text immediately')
         arg_proc.add_argument('-sidetone', action='store_true',
                               help='Sidetone Osc')
         arg_proc.add_argument('-split', action='store_true',
@@ -116,6 +118,11 @@ class PARAMS:
                               choices=CONNECTIONS+['NONE']+RIGS)
         arg_proc.add_argument("-port2", help="Connection Port - 2nd rig",
                               type=int,default=0)
+        arg_proc.add_argument("-rig3", help="Connection Type - 3rd rig",
+                              type=str,default=["NONE"],nargs='+',
+                              choices=CONNECTIONS+['NONE']+RIGS)
+        arg_proc.add_argument("-port3", help="Connection Port - 2nd rig",
+                              type=int,default=0)
         arg_proc.add_argument("-max_age", help="Max age in hours",
                               type=int,default=9999)
         arg_proc.add_argument("-nrows", help="No. STO/RCL rows",
@@ -132,7 +139,7 @@ class PARAMS:
         arg_proc.add_argument("-rotor", help="Rotor connection Type",
                               type=str,default="NONE",
                               choices=['HAMLIB','NONE'])
-        arg_proc.add_argument("-port3", help="Rotor onnection Port",
+        arg_proc.add_argument("-port9", help="Rotor connection Port",
                               type=int,default=0)
         arg_proc.add_argument('-server', action='store_true',
                               help='Start hamlib server')
@@ -178,6 +185,13 @@ class PARAMS:
         else:
             self.rig2      = None
         self.PORT2         = args.port2
+            
+        self.connection3   = args.rig3[0]
+        if len(args.rig3)>=2:
+            self.rig3      = args.rig3[1]
+        else:
+            self.rig3      = None
+        self.PORT3         = args.port3
             
         self.NUM_ROWS      = args.nrows
         self.HAMLIB_SERVER = args.server
@@ -278,8 +292,8 @@ class PARAMS:
             MAX_AGE_HOURS=9999
             self.SHOW_TEXT_BOX2=True
         self.ROTOR_CONNECTION = args.rotor
-        self.PORT3            = args.port3
-        self.Immediate_TX     = False
+        self.PORT9            = args.port9
+        self.Immediate_TX     = args.immediate
 
         # Compute length of contest
         if args.max_age!=9999:

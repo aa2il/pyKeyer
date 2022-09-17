@@ -112,7 +112,7 @@ if not P.sock1.active and not P.PRACTICE_MODE:
         P.SIDETONE=True
         
 P.sock=P.sock1
-print('P.sock1=',P.sock1)
+print('P.sock1=',P.sock1,P.sock1.rig_type,P.sock1.rig_type1,P.sock1.rig_type2)
 
 # Open connection to 2nd rig
 if P.connection2 != "NONE":
@@ -120,12 +120,22 @@ if P.connection2 != "NONE":
     P.sock2 = socket_io.open_rig_connection(P.connection2,0,P.PORT2,0,'KEYER',rig=P.rig2,force=P.FORCE)
 else:
     P.sock2=None
-print('P.sock2=',P.sock2)
+#print('P.sock2=',P.sock2,P.sock2.rig_type,P.sock2.rig_type1,P.sock2.rig_type2)
+#sys.exit(0)
+
+# Open connection to 3rd rig
+if P.connection3 != "NONE":
+    print('\nPYKEYER: Opening connection to terciary rig - connection=',P.connection3,'\trig=',P.rig3,'...')
+    P.sock3 = socket_io.open_rig_connection(P.connection3,0,P.PORT3,3,'KEYER',rig=P.rig3,force=P.FORCE)
+else:
+    P.sock3=None
+#print('P.sock3=',P.sock3,P.sock3.rig_type,P.sock3.rig_type1,P.sock3.rig_type2)
 #sys.exit(0)
 
 # Open keying port(s)
 P.ser1=open_keying_port(P,P.sock1,1)
 P.ser2=open_keying_port(P,P.sock2,2)
+P.ser3=open_keying_port(P,P.sock3,2)
 P.ser=P.ser1
 #sys.exit(0)
     
@@ -139,14 +149,14 @@ if not P.PRACTICE_MODE:
     #sys.exit(0)
 
 # Open connection to rotor
-P.sock3 = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT3,0,'ROTOR')
-if not P.sock3.active and P.sock3.connection!='NONE':
+P.sock_rotor = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT9,0,'ROTOR')
+if not P.sock_rotor.active and P.sock_rotor.connection!='NONE':
     print('*** No connection available to rotor ***')
     sys.exit(0)
 
 # Open connection to FLLOG, if available
-P.sock3 = socket_io.open_rig_connection('FLLOG',0,0,0,'KEYER')
-#print(P.sock3.active)
+P.sock_log = socket_io.open_rig_connection('FLLOG',0,0,0,'KEYER')
+#print(P.sock_log.active)
 
 # Create hamlib-like server for clients like SDR to talk through
 P.threads=[]
@@ -205,21 +215,26 @@ if False:
     P.threads.append(server)
 
 # Create sidetone oscillator & start in a separate thread
-print('Creating Sidetone ...')
-init_sidetone(P)
+if P.SIDETONE:
+    print('Creating Sidetone ...')
+    init_sidetone(P)
+else:
+    P.q2=None
 
 # Set up a thread for audio capture
-print('Creating thread to Capture Audio ...')
-P.capture = audio_capture.AUDIO_CAPTURE(P)
-worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
-worker.setDaemon(True)
-worker.start()
-P.threads.append(worker)
+if P.CAPTURE:
+    print('Creating thread to Capture Audio ...')
+    P.capture = audio_capture.AUDIO_CAPTURE(P)
+    worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
+    worker.setDaemon(True)
+    worker.start()
+    P.threads.append(worker)
 
 # Load history from previous contests
 print('Loading Master History file ...')
 P.MASTER = load_history(P.HIST_DIR+'master.csv')
 P.calls = list(P.MASTER.keys())
+print('... Info for',len(P.calls),'calls were loaded.')
 
 # Actually create the GUI
 P.gui.construct_gui()

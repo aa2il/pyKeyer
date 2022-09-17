@@ -138,13 +138,13 @@ class GUI():
         self.nqsos_start = 0
         self.sock = self.P.sock
 
-        print(P.sock.rig_type2)
+        rig=''
         if P.sock.rig_type2 and P.sock.rig_type2!='None':
             rig=' - '+P.sock.rig_type2
             if P.sock2 and P.sock2.rig_type2 and P.sock2.rig_type2!='None':
                 rig+=' + '+P.sock2.rig_type2
-        else:
-            rig=''
+                if P.sock3 and P.sock3.rig_type2 and P.sock3.rig_type2!='None':
+                    rig+=' + '+P.sock3.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
         self.tuning = False
         self.root.protocol("WM_DELETE_WINDOW", self.Quit)
@@ -494,17 +494,24 @@ class GUI():
             self.Radio2.grid(row=row,column=col,sticky=E+W)
             tip = ToolTip(self.Radio2, ' Rig 2 ' )
 
+        if P.sock3:
+            col += 1
+            self.Radio3 = Radiobutton(self.root,  text=P.sock3.rig_type2,
+                                      variable=self.iRadio,
+                                      value=3,command=self.SelectRadio)
+            self.Radio3.grid(row=row,column=col,sticky=E+W)
+            tip = ToolTip(self.Radio3, ' Rig 3 ' )
+
         # Other buttons - any buttons we need to modify, we need to grab handle to them
         # before we try to pack them.  Otherwise, all we get is the results of the packing
 
         # Enable/Disable TX button - should be sufficient to just press <CR> in the txt box
         # Put in a pull-down menu if we really need this
-        self.P.Immediate_TX = True
         self.SendBtn = Button(self.root, text='Send',command=self.Toggle_Immediate_TX,\
                                   takefocus=0 ) 
         self.SendBtn.grid(row=row,column=ncols-2)
         tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
-        self.Toggle_Immediate_TX()
+        self.Toggle_Immediate_TX(1)
         
         # QRZ button
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
@@ -699,18 +706,22 @@ class GUI():
         if iRadio==1:
             self.P.sock=self.P.sock1
             self.P.ser=self.P.ser1
-        else:
+        elif iRadio==2:
             self.P.sock=self.P.sock2
             self.P.ser=self.P.ser2
+        else:
+            self.P.sock=self.P.sock3
+            self.P.ser=self.P.ser3
         self.sock=self.P.sock
         print("You selected radio " + str(iRadio),'\tP.sock=',self.P.sock)
         rig=P.sock.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
         
     # Callback to toggle sending of text
-    def Toggle_Immediate_TX(self):
-        self.P.Immediate_TX = not self.P.Immediate_TX 
-        print('Toggle_Text_TX:',self.P.Immediate_TX,self.text_buff)
+    def Toggle_Immediate_TX(self,iop=None):
+        if iop==None:
+            self.P.Immediate_TX = not self.P.Immediate_TX 
+        print('\n%%%%%%%%%%%%%%%%%% Toggle_Immediate_TX:',self.P.Immediate_TX,self.text_buff,iop)
         if self.P.Immediate_TX:
             self.SendBtn.configure(background='red',highlightbackground= 'red')
             self.q.put(self.text_buff)
@@ -1493,9 +1504,9 @@ class GUI():
                 mode='FM'
             elif mode=='AMN':
                 mode='AM'
-            band     = str( self.sock.get_band() )
+            band     = str( self.sock.get_band(freq*1e-3) )
             if band=='None':
-                print('*** WARNING - Cant determine band - no rig connection?')
+                print("*** WARNING - Can't determine band - no rig connection?")
             elif band[-1]!='m':
                 band += 'm'
 
@@ -1544,9 +1555,9 @@ class GUI():
                                   str(1e-3*freq_kHz_rx),band_rx,notes] )))
             qso.update(qso2)
 
-            if self.P.sock3.connection=='FLLOG':
+            if self.P.sock_log.connection=='FLLOG':
                 print('GUI: =============== via FLLOG ...')
-                self.P.sock3.Add_QSO(qso)
+                self.P.sock_log.Add_QSO(qso)
 
             elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE:
                 print('GUI: =============== via FLDIGI ...')
@@ -1721,15 +1732,15 @@ class GUI():
         last_exch=''
         self.last_qso=None
         now = datetime.utcnow().replace(tzinfo=UTC)
-        if self.P.sock3.connection=='FLLOG' and True:
+        if self.P.sock_log.connection=='FLLOG' and True:
             freq   = self.sock.get_freq()
             mode   = self.sock.get_mode()
-            self.match1 = self.P.sock3.Dupe_Check(call)
+            self.match1 = self.P.sock_log.Dupe_Check(call)
             print('match1=',self.match1)
             if self.match1:
-                self.match2 = self.P.sock3.Dupe_Check(call,mode,self.P.MAX_AGE,freq)
+                self.match2 = self.P.sock_log.Dupe_Check(call,mode,self.P.MAX_AGE,freq)
                 print('match2=',self.match2)
-                qso = self.P.sock3.Get_Last_QSO(call)
+                qso = self.P.sock_log.Get_Last_QSO(call)
                 print('last qso=',qso)
                 if 'SRX_STRING' in qso :
                     last_exch = qso['SRX_STRING']
@@ -2361,13 +2372,14 @@ class GUI():
         Menu1.add_command(label="Clear Stores ...", command=self.ClearState)
         Menu1.add_separator()
         
-        self.Capturing = BooleanVar(value=self.P.CAPTURE)
-        Menu1.add_checkbutton(
-            label="Capture Audio",
-            underline=0,
-            variable=self.Capturing,
-            command=self.P.capture.CaptureAudioCB
-        )
+        if self.P.CAPTURE:
+            self.Capturing = BooleanVar(value=self.P.CAPTURE)
+            Menu1.add_checkbutton(
+                label="Capture Audio",
+                underline=0,
+                variable=self.Capturing,
+                command=self.P.capture.CaptureAudioCB
+            )
         
         self.Tuning = BooleanVar(value=False)
         Menu1.add_checkbutton(

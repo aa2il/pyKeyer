@@ -168,11 +168,11 @@ def open_keying_port(P,sock,rig_num):
                 ser.PORT = SERIAL_PORT2
                 ser.BAUD = BAUD
 
-            elif sock.rig_type2=='None':
+            elif sock.rig_type2 in ['None','TYT9000d']:
                 ser=serial_dummy()
 
             else:
-                print('pyKeyer: Unknown rig type:',sock.rig_type,sock.rig_type2)
+                print('KEYING - OPEN KEYING PORT: Unknown rig type:',sock.rig_type,sock.rig_type2)
                 sys.exit(0)
         
         else:

@@ -51,12 +51,15 @@ class CODE_PRACTICE():
                 files.append(fname)
             files.sort()
             print('file=',files)
-            print(files[-1])
-            #sys.exit(0)
-            P.HISTORY2=files[-1]
+            if len(files)>0:
+                print(files[-1])
+                #sys.exit(0)
+                P.HISTORY2=files[-1]
             print('CODE_PRACTICE: History=',P.HISTORY2)
   
-        if P.HISTORY2==P.HISTORY:
+        if P.HISTORY2==P.HIST_DIR+'master.csv':
+            self.HIST=self.P.MASTER
+        elif P.HISTORY2==P.HISTORY:
             self.HIST = self.P.HIST
         elif len(P.HISTORY2)>0:
             self.HIST = load_history(P.HISTORY2)
@@ -68,6 +71,7 @@ class CODE_PRACTICE():
         # For the Cal QP, it is helpful to only practice with CA stations
         self.calls = list(self.HIST.keys())
         self.Ncalls = len(self.calls)
+        print('There are',self.Ncalls,'call signs to play with.')
         if P.CA_ONLY:
             print('CA ONLY - B4:',self.Ncalls)
             for call in self.calls:

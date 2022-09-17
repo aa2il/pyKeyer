@@ -58,7 +58,7 @@ endif
 set CONTEST=""
 #set CONTEST="ragchew"
 #set CONTEST="cwt"
-set CONTEST="cwopen"
+#set CONTEST="cwopen"
 #set CONTEST="sst"
 #set CONTEST="skcc"
 #set CONTEST="cqww"
@@ -136,6 +136,7 @@ set RIG_TYPE1="FTdx3000"
 #set RIG_TYPE1="FT991a"
 #set RIG_TYPE1="IC9700"
 #set RIG_TYPE1=`$FIND_RIG`
+#set RIG_TYPE1="TYT9000d"
 
 # Select secondary rig & middleware
 # Very limited for now
@@ -337,7 +338,7 @@ if( $RIG1 == "FLRIG" )then
         exit 1
     endif
     set PORT=12345                  # Port no. for FLRIG server
-    set RIG = "FLRIG"
+    #set RIG = "FLRIG"
 endif 
 if( $RIG1 == "FLRIG" && $RIG_TYPE1 == "IC9700" )then
     set PORT=12346                  # Port no. for FLRIG server
@@ -373,7 +374,7 @@ echo " "
 echo Setting basic rig config ...
 echo Setting CW Mode, Narrow Filtering and Power on port $PORT ...
 
-set CMD="$FIND_RIG -rig $RIG $RIG_TYPE1 -port $PORT -M CW -FILT Narrow -PWR 99 -MON $MON -TUNER 1 -BREAK 1"
+set CMD="$FIND_RIG -rig $RIG1 $RIG_TYPE1 -port $PORT -M CW -FILT Narrow -PWR 99 -MON $MON -TUNER 1 -BREAK 1"
 if( ($RIG_TYPE1 == "FTdx3000") )then
 
     # Cancel any IF SHIFT 
@@ -436,10 +437,10 @@ if( $START_SDR )then
     sleep 1
 
     echo "Waiting for pySDR to start ..."
-    set id=`find_windows pySDR 20`
+    set id=`find_windows pySDR 30`
     echo id=$id
     if ( $#id == 0 ) then
-        echo "--- ERROR --- Never found pyKeyer after 20 tries - giving up"
+        echo "--- ERROR --- Never found pyKeyer after 30 tries - giving up"
         exit
     endif
     
@@ -456,7 +457,7 @@ if( 0 )then
     pkill pyRig
     sleep 1
     pushd ~/Python/pyRig
-    pyRig.py -rig $RIG >& /tmp/PYRIG &
+    pyRig.py -rig $RIG1 >& /tmp/PYRIG &
     popd
 
     #$HAMLIB_DIR/rigctl -vvv -m $MODEL -s $BAUD -r /dev/$c
@@ -483,10 +484,10 @@ if( 1 )then
     echo "Waiting for pyKeyer to start ..."
     #find_windows pyKeyer 20
     #exit
-    set id=`find_windows pyKeyer 20`
+    set id=`find_windows pyKeyer 30`
     echo id=$id
     if ( $#id == 0 ) then
-        echo "--- ERROR --- Never found pyKeyer after 20 tries - giving up"
+        echo "--- ERROR --- Never found pyKeyer after 30 tries - giving up"
         exit
     endif
 
