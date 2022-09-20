@@ -21,6 +21,7 @@
 ################################################################################
 
 import threading
+from utilities import freq2band
 
 ################################################################################
 
@@ -73,7 +74,7 @@ def WatchDog(P):
         else:
             freq = P.sock.get_freq()
             mode = P.sock.get_mode()
-            band = P.sock.get_band(freq * 1e-6)
+            band = freq2band(1e-6*freq)
 
             P.gui.rig.band.set(band)
             x=str(int(freq*1e-3))+' KHz  '+str(mode)

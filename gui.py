@@ -67,7 +67,8 @@ from ragchew import *
 from dx_qso import *
 from qrz import *
 from sidetone import init_sidetone
-from utilities import cut_numbers
+from utilities import cut_numbers,freq2band
+import platform
 
 ############################################################################################
 
@@ -772,7 +773,7 @@ class GUI():
             # Not sure what this does but probably never get here!
             txt = spot['Button']['text']
             if txt=='--':
-                frq = self.sock.get_freq() / 1e3
+                frq = 1e-3*self.sock.get_freq() 
                 spot['Button']['text'] = "{:,.1f}".format(frq)
                 spot['Freq']=frq
                 spot['Fields'] = self.Read_Log_Fields()
@@ -793,7 +794,7 @@ class GUI():
         elif idir==1:
             # Save
             call=self.get_call().upper()
-            frq = self.sock.get_freq() / 1e3
+            frq = 1e-3*self.sock.get_freq()
             spot['Button']['text'] = call+" {:,.1f} ".format(frq)
             spot['Freq']=frq
             spot['Fields'] = self.Read_Log_Fields()
@@ -1504,11 +1505,9 @@ class GUI():
                 mode='FM'
             elif mode=='AMN':
                 mode='AM'
-            band     = str( self.sock.get_band(freq*1e-3) )
+            band     = freq2band(1e-3*freq_kHz)
             if band=='None':
                 print("*** WARNING - Can't determine band - no rig connection?")
-            elif band[-1]!='m':
-                band += 'm'
 
             # For satellites, read vfo B also  - MOVE THIS TO LOGGING() IN SATS.PY
             if self.P.contest_name=='SATELLITES':
@@ -1517,9 +1516,7 @@ class GUI():
 
                 freq_kHz    = 1e-3*self.sock.get_freq(VFO='B')
                 freq        = int( freq_kHz )
-                band        = str( self.sock.get_band(VFO='B') )
-                if band[-1]!='m':
-                    band += 'm'
+                band        = freq2band(1e-3*freq_kHz)
 
             else:
                 freq_kHz_rx = freq_kHz
@@ -1732,9 +1729,11 @@ class GUI():
         last_exch=''
         self.last_qso=None
         now = datetime.utcnow().replace(tzinfo=UTC)
+        freq = self.sock.get_freq()
+        mode = self.sock.get_mode()
+        band = freq2band(1e-6*freq)
+            
         if self.P.sock_log.connection=='FLLOG' and True:
-            freq   = self.sock.get_freq()
-            mode   = self.sock.get_mode()
             self.match1 = self.P.sock_log.Dupe_Check(call)
             print('match1=',self.match1)
             if self.match1:
@@ -1748,14 +1747,11 @@ class GUI():
                     date_off = datetime.strptime( qso["QSO_DATE_OFF"] +" "+ qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
                                        .replace(tzinfo=UTC)
                     age = (now - date_off).total_seconds() # In seconds
-                    band = str( self.sock.get_band() )
-                    if band[-1]!='m':
-                        band += 'm'
                     self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
                     print('match 1 & 2:',self.match1,self.match2)
 
         else:
-
+            
             for qso in self.log_book:
                 if qso['CALL']==call:
                     self.match1 = True
@@ -1763,10 +1759,6 @@ class GUI():
                     date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
                                        .replace(tzinfo=UTC)
                     age = (now - date_off).total_seconds() # In seconds
-                    mode = self.sock.get_mode()
-                    band = str( self.sock.get_band() )
-                    if band[-1]!='m':
-                        band += 'm'
 
                     # There are some contests that are "special"
                     if self.P.contest_name=='SATELLITES':
