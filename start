@@ -11,7 +11,7 @@
 set RIG="NONE"
 #set RIG="HAMLIB"
 #set RIG="DIRECT"
-set RIG="ANY"
+#set RIG="ANY"
 
 set RIG_TYPE="FTdx3000"
 #set RIG_TYPE="FT991a"
@@ -25,21 +25,21 @@ set RIG2="NONE"
 
 set KILL_OLD = 0
 set FIND_RIG="~/Python/findRig/findRig.py"
-set START_CLOCK = 1 
 
 ############################################################################################
-
-set BAUD = 38400
-set PORT = 4532
 
 set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
 set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
+set NANO="-sidetone"
 
 set WPM=25
 set HINTS="-nohints"
+
+set CA_ONLY=""
+#set CA_ONLY="-ca_only"
 
 set CONTEST="sending"
 #set CONTEST="cwt"
@@ -56,7 +56,7 @@ set CONTEST="sending"
 #set CONTEST="cqvhf"
 #set CONTEST="stew"
 #set CONTEST="sat"
-#set CONTEST="cqp"
+set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="ss"
 #set CONTEST="cqww"
@@ -139,7 +139,7 @@ else if( $CONTEST == "iaru" )then
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then
     set WPM=30
-    set HINTS="-nohints -adjust -ca_only"
+    set HINTS="-nohints -adjust $CA_ONLY"
 
 # Settings for ARRL & CQ VHF
 else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
@@ -238,34 +238,9 @@ endif
 
 ################################################################################
 
-# Start World Clock
-if( $START_CLOCK )then
-    echo Starting World Clock ...
-    pkill wclock
-    sleep 1
-    pushd ../wclock
-    wclock.py >& /tmp/WCLOCK &
-    popd
-    
-    echo "Waiting for clock to start ..."
-    set id=`find_windows "World Clock" 20`
-    echo id=$id
-    if ( $#id == 0 ) then
-        echo "--- ERROR --- Never found wclock after 20 tries - giving up"
-        exit
-    endif
-endif
-
-################################################################################
-
 if( "X$PRACTICE" == "" )then
     set CAPTURE="-capture"
-    pkill wclock
-    pushd ../wclock
-    #wclock.py >& /tmp/WCLOCK &
-    popd
 else
-    #set RIG="NONE"
     set CAPTURE=""
 endif
 

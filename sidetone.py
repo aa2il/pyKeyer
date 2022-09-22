@@ -37,7 +37,7 @@ else:
 ###################################################################
 
 # User params
-FS = 48000              # Playback rate
+FS = 8000    # 48000              # Playback rate
 F1 = 680                # My pitch
 F2 = 700                # Caller's pitch
 AMP=0.5
@@ -46,7 +46,7 @@ AMP=0.5
 
 def init_sidetone(P):
     
-    if P.SIDETONE or True:
+    if P.SIDETONE:
         print('Init SIDETONE ...')
         P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
         P.keyer.sidetone = P.osc
@@ -119,14 +119,18 @@ class SIDETONE_OSC():
 
         # JBA - start_playback is the offending line that causes a bunch of
         # audio io errors at start-up.
-        # Tried faking it by putting silence in rign buff but didnt work
+        # Tried faking it by putting silence in ring buff but didnt work
         #self.rb.push(self.long_space)
-        self.player.start_playback(0,False)
+        #self.player.start_playback(0,False)
+        #self.start()
         #time.sleep(5)
         #sys.exit(0)
 
     #def change_freq():
     #    self.gen_elements(self.WPM,1-self.nfrq)
+
+    def start(self):
+        self.player.start_playback(0,False)
         
     # Signal generation 
     def gen_elements(self,WPM,nfrq):

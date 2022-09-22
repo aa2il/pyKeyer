@@ -947,6 +947,19 @@ class GUI():
             self.serial_out = self.cntr
             print('GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
 
+        # Fill in nam
+        name=self.get_name().upper()
+        if name=='' and '[NAME]' in txt:
+            try:
+                call=self.get_call().upper()
+                name2=self.P.MASTER[call]['name']
+                txt = txt.replace('[NAME]',name2)
+            except Exception as e: 
+                print('Unable to retrieve NAME')
+                print( str(e) )
+                #print(call,self.P.MASTER[call])
+                #pass
+
         # This should have already been handled when we loaded the macros
         #txt = self.Patch_Macro(txt)
         txt = self.Patch_Macro2(txt)

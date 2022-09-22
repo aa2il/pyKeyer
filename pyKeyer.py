@@ -2,7 +2,7 @@
 ################################################################################
 #
 # pyKeyer.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 #    Main program for CW Keyer and server.
 
@@ -215,11 +215,8 @@ if False:
     P.threads.append(server)
 
 # Create sidetone oscillator & start in a separate thread
-if P.SIDETONE:
-    print('Creating Sidetone ...')
-    init_sidetone(P)
-else:
-    P.q2=None
+print('Creating Sidetone ...')
+init_sidetone(P)
 
 # Set up a thread for audio capture
 if P.CAPTURE:
@@ -290,6 +287,11 @@ for i in range(1, sheet1.nrows):
 print('Grids:',P.grids)
 
 #sys.exit(0)
+
+# Start sidetone audio processing
+if P.SIDETONE:
+    print('Starting Sidetone ...')
+    P.osc.start()
 
 # Spin
 mainloop()

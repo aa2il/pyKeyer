@@ -41,7 +41,7 @@ from nano_io import nano_write
 class CODE_PRACTICE():
     def __init__(self,P):
 
-        print('CODE_PRACTICE INIT: History=',P.HISTORY2)
+        print('CODE_PRACTICE INIT: History2=',P.HISTORY2)
         self.P = P
 
         # Load history file providing a bunch of calls to play with
@@ -52,10 +52,8 @@ class CODE_PRACTICE():
             files.sort()
             print('file=',files)
             if len(files)>0:
-                print(files[-1])
-                #sys.exit(0)
                 P.HISTORY2=files[-1]
-            print('CODE_PRACTICE: History=',P.HISTORY2)
+            print('CODE_PRACTICE: History2=',P.HISTORY2)
   
         if P.HISTORY2==P.HIST_DIR+'master.csv':
             self.HIST=self.P.MASTER
@@ -72,10 +70,16 @@ class CODE_PRACTICE():
         self.calls = list(self.HIST.keys())
         self.Ncalls = len(self.calls)
         print('There are',self.Ncalls,'call signs to play with.')
+        if P.PRACTICE_MODE and self.Ncalls==0:
+            print('CODE_PRACTICE INIT: Need some calls to play with!!!!!')
+            print('History2=',P.HISTORY2)
+            P.SHUTDOWN=True
+            sys.exit(0)
         if P.CA_ONLY:
             print('CA ONLY - B4:',self.Ncalls)
             for call in self.calls:
                 if self.HIST[call]['state']!='CA':
+                    #print('Deleting call=',call,'\t',self.HIST[call])
                     del self.HIST[call]
             self.calls = list(self.HIST.keys())
             self.Ncalls = len(self.calls)
@@ -109,14 +113,21 @@ class CODE_PRACTICE():
     
         # Pick a call at random
         P.PRACTICE_STATE=0
-        print('\nPRACTICE_QSO: Waiting 0 - Picking call ...')
+        print('\nPRACTICE_QSO: Waiting 0 - Picking call ... ',self.Ncalls-1)
         done = False
         repeats=False
+        ntries=0
         while not done:
+            ntries+=1
             i = random.randint(0, self.Ncalls-1)
             call = self.calls[i]
             done = P.KEYING.qso_info(HIST,call,1)
-            #print('PRACTICE_QSO:',call,HIST[call],done)
+            
+            print('PRACTICE_QSO: call=',call,'\tdone=',done,'\thist=',HIST[call])
+            if ntries>100:
+                print('Something is rotten in Denmark!')
+                P.SHUTDOWN=True
+                sys.exit(0)
 
         # Wait for op to hit CQ
         P.PRACTICE_STATE=1
