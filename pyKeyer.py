@@ -219,7 +219,7 @@ print('Creating Sidetone ...')
 init_sidetone(P)
 
 # Set up a thread for audio capture
-if P.CAPTURE:
+if P.CAPTURE or True:
     print('Creating thread to Capture Audio ...')
     P.capture = audio_capture.AUDIO_CAPTURE(P)
     worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )

@@ -46,7 +46,7 @@ AMP=0.5
 
 def init_sidetone(P):
     
-    if P.SIDETONE:
+    if P.SIDETONE or True:
         print('Init SIDETONE ...')
         P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
         P.keyer.sidetone = P.osc
@@ -69,39 +69,27 @@ def init_sidetone(P):
 
 def sidetone_executive(P):
     print('SIDETONE Exec started ...')
-    q = P.q2
 
     while not P.Stopper.isSet():
-        if q.qsize()>0:
-            msg = q.get()
-            q.task_done()
+        if P.q2.qsize()>0:
+            msg = P.q2.get()
+            P.q2.task_done()
             msg = msg.replace('[LOG]','')
             print('SIDETONE Exec: msg=',msg)
-            P.osc.send_cw(msg,P.keyer.WPM,0,P.SIDETONE)
+            if P.osc.enabled:
+                P.osc.send_cw(msg,P.keyer.WPM,0,P.SIDETONE)
         else:
             time.sleep(0.1)
                 
     print('SIDETONE Done.')
         
-        
-# Prototype
-def SideToneCB(in_data, frame_count, time_info, status):
-    global osc
-    
-    if n+frame_count>len(x):
-        n=0
-    data = x[n:(n+frame_count)].astype(np.float32).tostring()
-    #data = x.astype(np.float32).tostring()
-    n+=frame_count
-    print('Callback ...',len(data),len(x),frame_count,n)
-    return (data, pyaudio.paContinue)
-
 
 class SIDETONE_OSC():
     def __init__(self,WPM,AMP,F0,FS):
 
         print("\nCreating code practice osc ...")
-        self.enable=False
+        self.started = False
+        self.enabled = False
         self.AMP=AMP
         if type(F0) is list:
             self.F0=F0
@@ -122,6 +110,16 @@ class SIDETONE_OSC():
 
     def start(self):
         self.player.start_playback(0,False)
+        self.started = True
+        self.enabled = True
+        
+    def pause(self):
+        self.player.pause()
+        self.enabled = False
+        
+    def resume(self):
+        self.player.resume()
+        self.enabled = True
         
     # Signal generation 
     def gen_elements(self,WPM,nfrq):
@@ -190,16 +188,16 @@ class SIDETONE_OSC():
                         x = np.concatenate( (self.dah,self.space) )
 
                     # Send the element
-                    if AUDIO_ACTIVE:
+                    if AUDIO_ACTIVE and self.enabled:
                         self.rb.push(x)
                     self.rb2.push(x)
 
                 # Effect spacing between letters - we've already added one short space
                 # so we only need 2 more to effect char spacing
                 x = np.concatenate( (self.space,self.space) )
-                if AUDIO_ACTIVE:
-                    self.rb.push(x)
-                self.rb2.push(x)
+                if AUDIO_ACTIVE and self.enabled:
+                    self.rb.push(x)                         # Computer Audio
+                self.rb2.push(x)                            # Sidetone for capture
                 
 
     def play(self):

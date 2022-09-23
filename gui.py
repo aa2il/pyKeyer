@@ -2331,8 +2331,27 @@ class GUI():
     def SideToneCB(self):
         print("Toggling Sidetone ...")
         self.P.SIDETONE = not self.P.SIDETONE
-        if self.P.SIDETONE and not self.P.q2:
-            init_sidetone(self.P)
+        if self.P.SIDETONE:
+            if self.P.osc.started:
+                self.P.osc.resume()
+            else:
+                self.P.osc.start()
+        else:
+            if self.P.osc.started and self.P.osc.enabled:
+                self.P.osc.pause()
+
+    # Callback to turn capture on and off
+    def CaptureCB(self):
+        print("Toggling Sidetone ...")
+        self.P.CAPTURE = not self.P.CAPTURE
+        if self.P.CAPTURE:
+            if self.P.capture.started:
+                self.P.capture.resume()
+            else:
+                self.P.capture.start()
+        else:
+            if self.P.capture.started and self.P.capture.enabled:
+                self.P.capture.pause()
 
     # Callback to turn split text window on & off
     def SplitTextCB(self):
@@ -2377,14 +2396,15 @@ class GUI():
         Menu1.add_command(label="Clear Stores ...", command=self.ClearState)
         Menu1.add_separator()
         
-        if self.P.CAPTURE:
+        if self.P.CAPTURE or True:
             self.Capturing = BooleanVar(value=self.P.CAPTURE)
             Menu1.add_checkbutton(
                 label="Capture Audio",
                 underline=0,
                 variable=self.Capturing,
-                command=self.P.capture.CaptureAudioCB
+                command=self.CaptureCB
             )
+            # command=self.P.capture.CaptureAudioCB
         
         self.Tuning = BooleanVar(value=False)
         Menu1.add_checkbutton(

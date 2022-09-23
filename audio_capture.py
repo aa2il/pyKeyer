@@ -42,6 +42,8 @@ class AUDIO_CAPTURE():
     def __init__(self,P):
 
         print('AUDIO_CAPTURE: Init ...')
+        self.started = False
+        self.enabled = False
         self.P = P
 
     # Main routine that starts audio capture
@@ -61,7 +63,17 @@ class AUDIO_CAPTURE():
         if not self.P.RIG_AUDIO_IDX:
             self.P.RIG_AUDIO_IDX = self.P.rec.list_input_devices('USB Audio CODEC')
         self.P.rec.start_recording(self.P.RIG_AUDIO_IDX)
+        self.started = True
+        self.enabled = True
         
+    def pause(self):
+        self.P.rec.stop_recording()
+        self.enabled = False
+
+    def resume(self):
+        self.P.rec.resume_recording()
+        self.enabled = True
+
     # Callback to toggle audio recording on & off
     def CaptureAudioCB(self,iopt=None):
         P=self.P

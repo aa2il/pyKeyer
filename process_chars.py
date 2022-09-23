@@ -61,8 +61,10 @@ def process_chars(P):
 
             # Timing is critical so we make sure we have control
             if P.q2 and not P.PRACTICE_MODE and (P.SIDETONE or P.CAPTURE):
-                print('=========================================')
+                print('\n=========================================\n')
                 P.q2.put(txt)
+            else:
+                print('-=-=-=-=-=-=--=-=---=-=-=-=-=-=-=-=-=-=-=------------')
             lock.acquire()
             keyer.send_msg(txt)
             lock.release()
