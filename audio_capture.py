@@ -57,6 +57,11 @@ class AUDIO_CAPTURE():
         print('CAPTURE Exec Done.')
         """
 
+    def start(self):
+        if not self.P.RIG_AUDIO_IDX:
+            self.P.RIG_AUDIO_IDX = self.P.rec.list_input_devices('USB Audio CODEC')
+        self.P.rec.start_recording(self.P.RIG_AUDIO_IDX)
+        
     # Callback to toggle audio recording on & off
     def CaptureAudioCB(self,iopt=None):
         P=self.P
@@ -84,14 +89,14 @@ class AUDIO_CAPTURE():
                     rb22=P.osc.rb2
                 else:
                     rb22=None
+                RATE=8000
+                nchan=1
                 P.rec = WaveRecorder(P.wave_file, 'wb',
-                                     channels=1,wav_rate=8000,
+                                     channels=nchan,
+                                     rate=RATE,
+                                     wav_rate=RATE,
                                      rb2=rb22,
                                      GAIN=gain)
-                
-                if not P.RIG_AUDIO_IDX:
-                    P.RIG_AUDIO_IDX = P.rec.list_input_devices('USB Audio CODEC')
-                P.rec.start_recording(P.RIG_AUDIO_IDX)
                 
         else:
             if P.CAPTURE:

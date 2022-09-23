@@ -288,10 +288,12 @@ print('Grids:',P.grids)
 
 #sys.exit(0)
 
-# Start sidetone audio processing
+# Start sidetone and capture audio processing
 if P.SIDETONE:
     print('Starting Sidetone ...')
     P.osc.start()
+if P.CAPTURE:
+    P.capture.start()
 
 # Spin
 mainloop()

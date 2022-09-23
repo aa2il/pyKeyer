@@ -117,15 +117,6 @@ class SIDETONE_OSC():
         self.rb2    = dsp.ring_buffer2('Audio1',32*1024)
         self.player = dsp.AudioIO(None,int(self.FS),self.rb,None,'B',True)
 
-        # JBA - start_playback is the offending line that causes a bunch of
-        # audio io errors at start-up.
-        # Tried faking it by putting silence in ring buff but didnt work
-        #self.rb.push(self.long_space)
-        #self.player.start_playback(0,False)
-        #self.start()
-        #time.sleep(5)
-        #sys.exit(0)
-
     #def change_freq():
     #    self.gen_elements(self.WPM,1-self.nfrq)
 
