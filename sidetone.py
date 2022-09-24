@@ -44,9 +44,10 @@ AMP=0.5
 
 ################################################################################
 
-def init_sidetone(P):
+class AUDIO_SIDETONE():
     
-    if P.SIDETONE or True:
+    def __init__(self,P):
+    
         print('Init SIDETONE ...')
         P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
         P.keyer.sidetone = P.osc
@@ -55,33 +56,30 @@ def init_sidetone(P):
             P.q2     = queue.Queue(maxsize=0)
         else:
             P.q2     = Queue.Queue(maxsize=0)
-            
-        sidetone = threading.Thread(target=sidetone_executive, args=(P,),\
+
+        if False:
+            sidetone = threading.Thread(target=self.sidetone_executive, args=(self,),\
                                     name='Sidetone Osc')
-        sidetone.setDaemon(True)
-        sidetone.start()
-        P.threads.append(sidetone)
+            sidetone.setDaemon(True)
+            sidetone.start()
+            P.threads.append(sidetone)
         
-    else:
-        P.q2=None
-        P.osc=None
 
+    def sidetone_executive(self):
+        print('SIDETONE Exec started ...')
 
-def sidetone_executive(P):
-    print('SIDETONE Exec started ...')
-
-    while not P.Stopper.isSet():
-        if P.q2.qsize()>0:
-            msg = P.q2.get()
-            P.q2.task_done()
-            msg = msg.replace('[LOG]','')
-            print('SIDETONE Exec: msg=',msg)
-            if P.osc.enabled:
-                P.osc.send_cw(msg,P.keyer.WPM,0,P.SIDETONE)
-        else:
-            time.sleep(0.1)
+        while not P.Stopper.isSet():
+            if P.q2.qsize()>0:
+                msg = P.q2.get()
+                P.q2.task_done()
+                msg = msg.replace('[LOG]','')
+                print('SIDETONE EXEC: msg=',msg)
+                if P.osc.enabled:
+                    P.osc.send_cw(msg,P.keyer.WPM,0,P.SIDETONE)
+            else:
+                time.sleep(0.1)
                 
-    print('SIDETONE Done.')
+        print('SIDETONE EXEC Done.')
         
 
 class SIDETONE_OSC():

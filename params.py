@@ -153,6 +153,7 @@ class PARAMS:
                               help='Use history from adif log')
         args = arg_proc.parse_args()
 
+        self.OP_STATE      = 0
         self.SPRINT        = args.sprint
         self.CAPTURE       = args.capture
         self.RIG_AUDIO_IDX = None

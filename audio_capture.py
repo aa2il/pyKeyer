@@ -27,17 +27,6 @@ from audio_io import WaveRecorder
 
 ############################################################################################
 
-"""
-        # Capture
-        if False:
-            col += 2
-            self.CaptureBtn = Button(self.root, text='Capture',command=self.CaptureAudioCB ) 
-            self.CaptureBtn.grid(row=row,column=col,sticky=E+W)
-            tip = ToolTip(self.CaptureBtn, ' Capture Rig Audio ' )
-            self.CaptureAudioCB(-1)
-        
-"""
-
 class AUDIO_CAPTURE():
     def __init__(self,P):
 

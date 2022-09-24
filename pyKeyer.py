@@ -216,7 +216,8 @@ if False:
 
 # Create sidetone oscillator & start in a separate thread
 print('Creating Sidetone ...')
-init_sidetone(P)
+#init_sidetone(P)
+P.SideTone = AUDIO_SIDETONE(P)
 
 # Set up a thread for audio capture
 if P.CAPTURE or True:

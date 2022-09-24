@@ -147,7 +147,7 @@ class CQP_KEYING(DEFAULT_KEYING):
     def enable_boxes(self,gui):
 
         gui.contest=True
-        gui.ndigits=3
+        gui.ndigits=2
         gui.hide_all()
         self.macros=[1,None,2]
 

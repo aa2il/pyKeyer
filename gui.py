@@ -66,7 +66,6 @@ from paddling import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
-from sidetone import init_sidetone
 from utilities import cut_numbers,freq2band
 import platform
 
@@ -126,6 +125,7 @@ class GUI():
         self.P.LAST_MSG = -1
         self.P.root = self.root
         self.text_buff=''
+        self.macro_label=''
 
     # Function to actually construct the gui
     def construct_gui(self):
@@ -151,7 +151,6 @@ class GUI():
         self.root.protocol("WM_DELETE_WINDOW", self.Quit)
 
         self.MACRO_TXT = StringVar()
-        self.macro_label = ''
 
         self.last_call=''
         self.last_shift_key=''
@@ -925,6 +924,10 @@ class GUI():
         #print self.macros
         if arg not in self.macros:
             return
+
+        P=self.P
+        P.LAST_MACRO=arg
+        P.OP_STATE=0
         
         txt = self.macros[arg]["Text"]
         if arg in [0,5]:
@@ -933,10 +936,21 @@ class GUI():
             self.P.LAST_MSG = -1                 # Last was TU or my call
         #print 'LAST_MSG=',txt,arg,self.P.LAST_MSG
 
+        label = self.macros[arg]["Label"]
+        if 'CQ' in label or 'QRZ' in label:
+            P.OP_STATE |= 1
+        if 'Reply' in label:
+            P.OP_STATE |= 2+32
+        if 'TU' in label:
+            P.OP_STATE |= 4
+        if '?' in label and 'QRZ?' not in label:
+            P.OP_STATE |= 8
+        self.macro_label=label
+        print('SEND_MACRO: arg=',arg,'\tlabel=',label,'\tOP_STATE=',P.OP_STATE)
+
         # Highlight appropriate buttons for running or s&p
         self.P.KEYING.highlight(self,arg)
-        self.macro_label = self.macros[arg]["Label"]
-        print("\nSend_Marco:",arg,':',self.macro_label,txt)
+        print("\nSend_Marco:",arg,':',txt)
         if '[SERIAL]' in txt:
             cntr = self.sock.get_serial_out()
             if not cntr or cntr=='':
@@ -947,7 +961,7 @@ class GUI():
             self.serial_out = self.cntr
             print('GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
 
-        # Fill in nam
+        # Fill in name
         name=self.get_name().upper()
         if name=='' and '[NAME]' in txt:
             try:
@@ -1656,7 +1670,8 @@ class GUI():
             print('Call=',call)
             if self.contest:
                 print('Exch=',exch)
-            tkinter.messagebox.showerror("pyKeyer - Logging",errmsg)
+            if False:
+                tkinter.messagebox.showerror("pyKeyer - Logging",errmsg)
 
         # Save these for error checking in practice mode
         #print '%%% Saving exchange ***'
@@ -2135,7 +2150,6 @@ class GUI():
             # If we're in a contest and the return key was pressed,
             # send response and get ready for the exchange
             if (key=='Return' or key=='KP_Enter') and len(call)>0:
-                print('*_*_*_*_*_*_*_*_*_* PRACTICE_STATE=',self.P.PRACTICE_STATE)
                 next_widget = self.P.KEYING.next_event(key,event)
 
                 """

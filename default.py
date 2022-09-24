@@ -287,7 +287,9 @@ class DEFAULT_KEYING():
 
             # Send a macro if needed
             if key=='Return' or key=='KP_Enter':
-                if P.PRACTICE_STATE<6 or event.widget!=gui.call:
+                #if P.PRACTICE_STATE<6 or event.widget!=gui.call:
+                #if True:
+                if (P.OP_STATE & 32)==0 or event.widget!=gui.call:
                     #print('idx=',idx)
                     #print('macros=',self.macros)
                     n=self.macros[idx]

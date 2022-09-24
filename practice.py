@@ -105,6 +105,8 @@ class CODE_PRACTICE():
     # Routine to execute a single practice qso
     def practice_qso(self):
 
+        DEBUG=1
+
         P     = self.P
         HIST  = self.HIST
         keyer = P.keyer
@@ -112,8 +114,8 @@ class CODE_PRACTICE():
         MY_CALL = P.SETTINGS['MY_CALL']
     
         # Pick a call at random
-        P.PRACTICE_STATE=0
-        print('\nPRACTICE_QSO: Waiting 0 - Picking call ... ',self.Ncalls-1)
+        if DEBUG:
+            print('\nPRACTICE_QSO: Waiting 0 - Picking call ... ',self.Ncalls-1)
         done = False
         repeats=False
         ntries=0
@@ -130,38 +132,37 @@ class CODE_PRACTICE():
                 sys.exit(0)
 
         # Wait for op to hit CQ
-        P.PRACTICE_STATE=1
-        print('PRACTICE_QSO: Waiting 1a - hit CQ ... call=',call,
-              '... label=',P.gui.macro_label,'...')
+        if DEBUG:
+            print('PRACTICE_QSO: Waiting 1a - op CQ ... call=',call,'\t',P.OP_STATE)
         self.wait_for_keyer()
-        P.PRACTICE_STATE=2
         Done=False
         while not Done:
-            Done= ('CQ'  in P.gui.macro_label) or ('QRZ'   in P.gui.macro_label) or \
-                  ('QSY' in P.gui.macro_label) or (MY_CALL in P.gui.macro_label) or \
-                  ('Log QSO' in P.gui.macro_label and P.SPRINT) or \
-                  self.P.Stopper.isSet()
-            #print('PRACTICE_QSO: ',P.gui.macro_label,Done)
+            #Done= ('CQ'  in P.gui.macro_label) or ('QRZ'   in P.gui.macro_label) or \
+            #      ('QSY' in P.gui.macro_label) or (MY_CALL in P.gui.macro_label) or \
+            #      ('Log QSO' in P.gui.macro_label and P.SPRINT) or \
+            #      self.P.Stopper.isSet()
+            Done = (P.OP_STATE & 1) or self.P.Stopper.isSet()
             time.sleep(0.1)
-            #if not Done and keyer.evt.isSet():
-            #    keyer.evt.clear()
 
-        # Wait for handshake with keyer
-        #print('PRACTICE_QSO: Waiting 1b - Handshake with keyer ...')
-        if self.P.Stopper.isSet():
+        # Abort
+        if DEBUG:
+            print('PRACTICE_QSO: Waiting 1b - Got CQ ...')
+        if P.Stopper.isSet():
             return
-        #print('PRACTICE_QSO: Waiting 1c - ',keyer.evt.isSet() )
+        P.OP_STATE ^= 1          # Clear CQ/QRZ
+        
+        # Wait for handshake with keyer
+        if DEBUG:
+            print('PRACTICE_QSO: Waiting 1c for keyer ... ',keyer.evt.isSet() )
         keyer.evt.clear()
-        P.gui.macro_label=''
-        print('PRACTICE_QSO: Waiting 1d - Got handshake with keyer ...')
+        if DEBUG:
+            print('PRACTICE_QSO: Waiting 1d - Got handshake with keyer ...')
 
         # Send a call
-        P.PRACTICE_STATE=3
         done = False
         while not done:
 
             # Timing is critical so we make sure we have control
-            P.PRACTICE_STATE=4
             lock.acquire()
             txt1 = ' '+call
             if P.KEYING:
@@ -169,9 +170,10 @@ class CODE_PRACTICE():
                 exch2 = txt2
             else:
                 txt2='?????'
-                print('CODE PRACTICE: Unknown Contest')
+                print('PRACTICE_QSO: Unknown Contest')
                                     
-            print('CODE PRACTICE: Sending call=',txt1)
+            if DEBUG:
+                print('PRACTICE_QSO: Sending call=',txt1)
             if self.P.NANO_IO:
                 nano_write(self.P.ser,txt1)
             else:
@@ -180,43 +182,56 @@ class CODE_PRACTICE():
             lock.release()
 
             # Wait for op to answer
-            P.PRACTICE_STATE=5
-            print('CODE PRACTICE: Waiting 2a - Answer ... keyer.evt=',
-                  keyer.evt.isSet())
+            if DEBUG:
+                print('PRACTICE_QSO: Waiting 2a - op exchange ... op_state=',P.OP_STATE)
             self.wait_for_keyer()
-            while ('Reply' not in P.gui.macro_label) and ('?' not in P.gui.macro_label) and \
-                  (MY_CALL not in P.gui.macro_label) and not self.P.Stopper.isSet():
+            while not Done:
+                #Done = ('Reply' in P.gui.macro_label) or ('?' in P.gui.macro_label) or \
+                #    (MY_CALL in P.gui.macro_label) or self.P.Stopper.isSet():
+                Done = (P.OP_STATE & (2+8)) or self.P.Stopper.isSet()
                 time.sleep(0.1)
-            done = ('Reply' in P.gui.macro_label) or (MY_CALL in P.gui.macro_label)
-            P.PRACTICE_STATE=6
-            if not done:
-                repeats=repeats or ('?' in P.gui.macro_label)
-            P.gui.macro_label=''
+
+            # Abort
+            if DEBUG:
+                print('PRACTICE_QSO: Waiting 2b - Got answer - op_state=',P.OP_STATE)
             if self.P.Stopper.isSet():
                 return
+            
+            # Check for repeats
+            #done = ('Reply' in P.gui.macro_label) or (MY_CALL in P.gui.macro_label)
+            done = P.OP_STATE & 2
+            P.OP_STATE ^= 2          # Clear Reply
+            if not done:
+                repeats=repeats or (P.OP_STATE & 8)
+                P.OP_STATE ^= 8          # Clear Repeat
+
+            # Wait for handshake with keyer
+            if DEBUG:
+                print('PRACTICE_QSO: Waiting 2c - keyer',P.OP_STATE,done,repeats)
             keyer.evt.clear()
-            print('CODE PRACTICE: Waiting 2b - Got Answer ... done=',done)
+            if DEBUG:
+                print('PRACTICE_QSO: Waiting 2d - keyer ... done=',done,repeats)
 
         # Send exchange 
-        P.PRACTICE_STATE=7
         done = False
         while not done:
             
+            # Abort
             if self.P.Stopper.isSet():
                 return
 
             # Check if call is correct
             call2 = P.gui.get_call().upper()
             if call2==None or txt2==None:
-                print('\n@@@@@@@@@@@@@@@@@ CODE_PRACTICE: Unexpected string(s):\ncall=',call,
+                print('\n@@@@@@@@@@@@@@@@@ PRACTICE_QSO: Unexpected string(s):\ncall=',call,
                       '\ncall2=',call2,'\ntxt2=',txt2)
             if call2!=call:
                 txt2 = call+' '+txt2
             
             # Timing is critical so we make sure we have control
-            P.PRACTICE_STATE=8
             lock.acquire()
-            print('CODE PRACTICE: Sending exch=',txt2)
+            if DEBUG:
+                print('PRACTICE_QSO: Sending exch=',txt2)
             if self.P.NANO_IO:
                 nano_write(self.P.ser,txt2)
             else:
@@ -224,24 +239,32 @@ class CODE_PRACTICE():
             lock.release()
 
             # Wait for op to answer
-            P.PRACTICE_STATE=9
-            print('CODE PRACTICE: Waiting 3a - Answer...')
+            if DEBUG:
+                print('PRACTICE_QSO: Waiting 3a - op to Answer ... op_state=',P.OP_STATE)
             self.wait_for_keyer()
-            label = P.gui.macro_label.upper()
-            while ('TU' not in label) and ('?' not in label) and \
-                  ('LOG' not in label) and not self.P.Stopper.isSet(): ### and ('CQ' not in label):
+            while not Done:
+                #Done = ('TU' in label) or ('?' in label) or \
+                #    ('LOG' in label) ort self.P.Stopper.isSet()
+                Done = (P.OP_STATE & 4) or self.P.Stopper.isSet()
                 time.sleep(0.1)
-                label = P.gui.macro_label.upper()
-                if len(label)>0:
-                    print('CODE_PRACTICE 3a: label=',label,'\tkeyer.evt=',keyer.evt.isSet())
+
+            # Abort
+            if DEBUG:
+                print('PRACTICE_QSO: Waiting 3b - Got Answer, keyer ... op_state=',P.OP_STATE)
             if self.P.Stopper.isSet():
                 return
-            done = ('TU' in label) or ('LOG' in label)
+            #done = ('TU' in label) or ('LOG' in label)
+            done = P.OP_STATE & 4
+            P.OP_STATE ^= 4          # Clear TU
 
-            print('CODE PRACTICE: Waiting 3b - Answered ... done=',done,'\tlabel=',label)
+            if DEBUG:
+                print('PRACTICE_QSO: Waiting 3c - Got keyer ... done=',done)
             if not done:
-                repeats=repeats or ('?' in label)
-                #print('Repeats=',repeats,'\tKEYING=',P.KEYING)
+                repeats=repeats or (P.OP_STATE & 8)
+                P.OP_STATE ^= 8          # Clear Repeat
+                label=P.gui.macro_label.upper()
+                if DEBUG:
+                    print('Waiting 3d - Repeats=',repeats,'\tlabel=',label)
                 
                 # Determine next elementx
                 if P.KEYING:
@@ -250,12 +273,11 @@ class CODE_PRACTICE():
                     txt2=call+' '+call
 
                 # Get ready to try again
-                P.gui.macro_label=''
                 keyer.evt.clear()
-            
+                
         # Error checking - keyer event hasn't been cleared yet so the gui boxes won't get erased too fast
-        P.PRACTICE_STATE=10
-        print('CODE PRACTICE: Error check ...')
+        if DEBUG:
+            print('PRACTICE_QSO: Error check ...')
         call2 = P.gui.get_call().upper()
         if P.KEYING:
             match = P.KEYING.error_check()
@@ -284,9 +306,7 @@ class CODE_PRACTICE():
                     #print("NO ERROR - WPM UP ...")
                     P.gui.set_wpm(+1)
         print(' ')
-        P.PRACTICE_STATE=11
 
-            
     # Routine to wait for keyer to flush - bail out if stopper gets set
     def wait_for_keyer(self):
         while not self.P.keyer.evt.wait(timeout=1):
