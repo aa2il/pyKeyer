@@ -48,25 +48,53 @@ class AUDIO_SIDETONE():
     
     def __init__(self,P):
     
-        print('Init SIDETONE ...')
-        P.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
-        P.keyer.sidetone = P.osc
+        print('AUDIO SIDETONE: Init ...')
+        self.P=P
+        self.started = False
+        self.enabled = False
+        self.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
+        P.keyer.sidetone = self.osc
+        P.osc=self.osc
 
         if sys.version_info[0]==3:
-            P.q2     = queue.Queue(maxsize=0)
+            self.q2     = queue.Queue(maxsize=0)
         else:
-            P.q2     = Queue.Queue(maxsize=0)
+            self.q2     = Queue.Queue(maxsize=0)
+        P.q2=self.q2
 
-        if False:
-            sidetone = threading.Thread(target=self.sidetone_executive, args=(self,),\
+        if True:
+            self.sidetone = threading.Thread(target=self.sidetone_executive, args=(),\
                                     name='Sidetone Osc')
-            sidetone.setDaemon(True)
-            sidetone.start()
-            P.threads.append(sidetone)
+            self.sidetone.setDaemon(True)
+            #self.sidetone.start()
+            P.threads.append(self.sidetone)
         
-
+    def start(self):
+        print('AUDIO SIDETONE: Start ...',self.started)
+        #self.player.start_playback(0,False)
+        self.osc.start()
+        if not self.started:
+            print('AUDIO SIDETONE: Starting Exec ...')
+            self.sidetone.start()
+        self.started = True
+        self.enabled = True
+        
+    def pause(self):
+        print('AUDIO SIDETONE: Pause ...')
+        #self.player.pause()
+        self.enabled = False
+        self.osc.pause()
+        
+    def resume(self):
+        print('AUDIO SIDETONE: Resume ...')
+        #self.player.resume()
+        self.enabled = True
+        self.osc.resume()
+        
+            
     def sidetone_executive(self):
-        print('SIDETONE Exec started ...')
+        print('AUDIO SIDETONE: Exec started ...')
+        P=self.P
 
         while not P.Stopper.isSet():
             if P.q2.qsize()>0:
@@ -85,7 +113,6 @@ class AUDIO_SIDETONE():
 class SIDETONE_OSC():
     def __init__(self,WPM,AMP,F0,FS):
 
-        print("\nCreating code practice osc ...")
         self.started = False
         self.enabled = False
         self.AMP=AMP
@@ -94,6 +121,7 @@ class SIDETONE_OSC():
         else:
             self.F0=[F0]
         self.FS=float(FS)
+        print("\nCreating code practice osc ... FS=",self.FS,'\tF0=',self.F0)
 
         # Generate sigs
         self.gen_elements(WPM,0)

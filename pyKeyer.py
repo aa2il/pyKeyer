@@ -230,7 +230,7 @@ if P.CAPTURE or True:
 
 # Load history from previous contests
 print('Loading Master History file ...')
-P.MASTER = load_history(P.HIST_DIR+'master.csv')
+P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
 P.calls = list(P.MASTER.keys())
 print('... Info for',len(P.calls),'calls were loaded.')
 
@@ -292,7 +292,8 @@ print('Grids:',P.grids)
 # Start sidetone and capture audio processing
 if P.SIDETONE:
     print('Starting Sidetone ...')
-    P.osc.start()
+    P.SideTone.start()
+    #P.osc.start()
 if P.CAPTURE:
     P.capture.start()
 

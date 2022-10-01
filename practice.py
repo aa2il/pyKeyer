@@ -60,7 +60,7 @@ class CODE_PRACTICE():
         elif P.HISTORY2==P.HISTORY:
             self.HIST = self.P.HIST
         elif len(P.HISTORY2)>0:
-            self.HIST = load_history(P.HISTORY2)
+            self.HIST,fname9 = load_history(P.HISTORY2)
         else:
             print('Need a history file for practice mode')
             P.SHUTDOWN=True
@@ -329,7 +329,7 @@ if __name__ == '__main__':
 
     HISTORY = '../history/data/SS_Call_History_Aug2018.txt'
 
-    HIST = load_history(HISTORY)
+    HIST,fname9 = load_history(HISTORY)
     calls = list(HIST.keys())
     for call in calls:
         h=HIST[call]

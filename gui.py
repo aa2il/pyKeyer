@@ -126,6 +126,7 @@ class GUI():
         self.P.root = self.root
         self.text_buff=''
         self.macro_label=''
+        self.last_text=None
 
     # Function to actually construct the gui
     def construct_gui(self):
@@ -406,6 +407,12 @@ class GUI():
         self.txt.config(yscrollcommand=self.S.set)
         self.txt.bind("<Tab>", self.key_press )
 
+        if True:
+            self.txt.bind('<Button-1>', self.Text_Mouse )      
+            self.txt.bind('<Button-2>', self.Text_Mouse )      
+            self.txt.bind('<Button-3>', self.Text_Mouse )      
+
+
         # Bind a callback to be called whenever a key is pressed
         self.root.bind("<Key>", self.key_press )
         #self.root.bind("all", self.key_press )
@@ -599,6 +606,40 @@ class GUI():
             self.S2.grid_remove()
         Grid.rowconfigure(self.root, self.txt2_row, weight=wght)             # Allows or disables resizing
 
+
+    # Callback to process mouse events on the big text box
+    def Text_Mouse(self,evt):
+        print('TEXT MOUSE button=',evt.num)
+        if evt.num==1:
+            # Left click --> select
+            try:
+                #print(SEL_FIRST,SEL_LAST)
+                txt = self.txt.get(SEL_FIRST,SEL_LAST)
+                print("Select text:",txt)
+                # print("SEL_FIRST:",type(SEL_FIRST),"  SEL_LAST:",SEL_LAST)
+            except TclError:
+                print("No text selected")
+        elif evt.num==2:
+            # Middle click --> insert
+            try:
+                txt = self.txt.get(SEL_FIRST,SEL_LAST)
+                print("Select text:",txt)
+            except TclError:
+                print("No text selected")
+                txt = self.last_txt
+            print('Insert')
+            #self.txt.insert(END, txt+'\n')            
+            self.txt.see(END)
+            self.last_txt=txt
+            if self.P.Immediate_TX:
+                self.q.put(txt)
+            else:
+                self.text_buff+=txt
+                self.q.put(txt+' ')
+                self.text_buff=''
+        elif evt.num==3:
+            # Right click --> ???
+            pass
         
     # Callback to process mouse events on the spot buttons
     def Spots_Mouse(self,evt):
@@ -1430,6 +1471,8 @@ class GUI():
         #for th in threads:
         for th in self.P.threads:
             name = th.getName()
+            if name=='Sidetone Osc' and not self.P.SideTone.started:
+                continue
             print('\tWaiting for thread to quit -',name,' ...')
             self.P.Stopper.set()
             th.join()
@@ -2346,13 +2389,13 @@ class GUI():
         print("Toggling Sidetone ...")
         self.P.SIDETONE = not self.P.SIDETONE
         if self.P.SIDETONE:
-            if self.P.osc.started:
-                self.P.osc.resume()
+            if self.P.SideTone.started:
+                self.P.SideTone.resume()
             else:
-                self.P.osc.start()
+                self.P.SideTone.start()
         else:
-            if self.P.osc.started and self.P.osc.enabled:
-                self.P.osc.pause()
+            if self.P.SideTone.started and self.P.SideTone.enabled:
+                self.P.SideTone.pause()
 
     # Callback to turn capture on and off
     def CaptureCB(self):
@@ -2394,7 +2437,11 @@ class GUI():
         else:
             self.scp_lab.grid_remove()
             self.scp.grid_remove()
-               
+
+    # Callback to put rig into CW mode
+    def SetCWModeCB(self):
+        self.sock.set_mode('CW')
+            
 ############################################################################################
     
     # Function to create menu bar
@@ -2410,15 +2457,19 @@ class GUI():
         Menu1.add_command(label="Clear Stores ...", command=self.ClearState)
         Menu1.add_separator()
         
-        if self.P.CAPTURE or True:
-            self.Capturing = BooleanVar(value=self.P.CAPTURE)
-            Menu1.add_checkbutton(
-                label="Capture Audio",
-                underline=0,
-                variable=self.Capturing,
-                command=self.CaptureCB
-            )
-            # command=self.P.capture.CaptureAudioCB
+        Menu1.add_checkbutton(
+            label="Set Rig CW",
+            underline=0,
+            command=self.SetCWModeCB
+        )
+        
+        self.Capturing = BooleanVar(value=self.P.CAPTURE)
+        Menu1.add_checkbutton(
+            label="Capture Audio",
+            underline=0,
+            variable=self.Capturing,
+            command=self.CaptureCB
+        )
         
         self.Tuning = BooleanVar(value=False)
         Menu1.add_checkbutton(

@@ -61,7 +61,7 @@ def process_chars(P):
 
             # Timing is critical so we make sure we have control
             if P.q2 and not P.PRACTICE_MODE and (P.SIDETONE or P.CAPTURE):
-                print('\n=========================================\n')
+                print('\n=============== Pushing txt to q2:',txt)
                 P.q2.put(txt)
             else:
                 print('-=-=-=-=-=-=--=-=---=-=-=-=-=-=-=-=-=-=-=------------')

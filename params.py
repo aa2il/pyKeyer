@@ -102,7 +102,7 @@ class PARAMS:
         arg_proc.add_argument('-force', action='store_true',
                               help='Force rig connection (debugging)')
         arg_proc.add_argument('-ca_only', action='store_true',
-                              help='Only use California Stations')
+                              help='Only use California Stations for Practice')
         arg_proc.add_argument("-wpm", help="CW speed",type=int,default=20)
         arg_proc.add_argument('-adjust', action='store_true',
                               help='Adjust speed based on correct copy')
@@ -320,9 +320,10 @@ class PARAMS:
 
         # Where to find/put data files
         self.PLATFORM=platform.system()
-        MY_CALL = self.SETTINGS['MY_CALL'].replace('/','_')
-        self.HIST_DIR=os.path.expanduser('~/'+MY_CALL+'/')
-        self.DATA_DIR=os.path.expanduser('~/'+MY_CALL+'/')
+        #MY_CALL = self.SETTINGS['MY_CALL'].replace('/','_')
+        MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
+        self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+        self.DATA_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
         self.HISTORY = self.HIST_DIR+'master.csv'
                     
         #sys,exit(0)

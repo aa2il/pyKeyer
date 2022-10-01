@@ -49,7 +49,9 @@ class AUDIO_CAPTURE():
         """
 
     def start(self):
+        print('CAPTURE Starting ...',self.P.RIG_AUDIO_IDX)
         if not self.P.RIG_AUDIO_IDX:
+            self.CaptureAudioCB(-1)
             self.P.RIG_AUDIO_IDX = self.P.rec.list_input_devices('USB Audio CODEC')
         self.P.rec.start_recording(self.P.RIG_AUDIO_IDX)
         self.started = True
@@ -66,16 +68,17 @@ class AUDIO_CAPTURE():
     # Callback to toggle audio recording on & off
     def CaptureAudioCB(self,iopt=None):
         P=self.P
-        print("============================================== Capture Audio ...",iopt,P.CAPTURE)
+        print("\nCAPTURE AUDIO:  iopt=",iopt,'\tCAPTURE=',P.CAPTURE)
         if iopt==-1:
             iopt=None
             P.CAPTURE = not P.CAPTURE
+            print("CAPTURE AUDIO:  Toggled P.CAPTURE",P.CAPTURE)
         if (iopt==None and not P.CAPTURE) or iopt==1:
             if not P.CAPTURE:
                 #self.CaptureBtn['text']='Stop Capture'
                 #self.CaptureBtn.configure(background='red',highlightbackground= 'red')
                 P.CAPTURE = True
-                print('Capture rig audio started ...')
+                print('CAPTURE AUDIO: Preparing wave recorder for rig audio capture ...')
 
                 s=time.strftime("_%Y%m%d_%H%M%S", time.gmtime())      # UTC
                 dirname=''
@@ -90,22 +93,20 @@ class AUDIO_CAPTURE():
                     rb22=P.osc.rb2
                 else:
                     rb22=None
-                RATE=8000
+                WAVE_RATE=8000
                 nchan=1
                 P.rec = WaveRecorder(P.wave_file, 'wb',
                                      channels=nchan,
-                                     rate=RATE,
-                                     wav_rate=RATE,
+                                     wav_rate=WAVE_RATE,
                                      rb2=rb22,
                                      GAIN=gain)
                 
         else:
             if P.CAPTURE:
-                #self.CaptureBtn['text']='Capture'
-                #self.CaptureBtn.configure(background='green',highlightbackground= 'green')
                 if P.RIG_AUDIO_IDX:
                     P.rec.stop_recording()
                     P.rec.close()
+                    print('CAPTURE AUDIO : Wave recorder stopped ...')
                 P.CAPTURE = False
-                print('Capture rig audio stopped ...')
+                print('CAPTURE AUDIO : Capture rig audio stopped ...')
 

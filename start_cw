@@ -67,7 +67,7 @@ set CONTEST=""
 #set CONTEST="vhf"
 #set CONTEST="cqvhf"
 #set CONTEST="fd"
-#set CONTEST="cqp"
+set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
@@ -75,9 +75,7 @@ set CONTEST=""
 
 # Various options for pyKeyer
 set CAPTURE=""
-#set CAPTURE="-capture"
-#set CAPTURE="-capture -sidetone"
-#set CAPTURE=""
+set CAPTURE="-capture -sidetone"
 set MODE="-mode CW"
 
 set PRACTICE=""
@@ -258,8 +256,9 @@ else if( $CONTEST == "iaru" )then
 
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then
-    set HINTS="-use_log_hist -ca_only"
+    set HINTS="-use_log_hist -autofill -nrows 1"
     set WPM=25
+    set BM_OPTS = "$BM_OPTS -contest -hours 30 -cwops"
 
 # Settings for ARRL & CQ VHF
 else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
@@ -476,8 +475,10 @@ if( 1 )then
     endif
     
     set CMD="pyKeyer.py $OPTS"
-    echo $CMD >& /tmp/KEYER 
-    $CMD >>& /tmp/KEYER &
+    echo " "   >& /tmp/KEYER 
+    echo $CMD >>& /tmp/KEYER 
+    echo " "  >>& /tmp/KEYER 
+    $CMD      >>& /tmp/KEYER &
     #exit
     sleep 1
 
