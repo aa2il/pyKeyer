@@ -55,7 +55,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         if self.P.PRACTICE_MODE or True:
             #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [NAME] 73 EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [NAME] 73EE [LOG]'}
         else:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73 EE [LOG]'}
@@ -70,6 +70,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
 
         MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
         MACROS[9]     = {'Label' : 'No. 2x'    , 'Text' : '[-2][MYCWOPS] [MYCWOPS] [+2]'}

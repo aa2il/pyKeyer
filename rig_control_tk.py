@@ -46,7 +46,6 @@ class RIG_CONTROL():
         self.win.title("Rig Control")
         self.tabs = ttk.Notebook(self.win)          # Create Tab Control
         self.win.withdraw()
-        #self.win.protocol("WM_DELETE_WINDOW", self.CloseWindow)
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
         if self.sock.connection == 'NONE':
@@ -73,7 +72,8 @@ class RIG_CONTROL():
             if ((b=='10m')   and (self.sock.rig_type2=='TS850'   )) or \
                ((b=='2m' )   and (self.sock.rig_type2=='FTdx3000')) or \
                ((b=='1.25m') and (self.sock.rig_type2=='IC706'   )) or \
-               ((b=='33cm')  and (self.sock.rig_type2=='FT991a'  )):
+               ((b=='33cm')  and (self.sock.rig_type2=='FT991a'  )) or \
+               ((b=='GEN')   and (self.sock.rig_type2=='IC9700'  )):
                 break
             if ((b in CONTEST_BANDS) or (b in NON_CONTEST_BANDS)) and \
                (self.sock.rig_type2=='IC9700'  ):

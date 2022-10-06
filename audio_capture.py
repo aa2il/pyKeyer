@@ -37,8 +37,8 @@ class AUDIO_CAPTURE():
 
     # Main routine that starts audio capture
     def run(self):
-        print('CAPTURE Exec Starting ...')
-        self.CaptureAudioCB(-1)
+        print('AUDIO_CAPTURE Exec Starting ...')
+        #self.CaptureAudioCB(-1)
 
         """
         # Loop until exit event is set
@@ -87,6 +87,8 @@ class AUDIO_CAPTURE():
 
                 if P.sock.rig_type2=='FT991a':
                     gain=[4,1]
+                elif P.sock.rig_type2=='FTdx3000':
+                    gain=[2,1]
                 else:
                     gain=[1,1]
                 if P.osc:

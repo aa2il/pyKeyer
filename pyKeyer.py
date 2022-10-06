@@ -290,7 +290,7 @@ print('Grids:',P.grids)
 #sys.exit(0)
 
 # Start sidetone and capture audio processing
-if P.SIDETONE:
+if P.SIDETONE or P.CAPTURE:
     print('Starting Sidetone ...')
     P.SideTone.start()
     #P.osc.start()

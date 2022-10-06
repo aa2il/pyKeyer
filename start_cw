@@ -67,7 +67,7 @@ set CONTEST=""
 #set CONTEST="vhf"
 #set CONTEST="cqvhf"
 #set CONTEST="fd"
-set CONTEST="cqp"
+#set CONTEST="cqp"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
@@ -104,12 +104,15 @@ else if( X$CONTEST == "X" )then
     #exit
 endif
 
-# VHF Contest
+# VHF Contest or VHF command center
 if( 0 )then
     set START_SDR     = 0
     set START_CLOCK   = 0
     set START_BANDMAP = 0
     set CONTEST       = "vhf"
+    set USE_NANO_IO   = 0
+    set RIG_TYPE1="IC9700"
+    #set RIG_TYPE1="FT991a"
 endif
 
 echo CONTEST=$CONTEST
@@ -478,7 +481,7 @@ if( 1 )then
     echo " "   >& /tmp/KEYER 
     echo $CMD >>& /tmp/KEYER 
     echo " "  >>& /tmp/KEYER 
-    $CMD      >>& /tmp/KEYER &
+    $CMD >>& /tmp/KEYER &
     #exit
     sleep 1
 

@@ -42,35 +42,43 @@ def process_chars(P):
             txt=q.get()
             q.task_done()
 
-            # Not sure whay this was here but it causes a problem when we get text from big box
-            if P.PRACTICE_MODE and False:
-                txt = ' '+txt
-
             # Check keyer speed on radio 
             this_time = time.time();
             if this_time - last_time>0.1 and not P.PRACTICE_MODE:
                 last_time=this_time
-                #WPM = socket_io.read_speed(P.sock)
-                #print('PROCESS_CHARS: Reading speed')
-                WPM = P.sock.read_speed()
-                if WPM!=int( P.gui.WPM_TXT.get() ) and WPM>=5:
-                    keyer.set_wpm(WPM)
-                    P.gui.WPM_TXT.set(str(WPM))
+                try:
+                    WPM = P.sock.read_speed()
+                    if WPM!=int( P.gui.WPM_TXT.get() ) and WPM>=5:
+                        keyer.set_wpm(WPM)
+                        P.gui.WPM_TXT.set(str(WPM))
+                except Exception as e: 
+                    print('PROCESS CHARS - Unable to check radio keyer speed')
+                    print( str(e) )
 
             print('PROCESSS_CHARS: txt=',txt,'\tWPM=',keyer.WPM)
 
-            # Timing is critical so we make sure we have control
+            # Check if we need to send this sidetone also
             if P.q2 and not P.PRACTICE_MODE and (P.SIDETONE or P.CAPTURE):
-                print('\n=============== Pushing txt to q2:',txt)
-                P.q2.put(txt)
-            else:
-                print('-=-=-=-=-=-=--=-=---=-=-=-=-=-=-=-=-=-=-=------------')
+                txt2=''
+                keep=True
+                for ch in txt:
+                    if ch=='[':
+                        keep=False          # Skip over command sequences
+                    elif ch==']':
+                        keep=True
+                    elif keep:
+                        txt2+=ch
+                print('\n=============== Pushing txt to q2:',txt2)
+                P.q2.put(txt2)
+                
+            # Timing is critical so we make sure we have control
             lock.acquire()
             keyer.send_msg(txt)
             lock.release()
 
         else:
-            
+
+            # Check NanoIO device for any messages
             if P.NANO_IO:
                 
                 #print('PROCESSS_CHARS: Hey 1')
