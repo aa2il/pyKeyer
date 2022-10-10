@@ -57,6 +57,8 @@ class PARAMS:
                               help='ARRL 10m')
         arg_proc.add_argument('-cqp', action='store_true',
                               help='California QP')
+        arg_proc.add_argument('-state', help='State QP',
+                              type=str,default=None)
         arg_proc.add_argument('-fd', action='store_true',
                               help='ARRL Field Day')
         arg_proc.add_argument('-vhf', action='store_true',
@@ -210,11 +212,14 @@ class PARAMS:
         self.USE_SCP       = args.scp
         self.HIST          = {}
 
+        self.STATE_QPs = ['OCQP','AZQP','NVQP','NYQP','PAQP','SDQP']
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', \
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF',
                            'ARRL-10M','ARRL-DX', \
-                           'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO']
+                           'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO'] + \
+                           self.STATE_QPs
+
         self.SHOW_TEXT_BOX2=args.split
         if self.SPRINT:
             print('NEED TO FIX THIS!!!!!!!!!!!!!')
@@ -251,7 +256,10 @@ class PARAMS:
             MAX_AGE_HOURS=30
         elif args.cqp:
             self.contest_name='CQP'
-            MAX_AGE_HOURS=48 #??
+            MAX_AGE_HOURS=30
+        elif args.state!=None:
+            self.contest_name=args.state.upper()+'QP'
+            MAX_AGE_HOURS=48
         elif args.cwopen:
             self.contest_name='CW Open'
             MAX_AGE_HOURS=4

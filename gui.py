@@ -1110,6 +1110,8 @@ class GUI():
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
+        elif val in self.P.STATE_QPs:
+            self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)
         elif val=='IARU-HF':

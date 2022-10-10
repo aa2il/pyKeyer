@@ -43,6 +43,8 @@ class DEFAULT_KEYING():
         self.aux_cb=None
         self.number_key=None
         self.contest_duration = None
+        self.LAB1=None
+        self.LAB2=None
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
@@ -54,30 +56,90 @@ class DEFAULT_KEYING():
             P.HISTORY = None
         P.HISTORY=os.path.expanduser(P.HISTORY)
         P.HISTORY2 = P.HISTORY
+        P.CONTEST_ID=''
         
         # Init super check partial
         self.SCP=SUPER_CHECK_PARTIAL()
+        
 
     # Routient to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]  = {'Label' : 'CQ'      , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
-        MACROS[1]  = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
-        MACROS[2]  = {'Label' : 'Reply'   , 'Text' : 'RTU [RST] [MYSTATE] '}
-        MACROS[3]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
+        print('DEFAULT MACROS: contest_name=',self.contest_name)
+        if self.contest_name=='CW Default':
+            
+            MACROS[0]  = {'Label' : 'CQ'      , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
+            MACROS[1]  = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
+            MACROS[2]  = {'Label' : 'Reply'   , 'Text' : 'RTU [RST] [MYSTATE] '}
+            MACROS[3]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
+            
+            MACROS[4]  = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
+            MACROS[5]  = {'Label' : '73'      , 'Text' : '73 '}
+            MACROS[6]  = {'Label' : 'BK'      , 'Text' : 'BK '}
+            MACROS[7]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
+            
+            MACROS[8]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
+            MACROS[9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
+            MACROS[10] = {'Label' : 'V    '   , 'Text' : 'V'}
+            MACROS[11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV [-10]VVV'}
+
+        else:
+
+            CONTEST=self.contest_name
+            if self.contest_name in ['OCQP']:
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'NR'
+                EXCH2 = '[SERIAL]'
+            elif self.contest_name in ['NVQP']:
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSEC]'
+            elif self.contest_name in ['AZQP','SDQP','NYQP']:
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
+            elif self.contest_name in ['PAQP']:
+                LAB1  = 'NR'
+                EXCH1 = '[SERIAL]'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSEC]'
+
+            self.LAB1=LAB1
+            self.LAB2=LAB2
+            self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] '}
+            #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+            MACROS[0+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU '+EXCH1+' '+EXCH2+' '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [+2]73 EE [-2] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+            MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+            MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[4]  = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
-        MACROS[5]  = {'Label' : '73'      , 'Text' : '73 '}
-        MACROS[6]  = {'Label' : 'BK'      , 'Text' : 'BK '}
-        MACROS[7]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
+            MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU '+EXCH1+' '+EXCH2+' '}
+            MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU '+EXCH1+' '+EXCH1+' '+EXCH2+' '+EXCH2+' '}
+            MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+            MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+            MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+            MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
-        MACROS[8]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
-        MACROS[9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
-        MACROS[10] = {'Label' : 'V    '   , 'Text' : 'V'}
-        MACROS[11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV [-10]VVV'}
+            MACROS[8]     = {'Label' : 'My '+LAB1+' 2x' , 'Text' : '[-2]'+EXCH1+' '+EXCH1+' [+2]'}
+            MACROS[9]     = {'Label' : 'My '+LAB2+' 2x' , 'Text' : '[-2]'+EXCH2+' '+EXCH2+' [+2]'}
+            MACROS[10]    = {'Label' : LAB1+'?'         , 'Text' : LAB1+'? '}
+            MACROS[11]    = {'Label' : LAB2+'? '        , 'Text' : LAB2+'? '}
+            MACROS[11+12] = {'Label' : 'QRL? '          , 'Text' : 'QRL? '}
 
         return MACROS
+
+    
         
     # Routine to generate a hint for a given call
     def hint(self,call):
@@ -148,7 +210,7 @@ class DEFAULT_KEYING():
 
         contest=self.contest_name 
         if 'Default' in contest or 'Ragchew' in contest or \
-           'SATELLITES' in contest or 'DX-QSO' in contest_name:
+           'SATELLITES' in contest or 'DX-QSO' in contest:
             gui.contest=False
         else:
             gui.contest=True
@@ -161,26 +223,50 @@ class DEFAULT_KEYING():
         cspan=3
         gui.call_lab.grid(column=col,columnspan=cspan)
         gui.call.grid(column=col,columnspan=cspan)
-        col+=cspan
-        cspan=1
-        gui.rstout_lab.grid(column=col,columnspan=cspan)
-        gui.rstout.grid(column=col,columnspan=cspan)
-        col+=cspan
-        cspan=1
-        gui.rstin_lab.grid(column=col,columnspan=cspan)
-        gui.rstin.grid(column=col,columnspan=cspan)
-        col+=cspan
-        cspan=2
-        gui.name_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-        gui.name.grid(column=col,columnspan=cspan)
+        gui.boxes=[gui.call]
+
+        if not gui.contest:
+            col+=cspan
+            cspan=1
+            gui.rstout_lab.grid(column=col,columnspan=cspan)
+            gui.rstout.grid(column=col,columnspan=cspan)
+            gui.boxes.append(gui.rstout)
+
+        if not gui.contest or self.LAB1=='RST':
+            col+=cspan
+            cspan=1
+            gui.rstin_lab.grid(column=col,columnspan=cspan)
+            gui.rstin.grid(column=col,columnspan=cspan)
+            gui.boxes.append(gui.rstin)
+            
+        if self.LAB1=='NR' or self.LAB2=='NR':
+            col+=cspan
+            cspan=2
+            gui.serial_lab.grid(column=col,columnspan=cspan)
+            gui.serial.grid(column=col,columnspan=cspan)
+            gui.boxes.append(gui.serial)
+            gui.counter_lab.grid()
+            gui.counter.grid()
+            
+        if not gui.contest:
+            col+=cspan
+            cspan=2
+            gui.name_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+            gui.name.grid(column=col,columnspan=cspan)
+            gui.boxes.append(gui.name)
+            
         col+=cspan
         cspan=2
         gui.qth_lab.grid(column=col,columnspan=cspan)
         gui.qth.grid(column=col,columnspan=cspan)
-        col+=cspan
-        cspan=2
-        gui.notes_lab.grid(column=col,columnspan=cspan)
-        gui.notes.grid(column=col,columnspan=cspan)
+        gui.boxes.append(gui.qth)
+        
+        if not gui.contest:
+            col+=cspan
+            cspan=2
+            gui.notes_lab.grid(column=col,columnspan=cspan)
+            gui.notes.grid(column=col,columnspan=cspan)
+            gui.boxes.append(gui.notes)
 
         col+=cspan
         cspan=2
@@ -189,14 +275,8 @@ class DEFAULT_KEYING():
         if self.P.NO_HINTS:
             gui.hint_lab.grid_remove()
             gui.hint.grid_remove()
-
-        gui.boxes=[gui.call]
-        gui.boxes.append(gui.rstout)
-        gui.boxes.append(gui.rstin)
-        gui.boxes.append(gui.name)
-        gui.boxes.append(gui.qth)
-        gui.boxes.append(gui.notes)
-        gui.boxes.append(gui.hint)
+        else:
+            gui.boxes.append(gui.hint)
 
         
     # Gather together logging info for this contest

@@ -68,14 +68,18 @@ set CONTEST=""
 #set CONTEST="cqvhf"
 #set CONTEST="fd"
 #set CONTEST="cqp"
+#set CONTEST="state"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
 #set CONTEST="naqp"
 
+set STATE="NV"
+
 # Various options for pyKeyer
 set CAPTURE=""
-set CAPTURE="-capture -sidetone"
+set CAPTURE="-capture"
+#set CAPTURE="-capture -sidetone"
 set MODE="-mode CW"
 
 set PRACTICE=""
@@ -131,13 +135,15 @@ set RIG1="FLRIG"
 #set RIG1="HAMLIB"
 #set RIG1="DIRECT"
 
+#set RIG_TYPE1=`$FIND_RIG`
 #set RIG_TYPE1="TS850"
 #set RIG_TYPE1="IC706"
 set RIG_TYPE1="FTdx3000"
 #set RIG_TYPE1="FT991a"
-#set RIG_TYPE1="IC9700"
-#set RIG_TYPE1=`$FIND_RIG`
 #set RIG_TYPE1="TYT9000d"
+#set RIG_TYPE1="IC9700"
+
+#set RIG_TYPE2="IC9700"
 
 # Select secondary rig & middleware
 # Very limited for now
@@ -259,6 +265,13 @@ else if( $CONTEST == "iaru" )then
 
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then
+    set HINTS="-use_log_hist -autofill -nrows 1"
+    set WPM=25
+    set BM_OPTS = "$BM_OPTS -contest -hours 30 -cwops"
+
+# Settings for various state QPs
+else if( $CONTEST == "state" )then
+    set CONTEST="state $STATE"
     set HINTS="-use_log_hist -autofill -nrows 1"
     set WPM=25
     set BM_OPTS = "$BM_OPTS -contest -hours 30 -cwops"
@@ -472,7 +485,7 @@ if( 1 )then
     echo Starting keyer ...
     cd ~/Python/pyKeyer
 
-    set OPTS="-wpm ${WPM} $PRACTICE $CAPTURE -${CONTEST} -rig $RIG1 $RIG_TYPE1 -port $PORT $HINTS $SERVER $NANO $MODE $UDP"
+    set OPTS="-wpm ${WPM} $PRACTICE $CAPTURE -${CONTEST} -rig $RIG1 $RIG_TYPE1 -port $PORT $HINTS $SERVER $NANO $MODE $UDP -immediate"
     if( $RIG2 != "NONE" )then
         set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2 -port2 $PORT2"
     endif
