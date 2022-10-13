@@ -287,13 +287,10 @@ for i in range(1, sheet1.nrows):
         P.grids.append( grid.upper() )
 print('Grids:',P.grids)
 
-#sys.exit(0)
-
 # Start sidetone and capture audio processing
 if P.SIDETONE or P.CAPTURE:
     print('Starting Sidetone ...')
     P.SideTone.start()
-    #P.osc.start()
 if P.CAPTURE:
     P.capture.start()
 

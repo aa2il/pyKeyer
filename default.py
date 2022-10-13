@@ -97,7 +97,7 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
-            elif self.contest_name in ['AZQP','SDQP','NYQP']:
+            elif self.contest_name in ['AZQP','SDQP','NYQP','IL']:
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'

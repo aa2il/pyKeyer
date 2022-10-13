@@ -212,7 +212,7 @@ class PARAMS:
         self.USE_SCP       = args.scp
         self.HIST          = {}
 
-        self.STATE_QPs = ['OCQP','AZQP','NVQP','NYQP','PAQP','SDQP']
+        self.STATE_QPs = ['OCQP','AZQP','ILQP','NVQP','NYQP','PAQP','SDQP']
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', \
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF',

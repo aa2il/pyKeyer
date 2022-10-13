@@ -52,9 +52,10 @@ class AUDIO_SIDETONE():
         self.P=P
         self.started = False
         self.enabled = False
-        self.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
+        self.osc = SIDETONE_OSC(P,P.keyer.WPM,AMP,[F1,F2],FS)
         P.keyer.sidetone = self.osc
         P.osc=self.osc
+        self.player=self.osc.player
 
         if sys.version_info[0]==3:
             self.q2     = queue.Queue(maxsize=0)
@@ -63,33 +64,35 @@ class AUDIO_SIDETONE():
         P.q2=self.q2
 
         if True:
-            self.sidetone = threading.Thread(target=self.sidetone_executive, args=(),\
+            self.sidetone_exec = threading.Thread(target=self.sidetone_executive, args=(),\
                                     name='Sidetone Osc')
-            self.sidetone.setDaemon(True)
-            #self.sidetone.start()
-            P.threads.append(self.sidetone)
+            self.sidetone_exec.setDaemon(True)
+            #self.sidetone_exec.start()
+            P.threads.append(self.sidetone_exec)
         
     def start(self):
         print('AUDIO SIDETONE: Start ...',self.started)
-        #self.player.start_playback(0,False)
-        self.osc.start()
+        if self.P.SIDETONE:
+            print('AUDIO_SIDETONE: Player started...',self.P.SIDETONE)
+            self.player.start_playback(0,False)
+        #self.osc.start()
         if not self.started:
             print('AUDIO SIDETONE: Starting Exec ...')
-            self.sidetone.start()
+            self.sidetone_exec.start()
         self.started = True
         self.enabled = True
         
     def pause(self):
         print('AUDIO SIDETONE: Pause ...')
-        #self.player.pause()
+        self.player.pause()
         self.enabled = False
-        self.osc.pause()
+        #self.osc.pause()
         
     def resume(self):
         print('AUDIO SIDETONE: Resume ...')
-        #self.player.resume()
+        self.player.resume()
         self.enabled = True
-        self.osc.resume()
+        #self.osc.resume()
         
             
     def sidetone_executive(self):
@@ -102,8 +105,7 @@ class AUDIO_SIDETONE():
                 P.q2.task_done()
                 msg = msg.replace('[LOG]','')
                 print('SIDETONE EXEC: msg=',msg)
-                if P.osc.enabled:
-                    P.osc.send_cw(msg,P.keyer.WPM,0,P.SIDETONE)
+                P.osc.send_cw(msg,P.keyer.WPM,0,P.SIDETONE)
             else:
                 time.sleep(0.1)
                 
@@ -111,10 +113,11 @@ class AUDIO_SIDETONE():
         
 
 class SIDETONE_OSC():
-    def __init__(self,WPM,AMP,F0,FS):
+    def __init__(self,P,WPM,AMP,F0,FS):
 
-        self.started = False
-        self.enabled = False
+        self.P=P
+        #self.started = False
+        #self.enabled = False
         self.AMP=AMP
         if type(F0) is list:
             self.F0=F0
@@ -134,19 +137,6 @@ class SIDETONE_OSC():
     #def change_freq():
     #    self.gen_elements(self.WPM,1-self.nfrq)
 
-    def start(self):
-        self.player.start_playback(0,False)
-        self.started = True
-        self.enabled = True
-        
-    def pause(self):
-        self.player.pause()
-        self.enabled = False
-        
-    def resume(self):
-        self.player.resume()
-        self.enabled = True
-        
     # Signal generation 
     def gen_elements(self,WPM,nfrq):
         self.WPM=WPM
@@ -186,7 +176,7 @@ class SIDETONE_OSC():
     #    4. The space between letters is 3 time units.
     #    5. The space between words is 7 time units.
     def send_cw(self,msg,WPM,nfrq,AUDIO_ACTIVE):
-        print('SIDETONE->SEND_CW:  msg=',msg,len(msg),AUDIO_ACTIVE)
+        print('SIDETONE->SEND_CW:  msg=',msg,len(msg),'\tAUDIO_ACTIVE=',AUDIO_ACTIVE)
 
         # Check for speed or freq change
         if WPM != self.WPM or nfrq!=self.nfrq:
@@ -214,14 +204,18 @@ class SIDETONE_OSC():
                         x = np.concatenate( (self.dah,self.space) )
 
                     # Send the element
-                    if AUDIO_ACTIVE and self.enabled:
+                    #if AUDIO_ACTIVE and self.enabled:
+                    if AUDIO_ACTIVE:
+                        print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
                         self.rb.push(x)
                     self.rb2.push(x)
 
                 # Effect spacing between letters - we've already added one short space
                 # so we only need 2 more to effect char spacing
                 x = np.concatenate( (self.space,self.space) )
-                if AUDIO_ACTIVE and self.enabled:
+                #if AUDIO_ACTIVE and self.enabled:
+                if AUDIO_ACTIVE:
+                    print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
                     self.rb.push(x)                         # Computer Audio
                 self.rb2.push(x)                            # Sidetone for capture
                 
@@ -243,7 +237,7 @@ if __name__ == '__main__':
     print('Hey!')
 
     WPM=25
-    osc = SIDETONE_OSC(WPM,AMP,F1,FS)
+    osc = SIDETONE_OSC(P,WPM,AMP,F1,FS)
     
     osc.send_cw('Test',WPM)
     time.sleep(5)
