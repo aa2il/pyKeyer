@@ -1110,7 +1110,7 @@ class GUI():
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
-        elif val in self.P.STATE_QPs:
+        elif val in self.P.STATE_QPs+['TEN-TEN','WAG']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)
@@ -2343,15 +2343,21 @@ class GUI():
         elif event.widget==self.prec:
             prec=self.get_prec().upper()
             self.sock.set_log_fields({'Prec':prec})
+            if key=='Return' or key=='KP_Enter':
+                next_widget = self.P.KEYING.next_event(key,event)
 
         elif event.widget==self.call2:
             call2=self.get_call2().upper()
             self.sock.set_log_fields({'Call2':call2})
+            if key=='Return' or key=='KP_Enter':
+                next_widget = self.P.KEYING.next_event(key,event)
 
         elif event.widget==self.check:
-            print('!!!Check!!!')
+            #print('!!!Check!!!')
             check=self.get_check().upper()
             self.sock.set_log_fields({'Check':check})
+            if key=='Return' or key=='KP_Enter':
+                next_widget = self.P.KEYING.next_event(key,event)
             
         # Make sure we keep the focus
         self.root.focus_set()

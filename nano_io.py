@@ -18,6 +18,32 @@
 # GNU General Public License for more details.
 #
 ############################################################################################
+#
+# Use ~~ to view list of keyer command, ~? to see current settings ...
+# ~     Show cmds
+# C,c   CW
+# F,f   FSK
+# T,t   Tune
+# Svvvs Computer wpm
+# Uvvvu Paddle wpm
+# Dvvvd dash/dot ratio
+# X0    ptt ON
+# X1    ptt OFF
+# X?    ptt state
+# In    incr
+# A,a   IambicA
+# B,b   IambicB
+# K,k   Straight
+# 0     mark HIGH
+# 1     mark LOW
+# 4     45.45 baud
+# 5     50 baud
+# 7     75 baud
+# 9     100 baud
+# ?     Show config
+# W     Write EEPROM
+#
+############################################################################################
 
 import sys
 import serial

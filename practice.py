@@ -327,7 +327,7 @@ if __name__ == '__main__':
     fp = open("HIST.LOG","w")
     fp.write('QSO_DATE_OFF,TIME_OFF,CALL,FREQ,BAND,MODE,SRX_STRING\n')
 
-    HISTORY = '../history/data/SS_Call_History_Aug2018.txt'
+    #HISTORY = '../history/data/SS_Call_History_Aug2018.txt'
 
     HIST,fname9 = load_history(HISTORY)
     calls = list(HIST.keys())

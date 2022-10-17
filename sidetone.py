@@ -52,7 +52,7 @@ class AUDIO_SIDETONE():
         self.P=P
         self.started = False
         self.enabled = False
-        self.osc = SIDETONE_OSC(P,P.keyer.WPM,AMP,[F1,F2],FS)
+        self.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
         P.keyer.sidetone = self.osc
         P.osc=self.osc
         self.player=self.osc.player
@@ -113,11 +113,8 @@ class AUDIO_SIDETONE():
         
 
 class SIDETONE_OSC():
-    def __init__(self,P,WPM,AMP,F0,FS):
+    def __init__(self,WPM,AMP,F0,FS):
 
-        self.P=P
-        #self.started = False
-        #self.enabled = False
         self.AMP=AMP
         if type(F0) is list:
             self.F0=F0
@@ -237,7 +234,7 @@ if __name__ == '__main__':
     print('Hey!')
 
     WPM=25
-    osc = SIDETONE_OSC(P,WPM,AMP,F1,FS)
+    osc = SIDETONE_OSC(WPM,AMP,F1,FS)
     
     osc.send_cw('Test',WPM)
     time.sleep(5)

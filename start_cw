@@ -68,13 +68,13 @@ set CONTEST=""
 #set CONTEST="cqvhf"
 #set CONTEST="fd"
 #set CONTEST="cqp"
-#set CONTEST="state"
+set CONTEST="state"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
 #set CONTEST="naqp"
 
-set STATE="NV"
+set STATE="IL -max_age 8"
 
 # Various options for pyKeyer
 set CAPTURE=""

@@ -39,7 +39,6 @@ class CQP_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CQP')
-        #self.aux_cb=self.qth_hints
 
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/QSOP_CA*.txt')
         P.CONTEST_ID='CQ-QSO-PARTY'

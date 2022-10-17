@@ -33,7 +33,6 @@ set PRACTICE="-prac -nrows 0"
 set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
-set NANO="-sidetone"
 
 set WPM=25
 set HINTS="-nohints"
@@ -41,7 +40,8 @@ set HINTS="-nohints"
 set CA_ONLY=""
 #set CA_ONLY="-ca_only"
 
-set CONTEST="sending"
+set CONTEST="paddling"
+#set CONTEST="ten"
 #set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="mst"
@@ -57,7 +57,7 @@ set CONTEST="sending"
 #set CONTEST="stew"
 #set CONTEST="sat"
 #set CONTEST="cqp"
-set CONTEST="state"
+#set CONTEST="state"
 #set CONTEST="wpx"
 #set CONTEST="ss"
 #set CONTEST="cqww"
@@ -76,7 +76,7 @@ set STATE="NV"
 ########################################################################
 
 # Settings for sending practice
-if( $CONTEST == "sending" )then
+if( $CONTEST == "paddling" )then
     set CMD="$FIND_RIG -BREAK 0"
     $CMD
     set WPM=20
@@ -161,6 +161,11 @@ else if( $CONTEST == "arrl_10m" )then
     set WPM=25
     set HINTS=""
 
+# Settings for 10-10 10m
+else if( $CONTEST == "ten" )then
+    set WPM=25
+    set HINTS=""
+
 # Settings for ARRL Intl DX - need to test this more, not sure it handles dx stations correctly
 else if( $CONTEST == "arrl_dx" )then
     set WPM=30
@@ -168,7 +173,7 @@ else if( $CONTEST == "arrl_dx" )then
 
 # Settings for ARRL Sweepstakes
 else if( $CONTEST == "ss" )then
-    set WPM=25
+    set WPM=30
     set HINTS=""
     set HINTS="-adjust"
     #set HINTS="-nohints -adjust"

@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
@@ -35,8 +36,9 @@ VERBOSITY=0
 class SS_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'ARRL-SS-CW','SS_Call_History_Aug2018.txt')
+        DEFAULT_KEYING.__init__(self,P)
 
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/SSCW.txt')
         self.aux_cb = self.copy_call
         P.CONTEST_ID='ARRL-SS-CW'
 
@@ -47,7 +49,7 @@ class SS_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SS [MYCALL] '}
         MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYPREC] [MYCALL] [MYCHECK] [MYSEC] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 de [MYCALL] QRZ? [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
 

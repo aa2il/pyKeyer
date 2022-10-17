@@ -87,7 +87,8 @@ class DEFAULT_KEYING():
         else:
 
             CONTEST=self.contest_name
-            if self.contest_name in ['OCQP']:
+            LAB3=None
+            if self.contest_name in ['OCQP','WAG']:
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
@@ -97,7 +98,7 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
-            elif self.contest_name in ['AZQP','SDQP','NYQP','IL']:
+            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP']:
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
@@ -107,9 +108,22 @@ class DEFAULT_KEYING():
                 EXCH1 = '[SERIAL]'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
+            elif self.contest_name in ['TEN-TEN']:
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'NR'
+                EXCH2 = '0'
+                LAB3  = 'QTH'
+                EXCH2 = '[MYSTATE]'
+            else:
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
 
             self.LAB1=LAB1
             self.LAB2=LAB2
+            self.LAB3=LAB3
             self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
 
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] '}
@@ -379,7 +393,8 @@ class DEFAULT_KEYING():
         # Do any extra stuff that might be special to this contest
         if self.aux_cb:
             self.aux_cb(key,event)
-            
+
+        #print('NEXT EVENT: idx=',idx,'\tnn=',nn,'\tidx2=',idx2)
         next_widget.focus_set()
         return next_widget
             

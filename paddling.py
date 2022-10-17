@@ -29,7 +29,7 @@ else:
     import tkFont
 import time
 import random
-from nano_io import nano_set_wpm
+from nano_io import *
 from fileio import read_text_file
 from utilities import cut_numbers
 
@@ -185,15 +185,21 @@ class PADDLING_GUI():
     # Callback for WPM spinner
     def SetWpm(self,dWPM=0):
         WPM=int( self.WPM_TXT.get() ) + dWPM
-        print('Paddling-SetWpm: WPM=',WPM)
         if WPM>5:
             if self.P.LOCK_SPEED:
+                print('Paddling->SetWpm: LOCKED - Setting speed to WPM=',
+                      WPM,'...')
                 self.P.keyer.set_wpm(WPM)
                 self.P.sock.set_speed(WPM)
                 #self.P.gui.WPM_TXT.set(str(WPM))
                 #self.P.gui.set_wpm()
             else:
+                print('Paddling->SetWpm: NANO - Setting speed to WPM=',
+                      WPM,'...')
                 nano_set_wpm(self.P.ser,WPM,idev=2)
+                #nano_read(self.P.ser,True)
+                #nano_write(self.P.ser,'~?')
+                #nano_read(self.P.ser,True)
             self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram, call, etc.

@@ -75,6 +75,10 @@ class PARAMS:
                               help='CQ VHF')
         arg_proc.add_argument('-iaru', action='store_true',
                               help='IARU HF Championship')
+        arg_proc.add_argument('-ten', action='store_true',
+                              help='10-10 CW')
+        arg_proc.add_argument('-wag', action='store_true',
+                              help='Work All Germany')
         arg_proc.add_argument('-ragchew', action='store_true',
                               help='Regular Ragchew QSO')
         arg_proc.add_argument('-dx', action='store_true',
@@ -214,10 +218,10 @@ class PARAMS:
 
         self.STATE_QPs = ['OCQP','AZQP','ILQP','NVQP','NYQP','PAQP','SDQP']
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
-                           'ARRL-VHF','NAQP-CW', \
+                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF',
-                           'ARRL-10M','ARRL-DX', \
-                           'ARRL-FD','ARRL-SS-CW','STEW PERRY','SATELLITES','DX-QSO'] + \
+                           'ARRL-10M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
+                           'STEW PERRY','SATELLITES','DX-QSO'] + \
                            self.STATE_QPs
 
         self.SHOW_TEXT_BOX2=args.split
@@ -235,6 +239,12 @@ class PARAMS:
         elif args.mst:
             self.contest_name='MST'
             MAX_AGE_HOURS=1
+        elif args.ten:
+            self.contest_name='TEN-TEN'
+            MAX_AGE_HOURS=48
+        elif args.wag:
+            self.contest_name='WAG'
+            MAX_AGE_HOURS=48
         elif args.skcc:
             self.contest_name='SKCC'
             MAX_AGE_HOURS=2
@@ -306,9 +316,8 @@ class PARAMS:
 
         # Compute length of contest
         if args.max_age!=9999:
-            self.MAX_AGE       = args.max_age*60        # In minutes
-        else:
-            self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
+            MAX_AGE_HOURS = args.max_age
+        self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
 
         # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
