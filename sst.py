@@ -40,7 +40,9 @@ class SST_KEYING(DEFAULT_KEYING):
 
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/K1USNSST*.txt')
         P.CONTEST_ID='K1USN-SST'
-
+        self.contest_duration = 1
+        P.MAX_AGE = self.contest_duration *60
+                
     # Routient to set macros for this contest
     def macros(self):
 

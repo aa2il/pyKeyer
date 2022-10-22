@@ -225,6 +225,7 @@ class PARAMS:
                            self.STATE_QPs
 
         self.SHOW_TEXT_BOX2=args.split
+        MAX_AGE_HOURS = args.max_age
         if self.SPRINT:
             print('NEED TO FIX THIS!!!!!!!!!!!!!')
             sys.exit(0)
@@ -232,13 +233,10 @@ class PARAMS:
             MAX_AGE_HOURS=1
         elif args.cwt:
             self.contest_name='CWT'
-            MAX_AGE_HOURS=1
         elif args.sst:
             self.contest_name='SST'
-            MAX_AGE_HOURS=1
         elif args.mst:
             self.contest_name='MST'
-            MAX_AGE_HOURS=1
         elif args.ten:
             self.contest_name='TEN-TEN'
             MAX_AGE_HOURS=48
@@ -308,15 +306,10 @@ class PARAMS:
             MAX_AGE_HOURS=9999
         else:
             self.contest_name='Default'
-            MAX_AGE_HOURS=9999
             self.SHOW_TEXT_BOX2=True
         self.ROTOR_CONNECTION = args.rotor
         self.PORT9            = args.port9
         self.Immediate_TX     = args.immediate
-
-        # Compute length of contest
-        if args.max_age!=9999:
-            MAX_AGE_HOURS = args.max_age
         self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
 
         # Read config file

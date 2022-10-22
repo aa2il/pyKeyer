@@ -72,14 +72,14 @@ class DEFAULT_KEYING():
             MACROS[0]  = {'Label' : 'CQ'      , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
             MACROS[1]  = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
             MACROS[2]  = {'Label' : 'Reply'   , 'Text' : 'RTU [RST] [MYSTATE] '}
-            MACROS[3]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
+            MACROS[3]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
             
             MACROS[4]  = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
             MACROS[5]  = {'Label' : '73'      , 'Text' : '73 '}
-            MACROS[6]  = {'Label' : 'BK'      , 'Text' : 'BK '}
-            MACROS[7]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
+            MACROS[6]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
+            MACROS[7]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
             
-            MACROS[8]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
+            MACROS[8]  = {'Label' : 'BK'      , 'Text' : 'BK '}
             MACROS[9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
             MACROS[10] = {'Label' : 'V    '   , 'Text' : 'V'}
             MACROS[11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV [-10]VVV'}

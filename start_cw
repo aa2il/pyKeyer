@@ -68,7 +68,7 @@ set CONTEST=""
 #set CONTEST="cqvhf"
 #set CONTEST="fd"
 #set CONTEST="cqp"
-set CONTEST="state"
+#set CONTEST="state"
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
@@ -217,7 +217,7 @@ else if( $CONTEST == "sst" )then
 # Settings for Medium Speed Mini Test
 else if( $CONTEST == "mst" )then
     set HINTS="-use_log_hist"
-    set HINTS="-use_log_hist -nohints -autofill -nrows 1"
+    set HINTS="-use_log_hist -nohints -autofill -nrows 1 "
     set WPM=23
     set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 

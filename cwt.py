@@ -42,7 +42,8 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/CWOPS_*.txt')
         P.CONTEST_ID='CWOPS-CWT'
         self.number_key='cwops'
-        
+        self.contest_duration = 1
+        P.MAX_AGE = self.contest_duration *60
 
     # Routine to set macros for this contest
     def macros(self):
