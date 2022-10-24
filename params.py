@@ -135,6 +135,8 @@ class PARAMS:
                               type=int,default=2)
         arg_proc.add_argument('-nano', action='store_true',
                               help="Use Nano IO Interface")
+        arg_proc.add_argument('-cwio', action='store_true',
+                              help="Use FLRIG or HAMLIB for CW IO")
         arg_proc.add_argument('-lock', action='store_true',
                               help="Lock Paddle Speed to Computer Speed")
         arg_proc.add_argument("-mode", help="Rig Mode",
@@ -167,6 +169,7 @@ class PARAMS:
         self.TEST_MODE     = args.test
         
         self.NANO_IO       = args.nano
+        self.CW_IO         = args.cwio
         self.LOCK_SPEED    = args.lock
         
         self.SENDING_PRACTICE = args.sending

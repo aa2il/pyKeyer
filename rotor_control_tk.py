@@ -42,7 +42,7 @@ class ROTOR_CONTROL():
     def __init__(self,tabs,P):
         self.sock = P.sock_rotor
         self.MY_GRID = P.SETTINGS['MY_GRID']
-        if self.sock.connection == 'NONE' and False:
+        if self.sock.connection == 'NONE' and True:
             return None
 
         # Create a new tab 

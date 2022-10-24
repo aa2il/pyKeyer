@@ -99,8 +99,11 @@ if True:
 P.gui     = GUI(P)
     
 # Open connection to 1st rig
-print('\nPYKEYER: Opening connection to primary rig - connection=',P.connection,'\trig=',P.rig,'...')
-P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',rig=P.rig,force=P.FORCE)
+print('\nPYKEYER: Opening connection to primary rig - connection=',
+      P.connection,'\trig=',P.rig,'...')
+P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',
+                                        rig=P.rig,force=P.FORCE)
+#sys.exit(0)
 if not P.sock1.active and not P.PRACTICE_MODE:
     print('*** No connection available to rig ***')
     print('Perhaps you want practice mode?\n')
@@ -153,6 +156,16 @@ P.sock_rotor = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT9,0,'ROT
 if not P.sock_rotor.active and P.sock_rotor.connection!='NONE':
     print('*** No connection available to rotor ***')
     sys.exit(0)
+
+# Experiemtnal area - starting to get CWIO interface up & running - in progress
+if False:
+    print('Howdy Ho!',P.sock.cwio_get_wpm())
+    P.sock.cwio_set_wpm(25)
+    print('Howdy Ho Agn!',P.sock.cwio_get_wpm())
+    P.sock.cwio_write('test')
+    time.sleep(5)
+    sys.exit(0)
+    
 
 # Open connection to FLLOG, if available
 P.sock_log = socket_io.open_rig_connection('FLLOG',0,0,0,'KEYER')
