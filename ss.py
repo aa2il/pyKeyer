@@ -155,7 +155,7 @@ class SS_KEYING(DEFAULT_KEYING):
             print(txt2)
             P.gui.txt.insert(END, txt2+'\n')
             
-            txt2='Check sent:'+self.check+'\t- received:'+check2
+            txt2='Check sent:'+self.chk+'\t- received:'+chk2
             print(txt2)
             P.gui.txt.insert(END, txt2+'\n')
             

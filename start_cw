@@ -79,7 +79,7 @@ set STATE="IL -max_age 8"
 # Various options for pyKeyer
 set CAPTURE=""
 set CAPTURE="-capture"
-#set CAPTURE="-capture -sidetone"
+##set CAPTURE="-capture -sidetone"
 set MODE="-mode CW"
 
 set PRACTICE=""
@@ -196,7 +196,7 @@ if( $CONTEST == "naqp" )then
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
-    set WPM=30
+    set WPM=32
     set HINTS="-nohints"
     set HINTS="-nohints -autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
@@ -294,7 +294,7 @@ else if( $CONTEST == "ss" )then
     set WPM=25
     #set HINTS=""
     set HINTS="-use_log_hist"
-    set BM_OPTS = "$BM_OPTS -contest"
+    set BM_OPTS = "$BM_OPTS -contest -cwops"
 
 # Reasonable defaults
 else
