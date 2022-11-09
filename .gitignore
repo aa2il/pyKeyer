@@ -21,3 +21,5 @@
 /build/*
 /dist/pyKeyer
 /pyKeyer.spec
+/CQP_2022/*
+/SS/*

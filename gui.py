@@ -1792,7 +1792,7 @@ class GUI():
 
     # Routine to check & flag dupes
     def dup_check(self,call):
-        print('DUP_CHECK: call=',call,self.P.MAX_AGE)
+        print('DUP_CHECK: call=',call,'\tmax age=',self.P.MAX_AGE)
         self.time_on = datetime.utcnow().replace(tzinfo=UTC)
         #print('Time on=',self.time_on)
 
@@ -1827,6 +1827,8 @@ class GUI():
             
             for qso in self.log_book:
                 if qso['CALL']==call:
+                    #print('DUPE HEY 1',call,self.P.contest_name)
+                    
                     self.match1 = True
                     self.last_qso=qso
                     date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
@@ -1835,11 +1837,13 @@ class GUI():
 
                     # There are some contests that are "special"
                     if self.P.contest_name=='SATELLITES':
+                        
                         # Need to add more logic to this going forward
                         print(call,'- Worked before on sats')
                         self.match2 = True
                         
                     elif self.P.contest_name in ['ARRL-VHF','CQ-VHF']:
+                        
                         # Group phone mode together
                         #PHONE_MODES=['FM','SSB','USB','LSB']
                         #match3 = qso['MODE']==mode or (qso['MODE'] in PHONE_MODES and mode in PHONE_MODES)
@@ -1858,8 +1862,11 @@ class GUI():
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and match3 and match4)
                         
                     elif self.P.contest_name=='ARRL-SS-CW':
+                        
                         # Can only work each station once regardless of band
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['MODE']==mode)
+                        #print('SS DUPE:',age,self.P.MAX_AGE*60,qso['MODE'],mode,self.match2)
+                        
                     else:
                         # Most of the time, we can work each station on each band and mode
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)

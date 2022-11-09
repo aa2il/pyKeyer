@@ -264,7 +264,8 @@ class PARAMS:
             MAX_AGE_HOURS=12
         elif args.ss:
             self.contest_name='ARRL-SS-CW'
-            MAX_AGE_HOURS=30
+            if MAX_AGE_HOURS==9999:
+                MAX_AGE_HOURS=30
         elif args.cqp:
             self.contest_name='CQP'
             MAX_AGE_HOURS=30
@@ -313,7 +314,7 @@ class PARAMS:
         self.ROTOR_CONNECTION = args.rotor
         self.PORT9            = args.port9
         self.Immediate_TX     = args.immediate
-        self.MAX_AGE       = MAX_AGE_HOURS*60       # In minutes
+        self.MAX_AGE          = MAX_AGE_HOURS*60       # In minutes
 
         # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')

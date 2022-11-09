@@ -293,8 +293,8 @@ else if( $CONTEST == "arrl_10m" )then
 else if( $CONTEST == "ss" )then
     set WPM=25
     #set HINTS=""
-    set HINTS="-use_log_hist"
-    set BM_OPTS = "$BM_OPTS -contest -cwops"
+    set HINTS="-use_log_hist -autofill -max_age 30"
+    set BM_OPTS = "$BM_OPTS -contest -cwops -ss"
 
 # Reasonable defaults
 else
@@ -333,6 +333,7 @@ if( $KILL_OLD )then
     pkill flrig
     pkill wclock
     pkill bandmap
+    pkill oscope
     rm -f /tmp/HAMLIB /tmp/FLDIGI /tmp/KEYER /tmp/WCLOCK /tmp/BANDMAP*
     rm -f /tmp/SDR /tmp/FLRIG
     sleep 1
@@ -460,6 +461,16 @@ if( $START_SDR )then
     endif
     
     #exit
+endif
+
+################################################################################
+
+# Use oscope to capture rig audio
+if( X$CAPTURE != "X" )then
+    echo Starting Oscope ...
+    cd ~/Python/oscope
+    oscope.py >& /tmp/OSCOPE &
+    set CAPTURE=""
 endif
 
 ################################################################################

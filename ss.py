@@ -36,7 +36,7 @@ VERBOSITY=0
 class SS_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P)
+        DEFAULT_KEYING.__init__(self,P,'ARRL-SS-CW')
 
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/SSCW.txt')
         self.aux_cb = self.copy_call
@@ -49,7 +49,8 @@ class SS_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SS [MYCALL] '}
         MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYPREC] [MYCALL] [MYCHECK] [MYSEC] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
 
@@ -59,15 +60,16 @@ class SS_KEYING(DEFAULT_KEYING):
         MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
         MACROS[8]     = {'Label' : 'NR?'      , 'Text' : 'NR? '}
-        MACROS[8+12]  = {'Label' : 'Serial 2x', 'Text' : '[SERIAL] [SERIAL] '}
+        MACROS[8+12]  = {'Label' : 'Serial 2x', 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
         MACROS[9]     = {'Label' : 'Prec?'    , 'Text' : 'PREC? '}
-        MACROS[9+12]  = {'Label' : 'Prec 2x'  , 'Text' : '[MYPREC] [MYPREC] '}
+        MACROS[9+12]  = {'Label' : 'Prec 2x'  , 'Text' : '[-2][MYPREC] [MYPREC] [MYPREC] [MYPREC] [+2]'}
         MACROS[10]    = {'Label' : 'Check?'   , 'Text' : 'CHK? '}
-        MACROS[10+12] = {'Label' : 'Check 2x' , 'Text' : '[MYCHECK] [MYCHECK] '}
+        MACROS[10+12] = {'Label' : 'Check 2x' , 'Text' : '[-2][MYCHECK] [MYCHECK] [+2]'}
         MACROS[11]    = {'Label' : 'Sec?    ' , 'Text' : 'SEC? '}
-        MACROS[11+12] = {'Label' : 'Sec 2x'   , 'Text' : '[MYSEC] [MYSEC] '}
+        MACROS[11+12] = {'Label' : 'Sec 2x'   , 'Text' : '[-2][MYSEC] [MYSEC] [+2]'}
 
         return MACROS
 
@@ -174,7 +176,7 @@ class SS_KEYING(DEFAULT_KEYING):
     def enable_boxes(self,gui):
 
         gui.contest=True
-        gui.ndigits=3
+        gui.ndigits=1
         gui.hide_all()
         self.macros=[1,None,None,None,None,2]
 
@@ -281,7 +283,8 @@ class SS_KEYING(DEFAULT_KEYING):
         gui.check.delete(0, END)
         gui.check.insert(0,h[0])
         gui.qth.delete(0, END)
-        gui.qth.insert(0,h[1])
+        if len(h)>=2:
+            gui.qth.insert(0,h[1])
         
 
     # Copy call into call2 box
