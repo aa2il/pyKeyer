@@ -273,7 +273,8 @@ class GUI():
             vcmd = (self.root.register(self.check_call),'%P','%V','%W')
             self.call = Entry(self.root,font=font2,validate="key", validatecommand=vcmd )
         else:
-            self.call = Entry(self.root,font=font2 )
+            self.call = Entry(self.root,font=font2,
+                          selectbackground='green')
             
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
         self.call.focus_set()            # Grab focus
@@ -283,7 +284,9 @@ class GUI():
         vcmd = (self.root.register(self.take_focus),'%W')
         self.name_lab = Label(self.root, text="Name",font=font1)
         self.name_lab.grid(row=row,columnspan=4,column=4,sticky=E+W)
-        self.name = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        #self.name = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.name = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
+                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
         self.name.grid(row=row+1,rowspan=2,column=4,columnspan=4,sticky=E+W)
 
         self.rstin_lab = Label(self.root, text="RST in",font=font1)
@@ -305,17 +308,20 @@ class GUI():
         # For contests, some subset of these will be visible instead
         self.exch_lab = Label(self.root, text="Exchange",font=font1)
         self.exch_lab.grid(row=row,columnspan=7,column=4,sticky=E+W)
-        self.exch = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.exch = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
+                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
         self.exch.grid(row=row+1,rowspan=2,column=4,columnspan=6,sticky=E+W)
 
         self.qth_lab = Label(self.root, text="QTH",font=font1)
         self.qth_lab.grid(row=row,columnspan=3,column=8,sticky=E+W)
-        self.qth = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.qth = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
+                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
         self.qth.grid(row=row+1,rowspan=2,column=8,columnspan=2,sticky=E+W)
 
         self.serial_lab = Label(self.root, text="Serial",font=font1)
         self.serial_lab.grid(row=row,columnspan=1,column=4,sticky=E+W)
-        self.serial = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.serial = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
+                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
         self.serial.grid(row=row+1,rowspan=2,column=4,columnspan=1,sticky=E+W)
 
         self.prec_lab = Label(self.root, text="Prec",font=font1)
@@ -1349,17 +1355,6 @@ class GUI():
         with open('state.json', "w") as outfile:
             json.dump(STATE, outfile)
 
-        """
-        fp = open('state.pcl', 'wb')
-        pickle.dump(now, fp)
-        pickle.dump(self.PaddlingWin.bookmark-1, fp)
-        pickle.dump(self.P.MY_CNTR, fp)
-        pickle.dump(spots, fp)
-        pickle.dump(frqs, fp)
-        pickle.dump(flds, fp)
-        fp.close()
-        """
-        
         self.P.DIRTY=False
         print('SaveState: cntr=',self.P.MY_CNTR)
         #print('SaveState:',spots)
@@ -1379,7 +1374,6 @@ class GUI():
     # Restore program state
     def RestoreState(self):
         try:
-            #fp = open('state.pcl', 'rb')
             with open('state.json') as json_data_file:
                 STATE = json.load(json_data_file)
             print('STATE=',STATE)
@@ -1389,7 +1383,6 @@ class GUI():
             
         now        = datetime.utcnow().replace(tzinfo=UTC)
 
-        #time_stamp = pickle.load(fp)
         time_stamp = datetime.strptime( STATE['now'] , '%Y-%m-%d %H:%M:%S').replace(tzinfo=UTC)
         
         age = (now - time_stamp).total_seconds()/60  
@@ -1397,15 +1390,11 @@ class GUI():
               '\nAge=',age,' mins.')
 
         # Restore the book mark
-        #self.PaddlingWin.bookmark = max( pickle.load(fp) ,0 )
-        #print('BOOKMARK=',self.PaddlingWin.bookmark)
-        #sys.exit(0)
         self.PaddlingWin.bookmark = max( STATE['bookmark'] ,0 )
         print('RestoreState: Bookmark=',self.PaddlingWin.bookmark)
 
         # If we're in a long contest, restore the serial counter
         if age<self.P.MAX_AGE:
-            #self.P.MY_CNTR = pickle.load(fp)
             self.P.MY_CNTR = STATE['serial']
             print('RestoreState: Counter=',self.P.MY_CNTR)
             self.counter.delete(0, END)
@@ -1413,13 +1402,10 @@ class GUI():
 
         # If not too much time has elapsed, restore the spots 
         if age<30:
-            #spots = pickle.load(fp)
             spots = STATE['spots']
             if len(spots)>12*self.P.NUM_ROWS:
                 spots=spots[:12*self.P.NUM_ROWS]
             print('RestoreState: Spots=',spots)
-            #frqs = pickle.load(fp)
-            #flds = pickle.load(fp)
             frqs = STATE['freqs']
             flds = STATE['fields']
             for i in range(len(spots)):
@@ -1428,7 +1414,6 @@ class GUI():
                 self.spots[i]['Freq']=frqs[i]
                 self.spots[i]['Fields']=flds[i]
                 
-        #fp.close()
         self.P.DIRTY=False
         #sys.exit(0)
 
@@ -1744,12 +1729,25 @@ class GUI():
 
     # Callback when an entry box takes focus - clears selection so we don't overwrite
     def take_focus(self,W):
-        #print '\nFocus young man! W=',W
-        widget = self.root.nametowidget(W)         # Convert widget name to instance
-        #widget.icursor(END)                        # Move cursor to end ... - prevents editing - ugh!
-        widget.selection_clear()                   # ... and clear the selection
+        
+        #print('Focus young man! W=',W)
+        widget = self.root.nametowidget(W)         # Convert widget name to instance 
+        widget.focus_set()
+        if widget==self.call:
+            widget.selection_clear()                   # ... and clear the selection
         return True
 
+    # Sets selection of most of the boxes
+    def Set_Selection(self,widget):
+        
+        print('Selecting ...')
+        if widget!=self.call:
+            widget.select_range(0,"end")
+            widget.event_generate("<<Copy>>")
+            #pres=widget.select_present()
+            #print('pres=',pres)
+            
+        
     # Routine to compute QSO Rate
     def qso_rate(self):
         if self.start_time:
@@ -2125,7 +2123,10 @@ class GUI():
                     print('Text box',key,len(key),key=='Tab')
                     self.call.focus_set()
                 elif self.contest:
-                    self.P.KEYING.next_event(key,event)
+                    event.widget.selection_clear() 
+                    widget=self.P.KEYING.next_event(key,event)
+                    self.Set_Selection(widget)
+
                 return("break")
 
             elif key=='ISO_Left_Tab':
@@ -2136,7 +2137,9 @@ class GUI():
                 elif event.widget==self.txt or event.widget==self.txt2:
                     self.call.focus_set()
                 else:
-                    self.P.KEYING.next_event(key,event)
+                    event.widget.selection_clear() 
+                    widget=self.P.KEYING.next_event(key,event)
+                    self.Set_Selection(widget)
                 return("break")
                     
             # Return key in the text box - nothing to do

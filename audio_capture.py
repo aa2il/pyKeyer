@@ -33,20 +33,27 @@ class AUDIO_CAPTURE():
         print('AUDIO_CAPTURE: Init ...')
         self.started = False
         self.enabled = False
+        P.rec=None
         self.P = P
 
     # Main routine that starts audio capture
     def run(self):
         print('AUDIO_CAPTURE Exec Starting ...')
-        #self.CaptureAudioCB(-1)
+        P=self.P
 
-        """
         # Loop until exit event is set
-        while not self.P.Stopper.isSet():
-            time.sleep(1)
+        while not P.Stopper.isSet():
+
+            if P.rec:
+                rb=P.rec.rb
+                nsamps=rb.nsamps
+                if nsamps>1024:
+                    data=rb.pull(nsamps-1024)
+                    P.rec.write_data(data)               # Save to disk also
+            time.sleep(0.1)
                 
         print('CAPTURE Exec Done.')
-        """
+
 
     def start(self):
         print('CAPTURE Starting ...',self.P.RIG_AUDIO_IDX)

@@ -467,10 +467,10 @@ endif
 
 # Use oscope to capture rig audio
 if( X$CAPTURE != "X" )then
-    echo Starting Oscope ...
-    cd ~/Python/oscope
-    oscope.py >& /tmp/OSCOPE &
-    set CAPTURE=""
+    #echo Starting Oscope ...
+    #cd ~/Python/oscope
+    #oscope.py >& /tmp/OSCOPE &
+    #set CAPTURE=""
 endif
 
 ################################################################################

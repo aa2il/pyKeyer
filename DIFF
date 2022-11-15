@@ -25,11 +25,11 @@ echo N=$N
 set PTH=`pwd | sed 's;/home2;;g' | cut -c ${N}-`
 echo PTH=$PTH
 set old=${ROOT}${PTH}
-echo OLD=$old
 #exit
 
 # Overide if necessary
-#set OLD="work2"
+set old="save54"
+echo OLD=$old
 
 rm -f DIFFS
 foreach i (*.py AA2IL.adif sats.adif start* DIFF *.txt *.bat *.md)
