@@ -205,7 +205,6 @@ class SIDETONE_OSC():
                     if AUDIO_ACTIVE:
                         print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
                         self.rb.push(x)
-                    #print('SIDETONE->SEND_CW:  Pushing to RB2 ...',len(x))
                     self.rb2.push(x)
 
                 # Effect spacing between letters - we've already added one short space
@@ -215,7 +214,6 @@ class SIDETONE_OSC():
                 if AUDIO_ACTIVE:
                     print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
                     self.rb.push(x)                         # Computer Audio
-                #print('SIDETONE->SEND_CW:  Pushing to RB2 ...',len(x))
                 self.rb2.push(x)                            # Sidetone for capture
                 
 

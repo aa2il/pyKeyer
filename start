@@ -13,7 +13,8 @@ set RIG="NONE"
 #set RIG="DIRECT"
 #set RIG="ANY"
 
-set RIG_TYPE="FTdx3000"
+set RIG_TYPE=""
+#set RIG_TYPE="FTdx3000"
 #set RIG_TYPE="FT991a"
 #set RIG_TYPE="IC9700"
 
@@ -44,7 +45,7 @@ set CONTEST="paddling"
 #set CONTEST="ten"
 #set CONTEST="cwt"
 #set CONTEST="sst"
-set CONTEST="mst"
+#set CONTEST="mst"
 #set CONTEST="cwopen"
 #set CONTEST="skcc"
 #set CONTEST="calls"
@@ -218,7 +219,9 @@ endif
 ########################################################################
 
 # Setup for Hamlib
-if( $RIG_TYPE == "FTdx3000" )then
+if( $RIG != "HAMLIB" )then
+    echo No Hamlib
+else if( $RIG_TYPE == "FTdx3000" )then
     set DEVICE="/dev/serial/by-id/usb-Silicon_Labs_CP2105_Dual_USB_to_UART_Bridge_Controller_AH046H3M120067-if00-port0"
     set MODEL = 129
 else if( $RIG_TYPE == "FT991a" )then
@@ -226,7 +229,7 @@ else if( $RIG_TYPE == "FT991a" )then
     set MODEL = 135 
 else
     echo " "
-    echo Error configuring HAMLIB - Unknown rig model $MODEL
+    echo Error configuring HAMLIB - Unknown rig type $RIG_TYPE
     echo " "
     exit
 endif 
@@ -263,6 +266,7 @@ set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CA
 if( $RIG2 != "NONE" )then
     set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
 endif
+echo OPTS=$OPTS
 
 cd ~/Python/pyKeyer
 #echo pyKeyer.py $OPTS >& /tmp/KEYER

@@ -78,7 +78,7 @@ set STATE="IL -max_age 8"
 
 # Various options for pyKeyer
 set CAPTURE=""
-set CAPTURE="-capture"
+#set CAPTURE="-capture"
 ##set CAPTURE="-capture -sidetone"
 set MODE="-mode CW"
 

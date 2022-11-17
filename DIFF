@@ -28,7 +28,7 @@ set old=${ROOT}${PTH}
 #exit
 
 # Overide if necessary
-set old="save54"
+#set old="save54"
 echo OLD=$old
 
 rm -f DIFFS

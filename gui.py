@@ -41,7 +41,6 @@ from rig_io.socket_io import ClarReset
 from rig_control_tk import *
 from rotor_control_tk import *
 from ToolTip import *
-#import pickle
 from fileio import *
 from threading import enumerate
 
@@ -588,11 +587,11 @@ class GUI():
                 spot['Fields'] = None
                 self.spots.append(spot)
 
-        # Restore the state from the last time in
+        # Set macros & restore the state from the last time in
+        self.set_macros()
         self.RestoreState()
         
         # And away we go!
-        self.set_macros()
         self.root.deiconify()
         #splash.withdraw()
         self.splash.destroy()
@@ -1337,29 +1336,24 @@ class GUI():
         frqs  = []
         flds  = []
         for spot in self.spots:
-            #print spot
             spots.append( spot['Button']['text'] )
             frqs.append( spot['Freq'] )
             flds.append( spot['Fields'] )
         now = datetime.utcnow().replace(tzinfo=UTC)
 
-        #obj.strftime('%Y-%m-%d %H:%M:%S')
-        
-        STATE={'now' : now.strftime('%Y-%m-%d %H:%M:%S'), 
-               'bookmark' : self.PaddlingWin.bookmark-1,
-               'serial' : self.P.MY_CNTR,
-               'spots' : spots,
-               'freqs' : frqs,
-               'fields' : flds }
+        STATE={'now'        : now.strftime('%Y-%m-%d %H:%M:%S'), 
+               'bookmark'   : self.PaddlingWin.bookmark-1,
+               'serial'     : self.P.MY_CNTR,
+               'contest_id' : self.P.CONTEST_ID,
+               'spots'      : spots,
+               'freqs'      : frqs,
+               'fields'     : flds }
         print('STATE=',STATE)
         with open('state.json', "w") as outfile:
             json.dump(STATE, outfile)
 
         self.P.DIRTY=False
         print('SaveState: cntr=',self.P.MY_CNTR)
-        #print('SaveState:',spots)
-        #print('SaveState:',frqs)
-        #print('SaveState:',flds)
 
     # Clear store/recall butons
     def ClearState(self):
@@ -1386,19 +1380,21 @@ class GUI():
         time_stamp = datetime.strptime( STATE['now'] , '%Y-%m-%d %H:%M:%S').replace(tzinfo=UTC)
         
         age = (now - time_stamp).total_seconds()/60  
-        print('RestoreState: now=',now,'\ntime_stamp=',time_stamp,
+        print('RESTORE STATE: now=',now,'\ntime_stamp=',time_stamp,
               '\nAge=',age,' mins.')
 
         # Restore the book mark
         self.PaddlingWin.bookmark = max( STATE['bookmark'] ,0 )
-        print('RestoreState: Bookmark=',self.PaddlingWin.bookmark)
+        print('RESTORE STATE: Bookmark=',self.PaddlingWin.bookmark)
 
-        # If we're in a long contest, restore the serial counter
-        if age<self.P.MAX_AGE:
+        # If we're in a contest, restore the serial counter
+        if self.P.CONTEST_ID==STATE['contest_id'] and age<self.P.MAX_AGE:
             self.P.MY_CNTR = STATE['serial']
-            print('RestoreState: Counter=',self.P.MY_CNTR)
-            self.counter.delete(0, END)
-            self.counter.insert(0,str(self.P.MY_CNTR))
+        else:
+            self.P.MY_CNTR = 1
+        print('RESTORE STATE: Counter=',self.P.MY_CNTR)
+        self.counter.delete(0, END)
+        self.counter.insert(0,str(self.P.MY_CNTR))
 
         # If not too much time has elapsed, restore the spots 
         if age<30:
@@ -1825,8 +1821,6 @@ class GUI():
             
             for qso in self.log_book:
                 if qso['CALL']==call:
-                    #print('DUPE HEY 1',call,self.P.contest_name)
-                    
                     self.match1 = True
                     self.last_qso=qso
                     date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
@@ -1863,8 +1857,6 @@ class GUI():
                         
                         # Can only work each station once regardless of band
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['MODE']==mode)
-                        #print('SS DUPE:',age,self.P.MAX_AGE*60,qso['MODE'],mode,self.match2)
-                        
                     else:
                         # Most of the time, we can work each station on each band and mode
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
