@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cqww.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for CQ World Wdie contest
 #
@@ -35,6 +35,9 @@ class CQWW_KEYING(DEFAULT_KEYING):
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CQWW')
 
+        P.CONTEST_ID='CW-WW-CW'
+        self.contest_duration = 48
+        P.MAX_AGE = self.contest_duration *60
 
     # Routient to set macros for this contest
     def macros(self):
@@ -43,21 +46,24 @@ class CQWW_KEYING(DEFAULT_KEYING):
         MACROS[0]    = {'Label' : 'CQ'       , 'Text' : 'CQ WW [MYCALL] '}
         MACROS[0+12] = {'Label' : 'QRS '     , 'Text' : 'QRS PSE QRS '}
         MACROS[1]    = {'Label' : 'Reply'    , 'Text' : '[CALL] TU 5NN [MYCQZ] '}
-        MACROS[2]    = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] R73 WW [MYCALL] [LOG]'}
+        MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[2]    = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] 73 WW [MYCALL] [LOG]'}
         MACROS[3]    = {'Label' : 'Call?'    , 'Text' : '[CALL]? '}
         MACROS[3+12] = {'Label' : 'Call?'    , 'Text' : 'CALL? '}
 
         MACROS[4]    = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12] = {'Label' : 'His Call' , 'Text' : '[CALL] '}
         MACROS[5]    = {'Label' : 'S&P Reply', 'Text' : 'TU 5NN [MYCQZ] '}
-        MACROS[6]    = {'Label' : 'AGN?'     , 'Text' : 'AGN? '}
-        MACROS[6+12] = {'Label' : '? '       , 'Text' : '? '}
+        MACROS[5+12] = {'Label' : 'S&P 2x'   , 'Text' : '5NN [MYCQZ] [MYCQZ] '}
+        MACROS[6]    = {'Label' : '? '       , 'Text' : '? '}
+        MACROS[6+12] = {'Label' : 'AGN?'     , 'Text' : 'AGN? '}
         MACROS[7]    = {'Label' : 'Log QSO'  , 'Text' : '[LOG] '}
         
         MACROS[8]    = {'Label' : 'Zone 2x'  , 'Text' : '[MYCQZ] [MYCQZ '}
         MACROS[9]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
         MACROS[10]   = {'Label' : 'B4'       , 'Text' : '[CALL] B4'}
         MACROS[11]   = {'Label' : 'Nil'      , 'Text' : 'NIL'}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
 

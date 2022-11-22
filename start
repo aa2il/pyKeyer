@@ -61,7 +61,7 @@ set CONTEST="paddling"
 #set CONTEST="state"
 #set CONTEST="wpx"
 #set CONTEST="ss"
-#set CONTEST="cqww"
+set CONTEST="cqww"
 #set CONTEST="arrl_10m"
 #set CONTEST="arrl_dx"
 #set CONTEST="default"
@@ -78,8 +78,10 @@ set STATE="NV"
 
 # Settings for sending practice
 if( $CONTEST == "paddling" )then
-    set CMD="$FIND_RIG -BREAK 0"
-    $CMD
+    if( $RIG != "NONE" )then
+        set CMD="$FIND_RIG -BREAK 0"
+        $CMD
+    endif
     set WPM=20
     set CONTEST="ragchew"
     set HINTS="-nohints -adjust -sending  -immediate"
@@ -127,7 +129,7 @@ else if( $CONTEST == "wpx" )then
 # Setting for CQ World Wide
 else if( $CONTEST == "cqww" )then
     set WPM=25
-    set HINTS=""
+    set HINTS="-adjust"
 
 # Settings for field day
 else if( $CONTEST == "fd" )then
