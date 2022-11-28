@@ -243,14 +243,14 @@ else if( $CONTEST == "sprint" )then
 else if( $CONTEST == "wpx" )then
     set WPM=25
     set HINTS="-nohints -use_log_hist"
-    set BM_OPTS = "$BM_OPTS -contest"
+    set BM_OPTS = "$BM_OPTS -contest -cwops"
 
 # Setting for CQ World Wide
 else if( $CONTEST == "cqww" )then
     # Hints and log hist
-    set WPM=25
-    set HINTS="-use_log_hist"
-    set BM_OPTS = "$BM_OPTS -contest -dx"
+    set WPM=28
+    set HINTS="-use_log_hist -autofill"
+    set BM_OPTS = "$BM_OPTS -contest -dx -cwops"
 
 # Settings for field day
 else if( $CONTEST == "fd" )then

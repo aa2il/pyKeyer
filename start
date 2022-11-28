@@ -34,6 +34,7 @@ set PRACTICE="-prac -nrows 0"
 set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
+#set NANO="-sidetone"
 
 set WPM=25
 set HINTS="-nohints"

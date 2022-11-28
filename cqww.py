@@ -59,7 +59,7 @@ class CQWW_KEYING(DEFAULT_KEYING):
         MACROS[6+12] = {'Label' : 'AGN?'     , 'Text' : 'AGN? '}
         MACROS[7]    = {'Label' : 'Log QSO'  , 'Text' : '[LOG] '}
         
-        MACROS[8]    = {'Label' : 'Zone 2x'  , 'Text' : '[MYCQZ] [MYCQZ '}
+        MACROS[8]    = {'Label' : 'Zone 2x'  , 'Text' : '[MYCQZ] [MYCQZ] '}
         MACROS[9]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}
         MACROS[10]   = {'Label' : 'B4'       , 'Text' : '[CALL] B4'}
         MACROS[11]   = {'Label' : 'Nil'      , 'Text' : 'NIL'}
