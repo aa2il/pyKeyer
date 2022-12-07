@@ -42,7 +42,7 @@ set START_CLOCK   = 1       # 1
 set START_BANDMAP = 1       # 1
 
 # Select various processing options
-set SO2V          = 0       # 0
+set SO2V          = 1       # 0
 set USE_NANO_IO   = 1       # 1
 set TEST_MODE     = 0       # 0
 set KILL_OLD      = 1       # 1
@@ -423,12 +423,13 @@ endif
 ################################################################################
 
 # Start the SDR
+set LOOPBACK="-follow_freq"
 if( $SO2V )then
     #set SDR_OPTS="-fc 600 600 -af_bw 1 -follow_freq -mute -save_demod -pan_dr 70"
-    set SDR_OPTS="-af_bw .5 -so2v -follow_band"
+    #set SDR_OPTS="-af_bw .5 -so2v -follow_band"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK -so2v"
 else
     #set LOOPBACK="-loopback -follow_freq"
-    set LOOPBACK="-follow_freq"
     set SDR_OPTS="-af_bw .5 $LOOPBACK -mute"
 endif
 if( $START_SDR )then
@@ -447,7 +448,8 @@ if( $START_SDR )then
     set PAN="-pan -pan_bw 10 -pan_dr 90"
     #set PAN="-pan_bw 10 -pan_dr 90"
 
-    set cmd="$PY_SDR -mode CW -fsout $FS -vid_bw 45 -ant B -rig $RIG1 -no_hamlib -no_rigctl -port $PORT $SDR_OPTS $PAN"
+    #set cmd="$PY_SDR -mode CW -fsout $FS -vid_bw 45 -ant B -rig $RIG1 -no_hamlib -no_rigctl -port $PORT $SDR_OPTS $PAN"
+    set cmd="$PY_SDR -mode CW -fsout $FS -vid_bw 45 -ant B -rig $RIG1 -no_hamlib -port $PORT $SDR_OPTS $PAN"
     echo $cmd >& /tmp/SDR
     $cmd >>& /tmp/SDR &
     sleep 1

@@ -238,12 +238,12 @@ class GUI():
             self.PaddlingWin.hide()
         
         # Add menu bar
-        ncols=12
+        self.ncols=12
         row=0
         self.create_menu_bar()
         
         # Set up basic logging entry boxes
-        #row+=1
+        row+=1
         if sys.version_info[0]==3:
             font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
             font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
@@ -371,17 +371,17 @@ class GUI():
         if False:
             btn = Button(self.root, text='Get',command=self.Set_Log_Fields, \
                          takefocus=0 )
-            btn.grid(row=row+1,column=ncols-2)
+            btn.grid(row=row+1,column=self.ncols-2)
             tip = ToolTip(btn, ' Get FLDIGI Logger Fields ' )
 
             btn = Button(self.root, text='Put',command=self.Read_Log_Fields,\
                          takefocus=0 ) 
-            btn.grid(row=row+1,column=ncols-1)
+            btn.grid(row=row+1,column=self.ncols-1)
             tip = ToolTip(btn, ' Set FLDIGI Logger Fields ' )
 
             btn = Button(self.root, text='Wipe',command=self.Clear_Log_Fields,\
                          takefocus=0 ) 
-            btn.grid(row=row+2,column=ncols-2)
+            btn.grid(row=row+2,column=self.ncols-2)
             tip = ToolTip(btn, ' Clear FLDIGI Logger Fields ' )
 
         # Make sure all columns are adjusted when we resize the width of the window
@@ -393,9 +393,9 @@ class GUI():
         row+=3
         self.txt2_row=row
         self.txt2 = Text(self.root, height=5, width=80, bg='white')
-        self.txt2.grid(row=row,column=0,columnspan=ncols,stick=N+S+E+W)
+        self.txt2.grid(row=row,column=0,columnspan=self.ncols,stick=N+S+E+W)
         self.S2 = Scrollbar(self.root)
-        self.S2.grid(row=row,column=ncols,sticky=N+S)
+        self.S2.grid(row=row,column=self.ncols,sticky=N+S)
         self.S2.config(command=self.txt2.yview)
         self.txt2.config(yscrollcommand=self.S2.set)
         self.txt2.bind("<Tab>", self.key_press )
@@ -405,9 +405,9 @@ class GUI():
         row+=1
         Grid.rowconfigure(self.root, row, weight=1)             # Allows resizing
         self.txt = Text(self.root, height=5, width=80, bg='white')
-        self.txt.grid(row=row,column=0,columnspan=ncols,stick=N+S+E+W)
+        self.txt.grid(row=row,column=0,columnspan=self.ncols,stick=N+S+E+W)
         self.S = Scrollbar(self.root)
-        self.S.grid(row=row,column=ncols,sticky=N+S)
+        self.S.grid(row=row,column=self.ncols,sticky=N+S)
         self.S.config(command=self.txt.yview)
         self.txt.config(yscrollcommand=self.S.set)
         self.txt.bind("<Tab>", self.key_press )
@@ -521,14 +521,14 @@ class GUI():
         # Put in a pull-down menu if we really need this
         self.SendBtn = Button(self.root, text='Send',command=self.Toggle_Immediate_TX,\
                                   takefocus=0 ) 
-        self.SendBtn.grid(row=row,column=ncols-2)
+        self.SendBtn.grid(row=row,column=self.ncols-2)
         tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
         self.Toggle_Immediate_TX(1)
         
         # QRZ button
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
                      takefocus=0 ) 
-        btn.grid(row=row,column=ncols-1)
+        btn.grid(row=row,column=self.ncols-1)
         tip = ToolTip(btn, ' Query QRZ.com ' )
         
         # Set up a spin box to allow satellite logging
@@ -996,16 +996,16 @@ class GUI():
 
         # Highlight appropriate buttons for running or s&p
         self.P.KEYING.highlight(self,arg)
-        print("\nSend_Marco:",arg,':',txt)
+        print("\nSend_Macro:",arg,':',txt)
         if '[SERIAL]' in txt:
             cntr = self.sock.get_serial_out()
             if not cntr or cntr=='':
                 cntr=self.P.MY_CNTR
-            print('GUI: cntr=',cntr,'\tndigits=',self.ndigits)
+            #print('SEND MACRO: cntr=',cntr,'\tndigits=',self.ndigits)
             self.cntr = cut_numbers(cntr,ndigits=self.ndigits)
             txt = txt.replace('[SERIAL]',self.cntr)
             self.serial_out = self.cntr
-            print('GUI: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
+            print('SEND MACRO: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
 
         # Fill in name
         name=self.get_name().upper()
@@ -1025,16 +1025,20 @@ class GUI():
         txt = self.Patch_Macro2(txt)
 
         # Send text to keyer ...
+        #print('SEND MACRO: Q-put',txt)
         self.q.put(txt)
 
         # ... and to big text box ...
+        #print('SEND MACRO: txt box',txt)
         self.txt.insert(END, txt+'\n')
         self.txt.see(END)
         self.root.update_idletasks()
 
         # ... and to disk
+        #print('SEND MACRO: disk',txt)
         self.fp_txt.write('%s\n' % (txt) )
         self.fp_txt.flush()
+        #print('SEND MACRO: Done.')
         
 
     # Routine to hide all of the input boxes
@@ -1115,7 +1119,7 @@ class GUI():
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
-        elif val in self.P.STATE_QPs+['TEN-TEN','WAG']:
+        elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)
@@ -1207,6 +1211,7 @@ class GUI():
             self.keyer.set_wpm(WPM)
             self.sock.set_speed(WPM)
             self.WPM_TXT.set(str(WPM))
+            self.P.WPM = WPM
 
     # Callback to return everything to defaults
     def Reset_Defaults(self):
@@ -1415,7 +1420,8 @@ class GUI():
 
     # Exit
     def Quit(self):
-        # Make sure we really want to do this and didn't just fat-fingure something
+        
+        # Make sure we really want to do this and didn't just fat-finger something
         msg='Really Quit?'
         lab="pyKeyer"
         if sys.version_info[0]==3:
@@ -2451,16 +2457,44 @@ class GUI():
     # Callback to put rig into CW mode
     def SetCWModeCB(self):
         self.sock.set_mode('CW')
+
+    # Callback to activate callsign that is in the on deck circle
+    def BatterUp(self):
+
+        print('Swing batter swing ...')
+        call  = self.OnDeckCircle.get()
+        call2 = self.get_call()
+        if call!=call2:
+            
+            self.Clear_Log_Fields()
+            self.call.insert(0,call)
+            self.dup_check(call)
+            if self.contest:
+                self.get_hint(call)
+                if self.P.AUTOFILL:
+                    self.P.KEYING.insert_hint()
+
+        
             
 ############################################################################################
     
     # Function to create menu bar
     def create_menu_bar(self):
         print('Creating Menubar ...')
-                   
-        menubar = Menu(self.root)
-        Menu1 = Menu(menubar, tearoff=0)
+        OLD_WAY=False
 
+        if OLD_WAY:
+            menubar = Menu(self.root)
+        else:
+            toolbar = Frame(self.root, bd=1, relief=RAISED)
+            #toolbar.pack(side=TOP, fill=X)
+            toolbar.grid(row=0,columnspan=self.ncols,column=0,sticky=E+W)
+            #Label(toolbar,text='HEY').pack(side=LEFT, padx=2, pady=2)
+
+            menubar = Menubutton(toolbar,text='File',relief='flat')
+            menubar.pack(side=LEFT, padx=2, pady=2)
+            
+        Menu1 = Menu(menubar, tearoff=0)
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Rig Control ...", command=self.RigCtrlCB)
         Menu1.add_command(label="Paddling ...", command=self.PaddlingWin.show)
@@ -2563,10 +2597,32 @@ class GUI():
         
         Menu1.add_separator()
         Menu1.add_command(label="Exit", command=self.Quit)
-        menubar.add_cascade(label="File", menu=Menu1)
 
-        self.root.config(menu=menubar)
+        if OLD_WAY:
+            menubar.add_cascade(label="File", menu=Menu1)
+            menubar.add_command(label="VFO A",
+                                command=lambda: SetVFO(self,'A'))
+            menubar.add_command(label="VFO B",
+                                command=lambda: SetVFO(self,'B'))
+            menubar.add_command(label="A-->B",
+                                command=lambda: SetVFO(self,'A->B'))
+            self.root.config(menu=menubar)
+        else:
+            menubar.menu =  Menu1
+            menubar["menu"]= menubar.menu  
 
+            self.OnDeckCircle=Entry(toolbar,text='On Deck Circle')
+            self.OnDeckCircle.pack(side=LEFT, padx=2, pady=2)
+            Button(toolbar,text="Batter Up",command=self.BatterUp) \
+                .pack(side=LEFT, padx=2, pady=2)
 
-        
-        
+            Button(toolbar,text="VFO A",command=lambda: SetVFO(self,'A')) \
+                .pack(side=LEFT, padx=2, pady=2)
+            Button(toolbar,text="VFO B",command=lambda: SetVFO(self,'B')) \
+                .pack(side=LEFT, padx=2, pady=2)
+            Button(toolbar,text="A->B",command=lambda: SetVFO(self,'A->B')) \
+                .pack(side=LEFT, padx=2, pady=2)
+            #Button(toolbar,text="B->A",command=lambda: SetVFO(self,'B->A')) \
+            #    .pack(side=LEFT, padx=2, pady=2)
+            
+            

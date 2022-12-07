@@ -241,12 +241,15 @@ class Keyer():
             self.dotlen=1.2/self.WPM
 
             if self.P.NANO_IO:
+                print("SET_WPM: Setting NANO speed to ",wpm)
                 if self.P.LOCK_SPEED:  
+                    #print("SET_WPM 1: Setting NANO speed to ",wpm)
                     nano_set_wpm(ser,wpm,idev=3)
                     #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
                     self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
                     #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
                 else:
+                    #print("SET_WPM 2: Setting NANO speed to ",wpm)
                     nano_set_wpm(ser,wpm)
                 self.P.gui.WPM_TXT.set(str(wpm))
 

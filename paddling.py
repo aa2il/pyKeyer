@@ -251,7 +251,7 @@ class PADDLING_GUI():
     def NewItem(self):
         P=self.P
         Selection=self.Selection.get()
-        print("You selected",Selection)
+        #print("You selected",Selection)
 
         if Selection==0:
             # Panagrams

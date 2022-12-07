@@ -173,7 +173,10 @@ class SIDETONE_OSC():
     #    4. The space between letters is 3 time units.
     #    5. The space between words is 7 time units.
     def send_cw(self,msg,WPM,nfrq,AUDIO_ACTIVE):
-        print('SIDETONE->SEND_CW:  msg=',msg,len(msg),'\tAUDIO_ACTIVE=',AUDIO_ACTIVE)
+        VERBOSITY=0
+
+        if VERBOSITY>0:
+            print('SIDETONE->SEND_CW:  msg=',msg,len(msg),'\tAUDIO_ACTIVE=',AUDIO_ACTIVE)
 
         # Check for speed or freq change
         if WPM != self.WPM or nfrq!=self.nfrq:
@@ -184,7 +187,9 @@ class SIDETONE_OSC():
 
             i=ord(char)
             cw=morse[i]
-            #print('SIDETONE->SEND_CW: Sending *',i,'*',char,'*',cw,'*')
+            
+            if VERBOSITY>0:
+                print('SIDETONE->SEND_CW: Sending *',i,'*',char,'*',cw,'*')
             
             if i>=32:
                 # Loop over all elements in this char
@@ -203,7 +208,8 @@ class SIDETONE_OSC():
                     # Send the element
                     #if AUDIO_ACTIVE and self.enabled:
                     if AUDIO_ACTIVE:
-                        print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
+                        if VERBOSITY>0:
+                            print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...',el,len(x))
                         self.rb.push(x)
                     self.rb2.push(x)
 
@@ -212,7 +218,8 @@ class SIDETONE_OSC():
                 x = np.concatenate( (self.space,self.space) )
                 #if AUDIO_ACTIVE and self.enabled:
                 if AUDIO_ACTIVE:
-                    print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
+                    if VERBOSITY>0:
+                        print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
                     self.rb.push(x)                         # Computer Audio
                 self.rb2.push(x)                            # Sidetone for capture
                 

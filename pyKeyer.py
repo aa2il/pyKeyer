@@ -63,7 +63,38 @@ def UDP_msg_handler(msg):
     print('UDP Message Handler: msg=',msg)
     self=P.gui
 
-    #idx = msg.count('Call:')
+    msg=msg.split(':')
+    if msg[0]=='Call':
+        
+        # Call:callsign:VFO
+        call=msg[1]
+        vfo=msg[2]
+        print('UDP Message Handler: Setting call to:',call,vfo,P.gui.contest)
+        call2=self.get_call()
+        if call!=call2 and vfo=='A':
+            
+            self.Clear_Log_Fields()
+            self.call.insert(0,call)
+            self.dup_check(call)
+            if P.gui.contest:
+                self.get_hint(call)
+                if P.AUTOFILL:
+                    P.KEYING.insert_hint()
+
+        elif vfo=='B':
+
+            self.OnDeckCircle.delete(0, END)
+            self.OnDeckCircle.insert(0,call)
+
+    elif msg[0]=='Sat':
+        
+        # Sat:sat_name
+        sat=msg[1]
+        print('UDP Message Handler: Setting SAT to:',sat)
+        self.set_satellite(sat)
+    
+    return
+
     idx = [m.start() for m in re.finditer('Call:', msg)]
     if len(idx)>0:
         call=msg[idx[-1]+5:]
@@ -71,7 +102,6 @@ def UDP_msg_handler(msg):
         call2=self.get_call()
         if call!=call2:
             self.Clear_Log_Fields()
-            #self.call.delete(0, END)
             self.call.insert(0,call)
             self.dup_check(call)
             if P.gui.contest:
@@ -134,6 +164,15 @@ else:
     P.sock3=None
 #print('P.sock3=',P.sock3,P.sock3.rig_type,P.sock3.rig_type1,P.sock3.rig_type2)
 #sys.exit(0)
+
+# Check if we need nano device
+if P.SENDING_PRACTICE and not P.NANO_IO:
+    print('\n*******************************************************')
+    print('*******************************************************')
+    print('*** We need the NANO IO device for sending practice ***')
+    print('*******************************************************')
+    print('*******************************************************')
+    sys.exit(1)
 
 # Open keying port(s)
 P.ser1=open_keying_port(P,P.sock1,1)

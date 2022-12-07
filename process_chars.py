@@ -34,21 +34,35 @@ def process_chars(P):
     lock      = P.lock1
     q         = P.q
     P.NANO_ECHO=False
+    VERBOSITY=0
     
     while not P.Stopper.isSet():
 
         # Anything available?
+        if VERBOSITY>0:
+            print('PROCESSS_CHARS: Checking ...',q.qsize())
         if q.qsize()>0:
+            if VERBOSITY>0:
+                print('PROCESSS_CHARS: Get txt...')
             txt=q.get()
             q.task_done()
 
-            # Check keyer speed on radio 
+            # Check keyer speed on radio - can't do this since we're not in the main gui loop!
+            if VERBOSITY>0:
+                print('PROCESSS_CHARS: txt=',txt)
             this_time = time.time();
-            if this_time - last_time>0.1 and not P.PRACTICE_MODE:
+            if this_time - last_time>0.1 and not P.PRACTICE_MODE and False:
+                if VERBOSITY>0:
+                    print('PROCESSS_CHARS: this_time=',this_time,last_time)
                 last_time=this_time
                 try:
+                    if VERBOSITY>0:
+                        print('PROCESSS_CHARS: Read WPM ...')
                     WPM = P.sock.read_speed()
-                    if WPM!=int( P.gui.WPM_TXT.get() ) and WPM>=5:
+                    if VERBOSITY>0:
+                        print('PROCESSS_CHARS: WPM=',WPM,P.WPM)
+                    if WPM!=P.WPM2 and WPM>=5:
+                        print('PROCESSS_CHARS: Set WPM=',WPM)
                         keyer.set_wpm(WPM)
                         P.gui.WPM_TXT.set(str(WPM))
                 except Exception as e: 

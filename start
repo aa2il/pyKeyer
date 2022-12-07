@@ -34,7 +34,7 @@ set PRACTICE="-prac -nrows 0"
 set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
-#set NANO="-sidetone"
+set NANO="-sidetone"
 
 set WPM=25
 set HINTS="-nohints"
@@ -62,7 +62,8 @@ set CONTEST="paddling"
 #set CONTEST="state"
 #set CONTEST="wpx"
 #set CONTEST="ss"
-set CONTEST="cqww"
+#set CONTEST="cqww"
+#set CONTEST="arrl_160m"
 #set CONTEST="arrl_10m"
 #set CONTEST="arrl_dx"
 #set CONTEST="default"
@@ -159,6 +160,11 @@ else if( $CONTEST == "vhf" )then
 # Settings for satellites
 else if( $CONTEST == "sat" )then
     set WPM=25
+
+# Settings for ARRL 160m
+else if( $CONTEST == "arrl_160m" )then
+    set WPM=25
+    set HINTS="-adjust"
 
 # Settings for ARRL 10m
 else if( $CONTEST == "arrl_10m" )then
@@ -272,7 +278,7 @@ endif
 echo OPTS=$OPTS
 
 cd ~/Python/pyKeyer
-#echo pyKeyer.py $OPTS >& /tmp/KEYER
 echo pyKeyer.py $OPTS 
-#pyKeyer.py $OPTS >>& /tmp/KEYER &
-pyKeyer.py $OPTS
+echo pyKeyer.py $OPTS >& /tmp/KEYER
+pyKeyer.py $OPTS >>& /tmp/KEYER &
+#pyKeyer.py $OPTS

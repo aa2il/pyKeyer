@@ -184,13 +184,13 @@ class RIG_CONTROL():
                text="VFO B",     
                command=lambda: SetVFO(self,'B') ).pack(side=LEFT,anchor=W)
         Button(MiscFrame,
-               text="A->B",     
+               text="A-->B",     
                command=lambda: SetVFO(self,'A->B') ).pack(side=LEFT,anchor=W)
         Button(MiscFrame,
-               text="B->A",     
+               text="B-->A",     
                command=lambda: SetVFO(self,'B->A') ).pack(side=LEFT,anchor=W)
         Button(MiscFrame,
-               text="A<->B",     
+               text="A<-->B",     
                command=lambda: SetVFO(self,'A<->B') ).pack(side=LEFT,anchor=W)
         
         # Add a tab for key pad
@@ -366,6 +366,25 @@ class RIG_CONTROL():
         self.set_vfo_mode('B')
         #sys.exit(0)
 
+        # Buttons for VFO Ops
+        row+=2
+        Button(self.vfowin, text="VFO A",           \
+               command=lambda: SetVFO(self,'A') )   \
+               .grid(row=row,column=0,columnspan=1,sticky=E+W)
+        Button(self.vfowin, text="VFO B",           \
+               command=lambda: SetVFO(self,'B') )   \
+               .grid(row=row,column=1,columnspan=1,sticky=E+W)
+        row+=1
+        Button(self.vfowin, text="A->B",           \
+               command=lambda: SetVFO(self,'A->B') )   \
+               .grid(row=row,column=0,columnspan=1,sticky=E+W)
+        Button(self.vfowin, text="B->A",           \
+               command=lambda: SetVFO(self,'B->A') )   \
+               .grid(row=row,column=1,columnspan=1,sticky=E+W)
+        Button(self.vfowin, text="A<->B",           \
+               command=lambda: SetVFO(self,'A<->B') )   \
+               .grid(row=row,column=2,columnspan=1,sticky=E+W)
+        
         # Setup a spinbox to select PL tone
         col+=4
         row=0

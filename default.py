@@ -1,9 +1,9 @@
 ############################################################################################
 #
 # default.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for default qsos
+# Keying routines for default qsos, most state QSO parties and some other contests.
 #
 ############################################################################################
 #
@@ -38,6 +38,8 @@ VERBOSITY=0
 class DEFAULT_KEYING():
 
     def __init__(self,P,contest_name='CW Default',HISTORY=None):
+
+        print('DEFAULT KEYING INIT ...')
         self.P=P
         self.contest_name  = contest_name 
         self.aux_cb=None
@@ -45,6 +47,8 @@ class DEFAULT_KEYING():
         self.contest_duration = None
         self.LAB1=None
         self.LAB2=None
+        self.key1=None
+        self.key2=None
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
@@ -65,8 +69,11 @@ class DEFAULT_KEYING():
     # Routient to set macros for this contest
     def macros(self):
 
-        MACROS = OrderedDict()
         print('DEFAULT MACROS: contest_name=',self.contest_name)
+        self.key1=None
+        self.key2=None
+        
+        MACROS = OrderedDict()
         if self.contest_name=='CW Default':
             
             MACROS[0]  = {'Label' : 'CQ'      , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
@@ -93,6 +100,14 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
                 EXCH2 = '[SERIAL]'
+            elif self.contest_name in ['ARRL-160M']:
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSEC]'
+                CONTEST = 'TEST'
+                self.key1 = 'rst'
+                self.key2 = 'sec'
             elif self.contest_name in ['NVQP']:
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
@@ -157,19 +172,49 @@ class DEFAULT_KEYING():
         
     # Routine to generate a hint for a given call
     def hint(self,call):
-        return None
+        P=self.P
+
+        txt=''
+        if self.key1!=None and self.key1!='rst':
+            txt+='TBD '
+
+        if self.key2!=None and self.key2 in ['sec']:
+            qth = P.MASTER[call][self.key2]
+            txt += qth
+            
+        return txt
 
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
+        if self.key2!=None:
+            qth   = HIST[call][self.key2]
+        else:
+            qth=''
+            
         if iopt==1:
             
-            return True
+            done = len(qth)>0
+            return done
 
         else:
 
-            return ''
+            self.call = call
+            self.rst = '5NN'
+            self.qth = qth
+
+            txt=''
+            if self.key1!=None:
+                if self.key1=='rst':
+                    txt+=self.rst+' '
+
+            if self.key2!=None:
+                if self.key2 in ['sec']:
+                    txt+=self.qth
             
+            return txt
+
+        
     # Routine to process qso element repeats
     def repeat(self,label,exch2):
             
@@ -330,6 +375,8 @@ class DEFAULT_KEYING():
     # Hint insertion
     def insert_hint(self,h=None):
 
+        print('DEFAULT INSERT HINT 1: h=',h)
+
         gui=self.P.gui
 
         if h==None:
@@ -338,12 +385,18 @@ class DEFAULT_KEYING():
             h = h.split(' ')
 
         if len(h)>=1:
-            gui.name.delete(0, END)
-            gui.name.insert(0,h[0])
-            if len(h)>=2:
-                gui.qth.delete(0,END)
-                gui.qth.insert(0,h[1])
+            print('DEFAULT INSERT HINT 3: h=',h)
 
+            idx=0
+            if self.key1!=None and self.key1=='name':
+                gui.name.delete(0, END)
+                gui.name.insert(0,h[idx])
+                idx+=1
+
+            if self.key2!=None and self.key2 in ['sec']:
+                gui.qth.delete(0,END)
+                gui.qth.insert(0,h[idx])
+                idx+=1
 
     # Move on to next entry box & optionally play a macros
     def next_event(self,key,event):

@@ -2,7 +2,7 @@
 ################################################################################
 #
 # Params.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Command line param parser for pyKeyer.
 #
@@ -52,9 +52,11 @@ class PARAMS:
         arg_proc.add_argument('-wpx', action='store_true',
                               help='CQ WPX')
         arg_proc.add_argument('-arrl_dx', action='store_true',
-                              help='ARRL DX')
+                              help='ARRL Intl DX')
         arg_proc.add_argument('-arrl_10m', action='store_true',
                               help='ARRL 10m')
+        arg_proc.add_argument('-arrl_160m', action='store_true',
+                              help='ARRL 160m')
         arg_proc.add_argument('-cqp', action='store_true',
                               help='California QP')
         arg_proc.add_argument('-state', help='State QP',
@@ -168,11 +170,11 @@ class PARAMS:
         self.FORCE         = args.force
         self.TEST_MODE     = args.test
         
-        self.NANO_IO       = args.nano
+        self.SENDING_PRACTICE = args.sending
+        self.NANO_IO       = args.nano or args.sending
         self.CW_IO         = args.cwio
         self.LOCK_SPEED    = args.lock
         
-        self.SENDING_PRACTICE = args.sending
         self.AUTOFILL      = args.autofill
         self.PRACTICE_MODE = args.practice
         self.ADJUST_SPEED  = args.adjust and args.practice
@@ -223,7 +225,7 @@ class PARAMS:
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF',
-                           'ARRL-10M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
+                           'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO'] + \
                            self.STATE_QPs
 
@@ -293,6 +295,9 @@ class PARAMS:
         elif args.arrl_10m:
             self.contest_name = 'ARRL-10M'
             MAX_AGE_HOURS=48    #??
+        elif args.arrl_160m:
+            self.contest_name = 'ARRL-160M'
+            MAX_AGE_HOURS=42
         elif args.arrl_dx:
             self.contest_name = 'ARRL-DX'
             MAX_AGE_HOURS=48    #??

@@ -35,6 +35,7 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P,contest_name):
         DEFAULT_KEYING.__init__(self,P,contest_name) 
+        print('RAGCHEW KEYING INIT ...')
 
         P.CONTEST_ID='RAGCHEW'
 
