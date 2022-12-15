@@ -327,8 +327,9 @@ class GUI():
 
         self.scp_lab = Label(self.root, text="Super Check Partial",font=font1)
         self.scp_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
-        self.scp = Entry(self.root,font=font2,fg='blue')
+        self.scp = Entry(self.root,font=font2,fg='blue',selectbackground='white')
         self.scp.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
+        self.scp.bind('<Double-Button-1>',self.SCP_Selection)
 
         # Checkbox to indicate if we've received QSL
         self.qsl_rcvd=tk.IntVar()
@@ -1919,6 +1920,30 @@ class GUI():
             # Use default color
             self.call.configure(background=self.default_color)
 
+############################################################################################
+    
+    # Handlers for double-click in the SCP box
+    # This first one responds immediately to the double click.
+    # However, the selection is not made until after this callback
+    # returns so we just schedule to actual handler here.    
+    def SCP_Selection(self,evt):
+        print('SCP SELECTION: evt num=',evt.num)
+        self.scp.after(20,lambda: self.SCP_Selection2(evt) )
+
+    # This is the actual handler that copies the selected callsign into
+    # the call sign box
+    def SCP_Selection2(self,evt):
+        print('SCP SELECTION2: select present=',evt.widget.select_present())
+        if evt.widget.select_present():
+            call = evt.widget.selection_get()
+            print('Call:',call)
+            self.call.delete(0, END)
+            self.call.insert(0,call)
+            
+            next_widget=self.call
+            self.call.focus_set()
+        else:
+            print('Nothing to do')
 
 ############################################################################################
     

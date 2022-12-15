@@ -34,7 +34,8 @@ set PRACTICE="-prac -nrows 0"
 set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
-set NANO="-sidetone"
+#set NANO="-sidetone"
+#set NANO="-nano -sidetone"
 
 set WPM=25
 set HINTS="-nohints"
@@ -100,7 +101,7 @@ else if( $CONTEST == "naqp" )then
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=30
-    set HINTS="-nohints -adjust $SCP"
+    set HINTS="-nohints -adjust"
     #set HINTS=""
 
 # Settings for K1USN slow speed tests
@@ -274,7 +275,7 @@ else
 endif
 
 # Start keyer
-set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE"
+set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE $SCP"
 if( $RIG2 != "NONE" )then
     set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
 endif
