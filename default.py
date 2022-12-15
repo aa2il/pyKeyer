@@ -405,9 +405,13 @@ class DEFAULT_KEYING():
         gui = P.gui
 
         if event.widget==gui.txt or event.widget==gui.txt2:
+            
+            # We're in one of the big text boxes - jump to call entry box
             #print('txt->call')
             next_widget = gui.call
+            
         else:
+            
             # Get current widget index
             idx=gui.boxes.index(event.widget)
             nn = len(gui.boxes)
@@ -447,8 +451,9 @@ class DEFAULT_KEYING():
         if self.aux_cb:
             self.aux_cb(key,event)
 
-        #print('NEXT EVENT: idx=',idx,'\tnn=',nn,'\tidx2=',idx2)
+        #print('NEXT EVENT current widget=',event.widget,'\tnext widget=',next_widget)
         next_widget.focus_set()
+        #print('NEXT EVENT Done: idx=',idx,'\tnn=',nn,'\tidx2=',idx2)
         return next_widget
             
 
@@ -466,7 +471,7 @@ class DEFAULT_KEYING():
         # Get number from gui
         num = P.gui.get_exchange().upper()
         num = reverse_cut_numbers(num)
-        print('\nREVERSE_LOOKUP: num=',num)
+        #print('\nREVERSE_LOOKUP: num=',num)
         if num=='':
             return
 
@@ -477,15 +482,15 @@ class DEFAULT_KEYING():
             if num==num2:
                 dx_station = Station(call)
                 call2 = dx_station.homecall
-                print('call=',call,'home call=',call2)
+                #print('call=',call,'home call=',call2)
                 calls.append(call2)
 
         # Look for call closest to what we copied
         call_in=P.gui.get_call()
-        print('CALL_IN=',call_in)
+        #print('CALL_IN=',call_in)
 
         # Find most common (i.e. "mode") of home calls
-        print(calls)
+        #print(calls)
         calls2 = list(set(calls))
         counts = []
         dist=[]
@@ -495,9 +500,9 @@ class DEFAULT_KEYING():
             cnt=calls.count(call)
             counts.append(cnt)
             #print(call,cnt)
-        print('Known calls=',calls2)
-        print('Distances=',dist)
-        print('Counts=',counts)
+        #print('Known calls=',calls2)
+        #print('Distances=',dist)
+        #print('Counts=',counts)
 
         P.gui.txt.insert(END, '\n')
         P.gui.txt.insert(END, calls2)
@@ -515,7 +520,7 @@ class DEFAULT_KEYING():
                 m=calls2[idx]
             else:
                 m=max(set(calls), key=calls.count)
-            print('Most likely call=',m)
+            #print('Most likely call=',m)
             P.gui.call.delete(0, END)
             P.gui.call.insert(0,m)
             P.gui.dup_check(m)
@@ -528,7 +533,7 @@ class DEFAULT_KEYING():
         else:
             # Just fill in hint box
             h=P.gui.get_hint(m)
-        print('REVERSE_LOOKUP: h=',h)
+        #print('REVERSE_LOOKUP: h=',h)
         
         #return m
         

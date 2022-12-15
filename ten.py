@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # ten.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ARRL 10m and Intl DX contests.
 #
@@ -40,33 +40,39 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
             P.CONTEST_ID='ARRL-DX-CW'
         else:
             P.CONTEST_ID='ARRL-10'
+        self.contest_duration = 48
+        P.MAX_AGE = self.contest_duration *60
 
     # Routient to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYSTATE] '}
+        MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 TEST [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] 73EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYSTATE] '}
-        MACROS[5]     = {'Label' : 'S&P Reply2' , 'Text' : 'TU 5NN [MYSTATE] [MYSTATE] '}
+        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [MYSTATE] [MYSTATE] '}
         MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-        
-        MACROS[8]     = {'Label' : 'My QTH 2x' , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
+
+        MACROS[8]     = {'Label' : 'My QTH 2x' , 'Text' : '[-2][MYSTATE] [MYSTATE] [+2]'}
         MACROS[9]     = {'Label' : ' '         , 'Text' : ' '}
         MACROS[10]    = {'Label' : ' '         , 'Text' : ' '}
         if self.P.contest_name=='ARRL-DX':
             MACROS[11]    = {'Label' : 'NR? '  , 'Text' : 'NR? '}
         else:
             MACROS[11]    = {'Label' : 'QTH? ' , 'Text' : 'QTH? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
         
         return MACROS
 
