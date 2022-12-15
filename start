@@ -42,9 +42,12 @@ set HINTS="-nohints"
 set CA_ONLY=""
 #set CA_ONLY="-ca_only"
 
+set SCP=""
+set SCP="-scp"
+
 set CONTEST="paddling"
 #set CONTEST="ten"
-#set CONTEST="cwt"
+set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="cwopen"
@@ -97,7 +100,7 @@ else if( $CONTEST == "naqp" )then
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=30
-    set HINTS="-nohints -adjust"
+    set HINTS="-nohints -adjust $SCP"
     #set HINTS=""
 
 # Settings for K1USN slow speed tests
@@ -169,7 +172,7 @@ else if( $CONTEST == "arrl_160m" )then
 # Settings for ARRL 10m
 else if( $CONTEST == "arrl_10m" )then
     set WPM=25
-    set HINTS=""
+    set HINTS="-adjust"
 
 # Settings for 10-10 10m
 else if( $CONTEST == "ten" )then

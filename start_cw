@@ -42,7 +42,7 @@ set START_CLOCK   = 1       # 1
 set START_BANDMAP = 1       # 1
 
 # Select various processing options
-set SO2V          = 1       # 0
+set SO2V          = 0       # 0
 set USE_NANO_IO   = 1       # 1
 set TEST_MODE     = 0       # 0
 set KILL_OLD      = 1       # 1
@@ -284,8 +284,8 @@ else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
 # Settings for ARRL 10m
 else if( $CONTEST == "arrl_10m" )then
     set WPM=25
-    set HINTS="-use_log_hist"
-    set BM_OPTS = "$BM_OPTS -contest"
+    set HINTS="-use_log_hist -autofill -nrows 1"
+    set BM_OPTS = "$BM_OPTS -contest -hours 48 -cwops"
 
 # Settings for ARRL Sweepstakes
 # Since we can only work each station once, it doesn't make sense to use history

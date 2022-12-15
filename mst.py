@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # mst.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ICWC Medium Speed mini-tests
 #
@@ -25,6 +25,7 @@ from collections import OrderedDict
 from random import randint, random
 from utilities import cut_numbers
 from default import DEFAULT_KEYING
+from datetime import datetime
 
 ############################################################################################
 
@@ -48,12 +49,28 @@ class MST_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ MST [MYCALL] '}
-        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [SERIAL] '}
         #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 MST [MYCALL] [LOG]'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73EE [LOG]'}
+
+        # Check date for any special greetings
+        now = datetime.utcnow()
+        if now.month==12 and now.day>=11 and now.day<28:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
+            #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'MC [MYNAME] [SERIAL] '}
+        elif now.month==12 and now.day>=28:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
+            #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'MC HNY [MYNAME] [SERIAL] '}
+        elif now.month==1 and now.day<=14:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73EE [LOG]'}
+            #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'HNY [MYNAME] [SERIAL] '}
+        else:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73EE [LOG]'}
+
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         

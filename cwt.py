@@ -26,6 +26,7 @@ from random import random
 from rig_io.ft_tables import SST_SECS
 from default import DEFAULT_KEYING
 from utilities import cut_numbers,reverse_cut_numbers
+from datetime import datetime
 
 ############################################################################################
 
@@ -39,11 +40,28 @@ class CWOPS_KEYING(DEFAULT_KEYING):
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test')
 
+        print('CWT INIT ...')
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/CWOPS_*.txt')
         P.CONTEST_ID='CWOPS-CWT'
         self.number_key='cwops'
         self.contest_duration = 1
         P.MAX_AGE = self.contest_duration *60
+
+        """
+        This code fragment gets the proper history list from the master file
+        Eventually, we might go to this model where we only import the master.csv
+        and each keying objct extracts what it wants but I have to thnk this through.
+        One advantage of using CWT call history files is that include ops who participate
+        but are not members
+
+                    self.HIST=[];
+                    for x in self.P.MASTER:
+                        if len(x['cwops'])>0:
+                            #print('x=',x,len(x['cwops']))
+                            self.HIST.append(x)
+                    print('HIST len=',len(self.HIST))
+                    sys.exit(0)
+        """
 
     # Routine to set macros for this contest
     def macros(self):
@@ -52,15 +70,24 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CWT [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYCWOPS] '}
-        MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        if self.P.PRACTICE_MODE or True:
-            #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] RTU CWT [MYCALL] [LOG]'}
+        #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+
+        # Check date for any special greetings
+        now = datetime.utcnow()
+        if now.month==12 and now.day>=11 and now.day<28:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU MC [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
+        elif now.month==12 and now.day>=28:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
+        elif now.month==1 and now.day<=14:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+        else:            
+            #if self.P.PRACTICE_MODE or True:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [NAME] 73EE [LOG]'}
-        else:
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73 EE [LOG]'}
-        #MACROS[2+12]  = {'Label' : 'TU/QRZ'    , 'Text' : '[CALL_CHANGED] 73 [NAME] [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [NAME] 73EE [LOG]'}
+
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -110,7 +137,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
             num   = HIST[call]['cwops']
             
             # Select criteria for a accepting a call
-            # Most of the time require a cwops number but once in a while use only state
+            # Most of the time, require a cwops number but once in a while use only state
             # This seems to be most realistic of what in encountered in the tests.
             done = len(name)>0 and len(num)>0                  # Need no. but some have state in no. field
             x = random()

@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # sst.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for slow speed mini tests.
 #
@@ -25,6 +25,7 @@ from collections import OrderedDict
 from random import random
 from rig_io.ft_tables import SST_SECS
 from default import DEFAULT_KEYING
+from datetime import datetime
 
 ############################################################################################
 
@@ -48,28 +49,33 @@ class SST_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SST [MYCALL] '}
-        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [MYSTATE] '}
         #MACROS[1+12]  = {'Label' : 'Reply'     , 'Text' : '[CALL] TNX AGN [MYNAME] [MYSTATE] '}
         
-        #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 SST [MYCALL] [LOG]'}
-        #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC ES HNY [NAME] EE [LOG]'}
-        #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 [LOG]'}
-        #MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 QRZ? [LOG]'}
-        #MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] 73 [LOG]'}
-        #MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] GL EE'}
-        #MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 SST [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73 EE [LOG]'}
+        # Check date for any special greetings
+        now = datetime.utcnow()
+        if now.month==12 and now.day>=11 and now.day<28:
+            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
+            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'MC [NAME] [MYNAME] [MYSTATE]'}
+        elif now.month==12 and now.day>=28:
+            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
+            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'MC HNY [NAME] [MYNAME] [MYSTATE]'}
+        elif now.month==1 and now.day<=14:
+            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'HNY [NAME] [MYNAME] [MYSTATE]'}
+        else:
+            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 [LOG]'}
+            #MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 QRZ? [LOG]'}
+            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
+
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
-        #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'MC [NAME] [MYNAME] [MYSTATE]'}
-        #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'HNY [NAME] [MYNAME] [MYSTATE]'}
+        
         MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
