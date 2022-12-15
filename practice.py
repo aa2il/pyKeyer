@@ -43,6 +43,13 @@ class CODE_PRACTICE():
 
         print('CODE_PRACTICE INIT: History2=',P.HISTORY2)
         self.P = P
+        self.enable = False
+        self.last_id=None
+
+    def load_practice_history(self):
+        P=self.P
+        print('CODE_PRACTICE - Load Practice History',P.HISTORY2)
+        self.last_id=P.CONTEST_ID
 
         # Load history file providing a bunch of calls to play with
         if '*' in P.HISTORY2:
@@ -87,17 +94,34 @@ class CODE_PRACTICE():
             #sys.exit(0)
 
 
+    # P.OP_STATE:
+    #    0 - Nothing
+    #    1 - CQ or QRZ
+    #    2 or 32 - Reply
+    #    4 - TU
+    #    8 - '?' but not QRZ?
+            
+
     # Main routine that orchestrates code practice
     def run(self):
+        print('PRACTICE->RUN ...')
 
         # Loop until exit event is set
         while not self.P.Stopper.isSet():
+            print('PRACTICE->RUN ...',self.enable,self.P.OP_STATE,self.P.HISTORY2,self.P.CONTEST_ID)
+            self.enable |= self.P.OP_STATE
             
-            if self.P.PRACTICE_MODE:
+            if self.P.PRACTICE_MODE and self.enable:
+
+                # Check that we have the right history file - put this in cwt.py
+                if self.last_id!=self.P.CONTEST_ID:
+                    self.load_practice_history()
+
                 # Send a practice message
                 self.practice_qso()
 
             else:
+                
                 time.sleep(1)
                 
 
@@ -127,7 +151,7 @@ class CODE_PRACTICE():
             
             print('PRACTICE_QSO: call=',call,'\tdone=',done,'\thist=',HIST[call])
             if ntries>100:
-                print('Something is rotten in Denmark!')
+                print('PRACTICE_QSO: Something is rotten in Denmark - Probably a bad history file!!!')
                 P.SHUTDOWN=True
                 sys.exit(0)
 
@@ -137,19 +161,15 @@ class CODE_PRACTICE():
         self.wait_for_keyer()
         Done=False
         while not Done:
-            #Done= ('CQ'  in P.gui.macro_label) or ('QRZ'   in P.gui.macro_label) or \
-            #      ('QSY' in P.gui.macro_label) or (MY_CALL in P.gui.macro_label) or \
-            #      ('Log QSO' in P.gui.macro_label and P.SPRINT) or \
-            #      self.P.Stopper.isSet()
             Done = (P.OP_STATE & 1) or self.P.Stopper.isSet()
             time.sleep(0.1)
+        P.OP_STATE &= ~1          # Clear CQ/QRZ
 
-        # Abort
+        # Abort ?
         if DEBUG:
             print('PRACTICE_QSO: Waiting 1b - Got CQ ...')
         if P.Stopper.isSet():
             return
-        P.OP_STATE ^= 1          # Clear CQ/QRZ
         
         # Wait for handshake with keyer
         if DEBUG:
@@ -173,7 +193,7 @@ class CODE_PRACTICE():
                 print('PRACTICE_QSO: Unknown Contest')
                                     
             if DEBUG:
-                print('PRACTICE_QSO: Sending call=',txt1)
+                print('PRACTICE_QSO: Sending call=',txt1,'\top_state=',P.OP_STATE)
             if self.P.NANO_IO:
                 nano_write(self.P.ser,txt1)
             else:
@@ -182,35 +202,33 @@ class CODE_PRACTICE():
             lock.release()
 
             # Wait for op to answer
+            Done=False
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 2a - op exchange ... op_state=',P.OP_STATE)
+                print('PRACTICE_QSO: Waiting 2a - op exchange ...\top_state=',P.OP_STATE)
             self.wait_for_keyer()
             while not Done:
-                #Done = ('Reply' in P.gui.macro_label) or ('?' in P.gui.macro_label) or \
-                #    (MY_CALL in P.gui.macro_label) or self.P.Stopper.isSet():
                 Done = (P.OP_STATE & (2+8)) or self.P.Stopper.isSet()
                 time.sleep(0.1)
 
             # Abort
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 2b - Got answer - op_state=',P.OP_STATE)
+                print('PRACTICE_QSO: Waiting 2b - Got answer - \top_state=',P.OP_STATE,'\tDone=',Done)
             if self.P.Stopper.isSet():
                 return
             
             # Check for repeats
-            #done = ('Reply' in P.gui.macro_label) or (MY_CALL in P.gui.macro_label)
             done = P.OP_STATE & 2
-            P.OP_STATE ^= 2          # Clear Reply
+            P.OP_STATE &= ~2          # Clear Reply
             if not done:
                 repeats=repeats or (P.OP_STATE & 8)
-                P.OP_STATE ^= 8          # Clear Repeat
+                P.OP_STATE &= ~8          # Clear Repeat
 
             # Wait for handshake with keyer
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 2c - keyer',P.OP_STATE,done,repeats)
+                print('PRACTICE_QSO: Waiting 2c - keyer',P.OP_STATE,done,'\trepeats=',repeats,'\top_state=',P.OP_STATE)
             keyer.evt.clear()
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 2d - keyer ... done=',done,repeats)
+                print('PRACTICE_QSO: Waiting 2d - keyer ... done=',done,'\trepeats=',repeats,'\top_state=',P.OP_STATE)
 
         # Send exchange 
         done = False
@@ -239,29 +257,27 @@ class CODE_PRACTICE():
             lock.release()
 
             # Wait for op to answer
+            Done=False
             if DEBUG:
                 print('PRACTICE_QSO: Waiting 3a - op to Answer ... op_state=',P.OP_STATE)
             self.wait_for_keyer()
             while not Done:
-                #Done = ('TU' in label) or ('?' in label) or \
-                #    ('LOG' in label) ort self.P.Stopper.isSet()
-                Done = (P.OP_STATE & 4) or self.P.Stopper.isSet()
+                Done = (P.OP_STATE & (4+8)) or self.P.Stopper.isSet()
                 time.sleep(0.1)
 
-            # Abort
+            # Abort ?
             if DEBUG:
                 print('PRACTICE_QSO: Waiting 3b - Got Answer, keyer ... op_state=',P.OP_STATE)
             if self.P.Stopper.isSet():
                 return
-            #done = ('TU' in label) or ('LOG' in label)
             done = P.OP_STATE & 4
-            P.OP_STATE ^= 4          # Clear TU
+            P.OP_STATE &= ~4          # Clear TU
 
             if DEBUG:
                 print('PRACTICE_QSO: Waiting 3c - Got keyer ... done=',done)
             if not done:
                 repeats=repeats or (P.OP_STATE & 8)
-                P.OP_STATE ^= 8          # Clear Repeat
+                P.OP_STATE &= ~8          # Clear Repeat
                 label=P.gui.macro_label.upper()
                 if DEBUG:
                     print('Waiting 3d - Repeats=',repeats,'\tlabel=',label)
