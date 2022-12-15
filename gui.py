@@ -252,50 +252,25 @@ class GUI():
             font2 = tkFont.Font(family="monospace",size=28,weight="bold")
         self.call_lab = Label(self.root, text="Call",font=font1)
         self.call_lab.grid(row=row,columnspan=4,column=0,sticky=E+W)
-        if False:
-            self.call_sv = StringVar()
-            self.call = Entry(self.root,font=font2, textvariable=self.call_sv,
-                              validate="all", validatecommand=self.check_call)
-        elif False:
-            # valid percent substitutions (from the Tk entry man page)
-            # note: you only have to register the ones you need;
-            #
-            # %d = Type of action (1=insert, 0=delete, -1 for others)
-            # %i = index of char string to be inserted/deleted, or -1
-            # %P = value of the entry if the edit is allowed
-            # %s = value of entry prior to editing
-            # %S = the text string being inserted or deleted, if any
-            # %v = the type of validation that is currently set
-            # %V = the type of validation that triggered the callback
-            #      (key, focusin, focusout, forced)
-            # %W = the tk name of the widget
-            vcmd = (self.root.register(self.check_call),'%P','%V','%W')
-            self.call = Entry(self.root,font=font2,validate="key", validatecommand=vcmd )
-        else:
-            self.call = Entry(self.root,font=font2,
-                          selectbackground='green')
-            
+        self.call = Entry(self.root,font=font2,selectbackground='green')
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
         self.call.focus_set()            # Grab focus
         self.default_color = self.call.cget("background")
         
         # For normal operating, these will be visible
-        vcmd = (self.root.register(self.take_focus),'%W')
         self.name_lab = Label(self.root, text="Name",font=font1)
         self.name_lab.grid(row=row,columnspan=4,column=4,sticky=E+W)
-        #self.name = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
-        self.name = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
-                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
+        self.name = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.name.grid(row=row+1,rowspan=2,column=4,columnspan=4,sticky=E+W)
 
         self.rstin_lab = Label(self.root, text="RST in",font=font1)
         self.rstin_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
-        self.rstin = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.rstin = Entry(self.root,font=font2)
         self.rstin.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
 
         self.rstout_lab = Label(self.root, text="RST out",font=font1)
         self.rstout_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
-        self.rstout = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.rstout = Entry(self.root,font=font2)
         self.rstout.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
         if self.P.contest_name=='SATELLITES':
             self.rstin.insert(0,'5')
@@ -307,56 +282,52 @@ class GUI():
         # For contests, some subset of these will be visible instead
         self.exch_lab = Label(self.root, text="Exchange",font=font1)
         self.exch_lab.grid(row=row,columnspan=7,column=4,sticky=E+W)
-        self.exch = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
-                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
+        self.exch = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.exch.grid(row=row+1,rowspan=2,column=4,columnspan=6,sticky=E+W)
 
         self.qth_lab = Label(self.root, text="QTH",font=font1)
         self.qth_lab.grid(row=row,columnspan=3,column=8,sticky=E+W)
-        self.qth = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
-                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
+        self.qth = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.qth.grid(row=row+1,rowspan=2,column=8,columnspan=2,sticky=E+W)
 
         self.serial_lab = Label(self.root, text="Serial",font=font1)
         self.serial_lab.grid(row=row,columnspan=1,column=4,sticky=E+W)
-        self.serial = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,
-                          selectbackground='lightgreen')  #,takefocus=False,exportselection=0)
+        self.serial = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.serial.grid(row=row+1,rowspan=2,column=4,columnspan=1,sticky=E+W)
 
         self.prec_lab = Label(self.root, text="Prec",font=font1)
         self.prec_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
-        self.prec = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.prec = Entry(self.root,font=font2)
         self.prec.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
 
         self.cat_lab = Label(self.root, text="Category",font=font1)
         self.cat_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
-        self.cat = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.cat = Entry(self.root,font=font2)
         self.cat.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
 
         self.call2_lab = Label(self.root, text="Call",font=font1)
         self.call2_lab.grid(row=row,columnspan=1,column=6,sticky=E+W)
-        self.call2 = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.call2 = Entry(self.root,font=font2)
         self.call2.grid(row=row+1,rowspan=2,column=6,columnspan=1,sticky=E+W)
 
         self.check_lab = Label(self.root, text="Check",font=font1)
         self.check_lab.grid(row=row,columnspan=1,column=7,sticky=E+W)
-        self.check = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd)
+        self.check = Entry(self.root,font=font2)
         self.check.grid(row=row+1,rowspan=2,column=7,columnspan=1,sticky=E+W)
         
         self.notes_lab = Label(self.root, text="Notes",font=font1)
         self.notes_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
-        self.notes = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,fg='blue')
+        self.notes = Entry(self.root,font=font2,fg='blue')
         self.notes.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
 
         self.hint_lab = Label(self.root, text="Hint",font=font1)
         self.hint_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
-        self.hint = Entry(self.root,font=font2,validate='focusin',validatecommand=vcmd,fg='blue')
+        self.hint = Entry(self.root,font=font2,fg='blue')
         self.hint.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
 
         self.scp_lab = Label(self.root, text="Super Check Partial",font=font1)
         self.scp_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
-        self.scp = Entry(self.root,font=font2,validate='focusin',
-                         validatecommand=vcmd,fg='blue')
+        self.scp = Entry(self.root,font=font2,fg='blue')
         self.scp.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
 
         # Checkbox to indicate if we've received QSL
@@ -482,7 +453,7 @@ class GUI():
         col += 2
         self.counter_lab=Label(self.root, text='Serial:')
         self.counter_lab.grid(row=row,column=col,sticky=E+W)
-        self.counter = Entry(self.root,font=font2,validate='focusin',validatecommand=self.update_counter)
+        self.counter = Entry(self.root,font=font2)
         self.counter.grid(row=row,rowspan=1,column=col+1,columnspan=1,sticky=E+W)
         self.counter.delete(0, END)
         self.counter.insert(0,str(self.P.MY_CNTR))
@@ -973,8 +944,8 @@ class GUI():
 
         P=self.P
         P.LAST_MACRO=arg
-        P.OP_STATE=0
-        
+
+        # Keep track of what we last sent
         txt = self.macros[arg]["Text"]
         if arg in [0,5]:
             self.P.LAST_MSG = arg                # Last was a reply - make sure he got it ok
@@ -982,6 +953,8 @@ class GUI():
             self.P.LAST_MSG = -1                 # Last was TU or my call
         #print 'LAST_MSG=',txt,arg,self.P.LAST_MSG
 
+        # Set register to tell practice exec what op has done
+        P.OP_STATE=0
         label = self.macros[arg]["Label"]
         if 'CQ' in label or 'QRZ' in label:
             P.OP_STATE |= 1
@@ -1091,7 +1064,7 @@ class GUI():
     # Callback for Macro list spinner
     def set_macros(self,val=None):
 
-        print('SET_MACROS: val=',val)
+        #print('SET_MACROS: val=',val)
         if not val:
             val=self.P.contest_name
             self.MACRO_TXT.set(val)
@@ -1481,7 +1454,7 @@ class GUI():
         sys.exit(0)
 
     # Callback when call sign box has changed - apparently not called?
-    def check_call(self,P,V,W):
+    def check_call_OLD(self,P,V,W):
         #call=self.get_call()
         #call=self.call_sv.get()
         #print 'HEY!!!!!!! ',P,V,W
@@ -1724,7 +1697,7 @@ class GUI():
 
     # Routine to force the focus
     def force_focus(self,next_widget):
-        #print 'Take focus'
+        #print('FORCE FOCUS: Focus young man!')
         next_widget.focus_set()      
         next_widget.focus_force()
         self.root.update_idletasks()
@@ -1732,8 +1705,8 @@ class GUI():
     # Callback when an entry box takes focus - clears selection so we don't overwrite
     def take_focus(self,W):
         
-        #print('Focus young man! W=',W)
-        widget = self.root.nametowidget(W)         # Convert widget name to instance 
+        widget = self.root.nametowidget(W)             # Convert widget name to instance 
+        #print('TAKE FOCUS: Focus young man!',widget)
         widget.focus_set()
         if widget==self.call:
             widget.selection_clear()                   # ... and clear the selection
@@ -2030,6 +2003,8 @@ class GUI():
             # Quick way to send '?'
             if key in ['slash','question'] and (alt or control):
                 self.q.put('?')
+                self.P.OP_STATE |= 8
+                print('KEY PRESS - op_state=',self.P.OP_STATE)
                 return("break")
 
             # Reverse call sign lookup
@@ -2140,7 +2115,7 @@ class GUI():
                     self.Set_Selection(widget)
                 return("break")
                     
-            # Return key in the text box - nothing to do
+            # <CR> in the text box - nothing to do
             if (key=='Return' or key=='KP_Enter') and \
                event.widget!=self.txt and event.widget!=self.txt2 and True:
                 pass
@@ -2200,7 +2175,7 @@ class GUI():
                     self.call.configure(fg='black')
                 
 
-            # If we're in a contest and the return key was pressed,
+            # If we're in a contest and <CR> was pressed,
             # send response and get ready for the exchange
             if (key=='Return' or key=='KP_Enter') and len(call)>0:
                 next_widget = self.P.KEYING.next_event(key,event)
@@ -2219,7 +2194,8 @@ class GUI():
                 self.get_hint(call)
                 if self.P.AUTOFILL:
                     self.P.KEYING.insert_hint()
-                
+
+            """
             if self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.serial)
@@ -2227,7 +2203,8 @@ class GUI():
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.qth)
                     return("break")
-
+            """
+            
             # Save call so we can keep track of changes
             self.prev_call = call
 
@@ -2244,7 +2221,7 @@ class GUI():
                 elif self.contest and (self.P.SPRINT):
                     next_widget=self.qth
                 """
-
+            """
             if self.P.SPRINT:
                 if key=='Tab':
                     self.force_focus(self.qth)
@@ -2252,7 +2229,8 @@ class GUI():
                 elif key=='ISO_Left_Tab':
                     self.force_focus(self.serial)
                     return("break")
-                    
+            """
+            
         elif event.widget==self.qth:
             qth=self.get_qth().upper()
             #self.qth.delete(0, END)           # Causes arrow keys not to work - ugh!
@@ -2387,6 +2365,7 @@ class GUI():
     # Callback for practice with computer text
     def PracticeCB(self):
         self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
+        P.practice.enable = P.practice.enable and self.P.PRACTICE_MODE
 
     # Callback to toggle auto filling of hints info
     def AutoFillCB(self):

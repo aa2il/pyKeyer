@@ -38,9 +38,10 @@ def process_chars(P):
     
     while not P.Stopper.isSet():
 
-        # Anything available?
         if VERBOSITY>0:
             print('PROCESSS_CHARS: Checking ...',q.qsize())
+            
+        # Anything available?
         if q.qsize()>0:
             if VERBOSITY>0:
                 print('PROCESSS_CHARS: Get txt...')
@@ -95,23 +96,33 @@ def process_chars(P):
             # Check NanoIO device for any messages
             if P.NANO_IO:
                 
-                #print('PROCESSS_CHARS: Hey 1')
+                if VERBOSITY>0:
+                    print('PROCESSS_CHARS: Nano 1')
                 
                 if P.ser and P.ser.in_waiting>0:
-                    #print('PROCESSS_CHARS: Hey 2')
+                    if VERBOSITY>0:
+                        print('PROCESSS_CHARS: Nano 2A')
                     txt=nano_read(P.ser)
+                    if VERBOSITY>0:
+                        print('PROCESSS_CHARS: Nano 3',P.NANO_ECHO)
                     if P.NANO_ECHO:
                         P.NANO_ECHO=False
                         # Put it in the big text box also
                         try:
+                            if VERBOSITY>0:
+                                print('PROCESSS_CHARS: Nano 4')
                             P.gui.txt.insert(END, txt+'\n')
                             P.gui.txt.see(END)
                             P.gui.root.update_idletasks()
+                            if VERBOSITY>0:
+                                print('PROCESSS_CHARS: Nano 5')
                         except Exception as e: 
                             print( str(e) )
                 else:
                     time.sleep(0.1)
                     
+                if VERBOSITY>0:
+                    print('PROCESSS_CHARS: Nano 6')
             else:
                 time.sleep(0.1)
         
