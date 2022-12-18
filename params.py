@@ -81,6 +81,8 @@ class PARAMS:
                               help='10-10 CW')
         arg_proc.add_argument('-wag', action='store_true',
                               help='Work All Germany')
+        arg_proc.add_argument('-rac', action='store_true',
+                              help='RAC Winter QP')
         arg_proc.add_argument('-ragchew', action='store_true',
                               help='Regular Ragchew QSO')
         arg_proc.add_argument('-dx', action='store_true',
@@ -93,6 +95,8 @@ class PARAMS:
                               help='Sending Practice')
         arg_proc.add_argument('-autofill', action='store_true',
                               help='Auto fill known information')
+        arg_proc.add_argument('-autocomplete', action='store_true',
+                              help='Auto Complete Partial Callsigns')
         arg_proc.add_argument('-test', action='store_true',
                               help='Disable TX')
         arg_proc.add_argument('-practice', action='store_true',
@@ -219,11 +223,12 @@ class PARAMS:
         self.DIRTY         = False
         self.KEYING        = None
         self.USE_SCP       = args.scp
+        self.AUTO_COMPLETE = args.autocomplete or self.USE_SCP
         self.HIST          = {}
 
         self.STATE_QPs = ['OCQP','AZQP','ILQP','NVQP','NYQP','PAQP','SDQP']
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
-                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG',
+                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO'] + \
@@ -248,6 +253,9 @@ class PARAMS:
         elif args.wag:
             self.contest_name='WAG'
             MAX_AGE_HOURS=48
+        elif args.rac:
+            self.contest_name='RAC'
+            MAX_AGE_HOURS=24
         elif args.skcc:
             self.contest_name='SKCC'
             MAX_AGE_HOURS=2

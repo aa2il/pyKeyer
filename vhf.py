@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # vhf.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ARRL VHF, CQ VHF and Stew Perry 160m contests
 #
@@ -42,22 +42,23 @@ class VHF_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         #MACROS[3+12]  = {'Label' : '?'         , 'Text' : '? '}
         MACROS[3+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID] [MYGRID]'}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID]'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYGRID] [MYGRID] '}
-        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         
-        MACROS[8]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
+        MACROS[8]     = {'Label' : 'Grid 1x'   , 'Text' : '[-2][MYGRID] [+2]'}
         MACROS[9]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
         MACROS[10]    = {'Label' : 'GRID?  '   , 'Text' : 'GRID? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
@@ -70,6 +71,8 @@ class VHF_KEYING(DEFAULT_KEYING):
         P=self.P
 
         gridsq = P.MASTER[call]['grid']
+        self.NAME = P.MASTER[call]['name']
+        
         return gridsq
 
     # Routine to get practice qso info
@@ -134,13 +137,28 @@ class VHF_KEYING(DEFAULT_KEYING):
         gui.qth_lab.grid(column=col,columnspan=cspan)
         gui.qth.grid(column=col,columnspan=cspan)
 
+        col+=cspan
+        cspan=2
+        gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
+        gui.hint.grid(column=7,columnspan=3)
+        if self.P.NO_HINTS:
+            gui.hint_lab.grid_remove()
+            gui.hint.grid_remove()
+        else:
+            col+=cspan
+
         gui.boxes=[gui.call]
         gui.boxes.append(gui.qth)
+        gui.boxes.append(gui.hint)
             
-        if not gui.P.NO_HINTS:
-            gui.hint_lab.grid(column=7,columnspan=1,sticky=E+W)
-            gui.hint.grid(column=7,columnspan=3)
+        if True:
+            # Debug name insertion
+            col+=cspan
+            cspan=2
+            gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+            gui.name.grid(column=col,columnspan=cspan)
         
+            
     # Gather together logging info for this contest
     def logging(self):
 
@@ -178,3 +196,5 @@ class VHF_KEYING(DEFAULT_KEYING):
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
+        gui.name.delete(0, END)
+        gui.name.insert(0,self.NAME)

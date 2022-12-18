@@ -72,6 +72,7 @@ set CONTEST="cwt"
 #set CONTEST="arrl_dx"
 #set CONTEST="default"
 #set CONTEST="ragchew"
+set CONTEST="rac"
 #set CONTEST="dx"
 
 #set CAPTURE="-capture -sidetone"
@@ -214,6 +215,11 @@ else if( $CONTEST == "state" )then
     set WPM=25
     set HINTS=""
 
+# RAC contest
+else if( $CONTEST == "rac" )then
+    set WPM=25
+    set HINTS=""
+    
 else
     echo START: Unknown Contest -$CONTEST-
     exit

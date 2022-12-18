@@ -252,9 +252,9 @@ class GUI():
             font2 = tkFont.Font(family="monospace",size=28,weight="bold")
         self.call_lab = Label(self.root, text="Call",font=font1)
         self.call_lab.grid(row=row,columnspan=4,column=0,sticky=E+W)
-        self.call = Entry(self.root,font=font2,selectbackground='green')
+        self.call = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
-        self.call.focus_set()            # Grab focus
+        self.call.focus_set()
         self.default_color = self.call.cget("background")
         
         # For normal operating, these will be visible
@@ -1093,7 +1093,7 @@ class GUI():
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
-        elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M']:
+        elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)
@@ -1935,10 +1935,17 @@ class GUI():
     def SCP_Selection2(self,evt):
         print('SCP SELECTION2: select present=',evt.widget.select_present())
         if evt.widget.select_present():
-            call = evt.widget.selection_get()
-            print('Call:',call)
-            self.call.delete(0, END)
-            self.call.insert(0,call)
+            if False:
+                # Copy selected call into call entry box
+                call = evt.widget.selection_get()
+                print('Call:',call)
+                self.call.delete(0, END)
+                self.call.insert(0,call)
+            else:
+                # Another way to do this
+                evt.widget.event_generate("<<Copy>>")
+                self.call.delete(0, END)
+                self.call.event_generate("<<Paste>>")
             
             next_widget=self.call
             self.call.focus_set()
@@ -2185,20 +2192,36 @@ class GUI():
             #print('UPPER TEXT WINDOW')
             pass
 
-        # Update info in fldigi
+        # Update callsign info 
         elif event.widget==self.call:
             call=self.get_call().upper()
-            self.sock.set_log_fields({'Call':call})
+
+            # Update fldigi and check for dupes
+            self.sock.set_log_fields({'Call':call}) 
             self.dup_check(call)
+
+            # Check against SCP database
             if self.P.USE_SCP:
-                scps=self.P.KEYING.SCP.match(call)
+                scps,scps2 = self.P.KEYING.SCP.match(call)
                 self.scp.delete(0, END)
                 self.scp.insert(0, scps)
+
+                # Auto-complete
+                if len(key)==1 and self.P.AUTO_COMPLETE:
+                    KEY=key.upper()
+                    if KEY>='A' and KEY<='Z' and len(scps2)==1:
+                        call2=scps[0]
+                        print('AUTO-COMPLETE: call2=',call2,'\tkey=',key)
+                        self.call.delete(0, END)
+                        self.call.insert(0,call2)
+                        self.call.select_range( len(call), END )
+                        call=call2
+
+                # Highlight callsign if we have an exact match
                 if len(scps)>0 and call==scps[0]:
                     self.call.configure(fg='red')
                 else:
                     self.call.configure(fg='black')
-                
 
             # If we're in a contest and <CR> was pressed,
             # send response and get ready for the exchange
@@ -2371,6 +2394,8 @@ class GUI():
                 next_widget = self.P.KEYING.next_event(key,event)
             
         # Make sure we keep the focus
+        if next_widget!=event.widget:
+            event.widget.select_clear()
         self.root.focus_set()
         next_widget.focus_set()      
             
@@ -2457,6 +2482,10 @@ class GUI():
         else:
             self.scp_lab.grid_remove()
             self.scp.grid_remove()
+
+    # Callback to enable/disable auto-complete
+    def AutoCompleteCB(self):
+        self.P.AUTO_COMPLETE = not self.P.AUTO_COMPLETE
 
     # Callback to put rig into CW mode
     def SetCWModeCB(self):
@@ -2557,6 +2586,14 @@ class GUI():
             underline=0,
             variable=self.ShowSCP,
             command=self.ShowScpCB
+        )
+        
+        self.AutoComplete = BooleanVar(value=self.P.AUTO_COMPLETE)
+        Menu1.add_checkbutton(
+            label="Auto Complete",
+            underline=0,
+            variable=self.AutoComplete,
+            command=self.AutoCompleteCB
         )
         
         self.SideTone = BooleanVar(value=self.P.SIDETONE)

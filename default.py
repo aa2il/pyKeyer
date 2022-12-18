@@ -49,6 +49,7 @@ class DEFAULT_KEYING():
         self.LAB2=None
         self.key1=None
         self.key2=None
+        self.NAME=''
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
@@ -95,12 +96,18 @@ class DEFAULT_KEYING():
 
             CONTEST=self.contest_name
             LAB3=None
-            if self.contest_name in ['OCQP','WAG']:
+            if self.contest_name in ['OCQP','WAG','RAC']:
+                
+                # RST + Serial No.
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
                 EXCH2 = '[SERIAL]'
+                self.key1 = 'rst'
+                self.key2 = 'exch'
+                
             elif self.contest_name in ['ARRL-160M']:
+                
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
@@ -108,6 +115,7 @@ class DEFAULT_KEYING():
                 CONTEST = 'TEST'
                 self.key1 = 'rst'
                 self.key2 = 'sec'
+                
             elif self.contest_name in ['NVQP']:
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
@@ -182,6 +190,8 @@ class DEFAULT_KEYING():
             qth = P.MASTER[call][self.key2]
             txt += qth
             
+        self.NAME = P.MASTER[call]['name']
+
         return txt
 
     # Routine to get practice qso info
@@ -268,6 +278,8 @@ class DEFAULT_KEYING():
     def enable_boxes(self,gui):
 
         contest=self.contest_name 
+        print('DEFAULT ENABLE BOXES: contest_name=',self.contest_name)
+
         if 'Default' in contest or 'Ragchew' in contest or \
            'SATELLITES' in contest or 'DX-QSO' in contest:
             gui.contest=False
@@ -276,7 +288,6 @@ class DEFAULT_KEYING():
         gui.ndigits=3
         gui.hide_all()
         self.macros=[1,None,2]
-        #self.box_names=['call','serial','name']
 
         col=0
         cspan=3
@@ -301,9 +312,14 @@ class DEFAULT_KEYING():
         if self.LAB1=='NR' or self.LAB2=='NR':
             col+=cspan
             cspan=2
-            gui.serial_lab.grid(column=col,columnspan=cspan)
-            gui.serial.grid(column=col,columnspan=cspan)
-            gui.boxes.append(gui.serial)
+            if gui.contest and self.LAB1=='RST' and self.LAB2=='NR':
+                gui.exch_lab.grid(column=col,columnspan=cspan)
+                gui.exch.grid(column=col,columnspan=cspan)
+                gui.boxes.append(gui.exch)
+            else:
+                gui.serial_lab.grid(column=col,columnspan=cspan)
+                gui.serial.grid(column=col,columnspan=cspan)
+                gui.boxes.append(gui.serial)
             gui.counter_lab.grid()
             gui.counter.grid()
             
@@ -313,12 +329,13 @@ class DEFAULT_KEYING():
             gui.name_lab.grid(columnspan=cspan,column=col,sticky=E+W)
             gui.name.grid(column=col,columnspan=cspan)
             gui.boxes.append(gui.name)
-            
-        col+=cspan
-        cspan=2
-        gui.qth_lab.grid(column=col,columnspan=cspan)
-        gui.qth.grid(column=col,columnspan=cspan)
-        gui.boxes.append(gui.qth)
+
+        if not gui.contest or self.LAB1=='QTH' or self.LAB2=='QTH':
+            col+=cspan
+            cspan=2
+            gui.qth_lab.grid(column=col,columnspan=cspan)
+            gui.qth.grid(column=col,columnspan=cspan)
+            gui.boxes.append(gui.qth)
         
         if not gui.contest:
             col+=cspan
@@ -337,29 +354,49 @@ class DEFAULT_KEYING():
         else:
             gui.boxes.append(gui.hint)
 
+        if True:
+            # Debug name insertion
+            col+=cspan
+            cspan=2
+            gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+            gui.name.grid(column=col,columnspan=cspan)
         
     # Gather together logging info for this contest
     def logging(self):
 
         gui=self.P.gui
 
-        # Form exchange from other station
-        call=gui.get_call().upper()
-        serial = gui.get_serial().upper()
-        name = gui.get_name().upper()
-        exch   = serial+','+name
-
-        # Check validity of the exchange - in this case, just a valid call sign
+        # Get his cll
+        call    = gui.get_call().upper()
         valid = len(call)>=3 
 
-        # Form my exchagne tohim
-        MY_NAME   = self.P.SETTINGS['MY_NAME']
-        exch_out = str(gui.cntr)+','+MY_NAME
+        # Form exchange to & from other station
+        exch_in  = ''
+        exch_out = ''
+        if gui.cntr==0:
+            cntr = self.P.MY_CNTR
+        else:
+            cntr=gui.cntr
+        if gui.rstin in gui.boxes:
+            exch_in  += gui.get_rst_in()   + ','
+            exch_out += gui.get_rst_out()  + ','
+        if gui.serial in gui.boxes:
+            exch_in  += gui.get_serial()   + ','
+            exch_out += str(cntr)          + ','
+        if gui.exch in gui.boxes:
+            exch_in  += gui.get_exchange() + ','
+            exch_out += str(cntr)          + ','
+        if gui.name in gui.boxes:
+            exch_in  += gui.get_name().upper()     + ','
+            exch_out += self.P.SETTINGS['MY_NAME'] + ','
+        if gui.qth in gui.boxes:
+            exch_in  += gui.get_qth().upper()     + ','
+            exch_out += self.P.SETTINGS['MY_STATE'] + ','
 
         # Any special fields for this particular contest
         qso2={}
         
-        return exch,valid,exch_out,qso2
+        return exch_in,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):
@@ -392,11 +429,19 @@ class DEFAULT_KEYING():
                 gui.name.delete(0, END)
                 gui.name.insert(0,h[idx])
                 idx+=1
+            else:
+                gui.name.delete(0, END)
+                gui.name.insert(0,self.NAME)
 
-            if self.key2!=None and self.key2 in ['sec']:
-                gui.qth.delete(0,END)
-                gui.qth.insert(0,h[idx])
-                idx+=1
+            if self.key2!=None:
+                if self.key2 in ['sec']:
+                    gui.qth.delete(0,END)
+                    gui.qth.insert(0,h[idx])
+                    idx+=1
+                elif self.key2 in ['exch']:
+                    gui.exch.delete(0,END)
+                    gui.exch.insert(0,h[idx])
+                    idx+=1
 
     # Move on to next entry box & optionally play a macros
     def next_event(self,key,event):

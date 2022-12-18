@@ -108,7 +108,8 @@ class SST_KEYING(DEFAULT_KEYING):
         qth   = HIST[call]['state']
 
         if iopt==1:
-            
+
+            print('SST->QSO INFO:',name,qth)
             done = len(name)>0 and len(qth)>0
             return done
 
