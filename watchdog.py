@@ -105,9 +105,10 @@ def WatchDog(P):
         print("WatchDog - QSO Rate ...")
     P.gui.qso_rate()
 
-    # Send out heart beat
+    # Send out heart beat message - Cmd:Source:Msg
     if P.UDP_SERVER and False:
-        P.udp_server.Broadcast('Keyer Heartbeat - Thump Thump - kerr chunk')
+        print('WATCHDOG - Broadcasting heart beat ...')
+        P.udp_server.Broadcast('HeartBeat:Keyer:Thump Thump - kerr chunk')
     
     # Read rotor position
     if P.sock_rotor.connection!='NONE' or False:

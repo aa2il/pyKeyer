@@ -33,8 +33,10 @@ VERBOSITY=0
 # TCP Server class
 class TCP_Server(Thread):
     
-    def __init__(self,host,port,BUFFER_SIZE = 1024,Stopper=None,Handler=None): 
+    def __init__(self,P,host,port,BUFFER_SIZE = 1024,Handler=None): 
         Thread.__init__(self)
+
+        self.P=P
         if not host:
             host='127.0.0.1'
         self.host=host
@@ -48,11 +50,6 @@ class TCP_Server(Thread):
         self.tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
         self.tcpServer.bind((host,port))
 
-        if Stopper==None:
-            self.Stopper = Event()
-        else:
-            self.Stopper = Stopper
-
         self.socks = [self.tcpServer]        
 
     # Function to listener for new connections and/or data from clients
@@ -60,7 +57,7 @@ class TCP_Server(Thread):
         print("Listener: Waiting for connections from TCP clients..." )
         self.tcpServer.listen(4)
         
-        while not self.Stopper.isSet():
+        while not self.P.Stopper.isSet():
             if VERBOSITY>0:
                 print('TCP_SERVER - Listener - Hey 1')
             time.sleep(1)
@@ -77,6 +74,7 @@ class TCP_Server(Thread):
                 if VERBOSITY>0:
                     print('TCP_SERVER - Listener - Hey 2')
                 if sock is self.tcpServer:
+                    
                     if VERBOSITY>0:
                         print('TCP_SERVER - Listener - Hey 3')
                     
@@ -84,9 +82,20 @@ class TCP_Server(Thread):
                     conn, addr = self.tcpServer.accept()
                     #conn.settimeout(2)
                     conn.setblocking(0)
-                    print('\r{}:'.format(addr),'connected')
+                    print('LISTENER:\r{}:'.format(addr),'connected')
                     readable.append(conn)
                     self.socks.append(conn)
+
+                    if True:
+                        print('LISTENER: New socket:',conn,addr)
+                        print('\tSock Name=',conn.getsockname())
+                        print('\tPeer Name=',conn.getpeername())
+                        #print('\tName Info=',conn.getnameinfo())
+
+                    if True:
+                        # Send my name & query name of this client
+                        msg='Name:pyKeyer\nName:?\n'
+                        conn.send(msg.encode())
 
                 else:
 
@@ -117,12 +126,12 @@ class TCP_Server(Thread):
                         # We received a message from a client
                         print('\r{}:'.format(sock.getpeername()),data)
                         if self.msg_handler:
-                            self.msg_handler(data.decode())
+                            self.msg_handler(self,sock,data.decode())
                             
                     elif ready[0]:
                         # The client seemed to send a msg but we didn't get it
                         try:
-                            print('\r{}:'.format(sock.getpeername()),'disconnected')
+                            print('LISTENER:\r{}:'.format(sock.getpeername()),'disconnected')
                             sock.close()
                         except:
                             pass
@@ -143,13 +152,16 @@ class TCP_Server(Thread):
     # Function to broadcast a message to all connected clients
     def Broadcast(self,msg):
 
-        # Get list of sockets 
+        # Get list of sockets
         readable,writeable,inerror = select.select([],self.socks,[],0)
             
+        msg=msg+'\n'
         for sock in writeable:
             #print(sock)
             addr = sock.getsockname()
-            print('Sending',msg,'to',addr,'...')
+            print('BROADCASTing',msg.strip(),'to',addr,'...')
+            print('\tSock Name=',sock.getsockname())
+            print('\tPeer Name=',sock.getpeername())
             try:
                 sock.send(msg.encode())
             except:

@@ -104,11 +104,12 @@ class CODE_PRACTICE():
 
     # Main routine that orchestrates code practice
     def run(self):
-        print('PRACTICE->RUN ...')
+        print('PRACTICE->RUN Beginning ...')
 
         # Loop until exit event is set
         while not self.P.Stopper.isSet():
-            print('PRACTICE->RUN ...',self.enable,self.P.OP_STATE,self.P.HISTORY2,self.P.CONTEST_ID)
+            #print('PRACTICE->RUN ...',self.enable,self.P.OP_STATE,
+            #      self.P.HISTORY2,self.P.CONTEST_ID)
             self.enable |= self.P.OP_STATE
             
             if self.P.PRACTICE_MODE and self.enable:

@@ -56,66 +56,9 @@ from latlon2maiden import *
 from watchdog import *
 from keying import *
 from process_chars import *
+from udp import *
 
 ################################################################################
-
-def UDP_msg_handler(msg):
-    print('UDP Message Handler: msg=',msg)
-    self=P.gui
-
-    msg=msg.split(':')
-    if msg[0]=='Call':
-        
-        # Call:callsign:VFO
-        call=msg[1]
-        vfo=msg[2]
-        print('UDP Message Handler: Setting call to:',call,vfo,P.gui.contest)
-        call2=self.get_call()
-        if call!=call2 and vfo=='A':
-            
-            self.Clear_Log_Fields()
-            self.call.insert(0,call)
-            self.dup_check(call)
-            if P.gui.contest:
-                self.get_hint(call)
-                if P.AUTOFILL:
-                    P.KEYING.insert_hint()
-
-        elif vfo=='B':
-
-            self.OnDeckCircle.delete(0, END)
-            self.OnDeckCircle.insert(0,call)
-
-    elif msg[0]=='Sat':
-        
-        # Sat:sat_name
-        sat=msg[1]
-        print('UDP Message Handler: Setting SAT to:',sat)
-        self.set_satellite(sat)
-    
-    return
-
-    idx = [m.start() for m in re.finditer('Call:', msg)]
-    if len(idx)>0:
-        call=msg[idx[-1]+5:]
-        print('UDP Message Handler: Setting call to:',call,idx,P.gui.contest)
-        call2=self.get_call()
-        if call!=call2:
-            self.Clear_Log_Fields()
-            self.call.insert(0,call)
-            self.dup_check(call)
-            if P.gui.contest:
-                #print('UDP Message Handler: Update hints')
-                self.get_hint(call)
-                if P.AUTOFILL:
-                    P.KEYING.insert_hint()
-        
-    elif msg[:4]=='Sat:':
-        sat=msg[4:]
-        print('UDP Message Handler: Setting SAT to:',sat)
-        self.set_satellite(sat)
-    
-############################################################################################
 
 print("\n\n***********************************************************************************")
 print("\nStarting pyKeyer  ...")
@@ -299,7 +242,7 @@ P.threads.append(worker)
 
 # Start thread with UDP server
 if P.UDP_SERVER:
-    P.udp_server = TCP_Server(None,7474,Stopper=P.Stopper,Handler=UDP_msg_handler)
+    P.udp_server = TCP_Server(P,None,7474,Handler=UDP_msg_handler)
     worker = Thread(target=P.udp_server.Listener, args=(), name='UDP Server' )
     worker.setDaemon(True)
     worker.start()

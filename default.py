@@ -61,7 +61,6 @@ class DEFAULT_KEYING():
             P.HISTORY = None
         P.HISTORY=os.path.expanduser(P.HISTORY)
         P.HISTORY2 = P.HISTORY
-        P.CONTEST_ID=''
         
         # Init super check partial
         self.SCP=SUPER_CHECK_PARTIAL()
@@ -94,7 +93,7 @@ class DEFAULT_KEYING():
 
         else:
 
-            CONTEST=self.contest_name
+            CONTEST=self.contest_name 
             LAB3=None
             if self.contest_name in ['OCQP','WAG','RAC']:
                 
@@ -106,8 +105,11 @@ class DEFAULT_KEYING():
                 self.key1 = 'rst'
                 self.key2 = 'exch'
                 
-            elif self.contest_name in ['ARRL-160M']:
+                self.P.CONTEST_ID=self.contest_name+'-QSO-PARTY'
                 
+            elif self.contest_name in ['ARRL-160M']:
+
+                # RST + Section
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
@@ -115,39 +117,58 @@ class DEFAULT_KEYING():
                 CONTEST = 'TEST'
                 self.key1 = 'rst'
                 self.key2 = 'sec'
+                self.P.CONTEST_ID=self.contest_name
                 
             elif self.contest_name in ['NVQP']:
+                
+                # RST + Section - Not sure why not combined with above???
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
             elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP']:
+
+                # RST + State
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
             elif self.contest_name in ['PAQP']:
+                
+                # Serial No. + Section
                 LAB1  = 'NR'
                 EXCH1 = '[SERIAL]'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
             elif self.contest_name in ['TEN-TEN']:
+
+                # RST + 10-10 No. + State
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
                 EXCH2 = '0'
                 LAB3  = 'QTH'
                 EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=self.contest_name
+                
             else:
+
+                # RST + State
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=self.contest_name
 
             self.LAB1=LAB1
             self.LAB2=LAB2
             self.LAB3=LAB3
-            self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
 
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] '}
             #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
@@ -172,7 +193,9 @@ class DEFAULT_KEYING():
             MACROS[9]     = {'Label' : 'My '+LAB2+' 2x' , 'Text' : '[-2]'+EXCH2+' '+EXCH2+' [+2]'}
             MACROS[10]    = {'Label' : LAB1+'?'         , 'Text' : LAB1+'? '}
             MACROS[11]    = {'Label' : LAB2+'? '        , 'Text' : LAB2+'? '}
-            MACROS[11+12] = {'Label' : 'QRL? '          , 'Text' : 'QRL? '}
+
+        # Put up QRL? macro also
+        MACROS[11+12] = {'Label' : 'QRL? '          , 'Text' : 'QRL? '}
 
         return MACROS
 
@@ -345,7 +368,7 @@ class DEFAULT_KEYING():
             gui.boxes.append(gui.notes)
 
         col+=cspan
-        cspan=2
+        cspan=max(min(2,12-col),1)
         gui.hint_lab.grid(column=col,columnspan=cspan,sticky=E+W)
         gui.hint.grid(column=col,columnspan=cspan)
         if self.P.NO_HINTS:
@@ -354,12 +377,14 @@ class DEFAULT_KEYING():
         else:
             gui.boxes.append(gui.hint)
 
-        if True:
+        if gui.contest:
             # Debug name insertion
             col+=cspan
             cspan=2
             gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
             gui.name.grid(column=col,columnspan=cspan)
+            
+        print('DEFAULT ENABLE BOXES: col=',col,'\tcspan=',cspan)
         
     # Gather together logging info for this contest
     def logging(self):
@@ -483,8 +508,6 @@ class DEFAULT_KEYING():
 
             # Send a macro if needed
             if key=='Return' or key=='KP_Enter':
-                #if P.PRACTICE_STATE<6 or event.widget!=gui.call:
-                #if True:
                 if (P.OP_STATE & 32)==0 or event.widget!=gui.call:
                     #print('idx=',idx)
                     #print('macros=',self.macros)

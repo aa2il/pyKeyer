@@ -2,7 +2,7 @@
 ################################################################################
 #
 # start_cw - Rev 1.1
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Script to startup everything for a CW contest.
 #
@@ -74,7 +74,7 @@ set CONTEST=""
 #set CONTEST="iaru"
 #set CONTEST="naqp"
 #set CONTEST="rac"
-set CONTEST="stew"
+#set CONTEST="stew"
 
 set STATE="IL -max_age 8"
 
@@ -91,8 +91,11 @@ set BAUD = 38400
 set PORT = 0
 set PORT2 = 0
 
+set UDP=""
 set UDP="-udp"
-#set UDP=""
+
+set SCP=""
+set SCP="-scp"
 
 # If no contest was selected, default to CWT or SST
 set d=`date`
@@ -439,12 +442,9 @@ endif
 # Start the SDR
 set LOOPBACK="-follow_freq"
 if( $SO2V )then
-    #set SDR_OPTS="-fc 600 600 -af_bw 1 -follow_freq -mute -save_demod -pan_dr 70"
-    #set SDR_OPTS="-af_bw .5 -so2v -follow_band"
-    set SDR_OPTS="-af_bw .5 $LOOPBACK -so2v"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK -so2v $UDP"
 else
-    #set LOOPBACK="-loopback -follow_freq"
-    set SDR_OPTS="-af_bw .5 $LOOPBACK -mute"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK -mute $UDP"
 endif
 if( $START_SDR )then
     echo Starting SDR ...
@@ -512,7 +512,7 @@ if( 1 )then
     echo Starting keyer ...
     cd ~/Python/pyKeyer
 
-    set OPTS="-wpm ${WPM} $PRACTICE $CAPTURE -${CONTEST} -rig $RIG1 $RIG_TYPE1 -port $PORT $HINTS $SERVER $NANO $MODE $UDP -immediate"
+    set OPTS="-wpm ${WPM} $PRACTICE $CAPTURE -${CONTEST} -rig $RIG1 $RIG_TYPE1 -port $PORT $HINTS $SERVER $NANO $MODE $UDP -immediate $SCP"
     if( $RIG2 != "NONE" )then
         set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2 -port2 $PORT2"
     endif

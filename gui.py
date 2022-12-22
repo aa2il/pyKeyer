@@ -747,6 +747,18 @@ class GUI():
         else:
             self.SendBtn.configure(background='Green',highlightbackground= 'Green')
         
+    # Callback to toggle sending of text
+    def Toggle_SO2V(self,iop=None):
+        if iop==None:
+            self.P.SO2V = not self.P.SO2V
+        print('TOOGLE SO2V:',self.P.SO2V,iop)
+        if self.P.SO2V:
+            self.So2vBtn.configure(background='red',highlightbackground= 'red')
+            self.P.udp_server.Broadcast('SO2V:ON')
+        else:
+            self.So2vBtn.configure(background='Green',highlightbackground= 'Green')
+            self.P.udp_server.Broadcast('SO2V:OFF')
+        
     # Callback to look up a call on qrz.com
     def Call_LookUp(self):
         call = self.get_call()
@@ -2225,8 +2237,12 @@ class GUI():
 
             # If we're in a contest and <CR> was pressed,
             # send response and get ready for the exchange
-            if (key=='Return' or key=='KP_Enter') and len(call)>0:
-                next_widget = self.P.KEYING.next_event(key,event)
+            if (key=='Return' or key=='KP_Enter'):
+                if len(call)>0:
+                    next_widget = self.P.KEYING.next_event(key,event)
+                else:
+                    self.Send_Macro(0)
+
 
                 """
                 elif self.contest and self.P.SPRINT:
@@ -2666,4 +2682,6 @@ class GUI():
             #Button(toolbar,text="B->A",command=lambda: SetVFO(self,'B->A')) \
             #    .pack(side=LEFT, padx=2, pady=2)
             
+            self.So2vBtn = Button(toolbar,text="SO2V", command=self.Toggle_SO2V)
+            self.So2vBtn.pack(side=LEFT, padx=2, pady=2)
             
