@@ -139,7 +139,7 @@ if not P.sock_rotor.active and P.sock_rotor.connection!='NONE':
     print('*** No connection available to rotor ***')
     sys.exit(0)
 
-# Experiemtnal area - starting to get CWIO interface up & running - in progress
+# Experiemtnal area - starting to get FLRIG's CWIO interface up & running - in progress
 if False:
     print('Howdy Ho!',P.sock.cwio_get_wpm())
     P.sock.cwio_set_wpm(25)
@@ -161,7 +161,6 @@ P.Stopper = threading.Event()
 if not P.PRACTICE_MODE and P.sock.connection!='HAMLIB' and P.HAMLIB_SERVER:
     print('Creating HAMLIB servers ...')
     for port in [4532, 4632]:
-        #th = threading.Thread(target=rigctl.HamlibServer(P,HAMLIB_PORT).Run, args=(),name='Hamlib Server')
         th = threading.Thread(target=rigctl.HamlibServer(P,port).Run, args=(),name='Hamlib Server')
         th.setDaemon(True)
         th.start()
@@ -265,6 +264,21 @@ if P.sock.active:
 
     # Set sub-dial
     P.sock.set_sub_dial('CLAR')
+
+    # Set freq to CW band
+    if True:
+        print('PYKEYER - Set freq ...')
+        frq  = 1e-3*P.sock.get_freq() 
+        band = freq2band(1e-3*frq)
+        f1=bands[band]['CW1']
+        f2=bands[band]['CW2']
+        print('PYKEYER - Set freq ...',frq,band,f1,f2)
+        if P.contest_name in ['CWT','MST','SST']:
+            print('PYKEYER - Set freq to',f1+30)
+            P.sock.set_freq(f1+30) 
+        elif frq>0.5*(f1+f2):
+            print('PYKEYER - BURP - Set freq to',f1+30)
+            P.sock.set_freq(f1+30) 
 
 # Read satellite grids confirmed - this will be used to alert station in new grid
 FNAME = P.DATA_DIR+'states.xls'

@@ -1,11 +1,11 @@
-#########################################################################################
+################################################################################
 #
 # paddling.py - Rev. 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Gui for sending practice (i.e. fun with paddles)
 #
-############################################################################################
+################################################################################
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-#########################################################################################
+################################################################################
 
 import sys
 import os
@@ -33,13 +33,13 @@ from nano_io import *
 from fileio import read_text_file
 from utilities import cut_numbers
 
-#########################################################################################
+################################################################################
 
 TEST_MODE=True
 TEST_MODE=False
 RANDOM_QSO_MODE=False
 
-#########################################################################################
+################################################################################
 
 # GUI for paddle (sending) practice
 class PADDLING_GUI():
@@ -58,6 +58,9 @@ class PADDLING_GUI():
         self.stack_ptr=-1
         self.qso_ptr=-1
         self.bookmark=0
+        self.last_focus=None
+        self.WIN_NAME='PADDLING WINDOW'
+        self.OnTop=False
 
         # Open main or pop-up window depending on if "root" is given
         if root:
@@ -65,7 +68,8 @@ class PADDLING_GUI():
         else:
             self.win = Tk()
         self.win.title("Sending Practice by AA2IL")
-        self.win.geometry('1500x220+100+10')
+        self.win.geometry('1700x220+100+10')
+        self.root=self.win
 
         # Load fonts we want to use
         if sys.version_info[0]==3:
@@ -100,6 +104,7 @@ class PADDLING_GUI():
         #self.txt = Entry(self.win,font=font2)
         self.txt = Text(self.win, height=2, width=60, bg='white', font=font2)
         self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=12,sticky=E+W)
+        self.default_object=self.txt                        # Make this the default object to take the focus
 
         # Radio button group to select type of practice
         row+=3
@@ -124,6 +129,7 @@ class PADDLING_GUI():
                    bg='white',                
                    command=lambda j=0: self.SetWpm(0))
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
+        SB.bind("<Key>", self.KeyPress )
         if self.P.LOCK_SPEED:
             self.WPM_TXT.set(self.P.WPM)
         else:
@@ -159,8 +165,12 @@ class PADDLING_GUI():
             Grid.columnconfigure(self.win, i, weight=1,uniform='twelve')
         
         # Bind a callback to be called whenever a key is pressed
+        # and bind mouse entering or leaving the window
         self.win.bind("<Key>", self.KeyPress )
-        #self.win.bind("all", self.KeyPress )
+        #self.win.bind("<Enter>", self.Hoover )
+        #self.win.bind("<Leave>", self.Leave )
+        self.win.bind("<Enter>", self.P.gui.Hoover )
+        self.win.bind("<Leave>", self.P.gui.Leave )
         
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
@@ -171,6 +181,8 @@ class PADDLING_GUI():
             pass
             
         self.hide()
+
+################################################################################
 
     # Callback for monitor level setter
     def SetMonitorLevel(self,level=None):
@@ -351,9 +363,7 @@ class PADDLING_GUI():
             
         self.txt.delete(1.0, END)
         txt=txt.strip()
-        #txt=str(self.bookmark)+' '+txt.strip()
         self.txt.insert(1.0,txt)
-        #self.stack.insert(0,txt)
         self.stack.append(txt)
         if len(self.stack)>100:
             self.stack.pop(0)

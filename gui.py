@@ -90,11 +90,17 @@ def show_threads():
 class GUI():
     def __init__(self,P):
 
+        # Create root window
         print("\nCreating GUI ...")
         self.root = Tk()
         # width_size x height_size + x_position + y_position
         self.root.geometry('1200x400+250+250')
 
+        # Init
+        self.last_focus=None
+        self.WIN_NAME='ROOT WINDOW'
+        self.OnTop=False
+        
         # Create spash screen
         self.splash  = Toplevel(self.root)
         self.splash.title("Splish Splash")
@@ -254,24 +260,29 @@ class GUI():
         self.call_lab.grid(row=row,columnspan=4,column=0,sticky=E+W)
         self.call = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
+        self.call.bind("<Key>", self.key_press )
         self.call.focus_set()
         self.default_color = self.call.cget("background")
+        self.default_object=self.call                    # Make this the default object to take the focus
         
         # For normal operating, these will be visible
         self.name_lab = Label(self.root, text="Name",font=font1)
         self.name_lab.grid(row=row,columnspan=4,column=4,sticky=E+W)
         self.name = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.name.grid(row=row+1,rowspan=2,column=4,columnspan=4,sticky=E+W)
+        self.name.bind("<Key>", self.key_press )
 
         self.rstin_lab = Label(self.root, text="RST in",font=font1)
         self.rstin_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
         self.rstin = Entry(self.root,font=font2)
         self.rstin.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
+        self.rstin.bind("<Key>", self.key_press )
 
         self.rstout_lab = Label(self.root, text="RST out",font=font1)
         self.rstout_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
         self.rstout = Entry(self.root,font=font2)
         self.rstout.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
+        self.rstout.bind("<Key>", self.key_press )
         if self.P.contest_name=='SATELLITES':
             self.rstin.insert(0,'5')
             self.rstout.insert(0,'5nn')
@@ -284,52 +295,62 @@ class GUI():
         self.exch_lab.grid(row=row,columnspan=7,column=4,sticky=E+W)
         self.exch = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.exch.grid(row=row+1,rowspan=2,column=4,columnspan=6,sticky=E+W)
+        self.exch.bind("<Key>", self.key_press )
 
         self.qth_lab = Label(self.root, text="QTH",font=font1)
         self.qth_lab.grid(row=row,columnspan=3,column=8,sticky=E+W)
         self.qth = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.qth.grid(row=row+1,rowspan=2,column=8,columnspan=2,sticky=E+W)
+        self.qth.bind("<Key>", self.key_press )
 
         self.serial_lab = Label(self.root, text="Serial",font=font1)
         self.serial_lab.grid(row=row,columnspan=1,column=4,sticky=E+W)
         self.serial = Entry(self.root,font=font2,selectbackground='lightgreen')
         self.serial.grid(row=row+1,rowspan=2,column=4,columnspan=1,sticky=E+W)
+        self.serial.bind("<Key>", self.key_press )
 
         self.prec_lab = Label(self.root, text="Prec",font=font1)
         self.prec_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
         self.prec = Entry(self.root,font=font2)
         self.prec.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
+        self.prec.bind("<Key>", self.key_press )
 
         self.cat_lab = Label(self.root, text="Category",font=font1)
         self.cat_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
         self.cat = Entry(self.root,font=font2)
         self.cat.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
+        self.cat.bind("<Key>", self.key_press )
 
         self.call2_lab = Label(self.root, text="Call",font=font1)
         self.call2_lab.grid(row=row,columnspan=1,column=6,sticky=E+W)
         self.call2 = Entry(self.root,font=font2)
         self.call2.grid(row=row+1,rowspan=2,column=6,columnspan=1,sticky=E+W)
+        self.call2.bind("<Key>", self.key_press )
 
         self.check_lab = Label(self.root, text="Check",font=font1)
         self.check_lab.grid(row=row,columnspan=1,column=7,sticky=E+W)
         self.check = Entry(self.root,font=font2)
         self.check.grid(row=row+1,rowspan=2,column=7,columnspan=1,sticky=E+W)
+        self.check.bind("<Key>", self.key_press )
         
         self.notes_lab = Label(self.root, text="Notes",font=font1)
         self.notes_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
         self.notes = Entry(self.root,font=font2,fg='blue')
         self.notes.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
+        self.notes.bind("<Key>", self.key_press )
 
         self.hint_lab = Label(self.root, text="Hint",font=font1)
         self.hint_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
         self.hint = Entry(self.root,font=font2,fg='blue')
         self.hint.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
+        self.hint.bind("<Key>", self.key_press )
 
         self.scp_lab = Label(self.root, text="Super Check Partial",font=font1)
         self.scp_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
         self.scp = Entry(self.root,font=font2,fg='blue',selectbackground='white')
         self.scp.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
         self.scp.bind('<Double-Button-1>',self.SCP_Selection)
+        self.scp.bind("<Key>", self.key_press )
 
         # Checkbox to indicate if we've received QSL
         self.qsl_rcvd=tk.IntVar()
@@ -370,7 +391,8 @@ class GUI():
         self.S2.grid(row=row,column=self.ncols,sticky=N+S)
         self.S2.config(command=self.txt2.yview)
         self.txt2.config(yscrollcommand=self.S2.set)
-        self.txt2.bind("<Tab>", self.key_press )
+        #self.txt2.bind("<Tab>", self.key_press )
+        self.txt2.bind("<Key>", self.key_press )
         self.show_hide_txt2()
             
         # The lower box is so we can type in what we want to send
@@ -382,7 +404,8 @@ class GUI():
         self.S.grid(row=row,column=self.ncols,sticky=N+S)
         self.S.config(command=self.txt.yview)
         self.txt.config(yscrollcommand=self.S.set)
-        self.txt.bind("<Tab>", self.key_press )
+        #self.txt.bind("<Tab>", self.key_press )
+        self.txt.bind("<Key>", self.key_press )
 
         if True:
             self.txt.bind('<Button-1>', self.Text_Mouse )      
@@ -391,8 +414,11 @@ class GUI():
 
 
         # Bind a callback to be called whenever a key is pressed
-        self.root.bind("<Key>", self.key_press )
-        #self.root.bind("all", self.key_press )
+        # Also bind mouse entering or leaving the app
+        #self.root.bind("<Key>", self.key_press2 )
+        if True:
+            self.root.bind("<Enter>", self.Hoover )
+            self.root.bind("<Leave>", self.Leave )
 
         # Function buttons for pre-defined macros
         row += 10
@@ -439,6 +465,7 @@ class GUI():
                      bg='white',                \
                      command=lambda j=0: self.set_wpm(0))
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
+        SB.bind("<Key>", self.key_press )
         self.WPM_TXT.set(str(self.keyer.WPM))
         self.set_wpm(0)
 
@@ -455,6 +482,7 @@ class GUI():
         self.counter_lab=Label(self.root, text='Serial:')
         self.counter_lab.grid(row=row,column=col,sticky=E+W)
         self.counter = Entry(self.root,font=font2)
+        self.counter.bind("<Key>", self.key_press )
         self.counter.grid(row=row,rowspan=1,column=col+1,columnspan=1,sticky=E+W)
         self.counter.delete(0, END)
         self.counter.insert(0,str(self.P.MY_CNTR))
@@ -710,6 +738,7 @@ class GUI():
             self.rstin.insert(0,'5NN')
             self.rstout.insert(0,'5NN')
         self.cat.delete(0, END)
+        self.scp.delete(0, END)
 
         self.prec.delete(0, END)
         self.check.delete(0, END)
@@ -755,9 +784,11 @@ class GUI():
         if self.P.SO2V:
             self.So2vBtn.configure(background='red',highlightbackground= 'red')
             self.P.udp_server.Broadcast('SO2V:ON')
+            self.So2vBtn.configure(relief='sunken')
         else:
             self.So2vBtn.configure(background='Green',highlightbackground= 'Green')
             self.P.udp_server.Broadcast('SO2V:OFF')
+            self.So2vBtn.configure(relief='raised')
         
     # Callback to look up a call on qrz.com
     def Call_LookUp(self):
@@ -948,6 +979,20 @@ class GUI():
                 
         return txt
 
+    # Function to send cw text 
+    def Send_CW_Text(self,txt):
+        # Send text to keyer ...
+        self.q.put(txt)
+
+        # ... and to big text box ...
+        self.txt.insert(END, txt+'\n')
+        self.txt.see(END)
+        self.root.update_idletasks()
+
+        # ... and to disk
+        self.fp_txt.write('%s\n' % (txt) )
+        self.fp_txt.flush()
+    
     # Callback to send a pre-defined macro
     def Send_Macro(self,arg):
         #print 'arg=',arg,self.macros.has_key(arg)
@@ -1003,28 +1048,10 @@ class GUI():
             except Exception as e: 
                 print('Unable to retrieve NAME')
                 print( str(e) )
-                #print(call,self.P.MASTER[call])
-                #pass
 
-        # This should have already been handled when we loaded the macros
-        #txt = self.Patch_Macro(txt)
+        # Send cw text 
         txt = self.Patch_Macro2(txt)
-
-        # Send text to keyer ...
-        #print('SEND MACRO: Q-put',txt)
-        self.q.put(txt)
-
-        # ... and to big text box ...
-        #print('SEND MACRO: txt box',txt)
-        self.txt.insert(END, txt+'\n')
-        self.txt.see(END)
-        self.root.update_idletasks()
-
-        # ... and to disk
-        #print('SEND MACRO: disk',txt)
-        self.fp_txt.write('%s\n' % (txt) )
-        self.fp_txt.flush()
-        #print('SEND MACRO: Done.')
+        self.Send_CW_Text(txt)
         
 
     # Routine to hide all of the input boxes
@@ -1333,7 +1360,7 @@ class GUI():
         now = datetime.utcnow().replace(tzinfo=UTC)
 
         STATE={'now'        : now.strftime('%Y-%m-%d %H:%M:%S'), 
-               'bookmark'   : self.PaddlingWin.bookmark-1,
+               'bookmark'   : self.PaddlingWin.bookmark,
                'serial'     : self.P.MY_CNTR,
                'contest_id' : self.P.CONTEST_ID,
                'spots'      : spots,
@@ -1342,6 +1369,10 @@ class GUI():
         print('STATE=',STATE)
         with open('state.json', "w") as outfile:
             json.dump(STATE, outfile)
+        with open('keyer.log', "a") as outfile2:
+            outfile2.write('Save State:    \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
+            json.dump(STATE, outfile2)
+            outfile2.write('\n')
 
         self.P.DIRTY=False
         print('SaveState: cntr=',self.P.MY_CNTR)
@@ -1362,8 +1393,14 @@ class GUI():
             with open('state.json') as json_data_file:
                 STATE = json.load(json_data_file)
             print('STATE=',STATE)
-        except:
-            print('RestoreState: state.json not found')
+            now = datetime.utcnow().replace(tzinfo=UTC)
+            with open('keyer.log', "a") as outfile3:
+                outfile3.write('Restore State: \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
+                json.dump(STATE, outfile3)
+                outfile3.write('\n')
+        except Exception as e: 
+            print('RestoreState: Problem restoring state')
+            print( str(e) )
             return
             
         now        = datetime.utcnow().replace(tzinfo=UTC)
@@ -1465,23 +1502,6 @@ class GUI():
         print("\nThat's all folks!\n")
         self.Done=True
         sys.exit(0)
-
-    # Callback when call sign box has changed - apparently not called?
-    def check_call_OLD(self,P,V,W):
-        #call=self.get_call()
-        #call=self.call_sv.get()
-        #print 'HEY!!!!!!! ',P,V,W
-        self.sock.set_log_fields({'Call':P})
-
-        delay_ms=5
-        time.sleep(.001*delay_ms)
-        self.root.attributes('-topmost', True)              # Raising root above all other windows
-        self.call.focus_force()
-        time.sleep(.001*delay_ms)
-        self.root.attributes('-topmost', False)              # Raising root above all other windows
-        #self.root.after(delay_ms,self.root.attributes,'-topmost',False)
-
-        return True
 
     # Log the qso
     def log_qso(self):
@@ -1721,7 +1741,7 @@ class GUI():
         widget = self.root.nametowidget(W)             # Convert widget name to instance 
         #print('TAKE FOCUS: Focus young man!',widget)
         widget.focus_set()
-        if widget==self.call:
+        if widget==self.call and False:
             widget.selection_clear()                   # ... and clear the selection
         return True
 
@@ -1778,7 +1798,7 @@ class GUI():
 
     # Routine to check & flag dupes
     def dup_check(self,call):
-        print('DUP_CHECK: call=',call,'\tmax age=',self.P.MAX_AGE)
+        #print('DUP_CHECK: call=',call,'\tmax age=',self.P.MAX_AGE)
         self.time_on = datetime.utcnow().replace(tzinfo=UTC)
         #print('Time on=',self.time_on)
 
@@ -1966,7 +1986,128 @@ class GUI():
 
 ############################################################################################
     
-    # Callback when a key is pressed in an entry box
+    # Test routine
+    def event_trap(self,event):
+        print('EVENT_TRAP: evt=',event,event.type)
+
+        
+    # Callback when mouse enters a widget
+    def Hoover(self,event):
+
+        DEBUG=0
+                
+        # Which window are we in?
+        widget = event.widget
+        obj = self.Master(widget)
+        window=obj.root
+
+        # Check if some widget has the focus
+        try:
+            focus=window.focus_get()
+            #parent_name = focus.winfo_parent()
+            #parent = focus._nametowidget(parent_name)
+            obj2 = self.Master(focus)
+            parent=obj2.root
+        except:
+            parent=None
+            print('HOOVER: Probably outside keyer app?')
+
+        if DEBUG:
+            print('HOOVER: Mouse entering ',obj.WIN_NAME,'- widget',widget,
+                  '\twindow=',window,'\tFocus=',obj.last_focus)
+
+        # Make sure root window has the focus
+        # If not, raise it to the top and make it our focus
+        #if parent!=window:
+        if not obj.OnTop:
+            obj.OnTop=True
+            if DEBUG:
+                print('HOOVER: Raising ',obj.WIN_NAME,
+                      '===============================================')
+            #self.P.gui.root.call('wm', 'attributes', '.', '-topmost', True)
+            #window.attributes('-topmost', True)
+            ##self.P.gui.root.grab_set()
+            ##self.P.gui.root.grab_set_global()
+
+            if False:
+                title = window.title()
+                print('title=',title)
+                win1 = gw.getWindowsWithTitle(title)[0] 
+                win1.activate()
+
+            window.grab_set()
+            window.grab_set_global()
+            window.lift()
+            window.focus_force()
+            window.focus()
+            window.focus_set()
+            #window.transient()
+            #window.attributes('-topmost', False)
+            #window.grab_release()
+            #if True: # parent and False:
+            if False: # parent and False:
+                window.after_idle(self.P.gui.root.grab_release)
+                window.after_idle(window.attributes,'-topmost',False)
+            #window.after_idle(self.P.gui.root.call, 'wm', 'attributes', '.', '-topmost', False)
+            focus=None
+
+        if not focus:
+
+            # No focus - return focus to last widget that had it
+            # If none, set focus to call entry box
+            if obj.last_focus:
+                widget=obj.last_focus
+            else:
+                widget=obj.default_object
+            print('HOOVER: No Focus -',obj.WIN_NAME,'- Setting focus to',widget)
+            widget.focus_force()
+
+    def Master(self,widget):
+
+        #print('MASTER: widget=',widget)
+        #print('MASTER: roots=',self.P.gui.root,self.P.gui.PaddlingWin.win)
+
+        master=widget
+        while master!=None:
+            #print('MASTER: master=',master,master==self.root,master==self.PaddlingWin.win)
+            if master==self.P.gui.PaddlingWin.win:
+                #print('MASTER: In Paddling Window ...')
+                return self.P.gui.PaddlingWin
+            elif master==self.P.gui.root:
+                #print('MASTER: In Main Root Window ...')
+                return self.P.gui
+            else:
+                master=master.master
+            
+    # Callback when mouse leaves a widget
+    def Leave(self,event):
+
+        DEBUG=0
+
+        # Which window are we in?
+        widget = event.widget
+        obj = self.Master(widget)
+        window=obj.root
+        
+        # Keep track of widget that last had the focus
+        obj.last_focus = window.focus_get()
+        if DEBUG:
+            print('LEAVE: Mouse leaving ',obj.WIN_NAME,'- widget',widget,
+                  '\twindow=',window,'\tFocus=',obj.last_focus)
+
+        if widget==window:
+            if DEBUG:
+                print('LEAVE: Letting go ...--------------------------------------------------------------')
+            #window.attributes('-topmost', False)
+            #window.after_idle(self.P.gui.root.call, 'wm', 'attributes', '.', '-topmost', False)
+            window.grab_release()
+            obj.OnTop=False
+            
+        
+############################################################################################
+
+    # Callback when a key is pressed
+    # If this doesn't work right, try the version in save60
     def key_press(self,event,id=None):
 
         key   = event.keysym
@@ -1995,192 +2136,19 @@ class GUI():
 
         if True:
             print("Key Press:",key,'\tState:',hex(state),shift,control,alt)
-            #print event
+            if event.widget==self.call:
+                print('Call=',self.get_call())
 
         # This should never happen
         if len(key)==0:
+            print('Key Press: I dont know what I am doing here!')
             return
 
         # Check for special keys
         if len(key)>=2 or alt or control:
-            if len(key)==1:
-                key=key.lower()
-            
-            #print('Special:',key,'\t',state)
-            #if key=='Shift_L' or key=='Shift_R':
-            #    return("break")
-                
-            if key=='Shift_L':
-                self.last_shift_key='L'
-                
-            if key=='Shift_R':
-                self.last_shift_key='R'
-
-            DF=100
-            if key=='Up':
-                print('RIT Up',DF)
-                #self.sock.send('RT1;RU0050;')
-                self.sock.rit(1,DF)
-                return("break")
-                
-            if key=='Down':
-                print('RIT Down',-DF)
-                #self.sock.send('RT1;RD0050;')
-                self.sock.rit(1,-DF)
-                return("break")
-
-            if key=='KP_Decimal':
-                print('Reset clarifier')
-                #self.sock.send('RC;RT0;XT0;')
-                ClarReset(self)
-                #self.sock.rit(0,0)
-                return("break")
-
-            if key=='Prior':
-                print('WPM Up')
-                self.set_wpm(dWPM=+WPM_STEP)
-                
-            if key=='Next':
-                print('WPM Down')
-                self.set_wpm(dWPM=-WPM_STEP)
-
-            # Quick way to send '?'
-            if key in ['slash','question'] and (alt or control):
-                self.q.put('?')
-                self.P.OP_STATE |= 8
-                print('KEY PRESS - op_state=',self.P.OP_STATE)
-                return("break")
-
-            # Reverse call sign lookup
-            if key=='r' and (alt or control):
-                self.P.KEYING.reverse_call_lookup()
-
-            # This works but seemed problematic in normal operating??
-            if (key=='Delete' and False) or (key=='w' and (alt or control)):
-                #print('DELETE - CLEAR BOX ...')
-                if event.widget==self.txt or event.widget==self.txt2:
-                    #print('Text Box ...')
-                    event.widget.delete(1.0,END)     # Clear the entry box
-                    return("break")
-                else:
-                    #print('Not in Text Box ...')
-                    event.widget.delete(0,END)     # Clear the entry box
-                    if event.widget==self.call:
-                        self.call.configure(background=self.default_color)
-
-                # Wipe all fields Alt-w
-                if (key=='w' or key=='e') and (alt or control):
-                    #print('ALT-W')
-                    self.call.delete(0, END)
-                    self.call.configure(background=self.default_color)
-                    self.call2.delete(0, END)
-                    self.cat.delete(0, END)
-                    self.rstin.delete(0, END)
-                    self.rstout.delete(0, END)
-                    if self.P.contest_name=='SATELLITES':
-                        self.rstin.insert(0,'5')
-                        self.rstout.insert(0,'5nn')
-                    else:
-                        self.rstin.insert(0,'5nn')
-                        self.rstout.insert(0,'5NN')
-                    self.exch.delete(0, END)
-                    self.exch.configure(background=self.default_color)
-                    self.name.delete(0, END)
-                    self.qth.delete(0, END)
-                    self.qth.configure(background=self.default_color)
-                    self.serial.delete(0, END)
-                    self.prec.delete(0, END)
-                    self.hint.delete(0, END)
-                    self.check.delete(0, END)
-                    self.qsl_rcvd.set(0)
-
-                    next_widget=self.call
-                    self.call.focus_set()
-                    return("break")
-
-            # Copy hints to fields
-            if key=='Insert' or (key=='i' and (alt or control)):
-                if False:
-                    h = self.hint.get()
-                    print('h=',h,len(h))
-                    if len(h)==0:
-                        return "break"
-                    h = h.split(' ')
-                    print('h=',h)
-                    
-                self.P.KEYING.insert_hint()
-                """
-                elif self.P.SPRINT:
-                    self.name.delete(0, END)
-                    self.name.insert(0,h[0])
-                    self.qth.delete(0, END)
-                    self.qth.insert(0,h[1])
-                """
-
-                return "break"
-
-            # Immediately stop sending
-            if key=='Escape':
-                print('Escape!')
-                self.fp_txt.write('ESCAPE!!!!!\n')
-                self.fp_txt.flush()
-                
-                self.keyer.abort()     
-                if not self.q.empty():
-                    self.q.get(False)
-                    self.q.task_done()
-
-            # Move to next entry box
-            if key=='Tab':
-                if event.widget==self.txt:
-                    self.txt2.focus_set()
-                elif event.widget==self.txt2:
-                    self.txt.focus_set()
-                elif event.widget==self.txt or event.widget==self.txt2:
-                    print('Text box',key,len(key),key=='Tab')
-                    self.call.focus_set()
-                elif self.contest:
-                    event.widget.selection_clear() 
-                    widget=self.P.KEYING.next_event(key,event)
-                    self.Set_Selection(widget)
-
-                return("break")
-
-            elif key=='ISO_Left_Tab':
-                if event.widget==self.txt:
-                    self.txt2.focus_set()
-                elif event.widget==self.txt2:
-                    self.txt.focus_set()
-                elif event.widget==self.txt or event.widget==self.txt2:
-                    self.call.focus_set()
-                else:
-                    event.widget.selection_clear() 
-                    widget=self.P.KEYING.next_event(key,event)
-                    self.Set_Selection(widget)
-                return("break")
-                    
-            # <CR> in the text box - nothing to do
-            if (key=='Return' or key=='KP_Enter') and \
-               event.widget!=self.txt and event.widget!=self.txt2 and True:
-                pass
-
-            # Check for function keys
-            elif key[0]=='F':
-                idx=int( key[1:] ) - 1
-
-                print(self.last_shift_key)
-                if not alt and not control:
-                    if not shift:
-                        self.Send_Macro(idx)
-                    else:
-                        self.Send_Macro(idx+12)
-                elif control:
-                    self.Spots_cb(idx,1)
-                elif alt:
-                    self.Spots_cb(idx,2)
-                else:
-                    print('Modified Function Key not supported',shift,control,alt)
-                return("break")
+            val_special=self.handle_special_keys(event)
+        else:
+            val_special=None
 
         # Are we in a text window?
         next_widget=event.widget             # Next widget is by default the current widget
@@ -2235,70 +2203,23 @@ class GUI():
                 else:
                     self.call.configure(fg='black')
 
-            # If we're in a contest and <CR> was pressed,
-            # send response and get ready for the exchange
-            if (key=='Return' or key=='KP_Enter'):
-                if len(call)>0:
-                    next_widget = self.P.KEYING.next_event(key,event)
-                else:
-                    self.Send_Macro(0)
-
-
-                """
-                elif self.contest and self.P.SPRINT:
-                    next_widget=self.serial
-                    if self.P.LAST_MSG==0:
-                        self.Send_Macro(1)                 # Send reply
-                    else:
-                        self.Send_Macro(4)                 # Send my call
-                """
-
             # Take care of hints
             if self.contest:
                 self.get_hint(call)
                 if self.P.AUTOFILL:
                     self.P.KEYING.insert_hint()
 
-            """
-            if self.P.SPRINT:
-                if key=='Tab':
-                    self.force_focus(self.serial)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.qth)
-                    return("break")
-            """
-            
             # Save call so we can keep track of changes
             self.prev_call = call
 
         elif event.widget==self.name:
+
             name=self.get_name().upper()
-            #self.name.delete(0, END)             # Causes arrow keys not to work - ugh!
-            #self.name.insert(0, name)
             self.sock.set_log_fields({'Name':name})
 
-            # If we're in a contest and the return key was pressed, get ready for rest of the exchange
-            if key=='Return' or key=='KP_Enter':
-                next_widget = self.P.KEYING.next_event(key,event)
-                """
-                elif self.contest and (self.P.SPRINT):
-                    next_widget=self.qth
-                """
-            """
-            if self.P.SPRINT:
-                if key=='Tab':
-                    self.force_focus(self.qth)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.serial)
-                    return("break")
-            """
-            
         elif event.widget==self.qth:
+            
             qth=self.get_qth().upper()
-            #self.qth.delete(0, END)           # Causes arrow keys not to work - ugh!
-            #self.qth.insert(0, qth)
             self.sock.set_log_fields({'QTH':qth})
 
             if len(qth)>0 and self.P.contest_name=='CQP':
@@ -2309,55 +2230,23 @@ class GUI():
                 else:
                     self.qth.configure(background=self.default_color)
                     
-            # If we're in a contest and the return key was pressed, send reply
-            if key=='Return' or key=='KP_Enter':
-                if self.contest:
-                    #next_widget=self.qth
-                    next_widget = self.P.KEYING.next_event(key,event)
-                    """
-                    elif self.P.SPRINT:
-
-                        if self.P.LAST_MSG==0:
-                            self.Send_Macro(2)                     # Send TU
-                        elif self.P.LAST_MSG==5:
-                            self.Send_Macro(7)                     # Log the QSO
-                            #self.Send_Macro(0)                    # Send CQ
-                        else:
-                            self.Send_Macro(5)                     # Send my excahnge
-
-                    else:
-                        print('!!!!!!!!!!!!! GUI - should never get here !!!!!!!!!!')
-                    """
-                    
-            """
-            elif self.P.SPRINT:
-                if key=='Tab':
-                    self.force_focus(self.call)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.name)
-                    return("break")
-            """
-            
         elif event.widget==self.cat:
-            cat=self.get_cat().upper()
-            if key=='Return' or key=='KP_Enter':
-                next_widget = self.P.KEYING.next_event(key,event)
+
+            cal=self.get_cat().upper()
+            self.sock.set_log_fields({'Cat':prec})
 
         elif event.widget==self.rstin:
+
             rst=self.get_rst_in().upper()
             self.sock.set_log_fields({'RST_in':rst})
-            next_widget = self.P.KEYING.next_event(key,event)
-            return("break")
 
         elif event.widget==self.rstout:
+
             rst=self.get_rst_out().upper()
             self.sock.set_log_fields({'RST_out':rst})
-            if key=='Return' or key=='KP_Enter':
-                next_widget = self.P.KEYING.next_event(key,event)       # 1
-                return("break")
 
         elif event.widget==self.exch:
+
             exch=self.get_exchange().upper()
             self.sock.set_log_fields({'Exchange':exch})
 
@@ -2367,64 +2256,222 @@ class GUI():
                 else:
                     self.exch.configure(background=self.default_color)
                     
-            # If we're in a contest and the return key was pressed, send reply
-            if key=='Return' or key=='KP_Enter':
-                if self.contest:
-                    next_widget = self.P.KEYING.next_event(key,event)        #2
-
         elif event.widget==self.counter:
+
             print('^^^^^^^^^^^ Counter window',self.P.MY_CNTR)
             
         elif event.widget==self.serial:
+
             serial=self.get_serial().upper()
             self.sock.set_log_fields({'Serial_out':serial})
-            if key=='Return' or key=='KP_Enter':
-                next_widget = self.P.KEYING.next_event(key,event)
-            """
-            elif self.P.SPRINT:
-                if key=='Tab' or key=='Return' or key=='KP_Enter':
-                    self.force_focus(self.name)
-                    return("break")
-                elif key=='ISO_Left_Tab':
-                    self.force_focus(self.call)
-                    return("break")
-            """
                 
         elif event.widget==self.prec:
+
             prec=self.get_prec().upper()
             self.sock.set_log_fields({'Prec':prec})
-            if key=='Return' or key=='KP_Enter':
-                next_widget = self.P.KEYING.next_event(key,event)
 
         elif event.widget==self.call2:
+
             call2=self.get_call2().upper()
             self.sock.set_log_fields({'Call2':call2})
-            if key=='Return' or key=='KP_Enter':
-                next_widget = self.P.KEYING.next_event(key,event)
 
         elif event.widget==self.check:
-            #print('!!!Check!!!')
+
             check=self.get_check().upper()
             self.sock.set_log_fields({'Check':check})
-            if key=='Return' or key=='KP_Enter':
-                next_widget = self.P.KEYING.next_event(key,event)
             
-        # Make sure we keep the focus
-        if next_widget!=event.widget:
-            event.widget.select_clear()
-        self.root.focus_set()
-        next_widget.focus_set()      
-            
-        delay_ms=5
-        time.sleep(.001*delay_ms)
-        self.root.attributes('-topmost', True)              # Raising root above all other windows
-        next_widget.focus_force()
-        time.sleep(.001*delay_ms)
-        self.root.attributes('-topmost', False)              # Raising root above all other windows
+        return val_special
 
-        next_widget.focus_set()      
-        next_widget.focus_force()
-        self.root.update_idletasks()
+    
+    # Routine to handle keys with long names
+    def handle_special_keys(self,event):
+
+        DF=100
+        key   = event.keysym
+        state = event.state
+        control   = (state & 0x0004) != 0
+        shift     = ((state & 0x0001) != 0)
+        if platform.system()=='Linux':
+            alt       = (state & 0x0008) != 0 
+        elif platform.system()=='Windows':
+            alt       = (state & 0x20000) != 0 
+
+        print('Handle Special: key=',key,alt,control,state)
+            
+        if key=='Shift_L':
+            self.last_shift_key='L'
+                
+        elif key=='Shift_R':
+            self.last_shift_key='R'
+
+        elif key=='Up':
+            # Up arrow
+            print('RIT Up',DF)
+            self.sock.rit(1,DF)
+                
+        elif key=='Down':
+            # Down arrow
+            print('RIT Down',-DF)
+            self.sock.rit(1,-DF)
+
+        elif key=='KP_Decimal':
+            print('Reset clarifier')
+            ClarReset(self)
+
+        elif key in ['Prior','KP_Add']:
+            # Page up or big +
+            print('WPM Up')
+            self.set_wpm(dWPM=+WPM_STEP)
+            #return('break')
+                
+        elif key in ['Next','KP_Subtract']:
+            # Page down or big -
+            print('WPM Down')
+            self.set_wpm(dWPM=-WPM_STEP)
+            #return('break')
+
+        elif key in ['slash','question'] and (alt or control):
+            # Quick way to send '?'
+            self.q.put('?')
+            self.P.OP_STATE |= 8
+            print('KEY PRESS - op_state=',self.P.OP_STATE)
+
+        elif key in ['r','R'] and (alt or control):
+            # Send 'RR'
+            self.Send_CW_Text('RR')
+
+        elif key=='Home':
+            # Reverse call sign lookup
+            #if key=='Home' or (key=='r' and (alt or control)):
+            self.P.KEYING.reverse_call_lookup()
+
+        # This works but seemed problematic in normal operating??
+        elif (key=='Delete' and False) or (key in ['w','W'] and (alt or control)):
+            print('DELETE - CLEAR BOX ...')
+            if event.widget==self.txt or event.widget==self.txt2:
+                #print('Text Box ...')
+                event.widget.delete(1.0,END)     # Clear the entry box
+            else:
+                print('Not in Text Box ...')
+                event.widget.delete(0,END)     # Clear the entry box
+                if event.widget==self.call:
+                    self.call.configure(background=self.default_color)
+
+            # Wipe all fields Alt-w
+            if key in ['w','W'] and (alt or control):
+                #print('ALT-W')
+                self.call.delete(0, END)
+                self.call.configure(background=self.default_color)
+                self.call2.delete(0, END)
+                self.cat.delete(0, END)
+                self.rstin.delete(0, END)
+                self.rstout.delete(0, END)
+                if self.P.contest_name=='SATELLITES':
+                    self.rstin.insert(0,'5')
+                    self.rstout.insert(0,'5nn')
+                else:
+                    self.rstin.insert(0,'5nn')
+                    self.rstout.insert(0,'5NN')
+                self.exch.delete(0, END)
+                self.exch.configure(background=self.default_color)
+                self.name.delete(0, END)
+                self.qth.delete(0, END)
+                self.qth.configure(background=self.default_color)
+                self.serial.delete(0, END)
+                self.prec.delete(0, END)
+                self.hint.delete(0, END)
+                self.check.delete(0, END)
+                self.qsl_rcvd.set(0)
+                self.scp.delete(0, END)
+
+                next_widget=self.call
+                self.call.focus_set()
+
+        elif key=='Insert' or (key in ['i','I'] and (alt or control)):
+            # Copy hints to fields or reverse call look-up
+            if event.widget==self.exch:
+                self.P.KEYING.reverse_call_lookup()
+            else:
+                self.P.KEYING.insert_hint()
+                """
+                elif self.P.SPRINT:
+                    self.name.delete(0, END)
+                    self.name.insert(0,h[0])
+                    self.qth.delete(0, END)
+                    self.qth.insert(0,h[1])
+                """
+
+        elif key=='Escape':
+            # Immediately stop sending
+            print('Escape!')
+            self.fp_txt.write('ESCAPE!!!!!\n')
+            self.fp_txt.flush()
+            
+            self.keyer.abort()     
+            if not self.q.empty():
+                self.q.get(False)
+                self.q.task_done()
+
+        elif key=='Tab':
+            #elif key=='Tab' or key=='Return' or key=='KP_Enter':
+            
+            # Move to next entry box
+            if event.widget==self.txt and self.P.SHOW_TEXT_BOX2:
+                self.txt2.focus_set()
+            elif event.widget==self.txt2 and self.P.SHOW_TEXT_BOX2:
+                self.txt.focus_set()
+            elif event.widget==self.txt or event.widget==self.txt2:
+                print('Text box',key,len(key),key=='Tab')
+                self.call.focus_set()
+            #elif self.contest:
+            else:
+                event.widget.selection_clear() 
+                widget=self.P.KEYING.next_event(key,event)
+                self.Set_Selection(widget)
+
+        elif key=='ISO_Left_Tab':
+            if event.widget==self.txt:
+                self.txt2.focus_set()
+            elif event.widget==self.txt2:
+                self.txt.focus_set()
+            elif event.widget==self.txt or event.widget==self.txt2:
+                self.call.focus_set()
+            else:
+                event.widget.selection_clear() 
+                widget=self.P.KEYING.next_event(key,event)
+                self.Set_Selection(widget)
+
+        elif (key=='Return' or key=='KP_Enter') and \
+             event.widget!=self.txt and event.widget!=self.txt2:
+
+            print('HANDLE_SPECIAL - RETURN ...',event.widget)
+            event.widget.selection_clear() 
+            widget=self.P.KEYING.next_event(key,event)
+            self.Set_Selection(widget)
+        
+        elif key[0]=='F':
+            # Check for function keys
+            idx=int( key[1:] ) - 1
+            
+            print(self.last_shift_key)
+            if not alt and not control:
+                if not shift:
+                    self.Send_Macro(idx)
+                else:
+                    self.Send_Macro(idx+12)
+            elif control:
+                self.Spots_cb(idx,1)
+            elif alt:
+                self.Spots_cb(idx,2)
+            else:
+                print('Modified Function Key not supported',shift,control,alt)
+                
+        else:
+            print('Key Press: Un-used key combo',key,alt,control)
+            return
+
+        #print('Handle Special: BREAK - key=',key)
+        return("break")
 
 ############################################################################################
 
@@ -2670,6 +2717,7 @@ class GUI():
 
             self.OnDeckCircle=Entry(toolbar,text='On Deck Circle')
             self.OnDeckCircle.pack(side=LEFT, padx=2, pady=2)
+            self.OnDeckCircle.bind("<Key>", self.key_press )
             Button(toolbar,text="Batter Up",command=self.BatterUp) \
                 .pack(side=LEFT, padx=2, pady=2)
 

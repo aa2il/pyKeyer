@@ -147,7 +147,7 @@ class PARAMS:
                               help="Lock Paddle Speed to Computer Speed")
         arg_proc.add_argument("-mode", help="Rig Mode",
                               type=str,default=None,
-                              choices=[None,'CW','SSB'])
+                              choices=[None,'CW','SSB','RTTY'])
         arg_proc.add_argument("-log", help="Log file name",
                               type=str,default=None)
         arg_proc.add_argument("-rotor", help="Rotor connection Type",

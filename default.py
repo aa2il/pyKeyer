@@ -473,6 +473,7 @@ class DEFAULT_KEYING():
 
         P   = self.P
         gui = P.gui
+        DEBUG = 0
 
         if event.widget==gui.txt or event.widget==gui.txt2:
             
@@ -485,6 +486,8 @@ class DEFAULT_KEYING():
             # Get current widget index
             idx=gui.boxes.index(event.widget)
             nn = len(gui.boxes)
+            if DEBUG:
+                print('NEXT EVENT: idx=',idx,'\tnn=',nn)
 
             # Determine adjacent (next) widget
             if key in ['Tab','Return','KP_Enter']:
@@ -503,12 +506,24 @@ class DEFAULT_KEYING():
             else:
                 print('We should never get here!!',idx,key,nn)
                 idx2=idx
-            #print(idx,'->',idx2)
+                
+            if DEBUG:
+                print('NEXT EVENT: idx2=',idx2)
             next_widget = gui.boxes[idx2]
 
             # Send a macro if needed
             if key=='Return' or key=='KP_Enter':
-                if (P.OP_STATE & 32)==0 or event.widget!=gui.call:
+                if DEBUG:
+                    print('NEXT EVENT: Return\tOP_STATE=',P.OP_STATE)
+                call = gui.get_call()
+                if event.widget==gui.call and len(call)==0:
+
+                    # We're in the Call Entry box
+                    # If there is nothing here, call CQ
+                    next_widget=event.widget
+                    gui.Send_Macro(0)
+                        
+                else:    # if (P.OP_STATE & 32)==0 or event.widget!=gui.call
                     #print('idx=',idx)
                     #print('macros=',self.macros)
                     n=self.macros[idx]
@@ -519,9 +534,11 @@ class DEFAULT_KEYING():
         if self.aux_cb:
             self.aux_cb(key,event)
 
-        #print('NEXT EVENT current widget=',event.widget,'\tnext widget=',next_widget)
+        if DEBUG:
+            print('NEXT EVENT current widget=',event.widget,'\tnext widget=',next_widget)
         next_widget.focus_set()
-        #print('NEXT EVENT Done: idx=',idx,'\tnn=',nn,'\tidx2=',idx2)
+        if DEBUG:
+            print('NEXT EVENT Done: idx=',idx,'\tnn=',nn,'\tidx2=',idx2)
         return next_widget
             
 
