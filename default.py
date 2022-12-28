@@ -547,6 +547,7 @@ class DEFAULT_KEYING():
     def reverse_call_lookup(self):
 
         P=self.P
+        DEBUG=0
 
         # This is a no-op for most contests
         if self.number_key==None:
@@ -556,7 +557,8 @@ class DEFAULT_KEYING():
         # Get number from gui
         num = P.gui.get_exchange().upper()
         num = reverse_cut_numbers(num)
-        #print('\nREVERSE_LOOKUP: num=',num)
+        if DEBUG:
+            print('\nREVERSE_LOOKUP: num=',num)
         if num=='':
             return
 
@@ -569,6 +571,9 @@ class DEFAULT_KEYING():
                 call2 = dx_station.homecall
                 #print('call=',call,'home call=',call2)
                 calls.append(call2)
+
+        if DEBUG:
+            print('\nREVERSE_LOOKUP: num=',num,'\tcalls=',calls)
 
         # Look for call closest to what we copied
         call_in=P.gui.get_call()
@@ -599,6 +604,7 @@ class DEFAULT_KEYING():
         P.gui.txt.see(END)
 
         # Put best call into call box
+        m=''
         if len(calls)>0:
             if len(call_in)>0:
                 idx=dist.index(min(dist))
@@ -620,6 +626,6 @@ class DEFAULT_KEYING():
             h=P.gui.get_hint(m)
         #print('REVERSE_LOOKUP: h=',h)
         
-        #return m
+        return m
         
         

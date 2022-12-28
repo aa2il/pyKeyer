@@ -259,6 +259,10 @@ class GUI():
         self.call_lab = Label(self.root, text="Call",font=font1)
         self.call_lab.grid(row=row,columnspan=4,column=0,sticky=E+W)
         self.call = Entry(self.root,font=font2,selectbackground='lightgreen')
+        #reg = self.root.register(self.call_changed)
+        #self.call.config(validate ="key", validatecommand =(reg, '%P'))
+        #self.call = Entry(self.root,font=font2,selectbackground='lightgreen',
+        #                  validate='key', validatecommand=self.call_changed)
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
         self.call.bind("<Key>", self.key_press )
         self.call.focus_set()
@@ -1965,9 +1969,9 @@ class GUI():
     # This is the actual handler that copies the selected callsign into
     # the call sign box
     def SCP_Selection2(self,evt):
-        print('SCP SELECTION2: select present=',evt.widget.select_present())
+        print('SCP SELECTION2: Select Present=',evt.widget.select_present(),'\tAuto Fill=',self.P.AUTOFILL)
         if evt.widget.select_present():
-            if False:
+            if True:
                 # Copy selected call into call entry box
                 call = evt.widget.selection_get()
                 print('Call:',call)
@@ -1981,6 +1985,12 @@ class GUI():
             
             next_widget=self.call
             self.call.focus_set()
+
+            if self.P.AUTOFILL:
+                print('SCP SELECTION2: Autofilling...')
+                self.get_hint(call)
+                self.P.KEYING.insert_hint()
+            
         else:
             print('Nothing to do')
 
@@ -2107,9 +2117,9 @@ class GUI():
 ############################################################################################
 
     # Callback when a key is pressed
-    # If this doesn't work right, try the version in save60
     def key_press(self,event,id=None):
 
+        DF=100
         key   = event.keysym
         num   = event.keysym_num
         ch    = event.char
@@ -2136,8 +2146,6 @@ class GUI():
 
         if True:
             print("Key Press:",key,'\tState:',hex(state),shift,control,alt)
-            if event.widget==self.call:
-                print('Call=',self.get_call())
 
         # This should never happen
         if len(key)==0:
@@ -2145,14 +2153,193 @@ class GUI():
             return
 
         # Check for special keys
-        if len(key)>=2 or alt or control:
-            val_special=self.handle_special_keys(event)
-        else:
-            val_special=None
+        ret_val = "break"              # Assume its one of the special keys
+        if key=='Shift_L':
+            # Left Shift 
+            self.last_shift_key='L'
+                
+        elif key=='Shift_R':
+            # Right Shift 
+            self.last_shift_key='R'
 
+        elif key=='Up':
+            # Up arrow
+            print('RIT Up',DF)
+            self.sock.rit(1,DF)
+                
+        elif key=='Down':
+            # Down arrow
+            print('RIT Down',-DF)
+            self.sock.rit(1,-DF)
+
+        elif key=='KP_Decimal':
+            # "." on keypad
+            print('Reset clarifier')
+            ClarReset(self)
+
+        elif key in ['Prior','KP_Add']:
+            # Page up or big +
+            print('WPM Up')
+            self.set_wpm(dWPM=+WPM_STEP)
+            #return('break')
+                
+        elif key in ['Next','KP_Subtract']:
+            # Page down or big -
+            print('WPM Down')
+            self.set_wpm(dWPM=-WPM_STEP)
+            #return('break')
+
+        elif key in ['slash','question'] and (alt or control):
+            # Quick way to send '?'
+            self.q.put('?')
+            self.P.OP_STATE |= 8
+            print('KEY PRESS - op_state=',self.P.OP_STATE)
+
+        elif key in ['r','R'] and (alt or control):
+            # Send 'RR'
+            self.Send_CW_Text('RR')
+
+        elif key=='Home':
+            # Reverse call sign lookup
+            #if key=='Home' or (key=='r' and (alt or control)):
+            self.P.KEYING.reverse_call_lookup()
+
+        # This works but seemed problematic in normal operating??
+        elif (key=='Delete' and True) or (key in ['w','W'] and (alt or control)):
+            print('DELETE - CLEAR BOX ...')
+            if event.widget==self.txt or event.widget==self.txt2:
+                #print('Text Box ...')
+                event.widget.delete(1.0,END)     # Clear the entry box
+            else:
+                print('Not in Text Box ...')
+                event.widget.delete(0,END)     # Clear the entry box
+                if event.widget==self.call:
+                    self.call.configure(background=self.default_color)
+
+            # Wipe all fields Alt-w
+            if key in ['w','W'] and (alt or control):
+                #print('ALT-W')
+                self.call.delete(0, END)
+                self.call.configure(background=self.default_color)
+                self.call2.delete(0, END)
+                self.cat.delete(0, END)
+                self.rstin.delete(0, END)
+                self.rstout.delete(0, END)
+                if self.P.contest_name=='SATELLITES':
+                    self.rstin.insert(0,'5')
+                    self.rstout.insert(0,'5nn')
+                else:
+                    self.rstin.insert(0,'5nn')
+                    self.rstout.insert(0,'5NN')
+                self.exch.delete(0, END)
+                self.exch.configure(background=self.default_color)
+                self.name.delete(0, END)
+                self.qth.delete(0, END)
+                self.qth.configure(background=self.default_color)
+                self.serial.delete(0, END)
+                self.prec.delete(0, END)
+                self.hint.delete(0, END)
+                self.check.delete(0, END)
+                self.qsl_rcvd.set(0)
+                self.scp.delete(0, END)
+
+                next_widget=self.call
+                self.call.focus_set()
+
+        elif key=='Insert' or (key in ['i','I'] and (alt or control)):
+            # Copy hints to fields or reverse call look-up
+            if event.widget==self.exch:
+                val=self.P.KEYING.reverse_call_lookup()
+                if val==None or len(val)==0:
+                    self.P.KEYING.insert_hint()
+            else:
+                self.P.KEYING.insert_hint()
+
+        elif key=='Escape':
+            # Immediately stop sending
+            print('Escape!')
+            self.fp_txt.write('ESCAPE!!!!!\n')
+            self.fp_txt.flush()
+            
+            self.keyer.abort()     
+            if not self.q.empty():
+                self.q.get(False)
+                self.q.task_done()
+
+        elif key=='Tab':
+            
+            # Move to next entry box
+            if event.widget==self.txt and self.P.SHOW_TEXT_BOX2:
+                self.txt2.focus_set()
+            elif event.widget==self.txt2 and self.P.SHOW_TEXT_BOX2:
+                self.txt.focus_set()
+            elif event.widget==self.txt or event.widget==self.txt2:
+                print('Text box',key,len(key),key=='Tab')
+                self.call.focus_set()
+            else:
+                event.widget.selection_clear() 
+                widget=self.P.KEYING.next_event(key,event)
+                self.Set_Selection(widget)
+
+        elif key=='ISO_Left_Tab':
+            if event.widget==self.txt:
+                self.txt2.focus_set()
+            elif event.widget==self.txt2:
+                self.txt.focus_set()
+            elif event.widget==self.txt or event.widget==self.txt2:
+                self.call.focus_set()
+            else:
+                event.widget.selection_clear() 
+                widget=self.P.KEYING.next_event(key,event)
+                self.Set_Selection(widget)
+
+        elif (key=='Return' or key=='KP_Enter') and \
+             event.widget!=self.txt and event.widget!=self.txt2:
+
+            event.widget.selection_clear() 
+            widget=self.P.KEYING.next_event(key,event)
+            self.Set_Selection(widget)
+        
+        elif key[0]=='F':
+            # Check for function keys
+            idx=int( key[1:] ) - 1
+            
+            print(self.last_shift_key)
+            if not alt and not control:
+                if not shift:
+                    self.Send_Macro(idx)
+                else:
+                    self.Send_Macro(idx+12)
+            elif control:
+                self.Spots_cb(idx,1)
+            elif alt:
+                self.Spots_cb(idx,2)
+            else:
+                print('Modified Function Key not supported',shift,control,alt)
+                
+        else:
+            if len(key)>1 or alt or control:
+                print('Key Press: Un-used key combo',key,alt,control)
+                
+            # The entry change hasn't happened yet so just schedule updater
+            self.root.after(20,lambda: self.process_entry_boxes(event))
+            return
+        
+        return "break"
+
+            
+    # Callback when something changes in an entry box
+    def process_entry_boxes(self,event):
+
+        key   = event.keysym
+        ch    = event.char
+                            
+        # Next widget is by default the current widget
+        next_widget=event.widget
+    
         # Are we in a text window?
-        next_widget=event.widget             # Next widget is by default the current widget
         if event.widget==self.txt:
+            
             # Lower text window - Don't send control chars
             if len(ch)>0:
                 if ord(ch)==13:
@@ -2168,13 +2355,15 @@ class GUI():
                         self.text_buff+=ch
 
         elif event.widget==self.txt2:
-            # Upper text window 
+            # Upper text window which is just used for typing in rx text
             #print('UPPER TEXT WINDOW')
             pass
 
         # Update callsign info 
         elif event.widget==self.call:
+
             call=self.get_call().upper()
+            print('Call=',call)
 
             # Update fldigi and check for dupes
             self.sock.set_log_fields({'Call':call}) 
@@ -2182,16 +2371,16 @@ class GUI():
 
             # Check against SCP database
             if self.P.USE_SCP:
-                scps,scps2 = self.P.KEYING.SCP.match(call)
+                scps,scps2 = self.P.KEYING.SCP.match(call,VERBOSITY=0)
                 self.scp.delete(0, END)
                 self.scp.insert(0, scps)
 
                 # Auto-complete
                 if len(key)==1 and self.P.AUTO_COMPLETE:
                     KEY=key.upper()
-                    if KEY>='A' and KEY<='Z' and len(scps2)==1:
+                    if KEY>='A' and KEY<='Z' and ( len(scps2)==1 or (len(scps2)==0 and len(scps)==1) ):
                         call2=scps[0]
-                        print('AUTO-COMPLETE: call2=',call2,'\tkey=',key)
+                        print('AUTO-COMPLETE: call=',call,'\tcall2=',call2,'\tkey=',key)
                         self.call.delete(0, END)
                         self.call.insert(0,call2)
                         self.call.select_range( len(call), END )
@@ -2211,7 +2400,7 @@ class GUI():
 
             # Save call so we can keep track of changes
             self.prev_call = call
-
+            
         elif event.widget==self.name:
 
             name=self.get_name().upper()
@@ -2280,199 +2469,7 @@ class GUI():
             check=self.get_check().upper()
             self.sock.set_log_fields({'Check':check})
             
-        return val_special
-
     
-    # Routine to handle keys with long names
-    def handle_special_keys(self,event):
-
-        DF=100
-        key   = event.keysym
-        state = event.state
-        control   = (state & 0x0004) != 0
-        shift     = ((state & 0x0001) != 0)
-        if platform.system()=='Linux':
-            alt       = (state & 0x0008) != 0 
-        elif platform.system()=='Windows':
-            alt       = (state & 0x20000) != 0 
-
-        print('Handle Special: key=',key,alt,control,state)
-            
-        if key=='Shift_L':
-            self.last_shift_key='L'
-                
-        elif key=='Shift_R':
-            self.last_shift_key='R'
-
-        elif key=='Up':
-            # Up arrow
-            print('RIT Up',DF)
-            self.sock.rit(1,DF)
-                
-        elif key=='Down':
-            # Down arrow
-            print('RIT Down',-DF)
-            self.sock.rit(1,-DF)
-
-        elif key=='KP_Decimal':
-            print('Reset clarifier')
-            ClarReset(self)
-
-        elif key in ['Prior','KP_Add']:
-            # Page up or big +
-            print('WPM Up')
-            self.set_wpm(dWPM=+WPM_STEP)
-            #return('break')
-                
-        elif key in ['Next','KP_Subtract']:
-            # Page down or big -
-            print('WPM Down')
-            self.set_wpm(dWPM=-WPM_STEP)
-            #return('break')
-
-        elif key in ['slash','question'] and (alt or control):
-            # Quick way to send '?'
-            self.q.put('?')
-            self.P.OP_STATE |= 8
-            print('KEY PRESS - op_state=',self.P.OP_STATE)
-
-        elif key in ['r','R'] and (alt or control):
-            # Send 'RR'
-            self.Send_CW_Text('RR')
-
-        elif key=='Home':
-            # Reverse call sign lookup
-            #if key=='Home' or (key=='r' and (alt or control)):
-            self.P.KEYING.reverse_call_lookup()
-
-        # This works but seemed problematic in normal operating??
-        elif (key=='Delete' and False) or (key in ['w','W'] and (alt or control)):
-            print('DELETE - CLEAR BOX ...')
-            if event.widget==self.txt or event.widget==self.txt2:
-                #print('Text Box ...')
-                event.widget.delete(1.0,END)     # Clear the entry box
-            else:
-                print('Not in Text Box ...')
-                event.widget.delete(0,END)     # Clear the entry box
-                if event.widget==self.call:
-                    self.call.configure(background=self.default_color)
-
-            # Wipe all fields Alt-w
-            if key in ['w','W'] and (alt or control):
-                #print('ALT-W')
-                self.call.delete(0, END)
-                self.call.configure(background=self.default_color)
-                self.call2.delete(0, END)
-                self.cat.delete(0, END)
-                self.rstin.delete(0, END)
-                self.rstout.delete(0, END)
-                if self.P.contest_name=='SATELLITES':
-                    self.rstin.insert(0,'5')
-                    self.rstout.insert(0,'5nn')
-                else:
-                    self.rstin.insert(0,'5nn')
-                    self.rstout.insert(0,'5NN')
-                self.exch.delete(0, END)
-                self.exch.configure(background=self.default_color)
-                self.name.delete(0, END)
-                self.qth.delete(0, END)
-                self.qth.configure(background=self.default_color)
-                self.serial.delete(0, END)
-                self.prec.delete(0, END)
-                self.hint.delete(0, END)
-                self.check.delete(0, END)
-                self.qsl_rcvd.set(0)
-                self.scp.delete(0, END)
-
-                next_widget=self.call
-                self.call.focus_set()
-
-        elif key=='Insert' or (key in ['i','I'] and (alt or control)):
-            # Copy hints to fields or reverse call look-up
-            if event.widget==self.exch:
-                self.P.KEYING.reverse_call_lookup()
-            else:
-                self.P.KEYING.insert_hint()
-                """
-                elif self.P.SPRINT:
-                    self.name.delete(0, END)
-                    self.name.insert(0,h[0])
-                    self.qth.delete(0, END)
-                    self.qth.insert(0,h[1])
-                """
-
-        elif key=='Escape':
-            # Immediately stop sending
-            print('Escape!')
-            self.fp_txt.write('ESCAPE!!!!!\n')
-            self.fp_txt.flush()
-            
-            self.keyer.abort()     
-            if not self.q.empty():
-                self.q.get(False)
-                self.q.task_done()
-
-        elif key=='Tab':
-            #elif key=='Tab' or key=='Return' or key=='KP_Enter':
-            
-            # Move to next entry box
-            if event.widget==self.txt and self.P.SHOW_TEXT_BOX2:
-                self.txt2.focus_set()
-            elif event.widget==self.txt2 and self.P.SHOW_TEXT_BOX2:
-                self.txt.focus_set()
-            elif event.widget==self.txt or event.widget==self.txt2:
-                print('Text box',key,len(key),key=='Tab')
-                self.call.focus_set()
-            #elif self.contest:
-            else:
-                event.widget.selection_clear() 
-                widget=self.P.KEYING.next_event(key,event)
-                self.Set_Selection(widget)
-
-        elif key=='ISO_Left_Tab':
-            if event.widget==self.txt:
-                self.txt2.focus_set()
-            elif event.widget==self.txt2:
-                self.txt.focus_set()
-            elif event.widget==self.txt or event.widget==self.txt2:
-                self.call.focus_set()
-            else:
-                event.widget.selection_clear() 
-                widget=self.P.KEYING.next_event(key,event)
-                self.Set_Selection(widget)
-
-        elif (key=='Return' or key=='KP_Enter') and \
-             event.widget!=self.txt and event.widget!=self.txt2:
-
-            print('HANDLE_SPECIAL - RETURN ...',event.widget)
-            event.widget.selection_clear() 
-            widget=self.P.KEYING.next_event(key,event)
-            self.Set_Selection(widget)
-        
-        elif key[0]=='F':
-            # Check for function keys
-            idx=int( key[1:] ) - 1
-            
-            print(self.last_shift_key)
-            if not alt and not control:
-                if not shift:
-                    self.Send_Macro(idx)
-                else:
-                    self.Send_Macro(idx+12)
-            elif control:
-                self.Spots_cb(idx,1)
-            elif alt:
-                self.Spots_cb(idx,2)
-            else:
-                print('Modified Function Key not supported',shift,control,alt)
-                
-        else:
-            print('Key Press: Un-used key combo',key,alt,control)
-            return
-
-        #print('Handle Special: BREAK - key=',key)
-        return("break")
-
 ############################################################################################
 
     # Callback for practice with computer text
