@@ -617,13 +617,13 @@ class GUI():
         widget = event.widget
         obj = self.Master(widget)
         window=obj.root
+        title=window.title()
 
         print('ROOT MOUSE button=',event.num,'\twidget=',widget,
               '\twindow=',window,'\ttitle=',title)
         if event.num==1:
             # Left click --> grab window selection
             obj.OnTop=True
-            title=window.title()
             #os.system('wmctrl -a pyKeyer add.above')
             os.system('wmctrl -a "'+title+'"')
 
@@ -927,8 +927,7 @@ class GUI():
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
                 self.dup_check(call)
-                if self.contest:
-                    self.get_hint(call)
+                self.auto_fill(call,'')
             except:
                 pass
 
@@ -2387,7 +2386,42 @@ class GUI():
         
         return "break"
 
-            
+
+    # Function to take take of SCPs and Auto Fills
+    def auto_fill(self,call,key):
+
+        # Check against SCP database
+        if True:
+            if self.P.USE_SCP:
+                scps,scps2 = self.P.KEYING.SCP.match(call,VERBOSITY=0)
+                self.scp.delete(0, END)
+                self.scp.insert(0, scps)
+
+                # Auto-complete
+                if len(key)==1 and self.P.AUTO_COMPLETE:
+                    KEY=key.upper()
+                    #if KEY>='A' and KEY<='Z' and ( len(scps2)==1 or (len(scps2)==0 and len(scps)==1) ):
+                    if KEY>='A' and KEY<='Z' and len(scps2)==1:
+                        call2=scps[0]
+                        print('AUTO-COMPLETE: call=',call,'\tcall2=',call2,'\tkey=',key)
+                        self.call.delete(0, END)
+                        self.call.insert(0,call2)
+                        self.call.select_range( len(call), END )
+                        call=call2
+
+                # Highlight callsign if we have an exact match
+                if len(scps)>0 and call==scps[0]:
+                    self.call.configure(fg='red')
+                else:
+                    self.call.configure(fg='black')
+
+            # Take care of hints
+            if self.contest:
+                self.get_hint(call)
+                if self.P.AUTOFILL:
+                    self.P.KEYING.insert_hint()
+
+    
     # Callback when something changes in an entry box
     def process_entry_boxes(self,event):
 
@@ -2428,36 +2462,7 @@ class GUI():
             # Update fldigi and check for dupes
             self.sock.set_log_fields({'Call':call}) 
             self.dup_check(call)
-
-            # Check against SCP database
-            if self.P.USE_SCP:
-                scps,scps2 = self.P.KEYING.SCP.match(call,VERBOSITY=0)
-                self.scp.delete(0, END)
-                self.scp.insert(0, scps)
-
-                # Auto-complete
-                if len(key)==1 and self.P.AUTO_COMPLETE:
-                    KEY=key.upper()
-                    #if KEY>='A' and KEY<='Z' and ( len(scps2)==1 or (len(scps2)==0 and len(scps)==1) ):
-                    if KEY>='A' and KEY<='Z' and len(scps2)==1:
-                        call2=scps[0]
-                        print('AUTO-COMPLETE: call=',call,'\tcall2=',call2,'\tkey=',key)
-                        self.call.delete(0, END)
-                        self.call.insert(0,call2)
-                        self.call.select_range( len(call), END )
-                        call=call2
-
-                # Highlight callsign if we have an exact match
-                if len(scps)>0 and call==scps[0]:
-                    self.call.configure(fg='red')
-                else:
-                    self.call.configure(fg='black')
-
-            # Take care of hints
-            if self.contest:
-                self.get_hint(call)
-                if self.P.AUTOFILL:
-                    self.P.KEYING.insert_hint()
+            self.auto_fill(call,key)
 
             # Save call so we can keep track of changes
             self.prev_call = call
