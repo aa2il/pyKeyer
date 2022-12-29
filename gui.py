@@ -395,7 +395,6 @@ class GUI():
         self.S2.grid(row=row,column=self.ncols,sticky=N+S)
         self.S2.config(command=self.txt2.yview)
         self.txt2.config(yscrollcommand=self.S2.set)
-        #self.txt2.bind("<Tab>", self.key_press )
         self.txt2.bind("<Key>", self.key_press )
         self.show_hide_txt2()
             
@@ -408,21 +407,17 @@ class GUI():
         self.S.grid(row=row,column=self.ncols,sticky=N+S)
         self.S.config(command=self.txt.yview)
         self.txt.config(yscrollcommand=self.S.set)
-        #self.txt.bind("<Tab>", self.key_press )
+
         self.txt.bind("<Key>", self.key_press )
+        self.txt.bind('<Button-1>', self.Text_Mouse )      
+        self.txt.bind('<Button-2>', self.Text_Mouse )      
+        self.txt.bind('<Button-3>', self.Text_Mouse )      
 
-        if True:
-            self.txt.bind('<Button-1>', self.Text_Mouse )      
-            self.txt.bind('<Button-2>', self.Text_Mouse )      
-            self.txt.bind('<Button-3>', self.Text_Mouse )      
-
-
-        # Bind a callback to be called whenever a key is pressed
         # Also bind mouse entering or leaving the app
         #self.root.bind("<Key>", self.key_press2 )
-        if True:
-            self.root.bind("<Enter>", self.Hoover )
-            self.root.bind("<Leave>", self.Leave )
+        self.root.bind("<Enter>", self.Hoover )
+        self.root.bind("<Leave>", self.Leave )
+        self.root.bind('<Button-1>', self.Root_Mouse )      
 
         # Function buttons for pre-defined macros
         row += 10
@@ -616,7 +611,67 @@ class GUI():
         Grid.rowconfigure(self.root, self.txt2_row, weight=wght)             # Allows or disables resizing
 
 
-    # Callback to process mouse events on the big text box
+    # Callback to process mouse events in the root window
+    def Root_Mouse(self,event):
+        root = self.P.gui.root
+        widget = event.widget
+        obj = self.Master(widget)
+        window=obj.root
+
+        print('ROOT MOUSE button=',event.num,'\twidget=',widget,
+              '\twindow=',window,'\ttitle=',title)
+        if event.num==1:
+            # Left click --> grab window selection
+            obj.OnTop=True
+            title=window.title()
+            #os.system('wmctrl -a pyKeyer add.above')
+            os.system('wmctrl -a "'+title+'"')
+
+            # A bunch of failed attempts - keep this around bx we'll need
+            #   something differnet for windoz
+            #window.attributes('-topmost', True)
+            #window.grab_set()
+            #window.grab_set_global()
+            #window.lift()
+            #root.focus_force()
+            #window.after_idle(window.attributes,'-topmost',False)
+            #root.update()
+            #stk=root.tk.eval('wm stackorder '+str(window))
+            #print('stk=',stk)
+
+        return
+        if evt.num==1:
+            # Left click --> select
+            try:
+                #print(SEL_FIRST,SEL_LAST)
+                txt = self.txt.get(SEL_FIRST,SEL_LAST)
+                print("Select text:",txt)
+                # print("SEL_FIRST:",type(SEL_FIRST),"  SEL_LAST:",SEL_LAST)
+            except TclError:
+                print("No text selected")
+        elif evt.num==2:
+            # Middle click --> insert
+            try:
+                txt = self.txt.get(SEL_FIRST,SEL_LAST)
+                print("Select text:",txt)
+            except TclError:
+                print("No text selected")
+                txt = self.last_txt
+            print('Insert')
+            #self.txt.insert(END, txt+'\n')            
+            self.txt.see(END)
+            self.last_txt=txt
+            if self.P.Immediate_TX:
+                self.q.put(txt)
+            else:
+                self.text_buff+=txt
+                self.q.put(txt+' ')
+                self.text_buff=''
+        elif evt.num==3:
+            # Right click --> ???
+            pass
+        
+    # Callback to process mouse events in the big text box
     def Text_Mouse(self,evt):
         print('TEXT MOUSE button=',evt.num)
         if evt.num==1:
@@ -2039,25 +2094,28 @@ class GUI():
             ##self.P.gui.root.grab_set()
             ##self.P.gui.root.grab_set_global()
 
-            if False:
-                title = window.title()
-                print('title=',title)
-                win1 = gw.getWindowsWithTitle(title)[0] 
-                win1.activate()
+            if True:
+                # This seems to be the onyly reliable way to do this!
+                title=window.title()
+                #os.system('wmctrl -a pyKeyer')
+                os.system('wmctrl -a "'+title+'"')
+            else:
+                # This sort of worked but not quite
+                # Keep all of this around bx we'll need
+                #   something differnet for windoz
+                window.grab_set()
+                window.grab_set_global()
+                window.lift()
+                window.focus_force()
+                window.focus()
+                window.focus_set()
 
-            window.grab_set()
-            window.grab_set_global()
-            window.lift()
-            window.focus_force()
-            window.focus()
-            window.focus_set()
+            # A bunch of failed attempts - KEEP!!
             #window.transient()
             #window.attributes('-topmost', False)
             #window.grab_release()
-            #if True: # parent and False:
-            if False: # parent and False:
-                window.after_idle(self.P.gui.root.grab_release)
-                window.after_idle(window.attributes,'-topmost',False)
+            #window.after_idle(self.P.gui.root.grab_release)
+            #    window.after_idle(window.attributes,'-topmost',False)
             #window.after_idle(self.P.gui.root.call, 'wm', 'attributes', '.', '-topmost', False)
             focus=None
 
@@ -2199,7 +2257,9 @@ class GUI():
             # Send 'RR'
             self.Send_CW_Text('RR')
 
-        elif key=='Home':
+        elif key=='Home' and False:
+            # DON'T REMAP THE HOME KEY - ITS USEFUL FOR EDITing
+            # Insert Does this now if we are in the Exch Window
             # Reverse call sign lookup
             #if key=='Home' or (key=='r' and (alt or control)):
             self.P.KEYING.reverse_call_lookup()
@@ -2378,7 +2438,8 @@ class GUI():
                 # Auto-complete
                 if len(key)==1 and self.P.AUTO_COMPLETE:
                     KEY=key.upper()
-                    if KEY>='A' and KEY<='Z' and ( len(scps2)==1 or (len(scps2)==0 and len(scps)==1) ):
+                    #if KEY>='A' and KEY<='Z' and ( len(scps2)==1 or (len(scps2)==0 and len(scps)==1) ):
+                    if KEY>='A' and KEY<='Z' and len(scps2)==1:
                         call2=scps[0]
                         print('AUTO-COMPLETE: call=',call,'\tcall2=',call2,'\tkey=',key)
                         self.call.delete(0, END)

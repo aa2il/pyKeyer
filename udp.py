@@ -42,10 +42,15 @@ def UDP_msg_handler(self,sock,msg):
             P.gui.Clear_Log_Fields()
             P.gui.call.insert(0,call)
             P.gui.dup_check(call)
-            if P.gui.contest:
+            if P.gui.contest or True:
                 P.gui.get_hint(call)
                 if P.AUTOFILL:
                     P.KEYING.insert_hint()
+            if P.USE_SCP and False:
+                # Not why we would need this?
+                scps,scps2 = P.KEYING.SCP.match(call,VERBOSITY=0)
+                P.gui.scp.delete(0, END)
+                P.gui.scp.insert(0, scps)
 
         elif vfo=='B':
 

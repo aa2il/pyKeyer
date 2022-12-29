@@ -167,10 +167,9 @@ class PADDLING_GUI():
         # Bind a callback to be called whenever a key is pressed
         # and bind mouse entering or leaving the window
         self.win.bind("<Key>", self.KeyPress )
-        #self.win.bind("<Enter>", self.Hoover )
-        #self.win.bind("<Leave>", self.Leave )
         self.win.bind("<Enter>", self.P.gui.Hoover )
         self.win.bind("<Leave>", self.P.gui.Leave )
+        self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
         
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
