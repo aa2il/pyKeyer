@@ -83,8 +83,8 @@ class PADDLING_GUI():
         self.panagrams = read_text_file('Panagrams.txt')
         
         # Read qso template
-        self.QSO_Template = read_text_file('QSO_Template.txt',
-                                           KEEP_BLANKS=not RANDOM_QSO_MODE)
+        self.QSO_Template = read_text_file('QSO_Template.txt',KEEP_BLANKS=False)
+        # KEEP_BLANKS=not RANDOM_QSO_MODE)
         #print('QSO_Template=',self.QSO_Template )
         
         # Read words we stumble with
@@ -98,13 +98,14 @@ class PADDLING_GUI():
         self.Ncalls = len(self.calls)
             
         # Put up a box for the practice text - use large font
+        # Make this the default object to take the focus & bind keys to effect special mappings
         row=0
         lab = Label(self.win, text="",font=font1)
         lab.grid(row=row,rowspan=1,column=0,columnspan=12,sticky=E+W)
-        #self.txt = Entry(self.win,font=font2)
         self.txt = Text(self.win, height=2, width=60, bg='white', font=font2)
         self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=12,sticky=E+W)
-        self.default_object=self.txt                        # Make this the default object to take the focus
+        self.default_object=self.txt
+        self.txt.bind("<Key>", self.KeyPress )
 
         # Radio button group to select type of practice
         row+=3
@@ -164,21 +165,20 @@ class PADDLING_GUI():
         for i in range(12):
             Grid.columnconfigure(self.win, i, weight=1,uniform='twelve')
         
-        # Bind a callback to be called whenever a key is pressed
-        # and bind mouse entering or leaving the window
+        # Bind callbacks for whenever a key is pressed or the mouse enters or leaves the window
         self.win.bind("<Key>", self.KeyPress )
         self.win.bind("<Enter>", self.P.gui.Hoover )
         self.win.bind("<Leave>", self.P.gui.Leave )
         self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
-        
+
+        # Not sure what this does?
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
-        # Start the ball rolling
+        # Start the ball rolling with this window not visible
         try:
             self.SetWpm(0)
         except:
             pass
-            
         self.hide()
 
 ################################################################################
@@ -222,14 +222,24 @@ class PADDLING_GUI():
     def KeyPress(self,event,id=None):
 
         key   = event.keysym
-        print('Key Press:',key)
+        print('Paddling->Key Press:',key)
 
         if key in ['Return','KP_Enter','space']:
-           self.NewItem()
-        elif key in ['plus','KP_Add']:
+            
+            self.NewItem()
+            return "break"
+        
+        elif key in ['Prior','KP_Add']:
+            
+            # Page up or big +
             self.SetWpm(+1)
-        elif key in ['minus','KP_Subtract']:
+            return "break"
+        
+        elif key in ['Next','KP_Subtract']:
+            
+            # Page down or big -
             self.SetWpm(-1)
+            return "break"
            
     # Callback to push a prior item into entry box
     def PrevItem(self):
@@ -265,6 +275,7 @@ class PADDLING_GUI():
         #print("You selected",Selection)
 
         if Selection==0:
+            
             # Panagrams
             n=len(self.panagrams)
             #print('There are',n,'panagrams loaded')
@@ -277,6 +288,7 @@ class PADDLING_GUI():
             #print('Panagram=',txt)
 
         elif Selection==1:
+            
             # Call signs
             #print('There are',self.Ncalls,'call signs loaded')
             i = random.randint(0, self.Ncalls-1)
@@ -284,6 +296,7 @@ class PADDLING_GUI():
             #print('call=',txt)
             
         elif Selection>=2 and Selection<=5:
+            
             # Letter/number/char groups
             if Selection==2:
                 items=self.letters
@@ -301,6 +314,7 @@ class PADDLING_GUI():
             #print('letters=',txt)
             
         elif Selection==6:
+            
             # Words I stumble on
             n=len(self.Stumble)
             #print('There are',n,'stumble-bumblers loaded')
@@ -309,6 +323,7 @@ class PADDLING_GUI():
             #print('Stumble=',txt)
             
         elif Selection==7:
+            
             # Normal QSO
             if RANDOM_QSO_MODE:
                 # Pick a call at random
@@ -353,6 +368,7 @@ class PADDLING_GUI():
             #print('QSO=',txt)
             
         elif Selection==8:
+            
             txt = self.Book[self.bookmark]
             self.bookmark= (self.bookmark+1) % len(self.Book)
             
@@ -367,9 +383,11 @@ class PADDLING_GUI():
         if len(self.stack)>100:
             self.stack.pop(0)
         self.stack_ptr=len(self.stack)-1
-        
+
+    # Routine to show the main window
     def show(self):
-        print('Show Settings Window ...')
+        
+        print('Show Paddling Window ...')
         self.win.update()
         self.win.deiconify()
         self.win.focus_set()      
@@ -377,6 +395,7 @@ class PADDLING_GUI():
         self.txt.focus_set()      
         self.txt.focus_force()      
         
+    # Routine to hide the main window
     def hide(self):
         print('Hide Settings Window ...')
         self.win.withdraw()

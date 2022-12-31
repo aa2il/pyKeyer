@@ -2201,8 +2201,12 @@ class GUI():
         #mouse2 = state & 0x0200
         #mouse3 = state & 0x0400
 
+        #obj = self.Master(event.widget)
+        #window=obj.root
+
         if True:
             print("Key Press:",key,'\tState:',hex(state),shift,control,alt)
+            #print('\tself=',self,'\tobj=',obj,'\twindow=',window)
 
         # This should never happen
         if len(key)==0:
@@ -2212,59 +2216,70 @@ class GUI():
         # Check for special keys
         ret_val = "break"              # Assume its one of the special keys
         if key=='Shift_L':
+            
             # Left Shift 
             self.last_shift_key='L'
                 
         elif key=='Shift_R':
+            
             # Right Shift 
             self.last_shift_key='R'
 
         elif key=='Up':
+            
             # Up arrow
             print('RIT Up',DF)
             self.sock.rit(1,DF)
                 
         elif key=='Down':
+            
             # Down arrow
             print('RIT Down',-DF)
             self.sock.rit(1,-DF)
 
         elif key=='KP_Decimal':
+            
             # "." on keypad
             print('Reset clarifier')
             ClarReset(self)
 
         elif key in ['Prior','KP_Add']:
+            
             # Page up or big +
             print('WPM Up')
             self.set_wpm(dWPM=+WPM_STEP)
             #return('break')
                 
         elif key in ['Next','KP_Subtract']:
+            
             # Page down or big -
             print('WPM Down')
             self.set_wpm(dWPM=-WPM_STEP)
             #return('break')
 
         elif key in ['slash','question'] and (alt or control):
+            
             # Quick way to send '?'
             self.q.put('?')
             self.P.OP_STATE |= 8
             print('KEY PRESS - op_state=',self.P.OP_STATE)
 
         elif key in ['r','R'] and (alt or control):
+            
             # Send 'RR'
             self.Send_CW_Text('RR')
 
         elif key=='Home' and False:
+            
             # DON'T REMAP THE HOME KEY - ITS USEFUL FOR EDITing
             # Insert Does this now if we are in the Exch Window
             # Reverse call sign lookup
             #if key=='Home' or (key=='r' and (alt or control)):
             self.P.KEYING.reverse_call_lookup()
 
-        # This works but seemed problematic in normal operating??
         elif (key=='Delete' and True) or (key in ['w','W'] and (alt or control)):
+
+            # Erase entire entry box
             print('DELETE - CLEAR BOX ...')
             if event.widget==self.txt or event.widget==self.txt2:
                 #print('Text Box ...')
@@ -2306,6 +2321,7 @@ class GUI():
                 self.call.focus_set()
 
         elif key=='Insert' or (key in ['i','I'] and (alt or control)):
+            
             # Copy hints to fields or reverse call look-up
             if event.widget==self.exch:
                 val=self.P.KEYING.reverse_call_lookup()
@@ -2315,6 +2331,7 @@ class GUI():
                 self.P.KEYING.insert_hint()
 
         elif key=='Escape':
+            
             # Immediately stop sending
             print('Escape!')
             self.fp_txt.write('ESCAPE!!!!!\n')
@@ -2341,6 +2358,8 @@ class GUI():
                 self.Set_Selection(widget)
 
         elif key=='ISO_Left_Tab':
+            
+            # Move to prior entry box
             if event.widget==self.txt:
                 self.txt2.focus_set()
             elif event.widget==self.txt2:
@@ -2355,23 +2374,28 @@ class GUI():
         elif (key=='Return' or key=='KP_Enter') and \
              event.widget!=self.txt and event.widget!=self.txt2:
 
+            # Send appropriate macro and move on to next box
             event.widget.selection_clear() 
             widget=self.P.KEYING.next_event(key,event)
             self.Set_Selection(widget)
         
         elif key[0]=='F':
-            # Check for function keys
+            
+            # Function keys
             idx=int( key[1:] ) - 1
             
-            print(self.last_shift_key)
+            #print('Last shift=',self.last_shift_key)
             if not alt and not control:
+                # Send a macro
                 if not shift:
                     self.Send_Macro(idx)
                 else:
                     self.Send_Macro(idx+12)
             elif control:
+                # Quick Store 
                 self.Spots_cb(idx,1)
             elif alt:
+                # Quick Recall
                 self.Spots_cb(idx,2)
             else:
                 print('Modified Function Key not supported',shift,control,alt)
@@ -2382,6 +2406,7 @@ class GUI():
                 
             # The entry change hasn't happened yet so just schedule updater
             self.root.after(20,lambda: self.process_entry_boxes(event))
+            #window.after(20,lambda: self.process_entry_boxes(event))
             return
         
         return "break"
