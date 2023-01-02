@@ -96,7 +96,7 @@ set UDP=""
 set UDP="-udp"
 
 set SCP=""
-set SCP="-scp"
+#set SCP="-scp"
 
 # If no contest was selected, default to CWT or SST
 set d=`date`

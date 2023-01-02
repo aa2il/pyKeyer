@@ -1384,14 +1384,16 @@ class GUI():
         return self.check.get().upper()
 
     # Get a clue
-    def get_hint(self,call):
+    def get_hint(self,call=None):
         #print('GET_HINT: call=',call)
+        if call==None:
+            call = self.call.get()
 
         #if len(call)>=3 and not self.P.NO_HINTS:
         if len(call)>=3:
             self.dx_station = Station(call)
             #pprint(vars(self.dx_station))
-            h = hint.master(self.P,call,self.dx_station)
+            h = hint.master(self.P,call,self.dx_station,VERBOSITY=1)
             if not h:
                 h = hint.oh_canada(self.dx_station)
         else:

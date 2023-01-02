@@ -23,13 +23,9 @@ from rig_io.ft_tables import CA_COUNTIES
 
 ############################################################################################
 
-VERBOSITY=0
-
-############################################################################################
-
 # Routine to sift through previous contest lists to get a hint of exhcange
 # info (qth, member no. etc.)
-def master(P,call,dx_station=None):
+def master(P,call,dx_station=None,VERBOSITY=0):
 
     if VERBOSITY>0:
         print('HINT-MASTER: call=',call,len(P.calls))
@@ -41,9 +37,10 @@ def master(P,call,dx_station=None):
     if call in P.calls:
         if VERBOSITY>0:
             print('MASTER:',call,' is in master list')
-            print(P.MASTER[call])
         if P.KEYING:
-            return P.KEYING.hint(call)
+            h=P.KEYING.hint(call)
+            print(call,'\tmaster=',P.MASTER[call],'\nhint=',h)
+            return h
         else:
             print('HINT.MASTER: No hints available for this contest')
             return None

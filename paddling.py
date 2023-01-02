@@ -37,7 +37,7 @@ from utilities import cut_numbers
 
 TEST_MODE=True
 TEST_MODE=False
-RANDOM_QSO_MODE=False
+RANDOM_QSO_MODE=True
 
 ################################################################################
 

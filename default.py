@@ -442,12 +442,17 @@ class DEFAULT_KEYING():
         gui=self.P.gui
 
         if h==None:
-            h = gui.hint.get()
+            h = gui.hint.get()              # Read hint box
+            #print('DEFAULT INSERT HINT 2: h=',h,len(h))
+            if h=='':
+                h = gui.get_hint()          # Nothing in hint box, try getting a hint
+            #print('DEFAULT INSERT HINT 3: h=',h,len(h))
         if type(h) == str:
             h = h.split(' ')
+            #print('DEFAULT INSERT HINT 5: h=',h)
 
         if len(h)>=1:
-            print('DEFAULT INSERT HINT 3: h=',h)
+            print('DEFAULT INSERT HINT 6: h=',h)
 
             idx=0
             if self.key1!=None and self.key1=='name':
@@ -459,7 +464,7 @@ class DEFAULT_KEYING():
                 gui.name.insert(0,self.NAME)
 
             if self.key2!=None:
-                if self.key2 in ['sec']:
+                if self.key2 in ['sec','qth','state']:
                     gui.qth.delete(0,END)
                     gui.qth.insert(0,h[idx])
                     idx+=1

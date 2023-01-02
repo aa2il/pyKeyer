@@ -79,13 +79,19 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
     # Routine to generate a hint for a given call
     def hint(self,call):
         P=self.P
+        
         name  = P.MASTER[call]['name']
         state = P.MASTER[call]['state']
         num   = P.MASTER[call]['cwops']
         if len(num)==0:
             num='-'
+            
+        self.key1='name'
+        self.key2='state'
+        self.key3='num'
+        
         if VERBOSITY>0:
-            print('RAGCHEW_KEYEING - Hint:',name+' '+state+' '+num)
+            print('RAGCHEW_KEYEING - Hint:',name+' '+state+' '+num)            
         return name+' '+state+' '+num
 
 
