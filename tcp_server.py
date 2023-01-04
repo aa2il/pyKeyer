@@ -2,9 +2,9 @@
 ################################################################################
 #
 # tcp_server.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021o-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-#    Simple tcp server to effect allow clients to communicate to app.
+#    Simple tcp server to allow clients to communicate to keyer app.
 #
 ################################################################################
 #
@@ -26,14 +26,21 @@ from threading import Thread,Event
 import time
 import select
 
+################################################################################
+
 VERBOSITY=0
 
 ################################################################################
 
+# Prototype message handler
+def dummy_msg_handler(self,sock,msg):
+    id=sock.getpeername()
+    print('TCP_SERVER->MSG HANDLER: id=',id,'\tmsg=',msg.rstrip())
+        
 # TCP Server class
 class TCP_Server(Thread):
     
-    def __init__(self,P,host,port,BUFFER_SIZE = 1024,Handler=None): 
+    def __init__(self,P,host,port,BUFFER_SIZE=1024,Handler=None): 
         Thread.__init__(self)
 
         self.P=P
@@ -42,34 +49,55 @@ class TCP_Server(Thread):
         self.host=host
         self.port=port
         self.BUFFER_SIZE = BUFFER_SIZE
-        self.msg_handler=Handler
-        
-        print('TCP Server:',host,port)
+        self.running=False
+        if Handler:
+            self.msg_handler=Handler
+        else:
+            self.msg_handler=dummy_msg_handler
+        if P and hasattr(P,'Stopper'):
+            self.Stopper = P.Stopper
+        else:
+            self.Stopper = Event()
+            
+        print('TCP Server: host=',host,'\tport=',port,'\tBuf Size=',self.BUFFER_SIZE,
+              '\tHandler=',self.msg_handler)
 
+        # Start the server
+        self.StartServer()
+
+################################################################################
+
+    def StartServer(self):
+        print('TCP_SERVER->StartServer: Starting ...')
+        if self.running:
+            self.tcpServer.close()
+            #self.socks.remove(self.tcpServer)
         self.tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         self.tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
-        self.tcpServer.bind((host,port))
-
+        self.tcpServer.bind((self.host,self.port))
         self.socks = [self.tcpServer]        
-
+        self.running=True
+        
     # Function to listener for new connections and/or data from clients
     def Listener(self): 
-        print("Listener: Waiting for connections from TCP clients..." )
+        print('TCP_SERVER->Listener: Waiting for connections from TCP clients...')
         self.tcpServer.listen(4)
-        
-        while not self.P.Stopper.isSet():
+
+        # Run until stopper is set
+        while not self.Stopper.is_set():
             if VERBOSITY>0:
                 print('TCP_SERVER - Listener - Hey 1')
             time.sleep(1)
-            
+
             # Get list of sockets 
+            #print('Getting list ...')
+            #readable,writeable,inerror = select.select(self.socks,self.socks,self.socks,0)
             readable,writeable,inerror = select.select(self.socks,[],[],0)
             if VERBOSITY>0:
                 print('TCP_SERVER - Listener - readable=',readable,  \
                       '\twriteable=',writeable,'\tinerror=',inerror)
             
             # iterate through readable sockets
-            #i=0
             for sock in readable:
                 if VERBOSITY>0:
                     print('TCP_SERVER - Listener - Hey 2')
@@ -111,11 +139,6 @@ class TCP_Server(Thread):
                             data=None
                         if VERBOSITY>0:
                             print('TCP_SERVER - Listener - Hey 4b - ready=',ready)
-                    #except socket.timeout:
-                    #    if VERBOSITY>0:
-                    #        print('TCP_SERVER - Listener - Socket timeout')
-                    #    data=None
-                    #    timeout=True
                     except Exception as e: 
                         print('Listener: Problem with socket - closing')
                         print( str(e) )
@@ -123,11 +146,12 @@ class TCP_Server(Thread):
                         data=None
                 
                     if data:
+                        
                         # We received a message from a client
                         print('\r{}:'.format(sock.getpeername()),data)
                         if self.msg_handler:
                             self.msg_handler(self,sock,data.decode())
-                            
+
                     elif ready[0]:
                         # The client seemed to send a msg but we didn't get it
                         try:
@@ -140,11 +164,11 @@ class TCP_Server(Thread):
                     else:
                         # Nothing to see here
                         pass
-                        
+        
             # a simple spinner to show activity
             #i += 1
             #print('/-\|'[i%4]+'\r',end='',flush=True)
-
+        
         # Close socket
         self.tcpServer.close()
         print('Listerner: Bye bye!')
@@ -154,7 +178,7 @@ class TCP_Server(Thread):
 
         # Get list of sockets
         readable,writeable,inerror = select.select([],self.socks,[],0)
-            
+                
         msg=msg+'\n'
         for sock in writeable:
             #print(sock)
@@ -167,7 +191,7 @@ class TCP_Server(Thread):
             except:
                 print('Broadcast: Problem with socket')
                 print(sock)
-                
+
 ################################################################################
 
 # Test program                
@@ -175,20 +199,35 @@ if __name__ == '__main__':
     TCP_IP = '127.0.0.1' 
     TCP_PORT = 2004 
 
-    server = TCP_Server(TCP_IP,TCP_PORT)
+    server = TCP_Server(None,TCP_IP,TCP_PORT)
     worker = Thread(target=server.Listener, args=(), name='TCP Server' )
-    worker.setDaemon(True)
+    worker.daemon=True
     worker.start()
-    
-    #thread.join()
+
     while True:
         #print('zzzzzzzzzzzzzzzzz....')
         server.Broadcast('Heartbeat')
         time.sleep(1)
-        
+
     print('Joining ...')
     worker.join()
     print('Done.')
 
     sys.exit(0)
 
+"""
+
+# This is some code to explore address resolution
+hostname = socket.gethostname()
+dns_resolved_addr = socket.gethostbyname(hostname)
+port = 2004
+print('hostname=',hostname)
+print('dns_resolved_addr',dns_resolved_addr)
+if dns_resolved_addr=='127.0.1.1':                        # Not sure why it gets resolved this way!
+    #host='127.0.0.1'
+    host='localhost'
+else:
+    host=dns_resolved_addr
+print('host=',host)
+ 
+"""

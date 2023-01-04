@@ -162,7 +162,7 @@ if not P.PRACTICE_MODE and P.sock.connection!='HAMLIB' and P.HAMLIB_SERVER:
     print('Creating HAMLIB servers ...')
     for port in [4532, 4632]:
         th = threading.Thread(target=rigctl.HamlibServer(P,port).Run, args=(),name='Hamlib Server')
-        th.setDaemon(True)
+        th.daemon=True
         th.start()
         P.threads.append(th)
 
@@ -195,7 +195,7 @@ P.keyer.evt.clear()
 # Start a thread that controls keying of TX
 print('Creating thread to Process Chars ...')
 worker = threading.Thread(target=process_chars, args=(P,),name='Process Chars')
-worker.setDaemon(True)
+worker.daemon=True
 worker.start()
 P.threads.append(worker)
 
@@ -204,7 +204,7 @@ if False:
     print('Creating Listener thread ...')
     server = threading.Thread(target=cw_keyer.cw_server, \
                               args=(P,HOST,KEYER_PORT),name='CW Server')
-    server.setDaemon(True)
+    server.daemon=True
     server.start()
     P.threads.append(server)
 
@@ -218,7 +218,7 @@ if P.CAPTURE or True:
     print('Creating thread to Capture Audio ...')
     P.capture = audio_capture.AUDIO_CAPTURE(P)
     worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
-    worker.setDaemon(True)
+    worker.daemon=True
     worker.start()
     P.threads.append(worker)
 
@@ -235,7 +235,7 @@ P.gui.construct_gui()
 print('Creating Practice Exec thread ...')
 P.practice = practice.CODE_PRACTICE(P)
 worker = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
-worker.setDaemon(True)
+worker.daemon=True
 worker.start()
 P.threads.append(worker)
 
@@ -243,7 +243,7 @@ P.threads.append(worker)
 if P.UDP_SERVER:
     P.udp_server = TCP_Server(P,None,7474,Handler=UDP_msg_handler)
     worker = Thread(target=P.udp_server.Listener, args=(), name='UDP Server' )
-    worker.setDaemon(True)
+    worker.daemon=True
     worker.start()
     P.threads.append(worker)
 
@@ -252,7 +252,7 @@ P.WATCHDOG = True
 #P.WATCHDOG = False
 if P.WATCHDOG:
     P.Timer = threading.Timer(1.0, WatchDog, args=(P,))
-    P.Timer.setDaemon(True)                       # This prevents timer thread from blocking shutdown
+    P.Timer.daemon=True                       # This prevents timer thread from blocking shutdown
     P.Timer.start()
 else:
     P.Timer = None

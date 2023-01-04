@@ -20,6 +20,7 @@
 ############################################################################################
 
 import sys
+import os
 if sys.version_info[0]==3:
     from tkinter import *
     import tkinter.font
@@ -170,36 +171,26 @@ class GUI():
         self.cntr=0
 
         # Open simple log file & read its contents
+        # It probably time to jetison this & just use the adif file 
         MY_CALL = P.SETTINGS['MY_CALL']
         fname = P.DATA_DIR+MY_CALL.replace('/','_')+".LOG"
+        self.log_book = []
         print('Opening log file',fname,'...')
-        try:
-            self.fp_log = open(fname,"r+")
-        except:
+        if not os.path.exists(fname):
             self.fp_log = open(fname,"w")
-
-        if False:
-            with self.fp_log as csvfile:
-                csvReader = csv.reader(csvfile, dialect='excel')
-                #hdrs = next(csvReader)
-                #print('hdrs=',hdrs)
-                for row in csvReader:
-                    print(row)
-                    # do stuff with rows...
-            sys.exit(0)
-        
-        csvReader = csv.reader(self.fp_log, dialect='excel')
-        try:
-            hdrs = list(map(cleanup, next(csvReader)))
-            print('hdrs=',hdrs)
-        except:
             self.fp_log.write('QSO_DATE_OFF,TIME_OFF,CALL,FREQ,BAND,MODE,SRX_STRING,STX_STRING,SAT_NAME\n')
             self.fp_log.flush()
 
-        self.log_book = []
+        else:
+            
+            self.fp_log = open(fname,"r+")
+            csvReader = csv.reader(self.fp_log, dialect='excel')
+            hdrs = list(map(cleanup, next(csvReader)))
+            #print('hdrs=',hdrs)
 
-        try:
+            n=0
             for line in csvReader:
+                n+=1
                 #print 'line=',line
                 qso = dict(list(zip(hdrs, line)))
                 #print 'qso=',qso
@@ -208,11 +199,10 @@ class GUI():
                 else:
                     call=qso['CALL']
                     if not call in P.calls:
-                        #print('Call not in Master list:',call,'\t- Adding it')
+                        print('Call not in Master list:',call,'\t- Adding it')
                         self.log_book.append(qso)
                         P.calls.append(call)
-        except:
-            pass
+            print(n,' QSOs read.')
 
         # Read adif log also
         if P.LOG_FILE==None:
@@ -224,11 +214,16 @@ class GUI():
                 self.log_book.append(qso)
 
         self.nqsos_start = len(self.log_book)
-        print('There are',len(self.log_book),'QSOS in the log book')
+        print('There are',len(self.log_book),'QSOs in the log book')
         #sys.exit(0)
 
         # Keep an ADIF copy of the log as well
-        self.fp_adif = open(P.LOG_FILE,"a+")
+        if os.path.exists(P.LOG_FILE):
+            self.fp_adif = open(P.LOG_FILE,"a+")
+        else:
+            self.fp_adif = open(P.LOG_FILE,"w")
+            self.fp_adif.write('Simple Log Export<eoh>\n')
+            self.fp_adif.flush()
         print("GUI: ADIF file name=", self.fp_adif) 
 
         # Also save all sent text to a file
