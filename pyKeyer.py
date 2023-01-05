@@ -241,7 +241,8 @@ P.threads.append(worker)
 
 # Start thread with UDP server
 if P.UDP_SERVER:
-    P.udp_server = TCP_Server(P,None,7474,Handler=UDP_msg_handler)
+    P.udp_server = TCP_Server(P,None,KEYER_UDP_PORT,Server=True,
+                              Handler=UDP_msg_handler)
     worker = Thread(target=P.udp_server.Listener, args=(), name='UDP Server' )
     worker.daemon=True
     worker.start()

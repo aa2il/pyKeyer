@@ -19,7 +19,8 @@
 #
 #########################################################################################
 
-from tcp_client import *
+#from tcp_client import *
+#from tcp_server import *
 from tkinter import END
 
 #########################################################################################
@@ -29,46 +30,50 @@ def UDP_msg_handler(self,sock,msg):
     print('UDP Message Handler: msg=',msg.rstrip())
     P=self.P
 
-    msg=msg.split(':')
-    if msg[0]=='Call':
+    msgs=msg.split('\n')
+    for m in msgs:
+        print('UDP MSG HANDLER: m=',m,len(m))
+
+        mm=m.split(':')
+        if mm[0]=='Call':
         
-        # Call:callsign:VFO
-        call=msg[1]
-        vfo=msg[2]
-        print('UDP Message Handler: Setting call to:',call,vfo,P.gui.contest)
-        call2=P.gui.get_call()
-        if call!=call2 and vfo=='A':
+            # Call:callsign:VFO
+            call = mm[1]
+            vfo  = mm[2]
+            print('UDP Message Handler: Setting call to:',call,vfo,P.gui.contest)
+            call2=P.gui.get_call()
+            if call!=call2 and vfo=='A':
             
-            P.gui.Clear_Log_Fields()
-            P.gui.call.insert(0,call)
-            P.gui.dup_check(call)
-            if P.gui.contest or True:
-                P.gui.get_hint(call)
-                if P.AUTOFILL:
-                    P.KEYING.insert_hint()
-            if P.USE_SCP and False:
-                # Not why we would need this?
-                scps,scps2 = P.KEYING.SCP.match(call,VERBOSITY=0)
-                P.gui.scp.delete(0, END)
-                P.gui.scp.insert(0, scps)
+                P.gui.Clear_Log_Fields()
+                P.gui.call.insert(0,call)
+                P.gui.dup_check(call)
+                if P.gui.contest or True:
+                    P.gui.get_hint(call)
+                    if P.AUTOFILL:
+                        P.KEYING.insert_hint()
+                if P.USE_SCP and False:
+                    # Not why we would need this?
+                    scps,scps2 = P.KEYING.SCP.match(call,VERBOSITY=0)
+                    P.gui.scp.delete(0, END)
+                    P.gui.scp.insert(0, scps)
 
-        elif vfo=='B':
+            elif vfo=='B':
 
-            P.gui.OnDeckCircle.delete(0, END)
-            P.gui.OnDeckCircle.insert(0,call)
+                P.gui.OnDeckCircle.delete(0, END)
+                P.gui.OnDeckCircle.insert(0,call)
 
-    elif msg[0]=='Sat':
+            elif mm[0]=='Sat':
         
-        # Sat:sat_name
-        sat=msg[1]
-        print('UDP Message Handler: Setting SAT to:',sat)
-        P.gui.set_satellite(sat)
+                # Sat:sat_name
+                sat=mm[1]
+                print('UDP Message Handler: Setting SAT to:',sat)
+                P.gui.set_satellite(sat)
     
-    elif msg[0]=='Name':
+            elif mm[0]=='Name':
         
-        # Name:Client_name
-        name=msg[1]
-        print('UDP Message Handler: Client Name=',name)
+                # Name:Client_name
+                name=mm[1]
+                print('UDP Message Handler: Client Name=',name)
     
     return
 

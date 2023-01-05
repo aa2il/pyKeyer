@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # default.py - Rev 1.0
-# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for default qsos, most state QSO parties and some other contests.
 #
@@ -76,20 +76,29 @@ class DEFAULT_KEYING():
         MACROS = OrderedDict()
         if self.contest_name=='CW Default':
             
-            MACROS[0]  = {'Label' : 'CQ'      , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
-            MACROS[1]  = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
-            MACROS[2]  = {'Label' : 'Reply'   , 'Text' : 'RTU [RST] [MYSTATE] '}
-            MACROS[3]  = {'Label' : 'Call?'   , 'Text' : '[CALL]? '}
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : 'TU [RST] [MYSTATE] '}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [NAME] 73EE [LOG]'}
+            MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+            MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
             
-            MACROS[4]  = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
-            MACROS[5]  = {'Label' : '73'      , 'Text' : '73 '}
-            MACROS[6]  = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
-            MACROS[7]  = {'Label' : 'LOG it'  , 'Text' : '[LOG]'}
+            MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+            MACROS[5]     = {'Label' : 'Reply'     , 'Text' : 'TU [RST] [MYSTATE] '}
+            MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[RST] [MYSTATE] [MYSTATE] '}
+            MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+            MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+            MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+            MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
             
-            MACROS[8]  = {'Label' : 'BK'      , 'Text' : 'BK '}
-            MACROS[9]  = {'Label' : 'RST  '   , 'Text' : '[RST]'}
-            MACROS[10] = {'Label' : 'V    '   , 'Text' : 'V'}
-            MACROS[11] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV [-10]VVV'}
+            MACROS[8]     = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
+            MACROS[8+12]  = {'Label' : '73'      , 'Text' : '73 '}
+            MACROS[9]     = {'Label' : 'RST  '   , 'Text' : '[RST]'}
+            MACROS[10]    = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
+            MACROS[10+12] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV [-10]VVV'}
+            MACROS[11]    = {'Label' : 'BK'      , 'Text' : 'BK '}
+            MACROS[11+12] = {'Label' : 'V    '   , 'Text' : 'V'}
 
         else:
 
