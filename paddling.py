@@ -191,6 +191,9 @@ class PADDLING_GUI():
             print(("LEVEL: %d" % level))
             self.Slider2.set(level)
         self.P.sock.set_monitor_gain(level)
+        if True:
+            level=self.P.sock.get_monitor_gain()
+            print(("LEVEL: %d" % level))
         
 
     # Callback for WPM spinner

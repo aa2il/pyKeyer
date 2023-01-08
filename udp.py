@@ -19,8 +19,6 @@
 #
 #########################################################################################
 
-#from tcp_client import *
-#from tcp_server import *
 from tkinter import END
 
 #########################################################################################
@@ -75,6 +73,6 @@ def UDP_msg_handler(self,sock,msg):
                 name=mm[1]
                 print('UDP Message Handler: Client Name=',name)
     
-    return
+
 
 

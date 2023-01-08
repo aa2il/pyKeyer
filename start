@@ -10,11 +10,11 @@
 # Primary rig
 set RIG="NONE"
 #set RIG="HAMLIB"
-#set RIG="DIRECT"
+set RIG="DIRECT"
 #set RIG="ANY"
 
 set RIG_TYPE=""
-#set RIG_TYPE="FTdx3000"
+set RIG_TYPE="FTdx3000"
 #set RIG_TYPE="FT991a"
 #set RIG_TYPE="IC9700"
 
@@ -88,7 +88,9 @@ set STATE="NV"
 # Settings for sending practice
 if( $CONTEST == "paddling" )then
     if( $RIG != "NONE" )then
+        pkill flrig
         set CMD="$FIND_RIG -BREAK 0"
+        echo $CMD
         $CMD
     endif
     set WPM=20

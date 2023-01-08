@@ -442,6 +442,8 @@ endif
 
 # Start the SDR
 set LOOPBACK="-follow_freq"
+set LOOPBACK="-follow_freq -bandmap"
+#set LOOPBACK="-follow_freq -transpose -bandmap"
 if( $SO2V )then
     set SDR_OPTS="-af_bw .5 $LOOPBACK -so2v $UDP"
 else
@@ -455,7 +457,7 @@ if( $START_SDR )then
 
     # Add a delay to give hamlib server in the keyer time to come up
     #sleep 5
-    echo Waiting for hamlib server to come alive ...
+    echo Waiting for flrig/hamlib server to come alive ...
     echo f | nc -w 1 localhost $PORT
 
     set FS=48
@@ -567,7 +569,9 @@ if( $START_BANDMAP )then
     pkill bandmap
     pushd ../bandmap
     set cmd="bandmap.py -rig $RIG1 -port $PORT $BM_OPTS "
-    echo $cmd  >& /tmp/BANDMAP
+    echo " "    >& /tmp/BANDMAP
+    echo $cmd  >>& /tmp/BANDMAP
+    echo " "   >>& /tmp/BANDMAP
     $cmd  >>& /tmp/BANDMAP &
     popd
 

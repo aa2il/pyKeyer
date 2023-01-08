@@ -2,15 +2,10 @@
 ################################################################################
 #
 # pyKeyer.py - Rev 1.0
-# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 #    Main program for CW Keyer and server.
-
-# Notes:
-# Can also use something like this in FLDIGI macros to send text to server:
-#     echo v | nc -u -w 0 localhost 7388
-# Also, see ENV macro, F3 under 4th set to how to access serial number
-
+#
 # TO DO:
 #    - Add a way to correct log on the fly
 #    - Check if FLLOG works with the keyer
@@ -50,12 +45,12 @@ import time
 import os
 from params import *
 from settings import *
-from tcp_server import *
 import xlrd
 from latlon2maiden import *
 from watchdog import *
 from keying import *
 from process_chars import *
+from tcp_server import *
 from udp import *
 
 ################################################################################
@@ -139,6 +134,7 @@ if not P.sock_rotor.active and P.sock_rotor.connection!='NONE':
     print('*** No connection available to rotor ***')
     sys.exit(0)
 
+    
 # Experiemtnal area - starting to get FLRIG's CWIO interface up & running - in progress
 if False:
     print('Howdy Ho!',P.sock.cwio_get_wpm())
@@ -147,8 +143,8 @@ if False:
     P.sock.cwio_write('test')
     time.sleep(5)
     sys.exit(0)
-    
 
+    
 # Open connection to FLLOG, if available
 P.sock_log = socket_io.open_rig_connection('FLLOG',0,0,0,'KEYER')
 #print(P.sock_log.active)
@@ -250,7 +246,6 @@ if P.UDP_SERVER:
 
 # WatchDog - runs in its own thread
 P.WATCHDOG = True
-#P.WATCHDOG = False
 if P.WATCHDOG:
     P.Timer = threading.Timer(1.0, WatchDog, args=(P,))
     P.Timer.daemon=True                       # This prevents timer thread from blocking shutdown
@@ -285,7 +280,6 @@ if P.sock.active:
 FNAME = P.DATA_DIR+'states.xls'
 print('Reading Sat Grids - fname=',FNAME)
 book  = xlrd.open_workbook(FNAME,formatting_info=True)
-#sheet1 = book.sheet_by_name('6-meters')
 sheet1 = book.sheet_by_name('Satellites')
 
 # Digest confirmed grids

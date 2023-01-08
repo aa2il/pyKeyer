@@ -92,10 +92,12 @@ class AUDIO_CAPTURE():
                 P.wave_file = dirname+'capture'+s+'.wav'
                 print('\nOpening',P.wave_file,'...')
 
+                # Seems like this may depend on system audio setting
+                # Need to make this adaptive???
                 if P.sock.rig_type2=='FT991a':
                     gain=[4,1]
                 elif P.sock.rig_type2=='FTdx3000':
-                    gain=[2,1]
+                    gain=[1,1]
                 else:
                     gain=[1,1]
                 if P.osc:
