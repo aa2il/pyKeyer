@@ -10,11 +10,11 @@
 # Primary rig
 set RIG="NONE"
 #set RIG="HAMLIB"
-set RIG="DIRECT"
+#set RIG="DIRECT"
 #set RIG="ANY"
 
 set RIG_TYPE=""
-set RIG_TYPE="FTdx3000"
+#set RIG_TYPE="FTdx3000"
 #set RIG_TYPE="FT991a"
 #set RIG_TYPE="IC9700"
 
@@ -86,9 +86,26 @@ set STATE="NV"
 ########################################################################
 
 # Settings for sending practice
+if( ($CONTEST == "paddling") && ($RIG != "NONE") )then
+    pkill flrig
+    set RIG9=`$FIND_RIG`
+    if( $RIG9 == "None" )then
+        set RIG="NONE"
+    endif
+    echo $RIG9 $RIG
+    #exit
+else if( ($CONTEST == "paddling") && ($RIG == "NONE") )then
+    pkill flrig
+    set RIG9=`$FIND_RIG`
+    if( $RIG9 != "None" )then
+        set RIG="DIRECT"
+        set RIG_TYPE=$RIG9
+    endif
+    echo $RIG9 $RIG
+    #exit
+endif
 if( $CONTEST == "paddling" )then
     if( $RIG != "NONE" )then
-        pkill flrig
         set CMD="$FIND_RIG -BREAK 0"
         echo $CMD
         $CMD
@@ -96,7 +113,10 @@ if( $CONTEST == "paddling" )then
     set WPM=20
     set CONTEST="ragchew"
     set HINTS="-nohints -adjust -sending  -immediate"
-
+    #exit
+    
+########################################################################
+    
 # Settings for NAQP contest
 else if( $CONTEST == "naqp" )then
     set WPM=30

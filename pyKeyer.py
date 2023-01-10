@@ -255,6 +255,8 @@ else:
 
 # Init rig to useful settings    
 if P.sock.active:
+    print('PYKEYER - Init rig ...')
+    
     # Set TX power
     P.sock.set_power(99)
 
@@ -268,12 +270,13 @@ if P.sock.active:
         band = freq2band(1e-3*frq)
         f1=bands[band]['CW1']
         f2=bands[band]['CW2']
-        print('PYKEYER - Set freq ...',frq,band,f1,f2)
+        print('PYKEYER - Set freq ... current frq=',frq,'\tBand:',band,f1,f2)
         if P.contest_name in ['CWT','MST','SST']:
-            print('PYKEYER - Set freq to',f1+30)
-            P.sock.set_freq(f1+30) 
-        elif frq>0.5*(f1+f2):
-            print('PYKEYER - BURP - Set freq to',f1+30)
+            if frq>f1+50:
+                print('PYKEYER - Setting freq to',f1+30)
+                P.sock.set_freq(f1+30) 
+        elif frq>f1+79:     # frq>0.5*(f1+f2):
+            print('PYKEYER - BURP - Setting freq to',f1+30)
             P.sock.set_freq(f1+30) 
 
 # Read satellite grids confirmed - this will be used to alert station in new grid

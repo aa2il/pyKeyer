@@ -68,6 +68,7 @@ from dx_qso import *
 from qrz import *
 from utilities import cut_numbers,freq2band
 import platform
+import pyautogui
 
 ############################################################################################
 
@@ -451,7 +452,7 @@ class GUI():
 
         # Set up a spin box to control keying speed (WPM)
         self.WPM_TXT = StringVar()
-        Label(self.root, text='Speed:').grid(row=row,column=col,sticky=E+W)
+        Label(self.root, text='WPM:').grid(row=row,column=col,sticky=E+W)
         SB = Spinbox(self.root,                 \
                      from_=cw_keyer.MIN_WPM,    \
                      to=cw_keyer.MAX_WPM,       \
@@ -2655,7 +2656,15 @@ class GUI():
                 if self.P.AUTOFILL:
                     self.P.KEYING.insert_hint()
 
-        
+    # Callback to capture the screen 
+    def PrtScrn(self):
+
+        s=time.strftime("_%Y%m%d_%H%M%S", time.gmtime())      # UTC
+        fname='/tmp/ScreenShot_'+s+'.png'
+        print('Taking screen snapshot ...',fname)
+        screenshot = pyautogui.screenshot()
+        screenshot.save(fname)
+        print('Done.')
             
 ############################################################################################
     
@@ -2817,4 +2826,21 @@ class GUI():
             
             self.So2vBtn = Button(toolbar,text="SO2V", command=self.Toggle_SO2V)
             self.So2vBtn.pack(side=LEFT, padx=2, pady=2)
+            
+            # Spin box to control paddle keying speed (WPM)
+            if True:
+                SB2=Spinbox(toolbar,
+                            from_=15, to=50,       
+                            textvariable=self.PaddlingWin.WPM_TXT, 
+                            bg='white',                
+                            command=lambda j=0: self.PaddlingWin.SetWpm(0))
+                SB2.pack(side=RIGHT, padx=2, pady=2)
+                SB2.bind("<Key>", self.key_press )
+                Label(toolbar, text='Paddles:').pack(side=RIGHT, padx=2, pady=2)
+
+            # Screen capture
+            if True:
+                Button(toolbar,text="PrtScrn",command=self.PrtScrn) \
+                    .pack(side=RIGHT, padx=2, pady=2)
+            
             

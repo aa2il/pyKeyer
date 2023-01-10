@@ -119,11 +119,11 @@ class PADDLING_GUI():
             button.grid(row=row,column=col,sticky=E+W)
             col+=1
 
-        # Spin box to control keying speed (WPM)
+        # Spin box to control paddle keying speed (WPM)
         row+=1
         col=0
         self.WPM_TXT = StringVar()
-        Label(self.win, text='Speed:').grid(row=row,column=col,sticky=E+W)
+        Label(self.win, text='Paddles:').grid(row=row,column=col,sticky=E+W)
         SB=Spinbox(self.win,              
                    from_=15, to=50,       
                    textvariable=self.WPM_TXT, 
