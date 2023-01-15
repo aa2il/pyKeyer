@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # nano_io.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Functions related to the nano IO interface
 #
@@ -49,11 +49,12 @@ import sys
 import serial
 from rig_io.ft_tables import SERIAL_NANO_IO
 import time
+from utilities import find_serial_device
 
 ############################################################################################
 
+#NANO_IO_VIDPID='1A86:7523'
 NANO_BAUD=38400
-#NANO_BAUD=19200
 
 ############################################################################################
 
@@ -96,7 +97,9 @@ def nano_tune(ser,tune):
 def open_nano(baud=NANO_BAUD):
 
     # Open port
-    ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
+    device=find_serial_device('nanoIO')
+    ser = serial.Serial(device,baud,timeout=0.1,dsrdtr=0,rtscts=0)
+    #ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
     #ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,\
     #                    dsrdtr=True,rtscts=True)
  

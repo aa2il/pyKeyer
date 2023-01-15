@@ -73,7 +73,7 @@ set CONTEST=""
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
-#set CONTEST="naqp"
+set CONTEST="naqp"
 #set CONTEST="rac"
 #set CONTEST="stew"
 
@@ -198,7 +198,7 @@ set BM_OPTS = $UDP                        # Enable UDP protocol to keyer
 if( $CONTEST == "naqp" )then
     set WPM=30
     set HINTS="-use_log_hist -autofill"
-    set BM_OPTS = "$BM_OPTS -contest -hours 12"
+    set BM_OPTS = "$BM_OPTS -contest -hours 12 -cwops"
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
