@@ -197,7 +197,7 @@ set BM_OPTS = $UDP                        # Enable UDP protocol to keyer
 # Settings for NAQP contest, Jan 2019
 if( $CONTEST == "naqp" )then
     set WPM=30
-    set HINTS="-use_log_hist -autofill"
+    set HINTS="-nohints -use_log_hist -autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 12 -cwops"
 
 # Settings for CW Ops mini tests

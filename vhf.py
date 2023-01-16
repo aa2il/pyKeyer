@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # vhf.py - Rev 1.0
-# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ARRL VHF, CQ VHF and Stew Perry 160m contests
 #
