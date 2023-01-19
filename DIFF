@@ -12,7 +12,7 @@
 set ROOT="/media/${USER}/marconi"
 set ROOT="/media/${USER}/sproul"
 #set ROOT="/media/${USER}/3D76-ECB1"
-#set ROOT="/media/${USER}/acer"
+set ROOT="/media/${USER}/acer"
 #set ROOT="../clone"
 #set ROOT="/media/${USER}/cartman"
 if( !(-e $ROOT) )then
@@ -53,4 +53,10 @@ end
 
 chmod +x pyKeyer.py DIFF start *
 
-cat DIFFS
+#cat DIFFS
+set f=`basename $ROOT`
+echo $f
+if( $f == "acer" )then
+    ls $old/dist
+    cp $old/dist/*.exe $old/dist/*.iss $old/dist/Output/*.exe dist
+endif

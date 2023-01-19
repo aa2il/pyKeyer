@@ -312,7 +312,9 @@ endif
 echo OPTS=$OPTS
 
 cd ~/Python/pyKeyer
-echo pyKeyer.py $OPTS 
-echo pyKeyer.py $OPTS >& /tmp/KEYER
-pyKeyer.py $OPTS >>& /tmp/KEYER &
-#pyKeyer.py $OPTS
+set EXE="pyKeyer.py"
+#cd dist
+#set EXE="pyKeyer"
+echo $EXE $OPTS 
+echo $EXE $OPTS >& /tmp/KEYER
+$EXE $OPTS >>& /tmp/KEYER &

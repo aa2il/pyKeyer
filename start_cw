@@ -73,7 +73,7 @@ set CONTEST=""
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
-set CONTEST="naqp"
+#set CONTEST="naqp"
 #set CONTEST="rac"
 #set CONTEST="stew"
 

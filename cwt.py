@@ -54,13 +54,15 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         One advantage of using CWT call history files is that include ops who participate
         but are not members
 
-                    self.HIST=[];
-                    for x in self.P.MASTER:
-                        if len(x['cwops'])>0:
-                            #print('x=',x,len(x['cwops']))
-                            self.HIST.append(x)
-                    print('HIST len=',len(self.HIST))
-                    sys.exit(0)
+        print('# calls loaded=',len(P.HISTORY2))
+        if len(P.HISTORY2)==0:
+            P.HIST=[];
+            for x in P.MASTER:
+                if len(x['cwops'])>0:
+                    #print('x=',x,len(x['cwops']))
+                    P.HIST.append(x)
+            print('New HIST len=',len(P.HIST))
+            #sys.exit(0)
         """
 
     # Routine to set macros for this contest

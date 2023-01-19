@@ -2,7 +2,7 @@
 ############################################################################################
 #
 # practice.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Functions related code and contest practice
 #
@@ -60,10 +60,13 @@ class CODE_PRACTICE():
             print('file=',files)
             if len(files)>0:
                 P.HISTORY2=files[-1]
+            elif len(files)==0:
+                #P.HISTORY2=P.HIST_DIR+'master.csv'                
+                P.HISTORY2=P.HISTORY
             print('CODE_PRACTICE: History2=',P.HISTORY2)
   
         if P.HISTORY2==P.HIST_DIR+'master.csv':
-            self.HIST=self.P.MASTER
+            self.HIST = self.P.MASTER
         elif P.HISTORY2==P.HISTORY:
             self.HIST = self.P.HIST
         elif len(P.HISTORY2)>0:
@@ -72,6 +75,7 @@ class CODE_PRACTICE():
             print('Need a history file for practice mode')
             P.SHUTDOWN=True
             sys.exit(0)
+        print('P.HISTORY2=',P.HISTORY2,'\tLen Hist=',len(self.HIST))
 
         # For the Cal QP, it is helpful to only practice with CA stations
         self.calls = list(self.HIST.keys())

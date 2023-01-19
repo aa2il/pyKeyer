@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "pyKeyer"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1..0.0"
 #define MyAppPublisher "AA2IL"
 #define MyAppURL "https://github.com/aa2il/pyKeyer"
 #define MyAppExeName "pyKeyer.exe"
@@ -10,7 +10,7 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{34736ACA-8B6D-4EB1-90EE-5308138650E7}
+AppId={{0FEEA8DC-E988-4428-9B7B-059A8F03E8D7}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -22,8 +22,7 @@ DefaultDirName={autopf}\AA2IL
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\Users\Joea\Python\pyKeyer\dist
-OutputBaseFilename=pykeyer_setup
+OutputBaseFilename=pyKeyer_setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -36,6 +35,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Users\Joea\Python\pyKeyer\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\data\cty.plist"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\AA2IL\master.csv"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\pyKeyer\Panagrams.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\pyKeyer\QSO_Template.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\pyKeyer\Book.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\pyKeyer\Stumble.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\pyKeyer\keyer_splash.png"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

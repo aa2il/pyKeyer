@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # gui.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # GUI for CW keyer.
 #
@@ -106,23 +106,24 @@ class GUI():
         # Create spash screen
         self.splash  = Toplevel(self.root)
         self.splash.title("Splish Splash")
-        if P.PLATFORM=='Linux':
-            self.splash.attributes("-topmost", True,'-type', 'splash')
-        elif P.PLATFORM=='Windows':
-            self.splash.attributes("-topmost", True)
+        if False:
+            if P.PLATFORM=='Linux':
+                self.splash.attributes("-topmost", True,'-type', 'splash')
+            elif P.PLATFORM=='Windows':
+                self.splash.attributes("-topmost", True)
+            else:
+                print('GUI INIT: Unknown OS',P.PLATFORM)
+                sys.exit(0)
         else:
-            print('GUI INIT: Unknown OS',P.PLATFORM)
-            sys.exit(0)
-
+            self.splash.overrideredirect(1)
+            self.splash.geometry('+500+500')
+            
         pic = tk.PhotoImage(file='keyer_splash.png')
-        lab=tk.Label(self.splash, bg='white', image=pic)
-        #lab=tk.Label(self.splash, image=pic)
+        lab = tk.Label(self.splash, bg='white', image=pic)
         lab.pack()
         self.root.withdraw()
+        self.splash.update()
         self.splash.deiconify()
-
-        #self.root.eval('tk::PlaceWindow . Center')
-        #splash.after(4000, splash.destroy)
         self.root.update_idletasks()
 
         # Init
@@ -588,7 +589,6 @@ class GUI():
         
         # And away we go!
         self.root.deiconify()
-        #splash.withdraw()
         self.splash.destroy()
         self.root.update_idletasks()
 
@@ -620,8 +620,9 @@ class GUI():
         if event.num==1:
             # Left click --> grab window selection
             obj.OnTop=True
-            #os.system('wmctrl -a pyKeyer add.above')
-            os.system('wmctrl -a "'+title+'"')
+            if self.P.PLATFORM=='Linux':
+                #os.system('wmctrl -a pyKeyer add.above')
+                os.system('wmctrl -a "'+title+'"')
 
             # A bunch of failed attempts - keep this around bx we'll need
             #   something differnet for windoz
@@ -1425,10 +1426,11 @@ class GUI():
         print('STATE=',STATE)
         with open('state.json', "w") as outfile:
             json.dump(STATE, outfile)
-        with open('keyer.log', "a") as outfile2:
-            outfile2.write('Save State:    \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
-            json.dump(STATE, outfile2)
-            outfile2.write('\n')
+        if False:
+            with open('keyer.log', "a") as outfile2:
+                outfile2.write('Save State:    \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
+                json.dump(STATE, outfile2)
+                outfile2.write('\n')
 
         self.P.DIRTY=False
         print('SaveState: cntr=',self.P.MY_CNTR)
@@ -1450,10 +1452,11 @@ class GUI():
                 STATE = json.load(json_data_file)
             print('STATE=',STATE)
             now = datetime.utcnow().replace(tzinfo=UTC)
-            with open('keyer.log', "a") as outfile3:
-                outfile3.write('Restore State: \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
-                json.dump(STATE, outfile3)
-                outfile3.write('\n')
+            if False:
+                with open('keyer.log', "a") as outfile3:
+                    outfile3.write('Restore State: \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
+                    json.dump(STATE, outfile3)
+                    outfile3.write('\n')
         except Exception as e: 
             print('RestoreState: Problem restoring state')
             print( str(e) )
@@ -2072,10 +2075,10 @@ class GUI():
             parent=obj2.root
         except:
             parent=None
-            print('HOOVER: Probably outside keyer app?')
+            print('HOVER: Probably outside keyer app?')
 
         if DEBUG:
-            print('HOOVER: Mouse entering ',obj.WIN_NAME,'- widget',widget,
+            print('HOVER: Mouse entering ',obj.WIN_NAME,'- widget',widget,
                   '\twindow=',window,'\tFocus=',obj.last_focus)
 
         # Make sure root window has the focus
@@ -2084,7 +2087,7 @@ class GUI():
         if not obj.OnTop:
             obj.OnTop=True
             if DEBUG:
-                print('HOOVER: Raising ',obj.WIN_NAME,
+                print('HOVER: Raising ',obj.WIN_NAME,
                       '===============================================')
             #self.P.gui.root.call('wm', 'attributes', '.', '-topmost', True)
             #window.attributes('-topmost', True)
@@ -2094,8 +2097,9 @@ class GUI():
             if True:
                 # This seems to be the onyly reliable way to do this!
                 title=window.title()
-                #os.system('wmctrl -a pyKeyer')
-                os.system('wmctrl -a "'+title+'"')
+                if self.P.PLATFORM=='Linux':
+                    #os.system('wmctrl -a pyKeyer')
+                    os.system('wmctrl -a "'+title+'"')
             else:
                 # This sort of worked but not quite
                 # Keep all of this around bx we'll need
@@ -2124,7 +2128,7 @@ class GUI():
                 widget=obj.last_focus
             else:
                 widget=obj.default_object
-            print('HOOVER: No Focus -',obj.WIN_NAME,'- Setting focus to',widget)
+            print('HOVER: No Focus -',obj.WIN_NAME,'- Setting focus to',widget)
             widget.focus_force()
 
     def Master(self,widget):
@@ -2340,9 +2344,10 @@ class GUI():
                 self.q.get(False)
                 self.q.task_done()
 
-        elif key=='Tab':
+        elif key=='Tab' and not shift:
             
             # Move to next entry box
+            print('Tab: shift=',shift)
             if event.widget==self.txt and self.P.SHOW_TEXT_BOX2:
                 self.txt2.focus_set()
             elif event.widget==self.txt2 and self.P.SHOW_TEXT_BOX2:
@@ -2355,9 +2360,12 @@ class GUI():
                 widget=self.P.KEYING.next_event(key,event)
                 self.Set_Selection(widget)
 
-        elif key=='ISO_Left_Tab':
+        # Windows is screwy the way it handles the left-tab
+        elif key=='ISO_Left_Tab' or (key=='Tab' and shift):
             
             # Move to prior entry box
+            key='ISO_Left_Tab'
+            print('Left Tab: shift=',shift)
             if event.widget==self.txt:
                 self.txt2.focus_set()
             elif event.widget==self.txt2:

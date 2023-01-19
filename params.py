@@ -25,6 +25,7 @@ from rig_io.ft_tables import CONNECTIONS,RIGS,PRECS
 from settings import *
 import os
 import platform
+from utilities import find_resource_file
 
 ################################################################################
 
@@ -121,7 +122,7 @@ class PARAMS:
         arg_proc.add_argument('-scp', action='store_true',
                               help='Enable Super Check partial')
         arg_proc.add_argument("-rig", help="Connection Type - 1st rig",
-                              type=str,default=["ANY"],nargs='+',
+                              type=str,default=["NONE"],nargs='+',
                               choices=CONNECTIONS+['NONE']+RIGS)
         arg_proc.add_argument("-port", help="Connection Port - 1st rig",
                               type=int,default=0)
@@ -180,7 +181,7 @@ class PARAMS:
         self.LOCK_SPEED    = args.lock
         
         self.AUTOFILL      = args.autofill
-        self.PRACTICE_MODE = args.practice
+        self.PRACTICE_MODE = args.practice or args.rig[0]=="NONE"
         self.ADJUST_SPEED  = args.adjust and args.practice
         self.NO_HINTS      = args.nohints
         self.CA_ONLY       = args.ca_only
@@ -216,7 +217,8 @@ class PARAMS:
         self.GPS           = args.gps
         self.USE_LOG_HISTORY  = args.use_log_hist
         self.USE_ADIF_HISTORY = args.use_adif_hist
-        self.SIDETONE      = args.sidetone or self.PORT==1
+        self.SIDETONE      = args.sidetone or self.PORT==1 or \
+            (self.PRACTICE_MODE and not self.NANO_IO)
 
         self.MY_CNTR       = 1
         self.PRECS         = PRECS
@@ -351,8 +353,14 @@ class PARAMS:
         #MY_CALL = self.SETTINGS['MY_CALL'].replace('/','_')
         MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
         self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
-        self.DATA_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+        if not os.path.isdir(self.HIST_DIR):
+            fname=find_resource_file('master.csv')
+            self.HIST_DIR=os.path.dirname(fname)
         self.HISTORY = self.HIST_DIR+'master.csv'
+            
+        self.DATA_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+        if not os.path.isdir(self.DATA_DIR):
+            self.DATA_DIR='./'
                     
         #sys,exit(0)
 
