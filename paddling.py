@@ -92,7 +92,7 @@ class PADDLING_GUI():
 
         # Read Book
         self.Book = read_text_file('Book.txt',KEEP_BLANKS=False)
-        
+
         # Form list of calls - just use what we loaded from the master list
         self.calls = P.calls
         self.Ncalls = len(self.calls)

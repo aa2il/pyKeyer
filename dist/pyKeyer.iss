@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "pyKeyer"
-#define MyAppVersion "1..0.0"
+#define MyAppVersion "1..0"
 #define MyAppPublisher "AA2IL"
 #define MyAppURL "https://github.com/aa2il/pyKeyer"
 #define MyAppExeName "pyKeyer.exe"

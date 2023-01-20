@@ -2,7 +2,7 @@
 ################################################################################
 #
 # start_cw - Rev 1.1
-# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Script to startup everything for a CW contest.
 #
@@ -197,40 +197,39 @@ set BM_OPTS = $UDP                        # Enable UDP protocol to keyer
 # Settings for NAQP contest, Jan 2019
 if( $CONTEST == "naqp" )then
     set WPM=30
-    set HINTS="-nohints -use_log_hist -autofill"
+    set HINTS="-use_log_hist -autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 12 -cwops"
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=32
-    set HINTS="-nohints"
-    set HINTS="-nohints -autofill"
+    set HINTS="-autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 
 # Settings for CW Ops cw open
 else if( $CONTEST == "cwopen" )then
     set WPM=30
-    set HINTS="-use_log_hist -nohints -autofill"
+    set HINTS="-use_log_hist -autofill"
     set BM_OPTS = "$BM_OPTS -contest -hours 4  -cwops"
 
 # Settings for Slow Speed Mini Test
 else if( $CONTEST == "sst" )then
     set HINTS="-use_log_hist"
-    set HINTS="-use_log_hist -nohints -autofill -nrows 1"
+    set HINTS="-use_log_hist -autofill -nrows 1"
     set WPM=20
     set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 
 # Settings for Medium Speed Mini Test
 else if( $CONTEST == "mst" )then
     set HINTS="-use_log_hist"
-    set HINTS="-use_log_hist -nohints -autofill -nrows 1 "
+    set HINTS="-use_log_hist -autofill -nrows 1 "
     set WPM=23
     set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 
 # Settings for Ragchews
 else if( $CONTEST == "ragchew" )then
     set HINTS="-use_log_hist"
-    set HINTS="-use_log_hist -nohints -autofill -nrows 1"
+    set HINTS="-use_log_hist -autofill -nrows 1"
     set WPM=20
 
 # Settings for SKCC sprint - FOR LOGGING ONLY!!
@@ -248,7 +247,7 @@ else if( $CONTEST == "sprint" )then
 # Setting for CQ WPX (or any contest that requires rst + serial number)
 else if( $CONTEST == "wpx" )then
     set WPM=25
-    set HINTS="-nohints -use_log_hist"
+    set HINTS="-use_log_hist"
     set BM_OPTS = "$BM_OPTS -contest -cwops"
 
 # Setting for CQ World Wide
@@ -266,7 +265,7 @@ else if( $CONTEST == "fd" )then
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then
     set WPM=25
-    set HINTS="-use_log_hist -nohints -autofill"
+    set HINTS="-use_log_hist -autofill"
     set BM_OPTS = "$BM_OPTS -contest"
 
 # Settings for CA QSO Party
@@ -285,7 +284,7 @@ else if( $CONTEST == "state" )then
 # Settings for ARRL & CQ VHF
 else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
     set WPM=25
-    set HINTS="-nohints -use_log_hist"
+    set HINTS="-use_log_hist"
 
 # Settings for ARRL 10m
 else if( $CONTEST == "arrl_10m" )then

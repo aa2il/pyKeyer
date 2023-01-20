@@ -19,7 +19,7 @@ set CONTEST="cwt"
 ###############################################################################
 
 # Start keyer
-set OPTS="-prac -wpm 30 -adjust -sending $NANO -$CONTEST -nohints"
+set OPTS="-prac -wpm 30 -adjust -sending $NANO -$CONTEST"
 #echo OPTS=$OPTS
 
 cd ~/Python/pyKeyer/dist

@@ -38,7 +38,8 @@ set NANO="-nano"
 #set NANO="-nano -sidetone"
 
 set WPM=25
-set HINTS="-nohints"
+set HINTS=""
+#set HINTS="-hints"
 
 set CA_ONLY=""
 #set CA_ONLY="-ca_only"
@@ -112,7 +113,7 @@ if( $CONTEST == "paddling" )then
     endif
     set WPM=20
     set CONTEST="ragchew"
-    set HINTS="-nohints -adjust -sending  -immediate"
+    set HINTS="-adjust -sending  -immediate"
     #exit
     
 ########################################################################
@@ -120,26 +121,26 @@ if( $CONTEST == "paddling" )then
 # Settings for NAQP contest
 else if( $CONTEST == "naqp" )then
     set WPM=30
-    set HINTS="-nohints -adjust"
-    #set HINTS="-nohints -adjust -autofill -scp"
+    set HINTS="-adjust"
+    #set HINTS="-adjust -autofill -scp"
 
 # Settings for CW Ops mini tests
 else if( $CONTEST == "cwt" )then
     set WPM=30
-    set HINTS="-nohints -adjust"
+    set HINTS="-adjust"
     #set HINTS=""
 
 # Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then
     set WPM=20
-    set HINTS="-nohints -adjust"
-    #set HINTS="-nohints -adjust -autofill"
-    #set HINTS="-use_log_hist -nohints -autofill -nrows 1"
+    set HINTS="-adjust"
+    #set HINTS="-adjust -autofill"
+    #set HINTS="-use_log_hist -autofill -nrows 1"
 
 # Settings for ICWC Medium speed tests
 else if( $CONTEST == "mst" )then
     set WPM=25
-    set HINTS="-nohints -adjust"
+    set HINTS="-adjust"
 
 # Settings for NCCC CW Sprints
 else if( $CONTEST == "sprint" )then
@@ -165,8 +166,7 @@ else if( $CONTEST == "cqww" )then
 # Settings for field day
 else if( $CONTEST == "fd" )then
     set WPM=25
-    #set HINTS="-nohints"
-    set HINTS="-nohints -adjust"
+    set HINTS="-adjust"
 
 # Settings for IARU HF Champs
 else if( $CONTEST == "iaru" )then
@@ -176,7 +176,7 @@ else if( $CONTEST == "iaru" )then
 # Settings for CA QSO Party
 else if( $CONTEST == "cqp" )then
     set WPM=30
-    set HINTS="-nohints -adjust $CA_ONLY"
+    set HINTS="-adjust $CA_ONLY"
 
 # Settings for ARRL & CQ VHF
 else if( $CONTEST == "vhf" || $CONTEST == "cqvhf" )then
@@ -215,7 +215,6 @@ else if( $CONTEST == "ss" )then
     set WPM=30
     set HINTS=""
     set HINTS="-adjust"
-    #set HINTS="-nohints -adjust"
 
 # Settings for SKCC practice
 else if( $CONTEST == "skcc" )then
@@ -230,8 +229,7 @@ else if( $CONTEST == "calls" )then
 # Settings for Default Quick, Ragchew or QSOs
 else if( $CONTEST == "default" || $CONTEST == "ragchew"  || $CONTEST == "dx" )then
     set WPM=22
-    set HINTS=""
-    set HINTS="-use_log_hist -nohints -autofill -nrows 0 -lock -sending"
+    set HINTS="-use_log_hist -autofill -nrows 0 -lock -sending"
 
 # Settings for various state QPs
 else if( $CONTEST == "state" )then

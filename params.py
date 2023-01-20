@@ -108,8 +108,8 @@ class PARAMS:
                               help='Sidetone Osc')
         arg_proc.add_argument('-split', action='store_true',
                               help='Split Text Window')
-        arg_proc.add_argument('-nohints', action='store_true',
-                              help='No hints')
+        arg_proc.add_argument('-hints', action='store_true',
+                              help='Show hints')
         arg_proc.add_argument('-capture', action='store_true',
                               help='Record Rig Audio')
         arg_proc.add_argument('-force', action='store_true',
@@ -183,7 +183,7 @@ class PARAMS:
         self.AUTOFILL      = args.autofill
         self.PRACTICE_MODE = args.practice or args.rig[0]=="NONE"
         self.ADJUST_SPEED  = args.adjust and args.practice
-        self.NO_HINTS      = args.nohints
+        self.NO_HINTS      = not args.hints
         self.CA_ONLY       = args.ca_only
         self.WPM           = args.wpm
         self.INIT_MODE     = args.mode
@@ -262,7 +262,7 @@ class PARAMS:
         elif args.skcc:
             self.contest_name='SKCC'
             MAX_AGE_HOURS=2
-            self.SHOW_TEXT_BOX2=True
+            #self.SHOW_TEXT_BOX2=True
         elif args.calls:
             self.contest_name='RANDOM CALLS'
             MAX_AGE_HOURS=2
@@ -315,18 +315,18 @@ class PARAMS:
         elif args.sat:
             self.contest_name='SATELLITES'
             MAX_AGE_HOURS=9999
-            self.SHOW_TEXT_BOX2=True
+            #self.SHOW_TEXT_BOX2=True
         elif args.ragchew:
             self.contest_name='Ragchew'
             MAX_AGE_HOURS=9999
-            self.SHOW_TEXT_BOX2=True
+            #self.SHOW_TEXT_BOX2=True
         elif args.dx:
             self.contest_name='DX-QSO'
-            self.SHOW_TEXT_BOX2=True
+            #self.SHOW_TEXT_BOX2=True
             MAX_AGE_HOURS=9999
         else:
             self.contest_name='Default'
-            self.SHOW_TEXT_BOX2=True
+            #self.SHOW_TEXT_BOX2=True
         self.ROTOR_CONNECTION = args.rotor
         self.PORT9            = args.port9
         self.Immediate_TX     = args.immediate
@@ -355,12 +355,20 @@ class PARAMS:
         self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
         if not os.path.isdir(self.HIST_DIR):
             fname=find_resource_file('master.csv')
-            self.HIST_DIR=os.path.dirname(fname)
+            self.HIST_DIR=os.path.dirname(fname)+'/'
         self.HISTORY = self.HIST_DIR+'master.csv'
             
-        self.DATA_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
-        if not os.path.isdir(self.DATA_DIR):
-            self.DATA_DIR='./'
+        self.WORK_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+        if not os.path.isdir(self.WORK_DIR):
+            HOME=os.path.expanduser('~/')
+            print('HOME=',HOME)
+            CURRENT=os.path.expanduser('./')
+            print('CURRENT=',CURRENT)
+            if CURRENT in HOME:
+                self.WORK_DIR=CURRENT
+            else:
+                self.WORK_DIR=HOME
+        print('WORK_DIR=',self.WORK_DIR)
                     
         #sys,exit(0)
 

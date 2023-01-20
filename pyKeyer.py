@@ -280,7 +280,7 @@ if P.sock.active:
             P.sock.set_freq(f1+30) 
 
 # Read satellite grids confirmed - this will be used to alert station in new grid
-FNAME = P.DATA_DIR+'states.xls'
+FNAME = P.HIST_DIR+'states.xls'
 P.grids=[]
 if os.path.isfile(FNAME):
     print('Reading Sat Grids - fname=',FNAME)

@@ -220,7 +220,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         gui.name_lab.grid(columnspan=cspan,column=col)
         gui.name.grid(column=col,columnspan=cspan)
         col+=cspan
-        cspan=1
+        cspan=2
         gui.exch_lab.grid(columnspan=cspan,column=col)
         gui.exch.grid(column=col,columnspan=cspan)
 

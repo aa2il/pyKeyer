@@ -69,6 +69,7 @@ from qrz import *
 from utilities import cut_numbers,freq2band
 import platform
 import pyautogui
+from utilities import find_resource_file
 
 ############################################################################################
 
@@ -118,7 +119,8 @@ class GUI():
             self.splash.overrideredirect(1)
             self.splash.geometry('+500+500')
             
-        pic = tk.PhotoImage(file='keyer_splash.png')
+        fname=find_resource_file('keyer_splash.png')
+        pic = tk.PhotoImage(file=fname)
         lab = tk.Label(self.splash, bg='white', image=pic)
         lab.pack()
         self.root.withdraw()
@@ -175,7 +177,7 @@ class GUI():
         # Open simple log file & read its contents
         # It probably time to jetison this & just use the adif file 
         MY_CALL = P.SETTINGS['MY_CALL']
-        fname = P.DATA_DIR+MY_CALL.replace('/','_')+".LOG"
+        fname = P.WORK_DIR+MY_CALL.replace('/','_')+".LOG"
         self.log_book = []
         print('Opening log file',fname,'...')
         if not os.path.exists(fname):
@@ -208,7 +210,7 @@ class GUI():
 
         # Read adif log also
         if P.LOG_FILE==None:
-            P.LOG_FILE = P.DATA_DIR+MY_CALL.replace('/','_')+".adif"
+            P.LOG_FILE = P.WORK_DIR+MY_CALL.replace('/','_')+".adif"
         if P.USE_ADIF_HISTORY:
             print('fname_adif=',P.LOG_FILE)
             qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
@@ -229,7 +231,7 @@ class GUI():
         print("GUI: ADIF file name=", self.fp_adif) 
 
         # Also save all sent text to a file
-        self.fp_txt = open(P.DATA_DIR+MY_CALL.replace('/','_')+".TXT","a+")
+        self.fp_txt = open(P.WORK_DIR+MY_CALL.replace('/','_')+".TXT","a+")
 
         # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
         self.SettingsWin = SETTINGS_GUI(self.root,self.P)
@@ -1424,7 +1426,7 @@ class GUI():
                'freqs'      : frqs,
                'fields'     : flds }
         print('STATE=',STATE)
-        with open('state.json', "w") as outfile:
+        with open(self.P.WORK_DIR+'state.json', "w") as outfile:
             json.dump(STATE, outfile)
         if False:
             with open('keyer.log', "a") as outfile2:
@@ -1448,7 +1450,7 @@ class GUI():
     # Restore program state
     def RestoreState(self):
         try:
-            with open('state.json') as json_data_file:
+            with open(self.P.WORK_DIR+'state.json') as json_data_file:
                 STATE = json.load(json_data_file)
             print('STATE=',STATE)
             now = datetime.utcnow().replace(tzinfo=UTC)

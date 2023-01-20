@@ -1,0 +1,27 @@
+pyKeyer - by AA2IL
+----------------------
+
+A CW contest keyer and logger in written Python.
+Also can be used as a sending and receiving CW trainer.
+
+This app is written in python 3.  The python script pyKeyer.py can be run under linux or windoz 10/11. You will also need the libraries in github.com/aa2il/libs and to installed the python modules listed in "requirements.txt".
+
+Stand-alone execuatables for linux and windoz 10/11 have been made using pyinstaller.  Complete source code and build files are available at https://github.com/aa2il/wclock .
+
+Please email constructive comments/suggestions to aa2il AT arrl DOT net.
+
+Windows Installer:  pyKeyer_setup.exe
+
+After installation, double click the desktop shortcut or open a command prompt (cmd.exe) and execute "C:\Program Files (x86)\AA2IL\pyKeyer.exe".
+
+Known issues:
+
+- Rig control is not yet available under windoz.  (All capabilities are avaiable under linux.)
+
+------------------------------------------------------------------------------
+
+Revision history:
+
+Version 1.0 - Jan. 2023
+
+This is the first version-controlled release.
