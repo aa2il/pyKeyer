@@ -24,6 +24,7 @@ echo.
 	 copy keyer_splash.png dist
 	 copy ..\..\AA2IL\master.csv dist
          copy Release_Notes.txt dist
+         copy practice.bat dist
          del dist\Output\pyKeyer_setup.exe
 echo.
 echo On linux:

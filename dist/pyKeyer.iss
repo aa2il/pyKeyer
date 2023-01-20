@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "pyKeyer"
-#define MyAppVersion "1..0"
+#define MyAppVersion "1.0"
 #define MyAppPublisher "AA2IL"
 #define MyAppURL "https://github.com/aa2il/pyKeyer"
 #define MyAppExeName "pyKeyer.exe"
@@ -20,6 +20,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\AA2IL
 DisableProgramGroupPage=yes
+InfoAfterFile=C:\Users\Joea\Python\pyKeyer\dist\Release_Notes.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputBaseFilename=pyKeyer_setup
@@ -41,6 +42,8 @@ Source: "C:\Users\Joea\Python\pyKeyer\Panagrams.txt"; DestDir: "{app}"; Flags: i
 Source: "C:\Users\Joea\Python\pyKeyer\QSO_Template.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Joea\Python\pyKeyer\Book.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Joea\Python\pyKeyer\Stumble.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\pyKeyer\Release_Notes.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Joea\Python\pyKeyer\practice.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Joea\Python\pyKeyer\keyer_splash.png"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

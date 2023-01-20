@@ -33,7 +33,7 @@ set old=${ROOT}${PTH}
 echo OLD=$old
 
 rm -f DIFFS
-foreach i (*.py AA2IL.adif sats.adif start* DIFF *.txt *.bat *.md)
+foreach i (*.py AA2IL.adif sats.adif start* DIFF *.txt *.bat *.md dist/*.iss)
     echo $i
     set n=`diff -w $old/$i $i | wc -l`
     if( !( -e $old/$i ) )then
