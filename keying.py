@@ -163,7 +163,11 @@ def open_keying_port(P,sock,rig_num):
                     sys.exit(0)
                     
             elif sock.rig_type2=='FTdx3000':
-                ser = serial.Serial(SERIAL_PORT2,BAUD,timeout=0.1)
+
+                #port=SERIAL_PORT2     # Old
+                port=find_serial_device('FTdx3000',1,VERBOSITY=1)
+                #sys.exit(0)
+                ser = serial.Serial(port,BAUD,timeout=0.1)
                 ser.setDTR(False)
                 ser.PORT = SERIAL_PORT2
                 ser.BAUD = BAUD

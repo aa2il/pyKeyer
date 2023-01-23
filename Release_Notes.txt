@@ -4,7 +4,7 @@ pyKeyer - by AA2IL
 A CW contest keyer and logger in written Python.
 Also can be used as a sending and receiving CW trainer.
 
-This app is written in python 3.  The python script pyKeyer.py can be run under linux or windoz 10/11. You will also need the libraries in github.com/aa2il/libs and to installed the python modules listed in "requirements.txt".
+This app is written in python 3.  The python script pyKeyer.py can be run under linux or windoz 10/11. You will also need the libraries in github.com/aa2il/libs and to install the python modules listed in "requirements.txt".
 
 Stand-alone execuatables for linux and windoz 10/11 have been made using pyinstaller.  Complete source code and build files are available at https://github.com/aa2il/wclock .
 
@@ -21,6 +21,11 @@ Known issues:
 ------------------------------------------------------------------------------
 
 Revision history:
+
+Next Release:
+
+- Usual minor bug fixes
+- Rig control now working (DIRECT FTdx3000)
 
 Version 1.0 - Jan. 2023
 

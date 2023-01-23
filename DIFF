@@ -58,5 +58,5 @@ set f=`basename $ROOT`
 echo $f
 if( $f == "acer" )then
     ls $old/dist
-    cp $old/dist/*.exe $old/dist/*.iss $old/dist/Output/*.exe dist
+    cp $old/dist/*.exe $old/dist/Output/*.exe dist
 endif
