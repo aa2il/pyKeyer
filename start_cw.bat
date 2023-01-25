@@ -3,7 +3,7 @@ echo Hey 1
 echo me=%~n0
 echo log=%TEMP%\%me%.txt
 
-goto DONE
+:: goto DONE
 
 goto CLOCK
 cd "c:\Program Files (x86)\flrig-1.4.7\"
@@ -16,9 +16,10 @@ cd %USERPROFILE%\Python\pyKeyer
 :: pyKeyer.exe -rig FLRIG
 
 :CLOCK
+echo Starting WCLOCK ...
 cd %USERPROFILE%\Python\
 del CLOCK
-start cmd /c wclock\dist\wclock.exe ^> CLOCK
+start /min cmd /c wclock\dist\wclock.exe ^> CLOCK
 :: start call wclock\dist\wclock.exe ^1^> CLOCK ^2^>^&^1
 :: start cmd /c ^( wclock\dist\wclock.exe ^1^> CLOCK ^2^>^&^1 ^)
 

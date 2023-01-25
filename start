@@ -90,6 +90,7 @@ set STATE="NV"
 if( ($CONTEST == "paddling") && ($RIG != "NONE") )then
     pkill flrig
     set RIG9=`$FIND_RIG`
+    echo $RIG9
     if( $RIG9 == "None" )then
         set RIG="NONE"
     endif
@@ -105,6 +106,7 @@ else if( ($CONTEST == "paddling") && ($RIG == "NONE") )then
     echo $RIG9 $RIG
     #exit
 endif
+
 if( $CONTEST == "paddling" )then
     if( $RIG != "NONE" )then
         set CMD="$FIND_RIG -BREAK 0"

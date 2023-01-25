@@ -39,7 +39,10 @@ def master(P,call,dx_station=None,VERBOSITY=0):
             print('MASTER:',call,' is in master list')
         if P.KEYING:
             h=P.KEYING.hint(call)
-            print(call,'\tmaster=',P.MASTER[call],'\nhint=',h)
+            try:
+                print(call,'\tmaster=',P.MASTER[call],'\nhint=',h)
+            except:
+                print('HINT MASTER - I dont know what I am doing here',call)
             return h
         else:
             print('HINT.MASTER: No hints available for this contest')
