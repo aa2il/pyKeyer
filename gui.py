@@ -201,7 +201,12 @@ class GUI():
                 if P.USE_LOG_HISTORY:
                     self.log_book.append(qso)
                 else:
-                    call=qso['CALL']
+                    try:
+                        call=qso['CALL']
+                    except:
+                        print('Looks like LOG file is hosed up')
+                        print(qso)
+                        sys.exit(0)
                     if not call in P.calls:
                         print('Call not in Master list:',call,'\t- Adding it')
                         self.log_book.append(qso)
@@ -1203,7 +1208,7 @@ class GUI():
             self.P.KEYING=FD_KEYING(self.P)
         elif val.find('CQ-WPX')>=0:
             self.P.KEYING=WPX_KEYING(self.P)
-        elif val=='ARRL-10M' or val=='ARRL-DX':
+        elif val=='ARRL-10M' or val=='ARRL-DX' or val=='CQ-160M':
             self.P.KEYING=TEN_METER_KEYING(self.P,val)
         elif val=='Ragchew':
             self.P.KEYING=RAGCHEW_KEYING(self.P,val)

@@ -1,9 +1,9 @@
 ############################################################################################
 #
 # ten.py - Rev 1.0
-# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for ARRL 10m and Intl DX contests.
+# Keying routines for ARRL 10m, ARRL Intl DX and CQ 160m contests.
 #
 ############################################################################################
 #
@@ -38,8 +38,13 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
 
         if self.P.contest_name=='ARRL-DX':
             P.CONTEST_ID='ARRL-DX-CW'
-        else:
+        elif self.P.contest_name=='ARRL-10':
             P.CONTEST_ID='ARRL-10'
+        elif self.P.contest_name=='CQ-160M':
+            P.CONTEST_ID='CQ-160M'
+        else:
+            print('TEN METER KEYING - Unknown contest',self.P.contest_name)
+            sys.exit(0)
         self.contest_duration = 48
         P.MAX_AGE = self.contest_duration *60
 
@@ -50,8 +55,8 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYSTATE] '}
-        MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 TEST [MYCALL] [LOG]'}
+        #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] 73EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
@@ -60,8 +65,8 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYSTATE] '}
         MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [MYSTATE] [MYSTATE] '}
-        MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
 

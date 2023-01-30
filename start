@@ -48,11 +48,12 @@ set SCP=""
 set SCP="-scp"
 
 set CONTEST="paddling"
-#set CONTEST="cwt"
+set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="mst"
 
 #set CONTEST="naqp"
+#set CONTEST="cq160m"
 #set CONTEST="arrl_dx"
 #set CONTEST="iaru"
 #set CONTEST="fd"
@@ -199,6 +200,11 @@ else if( $CONTEST == "arrl_160m" )then
 
 # Settings for ARRL 10m
 else if( $CONTEST == "arrl_10m" )then
+    set WPM=25
+    set HINTS="-adjust"
+
+# Settings for CQ 160m
+else if( $CONTEST == "cq160m" )then
     set WPM=25
     set HINTS="-adjust"
 

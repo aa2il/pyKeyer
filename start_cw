@@ -61,6 +61,8 @@ set CONTEST=""
 #set CONTEST="cwopen"
 #set CONTEST="sst"
 #set CONTEST="mst"
+#set CONTEST="naqp"
+#set CONTEST="cq160m"
 #set CONTEST="skcc"
 #set CONTEST="cqww"
 #set CONTEST="ss"
@@ -73,7 +75,6 @@ set CONTEST=""
 #set CONTEST="wpx"
 #set CONTEST="arrl_10m"
 #set CONTEST="iaru"
-#set CONTEST="naqp"
 #set CONTEST="rac"
 #set CONTEST="stew"
 
@@ -298,11 +299,17 @@ else if( $CONTEST == "rac" )then
     set HINTS="-use_log_hist -autofill -nrows 1"
     set BM_OPTS = "$BM_OPTS -contest -hours 24 -cwops"
 
-# Settings for Stew Perry 160m
+# Settings for Stew Perry
 else if( $CONTEST == "stew" )then
     set WPM=25
     set HINTS="-use_log_hist -autofill -nrows 1"
     set BM_OPTS = "$BM_OPTS -contest -hours 24 -cwops"
+
+# Settings for CQ 160m
+else if( $CONTEST == "cq160m" )then
+    set WPM=25
+    set HINTS="-use_log_hist -autofill -nrows 1"
+    set BM_OPTS = "$BM_OPTS -contest -hours 48 -cwops"
 
 # Settings for ARRL Sweepstakes
 # Since we can only work each station once, it doesn't make sense to use history

@@ -40,6 +40,8 @@ class PARAMS:
                               help='ARRL Sweepstakes')
         arg_proc.add_argument('-naqp', action='store_true',
                               help='NAQP')
+        arg_proc.add_argument('-cq160m', action='store_true',
+                              help='CQ 160m CW')
         arg_proc.add_argument('-sst', action='store_true',
                               help='K1USN SST')
         arg_proc.add_argument('-mst', action='store_true',
@@ -139,7 +141,7 @@ class PARAMS:
         arg_proc.add_argument("-max_age", help="Max age in hours",
                               type=int,default=9999)
         arg_proc.add_argument("-nrows", help="No. STO/RCL rows",
-                              type=int,default=2)
+                              type=int,default=1)
         arg_proc.add_argument('-nano', action='store_true',
                               help="Use Nano IO Interface")
         arg_proc.add_argument('-cwio', action='store_true',
@@ -232,7 +234,7 @@ class PARAMS:
         self.STATE_QPs = ['OCQP','AZQP','ILQP','NVQP','NYQP','PAQP','SDQP']
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC',
-                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF',
+                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO'] + \
                            self.STATE_QPs
@@ -309,6 +311,9 @@ class PARAMS:
         elif args.arrl_160m:
             self.contest_name = 'ARRL-160M'
             MAX_AGE_HOURS=42
+        elif args.cq160m:
+            self.contest_name = 'CQ-160M'
+            MAX_AGE_HOURS=48    #??
         elif args.arrl_dx:
             self.contest_name = 'ARRL-DX'
             MAX_AGE_HOURS=48    #??
