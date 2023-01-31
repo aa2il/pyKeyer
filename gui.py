@@ -177,7 +177,7 @@ class GUI():
         # Open simple log file & read its contents
         # It probably time to jetison this & just use the adif file 
         MY_CALL = P.SETTINGS['MY_CALL']
-        fname = P.WORK_DIR+MY_CALL.replace('/','_')+".LOG"
+        fname = P.WORK_DIR+MY_CALL.replace('/','_')+".csv"
         self.log_book = []
         print('Opening log file',fname,'...')
         if not os.path.exists(fname):
@@ -839,7 +839,7 @@ class GUI():
         else:
             self.SendBtn.configure(background='Green',highlightbackground= 'Green')
         
-    # Callback to toggle sending of text
+    # Callback to toggle SO2V mode
     def Toggle_SO2V(self,iop=None):
         if iop==None:
             self.P.SO2V = not self.P.SO2V
@@ -852,6 +852,20 @@ class GUI():
             self.So2vBtn.configure(background='Green',highlightbackground= 'Green')
             self.P.udp_server.Broadcast('SO2V:OFF')
             self.So2vBtn.configure(relief='raised')
+        
+    # Callback to toggle DXSplit mode
+    def Toggle_DXSplit(self,iop=None):
+        if iop==None:
+            self.P.DXSPLIT = not self.P.DXSPLIT
+        print('TOOGLE DXSplit:',self.P.DXSPLIT,iop)
+        if self.P.DXSPLIT:
+            self.DXSplitBtn.configure(background='red',highlightbackground= 'red')
+            self.P.udp_server.Broadcast('SPLIT:ON')
+            self.DXSplitBtn.configure(relief='sunken')
+        else:
+            self.DXSplitBtn.configure(background='Green',highlightbackground= 'Green')
+            self.P.udp_server.Broadcast('SPLIT:OFF')
+            self.DXSplitBtn.configure(relief='raised')
         
     # Callback to look up a call on qrz.com
     def Call_LookUp(self):
@@ -1898,7 +1912,9 @@ class GUI():
         else:
             
             for qso in self.log_book:
-                if qso['CALL']==call:
+                if 'CALL' not in qso:
+                    print('DUP CHECK: - File - CALL not in QSO!!!\nqso=',qso,'\tcall=',call)
+                elif qso['CALL']==call:
                     self.match1 = True
                     self.last_qso=qso
                     date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
@@ -2841,6 +2857,9 @@ class GUI():
             
             self.So2vBtn = Button(toolbar,text="SO2V", command=self.Toggle_SO2V)
             self.So2vBtn.pack(side=LEFT, padx=2, pady=2)
+            
+            self.DXSplitBtn = Button(toolbar,text="DX Split", command=self.Toggle_DXSplit)
+            self.DXSplitBtn.pack(side=LEFT, padx=2, pady=2)
             
             # Spin box to control paddle keying speed (WPM)
             if True:

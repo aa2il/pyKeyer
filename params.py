@@ -216,6 +216,7 @@ class PARAMS:
         self.HAMLIB_SERVER = args.server
         self.UDP_SERVER    = args.udp
         self.SO2V          = False
+        self.DXSPLIT       = False
         self.GPS           = args.gps
         self.USE_LOG_HISTORY  = args.use_log_hist
         self.USE_ADIF_HISTORY = args.use_adif_hist

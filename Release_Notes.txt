@@ -26,6 +26,7 @@ Next Release:
 
 - Usual minor bug fixes
 - Rig control now working (DIRECT FTdx3000)
+- Added CQ 160m contest
 
 Version 1.0 - Jan. 2023
 

@@ -59,15 +59,12 @@ class MST_KEYING(DEFAULT_KEYING):
         if now.month==12 and now.day>=11 and now.day<28:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
-            #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'MC [MYNAME] [SERIAL] '}
         elif now.month==12 and now.day>=28:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
-            #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'MC HNY [MYNAME] [SERIAL] '}
         elif now.month==1 and now.day<=14:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73EE [LOG]'}
-            #MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'HNY [MYNAME] [SERIAL] '}
         else:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73EE [LOG]'}
@@ -81,7 +78,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-        MACROS[7+12]  = {'Label' : '73'        , 'Text' : '73 GL ee'}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
         MACROS[8]     = {'Label' : 'My Name 2x', 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
         MACROS[9]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
