@@ -97,7 +97,7 @@ def nano_tune(ser,tune):
 def open_nano(baud=NANO_BAUD):
 
     # Open port
-    device=find_serial_device('nanoIO')
+    device=find_serial_device('nanoIO',0,0)
     ser = serial.Serial(device,baud,timeout=0.1,dsrdtr=0,rtscts=0)
     #ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
     #ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,\

@@ -115,6 +115,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
     # Routine to generate a hint for a given call
     def hint(self,call):
         P=self.P
+        
         try:
             name  = P.MASTER[call]['name']
             state = P.MASTER[call]['state']

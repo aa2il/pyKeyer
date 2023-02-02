@@ -192,6 +192,12 @@ class RIG_CONTROL():
         Button(MiscFrame,
                text="A<-->B",     
                command=lambda: SetVFO(self,'A<->B') ).pack(side=LEFT,anchor=W)
+        #Button(MiscFrame,
+        #       text="Split",     
+        #       command=lambda: SetVFO(self,'SPLIT') ).pack(side=LEFT,anchor=W)
+        Button(MiscFrame,
+               text="TXW",     
+               command=lambda: SetVFO(self,'TXW') ).pack(side=LEFT,anchor=W)
         
         # Add a tab for key pad
         if self.sock.rig_type1=='Yaesu':

@@ -137,7 +137,7 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSEC]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP']:
+            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP','VTQP','BCQP']:
 
                 # RST + State
                 LAB1  = 'RST'
@@ -153,6 +153,15 @@ class DEFAULT_KEYING():
                 EXCH1 = '[SERIAL]'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
+            elif self.contest_name in ['MNQP']:
+                
+                # Name + State
+                LAB1  = 'NAME'
+                EXCH1 = '[MYNAME]'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['TEN-TEN']:
@@ -213,6 +222,7 @@ class DEFAULT_KEYING():
     # Routine to generate a hint for a given call
     def hint(self,call):
         P=self.P
+        gui=self.P.gui
 
         txt=''
         if self.key1!=None and self.key1!='rst':
@@ -223,6 +233,8 @@ class DEFAULT_KEYING():
             txt += qth
             
         self.NAME = P.MASTER[call]['name']
+        gui.name.delete(0,END)
+        gui.name.insert(0,self.NAME)
 
         return txt
 

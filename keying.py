@@ -98,8 +98,9 @@ def open_keying_port(P,sock,rig_num):
             # but, in general, we'll use USB B in case we are using hamlib for rig control
             print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
             try:
-                ser = serial.Serial(SERIAL_PORT10,BAUD,
-                                    timeout=0.1,dsrdtr=0,rtscts=0)
+                #port=SERIAL_PORT10     # Old
+                port=find_serial_device('IC9700',1,VERBOSITY=1)
+                ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
                 print('OPEN KEYING PORT: Sock Init...')
                 sock.init_keyer()
                 time.sleep(.1)
@@ -134,7 +135,10 @@ def open_keying_port(P,sock,rig_num):
         if not P.PRACTICE_MODE:
 
             if sock.rig_type2=='FT991a':
-                ser = serial.Serial(SERIAL_PORT4,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
+                
+                #port=SERIAL_PORT4     # Old
+                port=find_serial_device('FT991a',1,VERBOSITY=1)
+                ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
                 ser.setDTR(True)
                 time.sleep(.02)
                 ser.setDTR(False)
@@ -166,7 +170,6 @@ def open_keying_port(P,sock,rig_num):
 
                 #port=SERIAL_PORT2     # Old
                 port=find_serial_device('FTdx3000',1,VERBOSITY=1)
-                #sys.exit(0)
                 ser = serial.Serial(port,BAUD,timeout=0.1)
                 ser.setDTR(False)
                 ser.PORT = SERIAL_PORT2

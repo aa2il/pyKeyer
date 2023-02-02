@@ -38,7 +38,7 @@ import hint
 from dx.spot_processing import Station
 from pprint import pprint
 import webbrowser
-from rig_io.socket_io import ClarReset
+from rig_io.socket_io import ClarReset,SetTXSplit
 from rig_control_tk import *
 from rotor_control_tk import *
 from ToolTip import *
@@ -128,7 +128,7 @@ class GUI():
         self.splash.deiconify()
         self.root.update_idletasks()
 
-        # Init
+        # More inits
         self.Done=False
         self.contest = False
         self.P = P
@@ -137,6 +137,15 @@ class GUI():
         self.text_buff=''
         self.macro_label=''
         self.last_text=None
+
+        # Select font
+        if sys.version_info[0]==3:
+            self.font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
+            self.font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
+        else:
+            self.font1 = tkFont.Font(family="monospace",size=12,weight="bold")
+            self.font2 = tkFont.Font(family="monospace",size=28,weight="bold")
+        
 
     # Function to actually construct the gui
     def construct_gui(self):
@@ -254,18 +263,12 @@ class GUI():
         
         # Set up basic logging entry boxes
         row+=1
-        if sys.version_info[0]==3:
-            font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
-            font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
-        else:
-            font1 = tkFont.Font(family="monospace",size=12,weight="bold")
-            font2 = tkFont.Font(family="monospace",size=28,weight="bold")
-        self.call_lab = Label(self.root, text="Call",font=font1)
+        self.call_lab = Label(self.root, text="Call",font=self.font1)
         self.call_lab.grid(row=row,columnspan=4,column=0,sticky=E+W)
-        self.call = Entry(self.root,font=font2,selectbackground='lightgreen')
+        self.call = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         #reg = self.root.register(self.call_changed)
         #self.call.config(validate ="key", validatecommand =(reg, '%P'))
-        #self.call = Entry(self.root,font=font2,selectbackground='lightgreen',
+        #self.call = Entry(self.root,font=self.font2,selectbackground='lightgreen',
         #                  validate='key', validatecommand=self.call_changed)
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
         self.call.bind("<Key>", self.key_press )
@@ -274,21 +277,21 @@ class GUI():
         self.default_object=self.call                    # Make this the default object to take the focus
         
         # For normal operating, these will be visible
-        self.name_lab = Label(self.root, text="Name",font=font1)
+        self.name_lab = Label(self.root, text="Name",font=self.font1)
         self.name_lab.grid(row=row,columnspan=4,column=4,sticky=E+W)
-        self.name = Entry(self.root,font=font2,selectbackground='lightgreen')
+        self.name = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         self.name.grid(row=row+1,rowspan=2,column=4,columnspan=4,sticky=E+W)
         self.name.bind("<Key>", self.key_press )
 
-        self.rstin_lab = Label(self.root, text="RST in",font=font1)
+        self.rstin_lab = Label(self.root, text="RST in",font=self.font1)
         self.rstin_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
-        self.rstin = Entry(self.root,font=font2)
+        self.rstin = Entry(self.root,font=self.font2)
         self.rstin.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
         self.rstin.bind("<Key>", self.key_press )
 
-        self.rstout_lab = Label(self.root, text="RST out",font=font1)
+        self.rstout_lab = Label(self.root, text="RST out",font=self.font1)
         self.rstout_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
-        self.rstout = Entry(self.root,font=font2)
+        self.rstout = Entry(self.root,font=self.font2)
         self.rstout.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
         self.rstout.bind("<Key>", self.key_press )
         if self.P.contest_name=='SATELLITES':
@@ -299,63 +302,63 @@ class GUI():
             self.rstout.insert(0,'5NN')
 
         # For contests, some subset of these will be visible instead
-        self.exch_lab = Label(self.root, text="Exchange",font=font1)
+        self.exch_lab = Label(self.root, text="Exchange",font=self.font1)
         self.exch_lab.grid(row=row,columnspan=7,column=4,sticky=E+W)
-        self.exch = Entry(self.root,font=font2,selectbackground='lightgreen')
+        self.exch = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         self.exch.grid(row=row+1,rowspan=2,column=4,columnspan=6,sticky=E+W)
         self.exch.bind("<Key>", self.key_press )
 
-        self.qth_lab = Label(self.root, text="QTH",font=font1)
+        self.qth_lab = Label(self.root, text="QTH",font=self.font1)
         self.qth_lab.grid(row=row,columnspan=3,column=8,sticky=E+W)
-        self.qth = Entry(self.root,font=font2,selectbackground='lightgreen')
+        self.qth = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         self.qth.grid(row=row+1,rowspan=2,column=8,columnspan=2,sticky=E+W)
         self.qth.bind("<Key>", self.key_press )
 
-        self.serial_lab = Label(self.root, text="Serial",font=font1)
+        self.serial_lab = Label(self.root, text="Serial",font=self.font1)
         self.serial_lab.grid(row=row,columnspan=1,column=4,sticky=E+W)
-        self.serial = Entry(self.root,font=font2,selectbackground='lightgreen')
+        self.serial = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         self.serial.grid(row=row+1,rowspan=2,column=4,columnspan=1,sticky=E+W)
         self.serial.bind("<Key>", self.key_press )
 
-        self.prec_lab = Label(self.root, text="Prec",font=font1)
+        self.prec_lab = Label(self.root, text="Prec",font=self.font1)
         self.prec_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
-        self.prec = Entry(self.root,font=font2)
+        self.prec = Entry(self.root,font=self.font2)
         self.prec.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
         self.prec.bind("<Key>", self.key_press )
 
-        self.cat_lab = Label(self.root, text="Category",font=font1)
+        self.cat_lab = Label(self.root, text="Category",font=self.font1)
         self.cat_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
-        self.cat = Entry(self.root,font=font2)
+        self.cat = Entry(self.root,font=self.font2)
         self.cat.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
         self.cat.bind("<Key>", self.key_press )
 
-        self.call2_lab = Label(self.root, text="Call",font=font1)
+        self.call2_lab = Label(self.root, text="Call",font=self.font1)
         self.call2_lab.grid(row=row,columnspan=1,column=6,sticky=E+W)
-        self.call2 = Entry(self.root,font=font2)
+        self.call2 = Entry(self.root,font=self.font2)
         self.call2.grid(row=row+1,rowspan=2,column=6,columnspan=1,sticky=E+W)
         self.call2.bind("<Key>", self.key_press )
 
-        self.check_lab = Label(self.root, text="Check",font=font1)
+        self.check_lab = Label(self.root, text="Check",font=self.font1)
         self.check_lab.grid(row=row,columnspan=1,column=7,sticky=E+W)
-        self.check = Entry(self.root,font=font2)
+        self.check = Entry(self.root,font=self.font2)
         self.check.grid(row=row+1,rowspan=2,column=7,columnspan=1,sticky=E+W)
         self.check.bind("<Key>", self.key_press )
         
-        self.notes_lab = Label(self.root, text="Notes",font=font1)
+        self.notes_lab = Label(self.root, text="Notes",font=self.font1)
         self.notes_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
-        self.notes = Entry(self.root,font=font2,fg='blue')
+        self.notes = Entry(self.root,font=self.font2,fg='blue')
         self.notes.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
         self.notes.bind("<Key>", self.key_press )
 
-        self.hint_lab = Label(self.root, text="Hint",font=font1)
+        self.hint_lab = Label(self.root, text="Hint",font=self.font1)
         self.hint_lab.grid(row=row,columnspan=1,column=8,sticky=E+W)
-        self.hint = Entry(self.root,font=font2,fg='blue')
+        self.hint = Entry(self.root,font=self.font2,fg='blue')
         self.hint.grid(row=row+1,rowspan=2,column=8,columnspan=1,sticky=E+W)
         self.hint.bind("<Key>", self.key_press )
 
-        self.scp_lab = Label(self.root, text="Super Check Partial",font=font1)
+        self.scp_lab = Label(self.root, text="Super Check Partial",font=self.font1)
         self.scp_lab.grid(row=row,columnspan=1,column=9,sticky=E+W)
-        self.scp = Entry(self.root,font=font2,fg='blue',selectbackground='white')
+        self.scp = Entry(self.root,font=self.font2,fg='blue',selectbackground='white')
         self.scp.grid(row=row+1,rowspan=2,column=9,columnspan=1,sticky=E+W)
         self.scp.bind('<Double-Button-1>',self.SCP_Selection)
         self.scp.bind("<Key>", self.key_press )
@@ -466,6 +469,7 @@ class GUI():
                      to=cw_keyer.MAX_WPM,       \
                      textvariable=self.WPM_TXT, \
                      bg='white',                \
+                     justify='center',          \
                      command=lambda j=0: self.set_wpm(0))
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
         SB.bind("<Key>", self.key_press )
@@ -484,7 +488,7 @@ class GUI():
         col += 2
         self.counter_lab=Label(self.root, text='Serial:')
         self.counter_lab.grid(row=row,column=col,sticky=E+W)
-        self.counter = Entry(self.root,font=font2)
+        self.counter = Entry(self.root,font=self.font2)
         self.counter.bind("<Key>", self.key_press )
         self.counter.grid(row=row,rowspan=1,column=col+1,columnspan=1,sticky=E+W)
         self.counter.delete(0, END)
@@ -551,7 +555,7 @@ class GUI():
         #row += 1
         #col=0
         col=8
-        self.rate_lab = Label(self.root, text="QSO Rate:",font=font1)
+        self.rate_lab = Label(self.root, text="QSO Rate:",font=self.font1)
         self.rate_lab.grid(row=row,columnspan=4,column=col,sticky=W)
 
         # Other capabilities accessed via menu
@@ -862,10 +866,16 @@ class GUI():
             self.DXSplitBtn.configure(background='red',highlightbackground= 'red')
             self.P.udp_server.Broadcast('SPLIT:ON')
             self.DXSplitBtn.configure(relief='sunken')
+
+            # Set clarifier to 1 KHz UP by default
+            SetTXSplit(self.P,1,True)
         else:
             self.DXSplitBtn.configure(background='Green',highlightbackground= 'Green')
             self.P.udp_server.Broadcast('SPLIT:OFF')
             self.DXSplitBtn.configure(relief='raised')
+
+            # Turn off clarifier
+            SetTXSplit(self.P,0,False)
         
     # Callback to look up a call on qrz.com
     def Call_LookUp(self):
@@ -2294,6 +2304,11 @@ class GUI():
             # Send 'RR'
             self.Send_CW_Text('RR')
 
+        elif key in ['p','P'] and (alt or control):
+
+            # Screen capture
+            self.PrtScrn()
+    
         elif key=='Home' and False:
             
             # DON'T REMAP THE HOME KEY - ITS USEFUL FOR EDITing
@@ -2852,7 +2867,11 @@ class GUI():
                 .pack(side=LEFT, padx=2, pady=2)
             Button(toolbar,text="A->B",command=lambda: SetVFO(self,'A->B')) \
                 .pack(side=LEFT, padx=2, pady=2)
-            #Button(toolbar,text="B->A",command=lambda: SetVFO(self,'B->A')) \
+            Button(toolbar,text="Swap",command=lambda: SetVFO(self,'A<->B')) \
+                .pack(side=LEFT, padx=2, pady=2)
+            #Button(toolbar,text="Split",command=lambda: SetVFO(self,'SPLIT')) \
+            #    .pack(side=LEFT, padx=2, pady=2)
+            #Button(toolbar,text="TXW",command=lambda: SetVFO(self,'TXW')) \
             #    .pack(side=LEFT, padx=2, pady=2)
             
             self.So2vBtn = Button(toolbar,text="SO2V", command=self.Toggle_SO2V)
@@ -2866,15 +2885,18 @@ class GUI():
                 SB2=Spinbox(toolbar,
                             from_=15, to=50,       
                             textvariable=self.PaddlingWin.WPM_TXT, 
-                            bg='white',                
+                            bg='white', justify='center',            
                             command=lambda j=0: self.PaddlingWin.SetWpm(0))
                 SB2.pack(side=RIGHT, padx=2, pady=2)
                 SB2.bind("<Key>", self.key_press )
                 Label(toolbar, text='Paddles:').pack(side=RIGHT, padx=2, pady=2)
 
             # Screen capture
-            if True:
-                Button(toolbar,text="PrtScrn",command=self.PrtScrn) \
-                    .pack(side=RIGHT, padx=2, pady=2)
-            
-            
+            #Button(toolbar,text="PrtScrn",command=self.PrtScrn) \
+            #    .pack(side=RIGHT, padx=2, pady=2)
+
+            # A place to put some info
+            self.info = Entry(toolbar,font=self.font1,selectbackground='lightgreen')
+            self.info.pack(side=RIGHT, padx=2, pady=2)
+            self.info.bind("<Key>", self.key_press )
+

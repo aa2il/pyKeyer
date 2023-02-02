@@ -31,7 +31,7 @@ set FIND_RIG="~/Python/findRig/findRig.py"
 
 set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
-set PRACTICE="-prac -nrows 0 -lock"
+#set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
 #set NANO="-sidetone"
