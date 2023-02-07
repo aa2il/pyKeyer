@@ -33,8 +33,7 @@ def process_chars(P):
     keyer     = P.keyer
     lock      = P.lock1
     q         = P.q
-    P.NANO_ECHO=False
-    VERBOSITY=0
+    VERBOSITY = 0
     
     while not P.Stopper.isSet():
 
@@ -106,12 +105,12 @@ def process_chars(P):
                     if VERBOSITY>0:
                         print('PROCESSS_CHARS: Nano 3',P.NANO_ECHO)
                     if P.NANO_ECHO:
-                        P.NANO_ECHO=False
                         # Put it in the big text box also
                         try:
                             if VERBOSITY>0:
                                 print('PROCESSS_CHARS: Nano 4')
-                            P.gui.txt.insert(END, txt+'\n')
+                            #P.gui.txt.insert(END, txt+'\n')
+                            P.gui.txt.insert(END, txt)
                             P.gui.txt.see(END)
                             P.gui.root.update_idletasks()
                             if VERBOSITY>0:

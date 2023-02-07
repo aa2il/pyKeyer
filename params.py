@@ -144,6 +144,8 @@ class PARAMS:
                               type=int,default=1)
         arg_proc.add_argument('-nano', action='store_true',
                               help="Use Nano IO Interface")
+        arg_proc.add_argument('-echo', action='store_true',
+                              help="Echo response from Nano IO to text box")
         arg_proc.add_argument('-cwio', action='store_true',
                               help="Use FLRIG or HAMLIB for CW IO")
         arg_proc.add_argument('-lock', action='store_true',
@@ -179,6 +181,7 @@ class PARAMS:
         
         self.SENDING_PRACTICE = args.sending
         self.NANO_IO       = args.nano or args.sending
+        self.NANO_ECHO     = self.NANO_IO and args.echo
         self.CW_IO         = args.cwio
         self.LOCK_SPEED    = args.lock
         
@@ -232,7 +235,7 @@ class PARAMS:
         self.AUTO_COMPLETE = args.autocomplete or self.USE_SCP
         self.HIST          = {}
 
-        self.STATE_QPs = ['OCQP','AZQP','ILQP','NVQP','NYQP','PAQP','SDQP']
+        self.STATE_QPs = ['OCQP','AZQP','ILQP','MNQP','NVQP','NYQP','PAQP','SDQP','VTQP','BCQP']
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',

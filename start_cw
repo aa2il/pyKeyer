@@ -78,7 +78,7 @@ set CONTEST=""
 #set CONTEST="rac"
 #set CONTEST="stew"
 
-set STATE="IL -max_age 8"
+set STATE="MN -max_age 24"
 
 # Various options for pyKeyer
 set CAPTURE=""

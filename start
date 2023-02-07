@@ -34,6 +34,7 @@ set PRACTICE="-prac -nrows 0"
 #set PRACTICE="-prac -nrows 0 -lock"
 set NANO=""
 set NANO="-nano"
+set NANO="-nano -echo"
 #set NANO="-sidetone"
 #set NANO="-nano -sidetone"
 
