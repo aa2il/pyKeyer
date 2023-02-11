@@ -111,6 +111,8 @@ morse[62]=".-.-.";     # > = <AR>	0b00101010
 
 ############################################################################################
 
+############################################################################################
+
 # The key object - this is where all the hard work is really done
 class Keyer():
 
@@ -253,6 +255,31 @@ class Keyer():
                     nano_set_wpm(ser,wpm)
                 self.P.gui.WPM_TXT.set(str(wpm))
 
+    def txt2morse(self,msg):
+        print('\nTXT2MORSE: msg=',msg)
+        tdown=0
+        times=[]
+        dotlen_ms = int(1000*self.dotlen)
+
+        for char in msg.upper():
+            i=ord(char)
+            cw=morse[i]
+            if i>32:
+                for el in cw:
+                    times.append(tdown)
+                    if( el=='.' ):
+                        tdown+=2*dotlen_ms            # Element plus space between elements
+                    elif( el=='-' ):
+                        tdown+=4*dotlen_ms
+
+                tdown+=2*dotlen_ms                    # Space between letters = 3 dits
+
+            else:
+                tdown+=4*dotlen_ms                    # Space between letters = 7 dits
+
+        print('IDEAL TIMING:',times,'\n')
+              
+                    
     # Get speed
     def get_wpm(self):
         return self.WPM

@@ -1,7 +1,7 @@
 ################################################################################
 #
 # paddling.py - Rev. 1.0
-# Copyright (C) 2021-2 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Gui for sending practice (i.e. fun with paddles)
 #
@@ -386,6 +386,9 @@ class PADDLING_GUI():
         if len(self.stack)>100:
             self.stack.pop(0)
         self.stack_ptr=len(self.stack)-1
+
+        if self.P.NANO_ECHO:
+            self.P.keyer.txt2morse(txt)
 
     # Routine to show the main window
     def show(self):

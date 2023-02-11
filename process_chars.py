@@ -34,6 +34,7 @@ def process_chars(P):
     lock      = P.lock1
     q         = P.q
     VERBOSITY = 0
+    nano_txt  = ''
     
     while not P.Stopper.isSet():
 
@@ -113,6 +114,12 @@ def process_chars(P):
                             P.gui.txt.insert(END, txt)
                             P.gui.txt.see(END)
                             P.gui.root.update_idletasks()
+                            nano_txt += txt
+                            if '\n' in txt:
+                                print('\nNANO: ',nano_txt)
+                                #P.gui.fp_txt.write('NANO: %s\n' % (nano_txt) )
+                                #P.gui.fp_txt.flush()
+                                nano_txt = ''
                             if VERBOSITY>0:
                                 print('PROCESSS_CHARS: Nano 5')
                         except Exception as e: 
