@@ -137,7 +137,7 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSEC]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP','VTQP','BCQP']:
+            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP','VTQP','BCQP','SCQP','NCQP']:
 
                 # RST + State
                 LAB1  = 'RST'

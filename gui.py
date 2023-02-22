@@ -2309,6 +2309,11 @@ class GUI():
             # Screen capture
             self.PrtScrn()
     
+        elif key in ['b','B'] and (alt or control):
+
+            # Update bandmap spots
+            self.UpdateBandmap()
+    
         elif key=='Home' and False:
             
             # DON'T REMAP THE HOME KEY - ITS USEFUL FOR EDITing
@@ -2701,6 +2706,11 @@ class GUI():
                 self.get_hint(call)
                 if self.P.AUTOFILL:
                     self.P.KEYING.insert_hint()
+
+    # Callback to request updated list of spots on the bandmap
+    def UpdateBandmap(self):
+        print('UPDATE BANDMAP - Requesting updated spot list ...')
+        self.P.udp_server.Broadcast('SpotList:Refresh')
 
     # Callback to capture the screen 
     def PrtScrn(self):

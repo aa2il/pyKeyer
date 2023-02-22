@@ -235,7 +235,8 @@ class PARAMS:
         self.AUTO_COMPLETE = args.autocomplete or self.USE_SCP
         self.HIST          = {}
 
-        self.STATE_QPs = ['OCQP','AZQP','ILQP','MNQP','NVQP','NYQP','PAQP','SDQP','VTQP','BCQP']
+        self.STATE_QPs = ['OCQP','AZQP','ILQP','MNQP','NVQP','NYQP','PAQP',
+                          'SDQP','VTQP','BCQP','SCQP','NCQP']
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',

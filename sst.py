@@ -66,8 +66,7 @@ class SST_KEYING(DEFAULT_KEYING):
             MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
             MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'HNY [NAME] [MYNAME] [MYSTATE]'}
         else:
-            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 [LOG]'}
-            #MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73 QRZ? [LOG]'}
+            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
             MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
 
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73EE [LOG]'}

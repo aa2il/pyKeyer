@@ -30,9 +30,9 @@ def UDP_msg_handler(self,sock,msg):
 
     msgs=msg.split('\n')
     for m in msgs:
-        print('UDP MSG HANDLER: m=',m,len(m))
-
         mm=m.split(':')
+        print('UDP MSG HANDLER: m=',m,'\tmm[0]=',mm[0])
+
         if mm[0]=='Call':
         
             # Call:callsign:VFO
@@ -59,20 +59,24 @@ def UDP_msg_handler(self,sock,msg):
 
                 P.gui.OnDeckCircle.delete(0, END)
                 P.gui.OnDeckCircle.insert(0,call)
+                
+            return
 
-            elif mm[0]=='Sat':
+        elif mm[0]=='Sat':
         
-                # Sat:sat_name
-                sat=mm[1]
-                print('UDP Message Handler: Setting SAT to:',sat)
-                P.gui.set_satellite(sat)
+            # Sat:sat_name
+            sat=mm[1]
+            print('UDP Message Handler: Setting SAT to:',sat)
+            P.gui.set_satellite(sat)
+            return
     
-            elif mm[0]=='Name':
+        elif mm[0]=='Name':
         
-                # Name:Client_name
-                name=mm[1]
-                print('UDP Message Handler: Client Name=',name)
-    
-
+            # Name:Client_name
+            name=mm[1]
+            print('UDP Message Handler: Client Name=',name)
+            return
+                    
+        print('UDP MSG HANDLER: Not sure what to do with this',mm)
 
 

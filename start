@@ -98,8 +98,8 @@ if( ($CONTEST == "paddling") && ($RIG != "NONE") )then
     endif
     echo $RIG9 $RIG
     #exit
-else if( ($CONTEST == "paddling") && ($RIG == "NONE") )then
-    pkill flrig
+else if( ($CONTEST == "paddling") && ($RIG == "NONE9") )then
+    #pkill flrig
     set RIG9=`$FIND_RIG`
     if( $RIG9 != "None" )then
         set RIG="DIRECT"

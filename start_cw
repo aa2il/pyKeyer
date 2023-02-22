@@ -190,7 +190,8 @@ if( 0 )then
     set START_BANDMAP = 0
 endif
 
-set BM_OPTS = $UDP                        # Enable UDP protocol to keyer
+#set BM_OPTS = $UDP                        # Enable UDP protocol to keyer
+set BM_OPTS = "$UDP -show_year"           # Show DCXXs needed for this year
 #set BM_OPTS = "$UDP -buttons"            # Enable band switch buttons
 
 #########################################################################
@@ -256,6 +257,13 @@ else if( $CONTEST == "cqww" )then
     # Hints and log hist
     set WPM=28
     set HINTS="-use_log_hist -autofill"
+    set BM_OPTS = "$BM_OPTS -contest -dx -cwops"
+
+# Setting for ARRL DX
+else if( $CONTEST == "arrl_dx" )then
+    # Hints and log hist
+    set WPM=28
+    set HINTS="-use_log_hist -nrows 2"
     set BM_OPTS = "$BM_OPTS -contest -dx -cwops"
 
 # Settings for field day
@@ -325,7 +333,7 @@ else
     #echo Unknown Contest:- $CONTEST-
     #exit
     set WPM=20
-    set HINTS="-use_log_hist -split"
+    set HINTS="-use_log_hist -split -cwops"
     #set HINTS=""
 
 endif
