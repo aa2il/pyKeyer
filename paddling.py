@@ -61,6 +61,7 @@ class PADDLING_GUI():
         self.last_focus=None
         self.WIN_NAME='PADDLING WINDOW'
         self.OnTop=False
+        self.P.NANO_ECHO = True
 
         # Open main or pop-up window depending on if "root" is given
         if root:

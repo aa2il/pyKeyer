@@ -21,7 +21,7 @@
 ################################################################################
 
 import argparse
-from rig_io.ft_tables import CONNECTIONS,RIGS,PRECS
+from rig_io.ft_tables import CONNECTIONS,RIGS,PRECS,STATES
 from settings import *
 import os
 import platform
@@ -63,7 +63,7 @@ class PARAMS:
         arg_proc.add_argument('-cqp', action='store_true',
                               help='California QP')
         arg_proc.add_argument('-state', help='State QP',
-                              type=str,default=None)
+                              type=str,default=None,nargs='*')
         arg_proc.add_argument('-fd', action='store_true',
                               help='ARRL Field Day')
         arg_proc.add_argument('-vhf', action='store_true',
@@ -84,6 +84,8 @@ class PARAMS:
                               help='10-10 CW')
         arg_proc.add_argument('-wag', action='store_true',
                               help='Work All Germany')
+        arg_proc.add_argument('-beru', action='store_true',
+                              help='RSGB Commonwealth')
         arg_proc.add_argument('-rac', action='store_true',
                               help='RAC Winter QP')
         arg_proc.add_argument('-ragchew', action='store_true',
@@ -235,14 +237,21 @@ class PARAMS:
         self.AUTO_COMPLETE = args.autocomplete or self.USE_SCP
         self.HIST          = {}
 
-        self.STATE_QPs = ['OCQP','AZQP','ILQP','MNQP','NVQP','NYQP','PAQP',
-                          'SDQP','VTQP','BCQP','SCQP','NCQP']
+        self.STATE_LIST=args.state
+        #self.STATE_QPs = ['OCQP','AZQP','IDQP','ILQP','MNQP','NVQP','NYQP','OKQP','PAQP',
+        #                  'SDQP','VTQP','WIQP','BCQP','SCQP','NCQP']
+        self.STATE_QPs = ['OCQP','BCQP']
+        for state in STATES:
+            self.STATE_QPs.append(state+'QP')
+            
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
-                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC',
+                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC', 'BERU',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
-                           'STEW PERRY','SATELLITES','DX-QSO'] + \
-                           self.STATE_QPs
+                           'STEW PERRY','SATELLITES','DX-QSO']
+        if args.state!=None:
+            for state in args.state:
+                self.CONTEST_LIST.append(state+'QP')
 
         self.SHOW_TEXT_BOX2=args.split
         MAX_AGE_HOURS = args.max_age
@@ -262,6 +271,9 @@ class PARAMS:
             MAX_AGE_HOURS=48
         elif args.wag:
             self.contest_name='WAG'
+            MAX_AGE_HOURS=48
+        elif args.beru:
+            self.contest_name='BERU'
             MAX_AGE_HOURS=48
         elif args.rac:
             self.contest_name='RAC'
@@ -290,7 +302,7 @@ class PARAMS:
             self.contest_name='CQP'
             MAX_AGE_HOURS=30
         elif args.state!=None:
-            self.contest_name=args.state.upper()+'QP'
+            self.contest_name=args.state[0].upper()+'QP'
             MAX_AGE_HOURS=48
         elif args.cwopen:
             self.contest_name='CW Open'

@@ -2,7 +2,7 @@
 ################################################################################
 #
 # ProcessChars.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Executive thread to process individual characters.
 #
@@ -98,16 +98,17 @@ def process_chars(P):
                 
                 if VERBOSITY>0:
                     print('PROCESSS_CHARS: Nano 1')
-                
-                if P.ser and P.ser.in_waiting>0:
-                    if VERBOSITY>0:
-                        print('PROCESSS_CHARS: Nano 2A')
-                    txt=nano_read(P.ser)
-                    if VERBOSITY>0:
-                        print('PROCESSS_CHARS: Nano 3',P.NANO_ECHO)
-                    if P.NANO_ECHO:
-                        # Put it in the big text box also
-                        try:
+
+                # This has thrown an error in the past
+                try:
+                    if P.ser and P.ser.in_waiting>0:
+                        if VERBOSITY>0:
+                            print('PROCESSS_CHARS: Nano 2A')
+                        txt=nano_read(P.ser)
+                        if VERBOSITY>0:
+                            print('PROCESSS_CHARS: Nano 3',P.NANO_ECHO)
+                        if P.NANO_ECHO:
+                            # Put it in the big text box also
                             if VERBOSITY>0:
                                 print('PROCESSS_CHARS: Nano 4')
                             #P.gui.txt.insert(END, txt+'\n')
@@ -122,9 +123,11 @@ def process_chars(P):
                                 nano_txt = ''
                             if VERBOSITY>0:
                                 print('PROCESSS_CHARS: Nano 5')
-                        except Exception as e: 
-                            print( str(e) )
-                else:
+                    else:
+                        time.sleep(0.1)
+                        
+                except Exception as e: 
+                    print( str(e) )
                     time.sleep(0.1)
                     
                 if VERBOSITY>0:

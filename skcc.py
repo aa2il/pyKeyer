@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # skcc.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for skcc sprints.
 # Note - we only use this logging since we must use straight ley for tx!!!
@@ -40,6 +40,9 @@ class SKCC_KEYING(DEFAULT_KEYING):
 
         P.CONTEST_ID='SKCC'
         self.number_key='skccnr'
+
+        P.gui.info.delete(0, END)
+        P.gui.insert(0,str(P.SETTINGS['MY_SKCC']))
 
         
     # Routine to set macros for this contest

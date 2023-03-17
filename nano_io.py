@@ -49,7 +49,7 @@ import sys
 import serial
 from rig_io.ft_tables import SERIAL_NANO_IO
 import time
-from utilities import find_serial_device
+from utilities import find_serial_device,list_all_serial_devices
 
 ############################################################################################
 
@@ -97,11 +97,10 @@ def nano_tune(ser,tune):
 def open_nano(baud=NANO_BAUD):
 
     # Open port
-    device=find_serial_device('nanoIO',0,0)
+    #list_all_serial_devices()
+    device=find_serial_device('nanoIO',0,1)
+    #device=find_serial_device('nanoIO32',0,1)
     ser = serial.Serial(device,baud,timeout=0.1,dsrdtr=0,rtscts=0)
-    #ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,dsrdtr=0,rtscts=0)
-    #ser = serial.Serial(SERIAL_NANO_IO,baud,timeout=0.1,\
-    #                    dsrdtr=True,rtscts=True)
  
     # Wait for nano to wake up
     print('Waiting for Nano IO to start-up ...')

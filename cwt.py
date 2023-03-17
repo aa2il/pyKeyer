@@ -247,8 +247,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         gui.boxes.append(gui.exch)
         gui.boxes.append(gui.hint)
         gui.boxes.append(gui.scp)
-        
-        
+
     # Gather together logging info for this contest
     def logging(self):
 

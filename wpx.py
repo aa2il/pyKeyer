@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # wpx.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for CQ World Prefix contest
 #
@@ -151,11 +151,11 @@ class WPX_KEYING(DEFAULT_KEYING):
         col+=cspan
         cspan=2
         gui.serial_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-        gui.serial.grid(column=col,columnspan=cspan)
+        gui.serial_box.grid(column=col,columnspan=cspan)
         
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstin)
-        gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.serial_box)
             
         gui.counter_lab.grid()
         gui.counter.grid()
@@ -185,9 +185,6 @@ class WPX_KEYING(DEFAULT_KEYING):
         return exch,valid,exch_out,qso2
     
     def dupe(self,a):
-        #gui=self.P.gui
-        #gui.serial.delete(0,END)
-        #gui.serial.insert(0,a[0])
         return
 
     # Hint insertion

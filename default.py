@@ -47,6 +47,7 @@ class DEFAULT_KEYING():
         self.contest_duration = None
         self.LAB1=None
         self.LAB2=None
+        self.LAB3=None
         self.key1=None
         self.key2=None
         self.NAME=''
@@ -86,15 +87,18 @@ class DEFAULT_KEYING():
             MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
             MACROS[5]     = {'Label' : 'Reply'     , 'Text' : 'TU [RST] [MYSTATE] '}
-            MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[RST] [MYSTATE] [MYSTATE] '}
+            #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[RST] [MYSTATE] [MYSTATE] '}
+            MACROS[5+12]  = {'Label' : 'S&P DX1'    , 'Text' : 'R FB [NAME] GUD TO MEET U '}
             MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
-            MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+            #MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+            MACROS[6+12]  = {'Label' : 'S&P DX2'    , 'Text' : 'UR [RST] [RST] IN [MYSTATE] [MYSTATE] '}
             MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
             MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
             
             MACROS[8]     = {'Label' : 'OP'      , 'Text' : 'OP [MYNAME] [MYNAME] '}
             MACROS[8+12]  = {'Label' : '73'      , 'Text' : '73 '}
-            MACROS[9]     = {'Label' : 'RST  '   , 'Text' : '[RST]'}
+            MACROS[9]     = {'Label' : 'RST  '   , 'Text' : '[RST] [RST] '}
+            MACROS[9+12]  = {'Label' : '73 DX'   , 'Text' : 'R [NAME] TNX FER FB QSO ES GUD DX 73 73 GB SK EE '}
             MACROS[10]    = {'Label' : 'QTH'     , 'Text' : 'QTH [MYSTATE] [MYSTATE] '}
             MACROS[10+12] = {'Label' : 'Test '   , 'Text' : 'VVV [+10]VVV [-10]VVV'}
             MACROS[11]    = {'Label' : 'BK'      , 'Text' : 'BK '}
@@ -103,8 +107,10 @@ class DEFAULT_KEYING():
         else:
 
             CONTEST=self.contest_name 
+            LAB2=None
+            EXCH2=''
             LAB3=None
-            if self.contest_name in ['OCQP','WAG','RAC']:
+            if self.contest_name in ['OCQP','WAG','RAC','BERU']:
                 
                 # RST + Serial No.
                 LAB1  = 'RST'
@@ -137,7 +143,7 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSEC]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP','VTQP','BCQP','SCQP','NCQP']:
+            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP','OKQP','VTQP','BCQP','SCQP','NCQP']:
 
                 # RST + State
                 LAB1  = 'RST'
@@ -146,7 +152,18 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['PAQP']:
+            elif self.contest_name in ['IDQP','WIQP']:
+
+                # State only - but they seem to send 5NN also so go with it
+                #LAB1  = 'QTH'
+                #EXCH1 = '[MYSTATE]'
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
+            elif self.contest_name in ['PAQP','VAQP']:
                 
                 # Serial No. + Section
                 LAB1  = 'NR'
@@ -184,9 +201,15 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name
 
+            print('LAB2=',LAB2,'\tEXCH2=',EXCH2)
             self.LAB1=LAB1
-            self.LAB2=LAB2
+            if LAB2!=None:
+                self.LAB2=LAB2
+            else:
+                self.LAB2=LAB1
+                LAB2=LAB1
             self.LAB3=LAB3
+            print('self.LAB2=',self.LAB2,'\tEXCH2=',EXCH2)
 
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] '}
             #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
@@ -207,10 +230,10 @@ class DEFAULT_KEYING():
             MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
             MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
-            MACROS[8]     = {'Label' : 'My '+LAB1+' 2x' , 'Text' : '[-2]'+EXCH1+' '+EXCH1+' [+2]'}
-            MACROS[9]     = {'Label' : 'My '+LAB2+' 2x' , 'Text' : '[-2]'+EXCH2+' '+EXCH2+' [+2]'}
-            MACROS[10]    = {'Label' : LAB1+'?'         , 'Text' : LAB1+'? '}
-            MACROS[11]    = {'Label' : LAB2+'? '        , 'Text' : LAB2+'? '}
+            MACROS[8]     = {'Label' : 'My '+self.LAB1+' 2x' , 'Text' : '[-2]'+EXCH1+' '+EXCH1+' [+2]'}
+            MACROS[9]     = {'Label' : 'My '+self.LAB2+' 2x' , 'Text' : '[-2]'+EXCH2+' '+EXCH2+' [+2]'}
+            MACROS[10]    = {'Label' : self.LAB1+'?'         , 'Text' : self.LAB1+'? '}
+            MACROS[11]    = {'Label' : self.LAB2+'? '        , 'Text' : self.LAB2+'? '}
 
         # Put up QRL? macro also
         MACROS[11+12] = {'Label' : 'QRL? '          , 'Text' : 'QRL? '}
@@ -306,7 +329,7 @@ class DEFAULT_KEYING():
             gui.btns1[2].configure(background='green',highlightbackground='green')
             gui.call.focus_set()
         elif arg==1:
-            gui.serial.focus_set()
+            gui.serial_box.focus_set()
         elif arg==4:
             gui.btns1[5].configure(background='red',highlightbackground= 'red')
             gui.btns1[7].configure(background='red',highlightbackground= 'red')
@@ -362,8 +385,8 @@ class DEFAULT_KEYING():
                 gui.boxes.append(gui.exch)
             else:
                 gui.serial_lab.grid(column=col,columnspan=cspan)
-                gui.serial.grid(column=col,columnspan=cspan)
-                gui.boxes.append(gui.serial)
+                gui.serial_box.grid(column=col,columnspan=cspan)
+                gui.boxes.append(gui.serial_box)
             gui.counter_lab.grid()
             gui.counter.grid()
             
@@ -426,7 +449,7 @@ class DEFAULT_KEYING():
         if gui.rstin in gui.boxes:
             exch_in  += gui.get_rst_in()   + ','
             exch_out += gui.get_rst_out()  + ','
-        if gui.serial in gui.boxes:
+        if gui.serial_box in gui.boxes:
             exch_in  += gui.get_serial()   + ','
             exch_out += str(cntr)          + ','
         if gui.exch in gui.boxes:
@@ -449,8 +472,6 @@ class DEFAULT_KEYING():
 
         gui=self.P.gui
 
-        #gui.serial.delete(0,END)
-        #gui.serial.insert(0,a[0])
         if len(a)>=2:
             gui.name.delete(0,END)
             gui.name.insert(0,a[1])
@@ -551,9 +572,10 @@ class DEFAULT_KEYING():
                 else:    # if (P.OP_STATE & 32)==0 or event.widget!=gui.call
                     #print('idx=',idx)
                     #print('macros=',self.macros)
+
                     n=self.macros[idx]
                     if n!=None:
-                        gui.Send_Macro(n)
+                        gui.Send_Macro(n,event.state)
 
         # Do any extra stuff that might be special to this contest
         if self.aux_cb:

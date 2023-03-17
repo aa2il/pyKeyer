@@ -148,14 +148,14 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         col+=cspan
         cspan=2
         gui.serial_lab.grid(column=col,columnspan=cspan)
-        gui.serial.grid(column=col,columnspan=cspan)
+        gui.serial_box.grid(column=col,columnspan=cspan)
         col+=cspan
         cspan=2
         gui.name_lab.grid(columnspan=cspan,column=col,sticky=E+W)
         gui.name.grid(column=col,columnspan=cspan)
         
         gui.boxes=[gui.call]
-        gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.serial_box)
         gui.boxes.append(gui.name)
         gui.counter_lab.grid()
         gui.counter.grid()
@@ -190,10 +190,6 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
 
         gui=self.P.gui
 
-        #return
-        #gui.serial.delete(0,END)
-        #gui.serial.insert(0,a[0])
-        
         if len(a)>=2:
             gui.name.delete(0,END)
             gui.name.insert(0,a[1])

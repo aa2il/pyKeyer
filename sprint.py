@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # sprint.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for Sprints
 #
@@ -227,14 +227,14 @@ class SPRINT_KEYING():
         gui.ndigits=1
 
         gui.serial_lab.grid()
-        gui.serial.grid()
+        gui.serial_box.grid()
         gui.name_lab.grid(columnspan=1,column=5,sticky=E+W)
         gui.name.grid(column=5,columnspan=1)
         gui.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
         gui.qth.grid(column=6,columnspan=1)
         
         gui.boxes=[gui.call]
-        gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.serial_box)
         gui.boxes.append(gui.qth)
         gui.counter_lab.grid()
         gui.counter.grid()

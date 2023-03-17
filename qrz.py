@@ -1,7 +1,7 @@
 #########################################################################################
 #
 # qrz.py - Rev. 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Gui to display what we know about a call.
 #
@@ -25,6 +25,7 @@ import os
 if sys.version_info[0]==3:
     from tkinter import *
     import tkinter.font
+    import tkinter.ttk as ttk
 else:
     from Tkinter import *
     import tkFont

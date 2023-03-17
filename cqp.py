@@ -159,14 +159,14 @@ class CQP_KEYING(DEFAULT_KEYING):
         col+=cspan
         cspan=2
         gui.serial_lab.grid(column=col,columnspan=cspan)
-        gui.serial.grid(column=col,columnspan=cspan)
+        gui.serial_box.grid(column=col,columnspan=cspan)
         col+=cspan
         cspan=2
         gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
         gui.qth.grid(column=col,columnspan=cspan)
         
         gui.boxes=[gui.call]
-        gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.serial_box)
         gui.boxes.append(gui.qth)
         gui.counter_lab.grid()
         gui.counter.grid()
@@ -201,8 +201,6 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         gui=self.P.gui
 
-        #gui.serial.delete(0,END)
-        #gui.serial.insert(0,a[0])
         if len(a)>=2:
             gui.qth.delete(0,END)
             gui.qth.insert(0,a[1])

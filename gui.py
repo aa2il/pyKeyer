@@ -67,7 +67,7 @@ from ragchew import *
 from dx_qso import *
 from qrz import *
 from utilities import cut_numbers,freq2band
-import platform
+#import platform
 import pyautogui
 from utilities import find_resource_file
 
@@ -316,9 +316,9 @@ class GUI():
 
         self.serial_lab = Label(self.root, text="Serial",font=self.font1)
         self.serial_lab.grid(row=row,columnspan=1,column=4,sticky=E+W)
-        self.serial = Entry(self.root,font=self.font2,selectbackground='lightgreen')
-        self.serial.grid(row=row+1,rowspan=2,column=4,columnspan=1,sticky=E+W)
-        self.serial.bind("<Key>", self.key_press )
+        self.serial_box = Entry(self.root,font=self.font2,selectbackground='lightgreen')
+        self.serial_box.grid(row=row+1,rowspan=2,column=4,columnspan=1,sticky=E+W)
+        self.serial_box.bind("<Key>", self.key_press )
 
         self.prec_lab = Label(self.root, text="Prec",font=self.font1)
         self.prec_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
@@ -1029,8 +1029,26 @@ class GUI():
         return txt
     
     # Routine to substitute various keyer commands that change quickly in macro text 
-    def Patch_Macro2(self,txt):
-    
+    def Patch_Macro2(self,txt,state=0):
+
+        P=self.P
+
+        # Check if any shift keys were pressed
+        if state:
+            #shift     = ((state & 0x0001) != 0)
+            control   = (state & 0x0004) != 0
+            if P.PLATFORM=='Linux':
+                alt       = (state & 0x0008) != 0 
+            elif P.PLATFORM=='Windows':
+                alt       = (state & 0x20000) != 0
+
+            # Yes - shorten response by eliminating my call
+            if alt or control:
+                MY_CALL = P.SETTINGS['MY_CALL']
+                if MY_CALL in txt:
+                    txt = txt.replace(MY_CALL,'')
+
+        # Greeting might depend on local time of day
         if '[GDAY]' in txt:
             hour = datetime.now().hour
             if hour<12:
@@ -1040,28 +1058,43 @@ class GUI():
             else:
                 txt = txt.replace('[GDAY]','GE' )
 
+        # Check if call has changed - if so, repeat it
         call = self.get_call().upper()
-        call2 = self.last_call
-        #print '---- CALL:',call,call2,call==call2
-        if call==call2:
-            txt = txt.replace('[CALL_CHANGED]','')
-        else:
-            txt = txt.replace('[CALL_CHANGED]',call)
+        if '[CALL_CHANGED]' in txt:
+            call2 = self.last_call
+            #print '---- CALL:',call,call2,call==call2
+            if call==call2:
+                txt = txt.replace('[CALL_CHANGED]','')
+            else:
+                stn1 = Station(call)
+                prefix1=stn1.call_prefix+stn1.call_number
+                print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
+                stn2 = Station(call2)
+                prefix2=stn2.call_prefix+stn2.call_number
+                print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
+                call3=call
+                if prefix1==prefix2:
+                    call3=stn1.call_suffix
+                elif stn1.call_suffix==stn2.call_suffix:
+                    call3=prefix1
+                txt = txt.replace('[CALL_CHANGED]',call3)
 
+        # Fill in his call ...
         if '[CALL]' in txt:
             txt = txt.replace('[CALL]',call)
             self.last_call=call
-        
+
+        # ... and his name
         his_name=self.get_name().replace('?','')
         if '?' in his_name:
             his_name=' '
         txt = txt.replace('[NAME]',his_name )
         txt = txt.replace('[RST]', self.get_rst_out() )
 
+        # Take care of exchange
         if '[EXCH]' in txt:
             txt = txt.replace('[EXCH]', '' )
             self.exch_out = txt
-
                 
         return txt
 
@@ -1080,7 +1113,7 @@ class GUI():
         self.fp_txt.flush()
     
     # Callback to send a pre-defined macro
-    def Send_Macro(self,arg):
+    def Send_Macro(self,arg,state=0):
         #print 'arg=',arg,self.macros.has_key(arg)
         #print self.macros
         if arg not in self.macros:
@@ -1113,7 +1146,7 @@ class GUI():
 
         # Highlight appropriate buttons for running or s&p
         self.P.KEYING.highlight(self,arg)
-        print("\nSend_Macro:",arg,':',txt)
+        print("\nSend_Macro:",arg,':\ttxt=',txt,'\tstate=',state)
         if '[SERIAL]' in txt:
             cntr = self.sock.get_serial_out()
             if not cntr or cntr=='':
@@ -1136,12 +1169,14 @@ class GUI():
                 print( str(e) )
 
         # Send cw text 
-        txt = self.Patch_Macro2(txt)
+        txt = self.Patch_Macro2(txt,state)
+        print('\nSend_Macro: txt=',txt)
         self.Send_CW_Text(txt)
         
 
     # Routine to hide all of the input boxes
     def hide_all(self):
+        print('HIDE ALL ...',self.serial_box)
         self.cat_lab.grid_remove()
         self.cat.grid_remove()
         self.rstin_lab.grid_remove()
@@ -1154,8 +1189,11 @@ class GUI():
         self.name.grid_remove()
         self.qth_lab.grid_remove()
         self.qth.grid_remove()
+        
         self.serial_lab.grid_remove()
-        self.serial.grid_remove()
+        self.serial_box.grid_remove()
+        self.counter.grid_remove()
+        
         self.prec_lab.grid_remove()
         self.prec.grid_remove()
         self.call2_lab.grid_remove()
@@ -1397,7 +1435,7 @@ class GUI():
 
     # Read serial from entry box
     def get_serial(self):
-        return self.serial.get().upper()
+        return self.serial_box.get().upper()
 
     # Read prec from entry box
     def get_prec(self):
@@ -1743,7 +1781,7 @@ class GUI():
             self.notes.delete(0,END)
             self.hint.delete(0,END)
             self.scp.delete(0,END)
-            self.serial.delete(0,END)
+            self.serial_box.delete(0,END)
             self.prec.delete(0,END)
             self.call2.delete(0,END)
             self.check.delete(0,END)
@@ -2000,7 +2038,7 @@ class GUI():
 
                 """
                 elif self.P.SPRINT:
-                    #self.serial.delete(0,END)
+                    #self.serial_box.delete(0,END)
                     if len(a)>=2:
                         self.name.delete(0,END)
                         self.name.insert(0,a[1])
@@ -2018,18 +2056,13 @@ class GUI():
             # It wipes out valid exchange if we change call - ugh!
             # The flag self.prefill seems to be a problem - need to work on this?
             if (self.prev_call != call and False) or (self.prefill and False):
-            #if (self.prev_call != call and True) or self.prefill:
                 self.name.delete(0,END)
                 self.qth.delete(0,END)
                 self.cat.delete(0,END)
-                self.serial.delete(0,END)
+                self.serial_box.delete(0,END)
                 self.hint.delete(0, END)
                 self.exch.delete(0,END)
 
-            # Kludge - should be taken care of above?
-            #if (self.prev_call != call and True) or self.prefill:
-            #    self.hint.delete(0, END)
-                    
             # Check fldigi logger
             if self.sock.connection=='FLDIGI' and not self.P.PRACTICE_MODE and False:
                 fields  = self.sock.get_log_fields()
@@ -2211,6 +2244,7 @@ class GUI():
     # Callback when a key is pressed
     def key_press(self,event,id=None):
 
+        P = self.P
         DF=100
         key   = event.keysym
         num   = event.keysym_num
@@ -2224,11 +2258,11 @@ class GUI():
 
         # Well this is screwy - there seems to be a difference between
         # linux and windoz
-        if platform.system()=='Linux':
+        if P.PLATFORM=='Linux':
             #alt       = (state & 0x0088) != 0     # Both left and right ALTs
             alt       = (state & 0x0008) != 0 
             #num_lock  = state & 0x0010
-        elif platform.system()=='Windows':
+        elif P.PLATFORM=='Windows':
             alt       = (state & 0x20000) != 0 
             #num_lock  = state & 0x008
             
@@ -2355,7 +2389,7 @@ class GUI():
                 self.name.delete(0, END)
                 self.qth.delete(0, END)
                 self.qth.configure(background=self.default_color)
-                self.serial.delete(0, END)
+                self.serial_box.delete(0, END)
                 self.prec.delete(0, END)
                 self.hint.delete(0, END)
                 self.check.delete(0, END)
@@ -2588,8 +2622,9 @@ class GUI():
         elif event.widget==self.counter:
 
             print('^^^^^^^^^^^ Counter window',self.P.MY_CNTR)
+            self.update_counter()
             
-        elif event.widget==self.serial:
+        elif event.widget==self.serial_box:
 
             serial=self.get_serial().upper()
             self.sock.set_log_fields({'Serial_out':serial})
@@ -2617,6 +2652,10 @@ class GUI():
         self.P.PRACTICE_MODE = not self.P.PRACTICE_MODE
         P.practice.enable = P.practice.enable and self.P.PRACTICE_MODE
 
+    # Callback to toggle echoing of nano IO text
+    def Toggle_Nano_Echo(self):
+        self.P.NANO_ECHO = not self.P.NANO_ECHO 
+        
     # Callback to toggle auto filling of hints info
     def AutoFillCB(self):
         self.P.AUTOFILL = not self.P.AUTOFILL
@@ -2831,6 +2870,14 @@ class GUI():
             underline=0,
             variable=self.LockSpeed,
             command=self.LockSpeedCB
+        )
+        
+        self.NanoEcho = BooleanVar(value=self.P.NANO_ECHO)
+        Menu1.add_checkbutton(
+            label="Nano Echo",
+            underline=0,
+            variable=self.NanoEcho,
+            command=self.Toggle_Nano_Echo
         )
         
         self.SplitTxt = BooleanVar(value=self.P.SHOW_TEXT_BOX2)

@@ -175,7 +175,7 @@ class MST_KEYING(DEFAULT_KEYING):
         col+=cspan
         cspan=2
         gui.serial_lab.grid(column=col,columnspan=cspan)
-        gui.serial.grid(column=col,columnspan=cspan)
+        gui.serial_box.grid(column=col,columnspan=cspan)
 
         col+=cspan
         cspan=2
@@ -196,7 +196,7 @@ class MST_KEYING(DEFAULT_KEYING):
             
         gui.boxes=[gui.call]
         gui.boxes.append(gui.name)
-        gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.serial_box)
         gui.boxes.append(gui.hint)
         gui.boxes.append(gui.scp)
         

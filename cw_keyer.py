@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cw_keyer.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Routines for translating keyboard strokes into CW chars.  The rig can be keyed
 # via the DTR line or, more reliably, via a nanoIO ardunino-based interface.
@@ -263,8 +263,8 @@ class Keyer():
 
         for char in msg.upper():
             i=ord(char)
-            cw=morse[i]
-            if i>32:
+            if i>32 and i<128:
+                cw=morse[i]
                 for el in cw:
                     times.append(tdown)
                     if( el=='.' ):

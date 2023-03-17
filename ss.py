@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # arrl_ss.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ARRL CW Sweepstakes
 #
@@ -187,7 +187,7 @@ class SS_KEYING(DEFAULT_KEYING):
         col+=cspan
         cspan=1
         gui.serial_lab.grid(column=col,columnspan=cspan)
-        gui.serial.grid(column=col,columnspan=cspan)
+        gui.serial_box.grid(column=col,columnspan=cspan)
         col+=cspan
         cspan=1
         gui.prec_lab.grid(column=col,columnspan=cspan)
@@ -206,7 +206,7 @@ class SS_KEYING(DEFAULT_KEYING):
         gui.qth.grid(column=col,columnspan=cspan)
 
         gui.boxes=[gui.call]
-        gui.boxes.append(gui.serial)
+        gui.boxes.append(gui.serial_box)
         gui.boxes.append(gui.prec)
         gui.boxes.append(gui.call2)
         gui.boxes.append(gui.check)
@@ -251,14 +251,9 @@ class SS_KEYING(DEFAULT_KEYING):
 
         gui=self.P.gui
 
-        #if match2:
-        #gui.serial.delete(0,END)
-        #gui.serial.insert(0,a[0])
-        
         if len(a)>=2:
             gui.prec.delete(0,END)
             if not gui.P.PRACTICE_MODE:
-                #gui.prec.insert(0,a[1])
                 if len(a)>=3:
                     gui.call2.delete(0,END)
                     gui.call2.insert(0,a[2])

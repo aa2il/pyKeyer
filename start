@@ -49,7 +49,7 @@ set SCP=""
 set SCP="-scp"
 
 set CONTEST="paddling"
-#set CONTEST="cwt"
+set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="mst"
 

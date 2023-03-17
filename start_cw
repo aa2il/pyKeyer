@@ -78,7 +78,7 @@ set CONTEST=""
 #set CONTEST="rac"
 #set CONTEST="stew"
 
-set STATE="MN -max_age 24"
+set STATE="OK ID WI -max_age 24"
 
 # Various options for pyKeyer
 set CAPTURE=""
@@ -168,12 +168,12 @@ set RIG_TYPE2="NONE"
 
 # Determine primary rig type
 echo RIG_TYPE1a=-$RIG_TYPE1-$#RIG_TYPE1-
-if( $RIG_TYPE1 == "" )then
+if( $RIG_TYPE1 == "" || $RIG_TYPE1 == "None" )then
     sleep 1
     set RIG_TYPE1=`$FIND_RIG`
     echo RIG_TYPE1b=-$RIG_TYPE1-$#RIG_TYPE1-
 endif
-if( $RIG_TYPE1 == "" )then
+if( $RIG_TYPE1 == "" || $RIG_TYPE1 == "None" )then
     sleep 1
     set RIG_TYPE1=`$FIND_RIG`
     echo RIG_TYPE1c=-$RIG_TYPE1-
@@ -216,8 +216,7 @@ else if( $CONTEST == "cwopen" )then
 
 # Settings for Slow Speed Mini Test
 else if( $CONTEST == "sst" )then
-    set HINTS="-use_log_hist"
-    set HINTS="-use_log_hist -autofill -nrows 1"
+    set HINTS="-use_log_hist -autofill -nrows 1 -lock"
     set WPM=20
     set BM_OPTS = "$BM_OPTS -contest -hours 1 -cwops"
 
@@ -230,8 +229,8 @@ else if( $CONTEST == "mst" )then
 
 # Settings for Ragchews
 else if( $CONTEST == "ragchew" )then
-    set HINTS="-use_log_hist"
     set HINTS="-use_log_hist -autofill -nrows 1"
+    set BM_OPTS = "$BM_OPTS -cwops"
     set WPM=20
 
 # Settings for SKCC sprint - FOR LOGGING ONLY!!
@@ -459,9 +458,9 @@ set LOOPBACK="-follow_freq"
 set LOOPBACK="-follow_freq -bandmap"
 #set LOOPBACK="-follow_freq -transpose -bandmap"
 if( $SO2V )then
-    set SDR_OPTS="-af_bw .5 $LOOPBACK -so2v $UDP"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK -so2v $UDP -vol 10"
 else
-    set SDR_OPTS="-af_bw .5 $LOOPBACK -mute $UDP"
+    set SDR_OPTS="-af_bw .5 $LOOPBACK -mute $UDP -vol 10"
 endif
 if( $START_SDR )then
     echo Starting SDR ...
