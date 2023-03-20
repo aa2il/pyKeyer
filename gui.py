@@ -2654,6 +2654,7 @@ class GUI():
 
     # Callback to toggle echoing of nano IO text
     def Toggle_Nano_Echo(self):
+        print('TOGGLE NANO ECHO:',self.P.NANO_ECHO)
         self.P.NANO_ECHO = not self.P.NANO_ECHO 
         
     # Callback to toggle auto filling of hints info

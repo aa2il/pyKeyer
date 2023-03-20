@@ -163,13 +163,22 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['PAQP','VAQP']:
+            elif self.contest_name in ['PAQP']:
                 
                 # Serial No. + Section
                 LAB1  = 'NR'
                 EXCH1 = '[SERIAL]'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
+            elif self.contest_name in ['VAQP']:
+                
+                # Serial No. + Section
+                LAB1  = 'NR'
+                EXCH1 = '[SERIAL]'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['MNQP']:
@@ -231,6 +240,7 @@ class DEFAULT_KEYING():
             MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
             MACROS[8]     = {'Label' : 'My '+self.LAB1+' 2x' , 'Text' : '[-2]'+EXCH1+' '+EXCH1+' [+2]'}
+            MACROS[8+12]  = {'Label' : 'My Exch 2x'          , 'Text' : '[-2]'+EXCH1+' '+EXCH2+' '+EXCH1+' '+EXCH2+' [+2]'}
             MACROS[9]     = {'Label' : 'My '+self.LAB2+' 2x' , 'Text' : '[-2]'+EXCH2+' '+EXCH2+' [+2]'}
             MACROS[10]    = {'Label' : self.LAB1+'?'         , 'Text' : self.LAB1+'? '}
             MACROS[11]    = {'Label' : self.LAB2+'? '        , 'Text' : self.LAB2+'? '}
@@ -352,7 +362,7 @@ class DEFAULT_KEYING():
             gui.contest=False
         else:
             gui.contest=True
-        gui.ndigits=3
+        gui.ndigits=2
         gui.hide_all()
         self.macros=[1,None,2]
 

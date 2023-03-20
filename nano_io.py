@@ -78,7 +78,7 @@ def nano_write(ser,txt):
             print('WAITING ....')
             while ser.out_waiting>0:
                 time.sleep(1)
-        cnt=ser.write(bytes(txt, 'utf-8'))
+        cnt=ser.write(bytes(txt,'utf-8'))
 
 # Key down/key up for tuning
 # This isn't working - need to explore when updating nanoIO code
@@ -91,7 +91,7 @@ def nano_tune(ser,tune):
         txt=']'
     print('NANO_TUNE:',txt)
     if ser:
-        ser.write(bytes(txt, 'utf-8'))
+        ser.write(bytes(txt,'utf-8'))
 
 # Open up comms to nano IO
 def open_nano(baud=NANO_BAUD):
@@ -108,11 +108,36 @@ def open_nano(baud=NANO_BAUD):
     while ser.in_waiting==0 and ntries<100:
         ntries += 1
         time.sleep(.1)
-    nano_read(ser)
 
     #nano_write(ser,"Test")
     #sys.exit(0)
+    
+    # Make sure its in CW & Iambic-A mode
+    nano_command(ser,'C')
+    nano_command(ser,'A')
+
+    # Show settings
+    # nano_command(ser,'~')
+    nano_command(ser,'?')
+
+    # Let's see what we've got
+    if True:
+        time.sleep(2)
+        txt=nano_read(ser)
+        print('OPEN NANO:',txt,'\n')
+
     return ser
+
+# Send a command to the nano 
+def nano_command(ser,txt):
+
+    txt2='~'+txt+'\n'
+    try:
+        nano_write(ser,txt2)
+    except Exception as e: 
+        print('NANO COMMAND: Problem with write - giving up')
+        print( str(e) )
+
 
 # Command nano to change WPM
 def nano_set_wpm(ser,wpm,idev=1):
@@ -125,7 +150,7 @@ def nano_set_wpm(ser,wpm,idev=1):
         except Exception as e: 
             print('NANO SET WPM: Problem with write - giving up')
             print( str(e) )
-            
+        
     if idev==2 or idev==3:
         # Set wpm for the paddles
         txt='~U'+str(wpm).zfill(3)+'u'
