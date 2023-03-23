@@ -2356,7 +2356,7 @@ class GUI():
             #if key=='Home' or (key=='r' and (alt or control)):
             self.P.KEYING.reverse_call_lookup()
 
-        elif (key=='Delete' and True) or (key in ['w','W'] and (alt or control)):
+        elif (key=='Delete' and False) or (key in ['w','W'] and (alt or control)):
 
             # Erase entire entry box
             print('DELETE - CLEAR BOX ...')

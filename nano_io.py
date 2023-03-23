@@ -131,9 +131,8 @@ def open_nano(baud=NANO_BAUD):
 # Send a command to the nano 
 def nano_command(ser,txt):
 
-    txt2='~'+txt+'\n'
     try:
-        nano_write(ser,txt2)
+        nano_write(ser,'~'+txt)
     except Exception as e: 
         print('NANO COMMAND: Problem with write - giving up')
         print( str(e) )
@@ -144,19 +143,11 @@ def nano_set_wpm(ser,wpm,idev=1):
 
     if idev==1 or idev==3:
         # Set wpm of chars sent from the keyboard
-        txt='~S'+str(wpm).zfill(3)+'s'
-        try:
-            nano_write(ser,txt)
-        except Exception as e: 
-            print('NANO SET WPM: Problem with write - giving up')
-            print( str(e) )
-        
+        txt='S'+str(wpm).zfill(3)+'s'
+        nano_command(ser,txt)
+            
     if idev==2 or idev==3:
         # Set wpm for the paddles
-        txt='~U'+str(wpm).zfill(3)+'u'
-        try:
-            nano_write(ser,txt)
-        except Exception as e: 
-            print('NANO SET WPM: Problem with write - giving up')
-            print( str(e) )
+        txt='U'+str(wpm).zfill(3)+'u'
+        nano_command(ser,txt)
             
