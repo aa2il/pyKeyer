@@ -1,3 +1,4 @@
+#! /usr/bin/python3 -u
 #########################################################################################
 #
 # qrz.py - Rev. 1.0
@@ -21,7 +22,6 @@
 
 import sys
 import os
-#import json
 if sys.version_info[0]==3:
     from tkinter import *
     import tkinter.font
@@ -29,8 +29,8 @@ if sys.version_info[0]==3:
 else:
     from Tkinter import *
     import tkFont
-from dx.cluster_connections import get_logger
-from dx.spot_processing import Station
+#from dx.cluster_connections import get_logger
+#from dx.spot_processing import Station
 import time
 from collections import OrderedDict
 
@@ -105,3 +105,39 @@ class CALL_INFO_GUI():
         
     def Dismiss(self):
         self.win.destroy()
+        
+#########################################################################################
+
+# If this file is called as main, run as independent exe
+if __name__ == '__main__':
+    import argparse
+    from settings import read_settings
+    from load_history import load_history
+
+    # Structure to contain processing params
+    class QRZ_PARAMS:
+        def __init__(self):
+            
+            # Read config file
+            self.SETTINGS,RCFILE = read_settings('.keyerrc')
+
+            # Load master call list
+            MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
+            self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+            self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')
+            self.calls = list(self.MASTER.keys())
+            
+    # Command line args
+    arg_proc = argparse.ArgumentParser(description='QRZ???')
+    arg_proc.add_argument('call',type=str)
+    args = arg_proc.parse_args()
+    call = args.call.upper()
+    #print('call=',call)
+
+    # Read config file
+    P=QRZ_PARAMS()
+    #print('SETTINGS=',P.SETTINGS)
+    
+    qrzWin = CALL_INFO_GUI(None,P,call,None)
+    mainloop()
+

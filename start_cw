@@ -58,11 +58,12 @@ endif
 set CONTEST=""
 #set CONTEST="ragchew"
 #set CONTEST="cwt"
-#set CONTEST="cwopen"
 #set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="naqp"
 #set CONTEST="cq160m"
+#set CONTEST="bw"
+
 #set CONTEST="skcc"
 #set CONTEST="cqww"
 #set CONTEST="ss"
@@ -77,8 +78,9 @@ set CONTEST=""
 #set CONTEST="iaru"
 #set CONTEST="rac"
 #set CONTEST="stew"
+#set CONTEST="cwopen"
 
-set STATE="VA -max_age 30"
+#set STATE="MO LA MS -max_age 48"
 
 # Various options for pyKeyer
 set CAPTURE=""
@@ -232,6 +234,12 @@ else if( $CONTEST == "ragchew" )then
     set HINTS="-use_log_hist -autofill -nrows 1"
     set BM_OPTS = "$BM_OPTS -cwops"
     set WPM=20
+
+# Settings for FOC BW
+else if( $CONTEST == "bw" )then
+    set WPM=25
+    set HINTS="-autofill"
+    set BM_OPTS = "$BM_OPTS -contest -hours 24 -cwops"
 
 # Settings for SKCC sprint - FOR LOGGING ONLY!!
 else if( $CONTEST == "skcc" )then

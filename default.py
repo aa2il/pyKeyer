@@ -110,6 +110,7 @@ class DEFAULT_KEYING():
             LAB2=None
             EXCH2=''
             LAB3=None
+            EXCH3=''
             if self.contest_name in ['OCQP','WAG','RAC','BERU']:
                 
                 # RST + Serial No.
@@ -143,7 +144,8 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSEC]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['AZQP','SDQP','NYQP','ILQP','OKQP','VTQP','BCQP','SCQP','NCQP']:
+            elif self.contest_name in ['AZQP','ILQP','LAQP','MOQP','MSQP','NCQP','NYQP',
+                                       'OKQP','SDQP','VTQP','BCQP','SCQP']:
 
                 # RST + State
                 LAB1  = 'RST'
@@ -198,7 +200,19 @@ class DEFAULT_KEYING():
                 LAB2  = 'NR'
                 EXCH2 = '0'
                 LAB3  = 'QTH'
-                EXCH2 = '[MYSTATE]'
+                EXCH3 = '[MYSTATE]'
+                self.P.CONTEST_ID=self.contest_name
+                
+            elif self.contest_name in ['FOC-BW']:
+
+                # RST + Name + Member No.
+                CONTEST = 'BW'
+                LAB1  = 'RST'
+                EXCH1 = '[NAME] 5NN'
+                LAB2  = 'NAME'
+                EXCH2 = '[MYNAME]'
+                LAB3  = 'NR'
+                EXCH3 = 'GL'
                 self.P.CONTEST_ID=self.contest_name
                 
             else:
@@ -232,7 +246,7 @@ class DEFAULT_KEYING():
         
             MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU '+EXCH1+' '+EXCH2+' '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU '+EXCH1+' '+EXCH2+' '+EXCH3+' '}
             MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU '+EXCH1+' '+EXCH1+' '+EXCH2+' '+EXCH2+' '}
             MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
             MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
@@ -244,6 +258,8 @@ class DEFAULT_KEYING():
             MACROS[9]     = {'Label' : 'My '+self.LAB2+' 2x' , 'Text' : '[-2]'+EXCH2+' '+EXCH2+' [+2]'}
             MACROS[10]    = {'Label' : self.LAB1+'?'         , 'Text' : self.LAB1+'? '}
             MACROS[11]    = {'Label' : self.LAB2+'? '        , 'Text' : self.LAB2+'? '}
+            if self.LAB3:
+                MACROS[10+12]    = {'Label' : self.LAB3+'?'         , 'Text' : self.LAB3+'? '}
 
         # Put up QRL? macro also
         MACROS[11+12] = {'Label' : 'QRL? '          , 'Text' : 'QRL? '}
@@ -385,11 +401,17 @@ class DEFAULT_KEYING():
             gui.rstin_lab.grid(column=col,columnspan=cspan)
             gui.rstin.grid(column=col,columnspan=cspan)
             gui.boxes.append(gui.rstin)
-            
-        if self.LAB1=='NR' or self.LAB2=='NR':
+
+        if self.LAB2=='NAME':
             col+=cspan
             cspan=2
-            if gui.contest and self.LAB1=='RST' and self.LAB2=='NR':
+            gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+            gui.name.grid(column=col,columnspan=cspan)
+            
+        if self.LAB1=='NR' or self.LAB2=='NR' or self.LAB3=='NR':
+            col+=cspan
+            cspan=2
+            if gui.contest and self.LAB1=='RST' and (self.LAB2=='NR' or self.LAB3=='NR'):
                 gui.exch_lab.grid(column=col,columnspan=cspan)
                 gui.exch.grid(column=col,columnspan=cspan)
                 gui.boxes.append(gui.exch)
@@ -397,8 +419,8 @@ class DEFAULT_KEYING():
                 gui.serial_lab.grid(column=col,columnspan=cspan)
                 gui.serial_box.grid(column=col,columnspan=cspan)
                 gui.boxes.append(gui.serial_box)
-            gui.counter_lab.grid()
-            gui.counter.grid()
+                gui.counter_lab.grid()
+                gui.counter.grid()
             
         if not gui.contest:
             col+=cspan
@@ -431,7 +453,7 @@ class DEFAULT_KEYING():
         else:
             gui.boxes.append(gui.hint)
 
-        if gui.contest:
+        if gui.contest and self.LAB2!='NAME':
             # Debug name insertion
             col+=cspan
             cspan=2

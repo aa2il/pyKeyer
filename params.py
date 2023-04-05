@@ -82,6 +82,8 @@ class PARAMS:
                               help='IARU HF Championship')
         arg_proc.add_argument('-ten', action='store_true',
                               help='10-10 CW')
+        arg_proc.add_argument('-bw', action='store_true',
+                              help='FOC BW')
         arg_proc.add_argument('-wag', action='store_true',
                               help='Work All Germany')
         arg_proc.add_argument('-beru', action='store_true',
@@ -248,7 +250,7 @@ class PARAMS:
                            'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC', 'BERU',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
-                           'STEW PERRY','SATELLITES','DX-QSO']
+                           'STEW PERRY','SATELLITES','DX-QSO','FOC-BW']
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
@@ -269,6 +271,9 @@ class PARAMS:
         elif args.ten:
             self.contest_name='TEN-TEN'
             MAX_AGE_HOURS=48
+        elif args.bw:
+            self.contest_name='FOC-BW'
+            MAX_AGE_HOURS=24
         elif args.wag:
             self.contest_name='WAG'
             MAX_AGE_HOURS=48
