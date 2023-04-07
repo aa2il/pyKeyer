@@ -70,6 +70,10 @@ class PARAMS:
                               help='ARRL VHF')
         arg_proc.add_argument('-stew', action='store_true',
                               help='Stew Parry')
+        arg_proc.add_argument('-jidx', action='store_true',
+                              help='JIDX CW')
+        arg_proc.add_argument('-cqmm', action='store_true',
+                              help='CQMM DX')
         arg_proc.add_argument('-sat', action='store_true',
                               help='Satellites')
         arg_proc.add_argument('-sprint', action='store_true',
@@ -250,7 +254,7 @@ class PARAMS:
                            'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC', 'BERU',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
-                           'STEW PERRY','SATELLITES','DX-QSO','FOC-BW']
+                           'STEW PERRY','SATELLITES','DX-QSO','FOC-BW','JIDX','CQMM']
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
@@ -274,6 +278,12 @@ class PARAMS:
         elif args.bw:
             self.contest_name='FOC-BW'
             MAX_AGE_HOURS=24
+        elif args.jidx:
+            self.contest_name='JIDX'
+            MAX_AGE_HOURS=30
+        elif args.cqmm:
+            self.contest_name='CQMM'
+            MAX_AGE_HOURS=48-9
         elif args.wag:
             self.contest_name='WAG'
             MAX_AGE_HOURS=48

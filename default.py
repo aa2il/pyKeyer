@@ -144,8 +144,11 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSEC]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['AZQP','ILQP','LAQP','MOQP','MSQP','NCQP','NYQP',
-                                       'OKQP','SDQP','VTQP','BCQP','SCQP']:
+            elif self.contest_name in ['AZQP','GAQP','ILQP','LAQP',
+                                       'MIQP','MOQP','MSQP',
+                                       'NCQP','NDQP','NEQP','NMQP','NYQP',
+                                       'OKQP','SCQP','SDQP','VTQP',
+                                       'BCQP','ONQP','QCQP']:
 
                 # RST + State
                 LAB1  = 'RST'
@@ -214,6 +217,24 @@ class DEFAULT_KEYING():
                 LAB3  = 'NR'
                 EXCH3 = 'GL'
                 self.P.CONTEST_ID=self.contest_name
+                
+            elif self.contest_name in ['JIDX']:
+                
+                # RST + CQ Zone
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'NR'
+                EXCH2 = '[MYCQZONE]'
+                self.P.CONTEST_ID=self.contest_name[0:2]
+                
+            elif self.contest_name in ['CQMM']:
+                
+                # RST + Continent
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = 'NA'
+                self.P.CONTEST_ID=self.contest_name[0:2]
                 
             else:
 
