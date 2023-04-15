@@ -111,7 +111,7 @@ class DEFAULT_KEYING():
             EXCH2=''
             LAB3=None
             EXCH3=''
-            if self.contest_name in ['OCQP','WAG','RAC','BERU']:
+            if self.contest_name in ['OCQP','WAG','RAC','BERU','HOLYLAND']:
                 
                 # RST + Serial No.
                 LAB1  = 'RST'
@@ -224,7 +224,7 @@ class DEFAULT_KEYING():
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
-                EXCH2 = '[MYCQZONE]'
+                EXCH2 = '[MYCQZ]'
                 self.P.CONTEST_ID=self.contest_name[0:2]
                 
             elif self.contest_name in ['CQMM']:

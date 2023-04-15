@@ -63,6 +63,7 @@ set CONTEST=""
 #set CONTEST="naqp"
 #set CONTEST="cq160m"
 #set CONTEST="bw"
+#set CONTEST="cqmm"
 
 #set CONTEST="skcc"
 #set CONTEST="cqww"
@@ -80,7 +81,7 @@ set CONTEST=""
 #set CONTEST="stew"
 #set CONTEST="cwopen"
 
-#set STATE="MO LA MS -max_age 48"
+set STATE="MI ND NE ON QC -max_age 48"
 
 # Various options for pyKeyer
 set CAPTURE=""
