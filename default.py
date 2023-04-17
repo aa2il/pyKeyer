@@ -230,11 +230,12 @@ class DEFAULT_KEYING():
             elif self.contest_name in ['CQMM']:
                 
                 # RST + Continent
+                CONTEST = 'MM'
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = 'NA'
-                self.P.CONTEST_ID=self.contest_name[0:2]
+                self.P.CONTEST_ID=self.contest_name
                 
             else:
 
