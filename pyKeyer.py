@@ -278,9 +278,12 @@ if P.sock.active:
         if P.contest_name in ['CWT','MST','SST']:
             if frq>f1+50:
                 print('PYKEYER - Setting freq to',f1+30)
-                P.sock.set_freq(f1+30) 
+                P.sock.set_freq(f1+30)
+        elif band=='2m':
+            print('PYKEYER - Setting freq to',f1+200)
+            P.sock.set_freq(f1+200) 
         elif frq>f1+79:     # frq>0.5*(f1+f2):
-            print('PYKEYER - BURP - Setting freq to',f1+30)
+            print('PYKEYER - Setting freq to',f1+30)
             P.sock.set_freq(f1+30) 
 
 # Read satellite grids confirmed - this will be used to alert station in new grid

@@ -183,7 +183,6 @@ class Keyer():
             self.sidetone.send_cw(msg,self.WPM,0,True)
             return
 
-        #elif not self.enable and not TEST_MODE:
         elif TEST_MODE:
             # Disable for testing purposes
             print("send_cw:",msg)    # ,WPM,dotlen
@@ -196,7 +195,7 @@ class Keyer():
             i=ord(char)
             cw=morse[i]
             dt=time.time() - self.time;
-            print('SEND_CW: sending ',char,dotlen)
+            print('SEND_CW: sending ',char,'\tdotlen=',dotlen)
             
             # Loop over all elements in this char
             startup = 0.02                            # Additional time needed to overcome OS limitations?
