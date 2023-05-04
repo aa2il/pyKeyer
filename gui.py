@@ -67,7 +67,6 @@ from ragchew import *
 from dx_qso import *
 from qrz import *
 from utilities import cut_numbers,freq2band
-#import platform
 import pyautogui
 from utilities import find_resource_file
 
@@ -190,6 +189,7 @@ class GUI():
         self.log_book = []
         print('Opening log file',fname,'...')
         if not os.path.exists(fname):
+            
             self.fp_log = open(fname,"w")
             self.fp_log.write('QSO_DATE_OFF,TIME_OFF,CALL,FREQ,BAND,MODE,SRX_STRING,STX_STRING,SAT_NAME\n')
             self.fp_log.flush()
@@ -266,10 +266,6 @@ class GUI():
         self.call_lab = Label(self.root, text="Call",font=self.font1)
         self.call_lab.grid(row=row,columnspan=4,column=0,sticky=E+W)
         self.call = Entry(self.root,font=self.font2,selectbackground='lightgreen')
-        #reg = self.root.register(self.call_changed)
-        #self.call.config(validate ="key", validatecommand =(reg, '%P'))
-        #self.call = Entry(self.root,font=self.font2,selectbackground='lightgreen',
-        #                  validate='key', validatecommand=self.call_changed)
         self.call.grid(row=row+1,rowspan=2,column=0,columnspan=4,sticky=E+W)
         self.call.bind("<Key>", self.key_press )
         self.call.focus_set()
@@ -2161,13 +2157,13 @@ class GUI():
             ##self.P.gui.root.grab_set()
             ##self.P.gui.root.grab_set_global()
 
-            if True:
-                # This seems to be the onyly reliable way to do this!
+            if self.P.AGGRESSIVE:
+                # This seems to be the only reliable way to do this!
                 title=window.title()
                 if self.P.PLATFORM=='Linux':
                     #os.system('wmctrl -a pyKeyer')
                     os.system('wmctrl -a "'+title+'"')
-            else:
+            elif False:
                 # This sort of worked but not quite
                 # Keep all of this around bx we'll need
                 #   something differnet for windoz

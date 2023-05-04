@@ -124,6 +124,8 @@ class PARAMS:
                               help='Show hints')
         arg_proc.add_argument('-capture', action='store_true',
                               help='Record Rig Audio')
+        arg_proc.add_argument('-aggressive', action='store_true',
+                              help='Aggressively keep main window on top')
         arg_proc.add_argument('-force', action='store_true',
                               help='Force rig connection (debugging)')
         arg_proc.add_argument('-ca_only', action='store_true',
@@ -187,6 +189,7 @@ class PARAMS:
         self.CAPTURE       = args.capture
         self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force
+        self.AGGRESSIVE    = args.aggressive
         self.TEST_MODE     = args.test
         
         self.SENDING_PRACTICE = args.sending
@@ -248,7 +251,7 @@ class PARAMS:
         self.STATE_LIST=args.state
         #self.STATE_QPs = ['OCQP','AZQP','IDQP','ILQP','MNQP','NVQP','NYQP','OKQP','PAQP',
         #                  'SDQP','VTQP','WIQP','BCQP','SCQP','NCQP']
-        self.STATE_QPs = ['OCQP','BCQP','ONQP','QCQP']
+        self.STATE_QPs = ['OCQP','BCQP','ONQP','QCQP','W1QP','W7QP','CPQP']
         for state in STATES:
             self.STATE_QPs.append(state+'QP')
             

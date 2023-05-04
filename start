@@ -48,6 +48,9 @@ set CA_ONLY=""
 set SCP=""
 set SCP="-scp"
 
+set AGGRESSIVE=""
+set AGGRESSIVE="-aggressive"
+
 set CONTEST="paddling"
 #set CONTEST="cwt"
 #set CONTEST="sst"
@@ -312,7 +315,7 @@ else
 endif
 
 # Start keyer
-set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE $SCP"
+set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE $SCP $AGGRESSIVE"
 if( $RIG2 != "NONE" )then
     set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
 endif

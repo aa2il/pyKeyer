@@ -81,7 +81,7 @@ set CONTEST=""
 #set CONTEST="stew"
 #set CONTEST="cwopen"
 
-set STATE="MI ND NE ON QC -max_age 48"
+set STATE="W7 W1 IN DE -max_age 48"
 
 # Various options for pyKeyer
 set CAPTURE=""
