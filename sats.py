@@ -177,6 +177,10 @@ class SAT_KEYING(DEFAULT_KEYING):
             cspan=3
             gui.hint_lab.grid(column=col,columnspan=cspan,sticky=E+W)
             gui.hint.grid(column=col,columnspan=cspan)
+
+        gui.sat_lab.grid()
+        gui.sat_SB.grid()
+            
         
     # Gather together logging info for this contest
     def logging(self):

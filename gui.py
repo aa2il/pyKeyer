@@ -538,14 +538,15 @@ class GUI():
         row += 1
         col  = 0
         self.SAT_TXT = StringVar()
-        Label(self.root, text='Satellites:').grid(row=row,column=col,sticky=E+W)
+        self.sat_lab = Label(self.root, text='Satellites:')
+        self.sat_lab.grid(row=row,column=col,sticky=E+W)
         sat_list=sorted( SATELLITE_LIST )
-        SB = OptionMenu(self.root,self.SAT_TXT,*sat_list, \
-                        command=self.set_satellite).grid(row=row,column=col+1,columnspan=2,sticky=E+W)
+        self.sat_SB = OptionMenu(self.root,self.SAT_TXT,*sat_list, command=self.set_satellite)
+        self.sat_SB.grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         self.set_satellite('None')
         
         # Reset clarifier
-        ClarReset(self)
+        ClarReset(self,self.P.RX_Clar_On)
 
         # Some other info
         #row += 1
@@ -1031,15 +1032,18 @@ class GUI():
 
         # Check if any shift keys were pressed
         if state:
-            #shift     = ((state & 0x0001) != 0)
-            control   = (state & 0x0004) != 0
+            shift   = (state & 0x0001) != 0
+            control = (state & 0x0004) != 0
             if P.PLATFORM=='Linux':
-                alt       = (state & 0x0008) != 0 
+                alt = (state & 0x0008) != 0 
             elif P.PLATFORM=='Windows':
-                alt       = (state & 0x20000) != 0
+                alt = (state & 0x20000) != 0
+            else:
+                print('PATCH_MACRO:  **** ERROR **** Unknown platform',P.PLATFORM)
+                alt = (state & 0x0008) != 0 
 
             # Yes - shorten response by eliminating my call
-            if alt or control:
+            if alt or control or shift:
                 MY_CALL = P.SETTINGS['MY_CALL']
                 if MY_CALL in txt:
                     txt = txt.replace(MY_CALL,'')
@@ -1204,6 +1208,9 @@ class GUI():
         self.scp.grid_remove()
         self.qsl.grid_remove()
 
+        self.sat_lab.grid_remove()
+        self.sat_SB.grid_remove()
+
     # Callback to set Satellite list spinner
     def set_satellite(self,val):
         print('SET_SATELLITE: val=',val)
@@ -1252,8 +1259,8 @@ class GUI():
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
-        elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC',
-                                      'FOC-BW','JIDX','CQMM']:
+        elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
+                                      'FOC-BW','JIDX','CQMM','HOLYLAND']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)
@@ -1280,6 +1287,7 @@ class GUI():
         else:
             print('SET_MACROS: *** ERROR *** Cant figure which contest !')
             print('val=',val)
+            #return
             sys.exit(0)
             
         self.P.SPRINT   = val.find('Sprint')         >= 0
@@ -1754,7 +1762,7 @@ class GUI():
                 self.sock.run_macro(47)
 
             # Reset clarifier
-            ClarReset(self)
+            ClarReset(self,self.P.RX_Clar_On)
 
             # Make sure practice exec gets what it needs
             if self.P.PRACTICE_MODE:
@@ -2307,7 +2315,7 @@ class GUI():
             
             # "." on keypad
             print('Reset clarifier')
-            ClarReset(self)
+            ClarReset(self,self.P.RX_Clar_On)
 
         elif key in ['Prior','KP_Add']:
             

@@ -191,6 +191,7 @@ class PARAMS:
         self.FORCE         = args.force
         self.AGGRESSIVE    = args.aggressive
         self.TEST_MODE     = args.test
+        self.RX_Clar_On    = True
         
         self.SENDING_PRACTICE = args.sending
         self.NANO_IO       = args.nano or args.sending
