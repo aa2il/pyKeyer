@@ -29,8 +29,6 @@ if sys.version_info[0]==3:
 else:
     from Tkinter import *
     import tkFont
-#from dx.cluster_connections import get_logger
-#from dx.spot_processing import Station
 import time
 from collections import OrderedDict
 
@@ -130,9 +128,23 @@ if __name__ == '__main__':
     # Command line args
     arg_proc = argparse.ArgumentParser(description='QRZ???')
     arg_proc.add_argument('call',type=str)
+    arg_proc.add_argument('-cwops', action='store_true',
+                              help='CWops Reverse Lookup')
     args = arg_proc.parse_args()
     call = args.call.upper()
-    #print('call=',call)
+    print('call=',call)
+
+    # Reverse member no. lookup for CWops
+    if args.cwops:
+        MASTER,junk = load_history('~/Python/history/data/Shareable CWops data.xlsx')
+        calls=[]
+        num=call
+        for c in MASTER.keys():
+            num2 = MASTER[c]['cwops']
+            if num==num2:
+                calls.append(c)
+        print(calls)
+        call=calls[0]
 
     # Read config file
     P=QRZ_PARAMS()

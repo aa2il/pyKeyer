@@ -42,7 +42,7 @@ class SKCC_KEYING(DEFAULT_KEYING):
         self.number_key='skccnr'
 
         P.gui.info.delete(0, END)
-        P.gui.insert(0,str(P.SETTINGS['MY_SKCC']))
+        P.gui.info.insert(0,str(P.SETTINGS['MY_SKCC']))
 
         
     # Routine to set macros for this contest
@@ -248,11 +248,13 @@ class SKCC_KEYING(DEFAULT_KEYING):
         gui.name.insert(0,h[0])
         
         gui.qth.delete(0, END)
-        if len( h[1] )>0:
-            gui.qth.insert(0,h[1])
-            
         gui.exch.delete(0, END)
-        if len( h[2] )>0:
-            gui.exch.insert(0,h[2])
+        if len(h)>=1:
+            if len( h[1] )>0:
+                gui.qth.insert(0,h[1])
+            
+            if len(h)>=2:
+                if len( h[2] )>0:
+                    gui.exch.insert(0,h[2])
 
 

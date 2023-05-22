@@ -81,7 +81,7 @@ set CONTEST=""
 #set CONTEST="stew"
 #set CONTEST="cwopen"
 
-set STATE="W7 W1 IN DE -max_age 48"
+set STATE="AR -max_age 48"
 
 # Various options for pyKeyer
 set CAPTURE=""
@@ -475,7 +475,7 @@ if( $START_SDR )then
     echo Starting SDR ...
     pkill pySDR
     cd ~/Python/pySDR
-    start_loopback
+    #start_loopback
 
     # Add a delay to give hamlib server in the keyer time to come up
     #sleep 5

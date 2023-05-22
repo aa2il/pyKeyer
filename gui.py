@@ -1067,15 +1067,24 @@ class GUI():
                 txt = txt.replace('[CALL_CHANGED]','')
             else:
                 stn1 = Station(call)
-                prefix1=stn1.call_prefix+stn1.call_number
-                print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
+                try:
+                    prefix1=stn1.call_prefix+stn1.call_number
+                    print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
+                except:
+                    print('Problem getting prefix for STN1',call)
+                    
                 stn2 = Station(call2)
-                prefix2=stn2.call_prefix+stn2.call_number
-                print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
+                try:
+                    prefix2=stn2.call_prefix+stn2.call_number
+                    print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
+                except:
+                    print('Problem getting prefix for STN2',call2)
+
+                # Only send back part that has changed, provided it is long enough
                 call3=call
-                if prefix1==prefix2:
+                if prefix1==prefix2 and len(stn1.call_suffix)>1:
                     call3=stn1.call_suffix
-                elif stn1.call_suffix==stn2.call_suffix:
+                elif stn1.call_suffix==stn2.call_suffix and len(prefix1)>1:
                     call3=prefix1
                 txt = txt.replace('[CALL_CHANGED]',call3)
 

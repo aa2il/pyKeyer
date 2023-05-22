@@ -144,8 +144,8 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSEC]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['AZQP','DEQP','GAQP','ILQP','INQP',
-                                       'LAQP','MIQP','MOQP','MSQP',
+            elif self.contest_name in ['ARQP','AZQP','DEQP','GAQP','ILQP',
+                                       'INQP','LAQP','MIQP','MOQP','MSQP',
                                        'NCQP','NDQP','NEQP','NMQP','NYQP',
                                        'OKQP','SCQP','SDQP','VTQP',
                                        'BCQP','ONQP','QCQP',

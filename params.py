@@ -250,8 +250,6 @@ class PARAMS:
         self.HIST          = {}
 
         self.STATE_LIST=args.state
-        #self.STATE_QPs = ['OCQP','AZQP','IDQP','ILQP','MNQP','NVQP','NYQP','OKQP','PAQP',
-        #                  'SDQP','VTQP','WIQP','BCQP','SCQP','NCQP']
         self.STATE_QPs = ['OCQP','BCQP','ONQP','QCQP','W1QP','W7QP','CPQP']
         for state in STATES:
             self.STATE_QPs.append(state+'QP')

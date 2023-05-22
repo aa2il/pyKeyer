@@ -110,7 +110,12 @@ def process_chars(P):
                         if P.NANO_ECHO:
                             # Put it in the big text box also
                             if VERBOSITY>0:
-                                print('PROCESSS_CHARS: Nano 4')
+                                print('PROCESSS_CHARS: Nano 4:',txt)
+
+                            # Add a <CR/LF> if we are echoing back a command
+                            if txt[0]=='~' and txt[-1] in ['u','s']:
+                                txt+='\n'
+                                
                             #P.gui.txt.insert(END, txt+'\n')
                             P.gui.txt.insert(END, txt)
                             P.gui.txt.see(END)
