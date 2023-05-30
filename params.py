@@ -182,6 +182,10 @@ class PARAMS:
                               help='Use history from log')
         arg_proc.add_argument('-use_adif_hist', action='store_true',
                               help='Use history from adif log')
+        arg_proc.add_argument('-geo',type=str,default=None,
+                              help='Geometry')
+        arg_proc.add_argument('-special', action='store_true',
+                              help='Special settings for VHF work')
         args = arg_proc.parse_args()
 
         self.OP_STATE      = 0
@@ -198,6 +202,8 @@ class PARAMS:
         self.NANO_ECHO     = self.NANO_IO and args.echo
         self.CW_IO         = args.cwio
         self.LOCK_SPEED    = args.lock
+        self.SPECIAL       = args.special
+        self.GEO           = args.geo
         
         self.AUTOFILL      = args.autofill
         self.PRACTICE_MODE = args.practice or args.rig[0]=="NONE"

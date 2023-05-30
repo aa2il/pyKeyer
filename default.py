@@ -145,7 +145,8 @@ class DEFAULT_KEYING():
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['ARQP','AZQP','DEQP','GAQP','ILQP',
-                                       'INQP','LAQP','MIQP','MOQP','MSQP',
+                                       'INQP','KYQP','LAQP','MIQP','MOQP',
+                                       'MSQP',
                                        'NCQP','NDQP','NEQP','NMQP','NYQP',
                                        'OKQP','SCQP','SDQP','VTQP',
                                        'BCQP','ONQP','QCQP',

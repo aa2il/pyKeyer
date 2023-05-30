@@ -49,6 +49,7 @@ class WPX_KEYING(DEFAULT_KEYING):
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [SERIAL] '}
         MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -59,7 +60,7 @@ class WPX_KEYING(DEFAULT_KEYING):
         MACROS[6]     = {'Label' : '?'         , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN? '     , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-        MACROS[7+12]  = {'Label' : '73'        , 'Text' : '73 GL ee'}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
         MACROS[8]     = {'Label' : 'Serial 2x' , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
         MACROS[9]     = {'Label' : 'NR?'       , 'Text' : 'NR? '}
@@ -132,7 +133,7 @@ class WPX_KEYING(DEFAULT_KEYING):
     def enable_boxes(self,gui):
 
         gui.contest=True
-        gui.ndigits=-3
+        gui.ndigits=2
         gui.hide_all()
         self.macros=[1,None,2]
         

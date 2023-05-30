@@ -96,7 +96,12 @@ class GUI():
         print("\nCreating GUI ...")
         self.root = Tk()
         # width_size x height_size + x_position + y_position
-        self.root.geometry('1200x400+250+250')
+        if P.GEO==None:
+            geo='1200x400+250+250'
+        else:
+            #pyKeyer.py -geo 1500x400+0+240
+            geo=P.GEO
+        self.root.geometry(geo)
 
         # Init
         self.last_focus=None
@@ -1072,6 +1077,7 @@ class GUI():
                     print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
                 except:
                     print('Problem getting prefix for STN1',call)
+                    prefix1=''
                     
                 stn2 = Station(call2)
                 try:
@@ -1079,6 +1085,7 @@ class GUI():
                     print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
                 except:
                     print('Problem getting prefix for STN2',call2)
+                    prefix2=''
 
                 # Only send back part that has changed, provided it is long enough
                 call3=call
@@ -2207,7 +2214,10 @@ class GUI():
             if obj.last_focus:
                 widget=obj.last_focus
             else:
-                widget=obj.default_object
+                try:
+                    widget=obj.default_object
+                except:
+                    return
             print('HOVER: No Focus -',obj.WIN_NAME,'- Setting focus to',widget)
             widget.focus_force()
 
