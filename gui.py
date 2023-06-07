@@ -838,6 +838,8 @@ class GUI():
         if iop==None:
             self.P.Immediate_TX = not self.P.Immediate_TX 
         print('\n%%%%%%%%%%%%%%%%%% Toggle_Immediate_TX:',self.P.Immediate_TX,self.text_buff,iop)
+        
+        # Manage button appearance
         if self.P.Immediate_TX:
             self.SendBtn.configure(background='red',highlightbackground= 'red')
             self.q.put(self.text_buff)
@@ -850,33 +852,45 @@ class GUI():
         if iop==None:
             self.P.SO2V = not self.P.SO2V
         print('TOOGLE SO2V:',self.P.SO2V,iop)
+
+        # Manage button appearance
         if self.P.SO2V:
             self.So2vBtn.configure(background='red',highlightbackground= 'red')
             self.P.udp_server.Broadcast('SO2V:ON')
             self.So2vBtn.configure(relief='sunken')
+
+            # Set VFO to A and copy to B
+            SetVFO(self,'A')
+            SetVFO(self,'A->B')
         else:
             self.So2vBtn.configure(background='Green',highlightbackground= 'Green')
             self.P.udp_server.Broadcast('SO2V:OFF')
             self.So2vBtn.configure(relief='raised')
-        
+
+            # Reset clarifier
+            ClarReset(self,self.P.RX_Clar_On)
+
+            
     # Callback to toggle DXSplit mode
     def Toggle_DXSplit(self,iop=None):
         if iop==None:
             self.P.DXSPLIT = not self.P.DXSPLIT
         print('TOOGLE DXSplit:',self.P.DXSPLIT,iop)
+        
+        # Manage button appearance
         if self.P.DXSPLIT:
             self.DXSplitBtn.configure(background='red',highlightbackground= 'red')
             self.P.udp_server.Broadcast('SPLIT:ON')
             self.DXSplitBtn.configure(relief='sunken')
 
-            # Set clarifier to 1 KHz UP by default
+            # Set TX clarifier (XIT split) to 1 KHz UP by default
             SetTXSplit(self.P,1,True)
         else:
             self.DXSplitBtn.configure(background='Green',highlightbackground= 'Green')
             self.P.udp_server.Broadcast('SPLIT:OFF')
             self.DXSplitBtn.configure(relief='raised')
 
-            # Turn off clarifier
+            # Turn off TX clarifier (XIT split)
             SetTXSplit(self.P,0,False)
         
     # Callback to look up a call on qrz.com
