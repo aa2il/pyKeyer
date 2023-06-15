@@ -278,9 +278,10 @@ if P.sock.active:
         if frq>f1+50:
             print('PYKEYER - Setting freq to',f1+30)
             P.sock.set_freq(f1+30)
-    elif band=='6m' and not P.SPECIAL:
-        print('PYKEYER - Setting freq to',f1+100)
-        P.sock.set_freq(f1+100) 
+    elif band=='6m':
+        if not P.SPECIAL:
+            print('PYKEYER - Setting freq to',f1+100)
+            P.sock.set_freq(f1+100) 
     elif band=='2m':
         print('PYKEYER - Setting freq to',f1+200)
         P.sock.set_freq(f1+200) 
@@ -288,8 +289,8 @@ if P.sock.active:
         print('PYKEYER - Setting freq to',f1+30)
         P.sock.set_freq(f1+30) 
 
-    if P.SPECIAL:
-        P.sock.set_mon_level(25)
+    #if P.SPECIAL:
+    #    P.sock.set_mon_level(25)
         
 # Read satellite grids confirmed - this will be used to alert station in new grid
 FNAME = P.HIST_DIR+'states.xls'

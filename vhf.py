@@ -44,7 +44,7 @@ class VHF_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R 73 [MYCALL] [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         #MACROS[3+12]  = {'Label' : '?'         , 'Text' : '? '}
@@ -57,8 +57,10 @@ class VHF_KEYING(DEFAULT_KEYING):
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
         MACROS[8]     = {'Label' : 'Grid 1x'   , 'Text' : '[-2][MYGRID] [+2]'}
+        MACROS[8+12]  = {'Label' : 'EE'        , 'Text' : 'EE '}
         MACROS[9]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
         MACROS[10]    = {'Label' : 'GRID?  '   , 'Text' : 'GRID? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}

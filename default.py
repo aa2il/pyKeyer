@@ -148,7 +148,7 @@ class DEFAULT_KEYING():
                                        'INQP','KYQP','LAQP','MIQP','MOQP',
                                        'MSQP',
                                        'NCQP','NDQP','NEQP','NMQP','NYQP',
-                                       'OKQP','SCQP','SDQP','VTQP',
+                                       'OKQP','SCQP','SDQP','VTQP','WVQP',
                                        'BCQP','ONQP','QCQP',
                                        'W1QP','W7QP','NEQP','CPQP']:
 

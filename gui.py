@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+import traceback
 import sys
 import os
 if sys.version_info[0]==3:
@@ -247,7 +248,7 @@ class GUI():
             self.fp_adif = open(P.LOG_FILE,"w")
             self.fp_adif.write('Simple Log Export<eoh>\n')
             self.fp_adif.flush()
-        print("GUI: ADIF file name=", self.fp_adif) 
+        print("GUI: ADIF file name=",P.LOG_FILE) 
 
         # Also save all sent text to a file
         self.fp_txt = open(P.WORK_DIR+MY_CALL.replace('/','_')+".TXT","a+")
@@ -830,7 +831,7 @@ class GUI():
             self.P.ser=self.P.ser3
         self.sock=self.P.sock
         print("You selected radio " + str(iRadio),'\tP.sock=',self.P.sock)
-        rig=P.sock.rig_type2
+        rig=self.P.sock.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
         
     # Callback to toggle sending of text
@@ -1729,7 +1730,9 @@ class GUI():
             freq_kHz = 1e-3*self.sock.get_freq()
             freq     = int( freq_kHz )
             mode     = self.sock.get_mode()
-            if mode=='FMN':
+            if mode in ['CW-U']:
+                mode='CW'
+            elif mode=='FMN':
                 mode='FM'
             elif mode=='AMN':
                 mode='AM'
@@ -1852,6 +1855,7 @@ class GUI():
                 qso2 =  {key.upper(): val for key, val in list(qso.items())}
                 print("GUI: ADIF writing QSO=",qso2)
                 write_adif_record(self.fp_adif,qso2,self.P)
+                print(' ')
 
             # Clobber any presets that have this call
             idx=0
@@ -2023,7 +2027,11 @@ class GUI():
                         # Rovers can be reworked if they are in a different grid square
                         if '/R' in call:
                             qth = self.P.gui.get_qth().upper()
-                            match4 = qth==qso['QTH']
+                            if 'QTH' in qso:
+                                qth2=qso['QTH']
+                            else:
+                                qth2=''
+                            match4 = qth==qth2
                         else:
                             match4 = True
 
@@ -2233,7 +2241,12 @@ class GUI():
                 except:
                     return
             print('HOVER: No Focus -',obj.WIN_NAME,'- Setting focus to',widget)
-            widget.focus_force()
+            try:
+                widget.focus_force()
+            except Exception as e: 
+                print("\n**** GUI->HOVER ERROR ***")
+                print('e=',e,'\n')
+                traceback.print_exc()
 
     def Master(self,widget):
 
