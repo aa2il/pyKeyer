@@ -126,11 +126,11 @@ class DEFAULT_KEYING():
             elif self.contest_name in ['ARRL-160M']:
 
                 # RST + Section
-                LAB1  = 'RST'
-                EXCH1 = '5NN'
-                LAB2  = 'QTH'
-                EXCH2 = '[MYSEC]'
                 CONTEST = 'TEST'
+                LAB1    = 'RST'
+                EXCH1   = '5NN'
+                LAB2    = 'QTH'
+                EXCH2   = '[MYSEC]'
                 self.key1 = 'rst'
                 self.key2 = 'sec'
                 self.P.CONTEST_ID=self.contest_name
@@ -212,12 +212,12 @@ class DEFAULT_KEYING():
 
                 # RST + Name + Member No.
                 CONTEST = 'BW'
-                LAB1  = 'RST'
-                EXCH1 = '[NAME] 5NN'
-                LAB2  = 'NAME'
-                EXCH2 = '[MYNAME]'
-                LAB3  = 'NR'
-                EXCH3 = 'GL'
+                LAB1    = 'RST'
+                EXCH1   = '[NAME] 5NN'
+                LAB2    = 'NAME'
+                EXCH2   = '[MYNAME]'
+                LAB3    = 'NR'
+                EXCH3   = 'GL'
                 self.P.CONTEST_ID=self.contest_name
                 
             elif self.contest_name in ['JIDX']:
@@ -229,14 +229,24 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYCQZ]'
                 self.P.CONTEST_ID=self.contest_name[0:2]
                 
+            elif self.contest_name in ['AADX']:
+                
+                # RST + Age
+                CONTEST = 'AA'
+                LAB1    = 'RST'
+                EXCH1   = '5NN'
+                LAB2    = 'NR'
+                EXCH2   = '[MYAGE]'
+                self.P.CONTEST_ID=self.contest_name[0:2]
+                
             elif self.contest_name in ['CQMM']:
                 
                 # RST + Continent
                 CONTEST = 'MM'
-                LAB1  = 'RST'
-                EXCH1 = '5NN'
-                LAB2  = 'QTH'
-                EXCH2 = 'NA'
+                LAB1    = 'RST'
+                EXCH1   = '5NN'
+                LAB2    = 'QTH'
+                EXCH2   = 'NA'
                 self.P.CONTEST_ID=self.contest_name
                 
             else:
@@ -271,7 +281,8 @@ class DEFAULT_KEYING():
             MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
             MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU '+EXCH1+' '+EXCH2+' '+EXCH3+' '}
-            MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU '+EXCH1+' '+EXCH1+' '+EXCH2+' '+EXCH2+' '}
+            MACROS[5+12]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] '+EXCH1+' '+EXCH2+' '+EXCH3+'GL '}
+            #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU '+EXCH1+' '+EXCH1+' '+EXCH2+' '+EXCH2+' '}
             MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
             MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
             MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}

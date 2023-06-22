@@ -64,6 +64,8 @@ class PARAMS:
                               help='California QP')
         arg_proc.add_argument('-state', help='State QP',
                               type=str,default=None,nargs='*')
+        arg_proc.add_argument('-aa', action='store_true',
+                              help='All Asia DX')
         arg_proc.add_argument('-fd', action='store_true',
                               help='ARRL Field Day')
         arg_proc.add_argument('-vhf', action='store_true',
@@ -265,7 +267,7 @@ class PARAMS:
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO','FOC-BW',
-                           'JIDX','CQMM','HOLYLAND']
+                           'JIDX','CQMM','HOLYLAND','AADX']
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
@@ -298,6 +300,9 @@ class PARAMS:
         elif args.holy:
             self.contest_name='HOLYLAND'
             MAX_AGE_HOURS=24
+        elif args.aa:
+            self.contest_name='AADX'
+            MAX_AGE_HOURS=48
         elif args.wag:
             self.contest_name='WAG'
             MAX_AGE_HOURS=48

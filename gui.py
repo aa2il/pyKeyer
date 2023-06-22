@@ -528,11 +528,18 @@ class GUI():
 
         # Enable/Disable TX button - should be sufficient to just press <CR> in the txt box
         # Put in a pull-down menu if we really need this
-        self.SendBtn = Button(self.root, text='Send',command=self.Toggle_Immediate_TX,\
+        if False:
+            self.SendBtn = Button(self.root, text='Send',command=self.Toggle_Immediate_TX,\
                                   takefocus=0 ) 
-        self.SendBtn.grid(row=row,column=self.ncols-2)
-        tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
+            self.SendBtn.grid(row=row,column=self.ncols-2)
+            tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
         self.Toggle_Immediate_TX(1)
+
+        # Force rig into CW mode and set filters
+        self.CWBtn = Button(self.root, text='CW Mode',command=self.Set_CW_Mode,\
+                                  takefocus=0 ) 
+        self.CWBtn.grid(row=row,column=self.ncols-2)
+        tip = ToolTip(self.CWBtn, ' Set Rig into CW Mode ' )
         
         # QRZ button
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
@@ -833,13 +840,14 @@ class GUI():
         print("You selected radio " + str(iRadio),'\tP.sock=',self.P.sock)
         rig=self.P.sock.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
-        
+
     # Callback to toggle sending of text
     def Toggle_Immediate_TX(self,iop=None):
         if iop==None:
             self.P.Immediate_TX = not self.P.Immediate_TX 
         print('\n%%%%%%%%%%%%%%%%%% Toggle_Immediate_TX:',self.P.Immediate_TX,self.text_buff,iop)
         
+        """
         # Manage button appearance
         if self.P.Immediate_TX:
             self.SendBtn.configure(background='red',highlightbackground= 'red')
@@ -847,6 +855,7 @@ class GUI():
             self.text_buff=''
         else:
             self.SendBtn.configure(background='Green',highlightbackground= 'Green')
+        """
         
     # Callback to toggle SO2V mode
     def Toggle_SO2V(self,iop=None):
@@ -1291,7 +1300,7 @@ class GUI():
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
-                                      'FOC-BW','JIDX','CQMM','HOLYLAND']:
+                                      'FOC-BW','JIDX','CQMM','HOLYLAND','AADX']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)
@@ -2697,6 +2706,13 @@ class GUI():
             
     
 ############################################################################################
+
+    # Callback to force rig into CW mode
+    def Set_CW_Mode(self):
+        self.sock.set_mode('CW')
+        #self.P.ContestMode=True
+        #SetFilter(self.P)
+        self.sock.set_filter(['Narrow','200 Hz'],'CW')
 
     # Callback for practice with computer text
     def PracticeCB(self):
