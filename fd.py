@@ -44,7 +44,7 @@ class FD_KEYING(DEFAULT_KEYING):
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYCAT] [MYSEC] '}
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYCAT] [MYCAT] [MYSEC] [MYSEC] '}
+        #MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYCAT] [MYCAT] [MYSEC] [MYSEC] '}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 FD [MYCALL] [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -223,7 +223,9 @@ class FD_KEYING(DEFAULT_KEYING):
             h = h.split(' ')
         
         gui.cat.delete(0, END)
-        gui.cat.insert(0,h[0])
         gui.qth.delete(0, END)
-        gui.qth.insert(0,h[1])
+        if len(h)>=1:
+            gui.cat.insert(0,h[0])
+            if len(h)>=2:
+                gui.qth.insert(0,h[1])
 

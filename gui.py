@@ -324,13 +324,13 @@ class GUI():
 
         self.prec_lab = Label(self.root, text="Prec",font=self.font1)
         self.prec_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
-        self.prec = Entry(self.root,font=self.font2)
+        self.prec = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         self.prec.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
         self.prec.bind("<Key>", self.key_press )
 
         self.cat_lab = Label(self.root, text="Category",font=self.font1)
         self.cat_lab.grid(row=row,columnspan=1,column=5,sticky=E+W)
-        self.cat = Entry(self.root,font=self.font2)
+        self.cat = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         self.cat.grid(row=row+1,rowspan=2,column=5,columnspan=1,sticky=E+W)
         self.cat.bind("<Key>", self.key_press )
 
@@ -342,7 +342,7 @@ class GUI():
 
         self.check_lab = Label(self.root, text="Check",font=self.font1)
         self.check_lab.grid(row=row,columnspan=1,column=7,sticky=E+W)
-        self.check = Entry(self.root,font=self.font2)
+        self.check = Entry(self.root,font=self.font2,selectbackground='lightgreen')
         self.check.grid(row=row+1,rowspan=2,column=7,columnspan=1,sticky=E+W)
         self.check.bind("<Key>", self.key_press )
         
@@ -1924,12 +1924,10 @@ class GUI():
     # Sets selection of most of the boxes
     def Set_Selection(self,widget):
         
-        print('Selecting ...')
+        print('Set Selection ...',widget)
         if widget!=self.call:
             widget.select_range(0,"end")
             widget.event_generate("<<Copy>>")
-            #pres=widget.select_present()
-            #print('pres=',pres)
             
         
     # Routine to compute QSO Rate
@@ -2655,8 +2653,9 @@ class GUI():
                     
         elif event.widget==self.cat:
 
-            cal=self.get_cat().upper()
-            self.sock.set_log_fields({'Cat':prec})
+            print('PROCESS ENTRY BOXES - CAT ...')
+            cat=self.get_cat().upper()
+            self.sock.set_log_fields({'Cat':cat})
 
         elif event.widget==self.rstin:
 
