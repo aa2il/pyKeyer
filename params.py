@@ -254,7 +254,7 @@ class PARAMS:
         self.DIRTY         = False
         self.KEYING        = None
         self.USE_SCP       = args.scp
-        self.AUTO_COMPLETE = args.autocomplete or self.USE_SCP
+        self.AUTO_COMPLETE = args.autocomplete # or self.USE_SCP
         self.HIST          = {}
 
         self.STATE_LIST=args.state

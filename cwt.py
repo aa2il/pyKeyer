@@ -38,7 +38,7 @@ VERBOSITY=0
 class CWOPS_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test')
+        DEFAULT_KEYING.__init__(self,P,'CW Ops Mini-Test',SCP_FNAME='Shareable CWops data.xlsx')
 
         print('CWT INIT ...')
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/CWOPS_*.txt')
@@ -77,6 +77,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
 
         # Check date for any special greetings
+        # Consider "GBA" for week around July 4?
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU MC [MYCALL] [LOG]'}

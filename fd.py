@@ -194,8 +194,8 @@ class FD_KEYING(DEFAULT_KEYING):
         valid = len(call)>=3 and len(cat)>0 and len(qth)>0
 
         MY_CAT     = self.P.SETTINGS['MY_CAT']
-        MY_STATE    = self.P.SETTINGS['MY_STATE']
-        exch_out = MY_CAT+','+MY_STATE
+        MY_SEC    = self.P.SETTINGS['MY_SEC']
+        exch_out = MY_CAT+','+MY_SEC
 
         qso2={}
         

@@ -37,9 +37,9 @@ VERBOSITY=0
 # Base keying class for simple qsos
 class DEFAULT_KEYING():
 
-    def __init__(self,P,contest_name='CW Default',HISTORY=None):
+    def __init__(self,P,contest_name='CW Default',HISTORY=None,SCP_FNAME=None):
 
-        print('DEFAULT KEYING INIT ...')
+        print('DEFAULT KEYING INIT ... SCP_FNAME=',SCP_FNAME)
         self.P=P
         self.contest_name  = contest_name 
         self.aux_cb=None
@@ -64,7 +64,7 @@ class DEFAULT_KEYING():
         P.HISTORY2 = P.HISTORY
         
         # Init super check partial
-        self.SCP=SUPER_CHECK_PARTIAL()
+        self.SCP=SUPER_CHECK_PARTIAL(SCP_FNAME)
         
 
     # Routient to set macros for this contest
@@ -73,6 +73,9 @@ class DEFAULT_KEYING():
         print('DEFAULT MACROS: contest_name=',self.contest_name)
         self.key1=None
         self.key2=None
+        #EXCH1 = ''
+        #EXCH2 = ''
+        self.Uses_Serial=False
         
         MACROS = OrderedDict()
         if self.contest_name=='CW Default':
@@ -120,7 +123,7 @@ class DEFAULT_KEYING():
                 EXCH2 = '[SERIAL]'
                 self.key1 = 'rst'
                 self.key2 = 'exch'
-                
+                self.Uses_Serial=True
                 self.P.CONTEST_ID=self.contest_name+'-QSO-PARTY'
                 
             elif self.contest_name in ['ARRL-160M']:
@@ -177,6 +180,7 @@ class DEFAULT_KEYING():
                 EXCH1 = '[SERIAL]'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
+                self.Uses_Serial=True
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['VAQP']:
@@ -186,6 +190,7 @@ class DEFAULT_KEYING():
                 EXCH1 = '[SERIAL]'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSTATE]'
+                self.Uses_Serial=True
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['MNQP']:
@@ -494,6 +499,10 @@ class DEFAULT_KEYING():
             cspan=2
             gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
             gui.name.grid(column=col,columnspan=cspan)
+
+        if self.Uses_Serial:
+            gui.counter_lab.grid()
+            gui.counter.grid()
             
         print('DEFAULT ENABLE BOXES: col=',col,'\tcspan=',cspan)
         

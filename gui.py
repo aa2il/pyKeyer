@@ -2146,6 +2146,9 @@ class GUI():
                 # Copy selected call into call entry box
                 call = evt.widget.selection_get()
                 print('Call:',call)
+                if ' ' in call:
+                    print('SCP_SELECTION - Whoops!',call)
+                    call=''
                 self.call.delete(0, END)
                 self.call.insert(0,call)
             else:
@@ -2458,9 +2461,12 @@ class GUI():
                 self.call.focus_set()
 
         elif key=='Insert' or (key in ['i','I'] and (alt or control)):
-            
-            # Copy hints to fields or reverse call look-up
-            if event.widget==self.exch:
+
+            if event.widget==self.call:
+                self.auto_fill(self.call.get(),'@@@')
+                #self.auto_fill(None,'@@@')
+            elif event.widget==self.exch:
+                # Copy hints to fields or reverse call look-up
                 val=self.P.KEYING.reverse_call_lookup()
                 if val==None or len(val)==0:
                     self.P.KEYING.insert_hint()
@@ -2557,35 +2563,33 @@ class GUI():
     def auto_fill(self,call,key):
 
         # Check against SCP database
-        if True:
-            if self.P.USE_SCP:
-                scps,scps2 = self.P.KEYING.SCP.match(call,VERBOSITY=0)
-                self.scp.delete(0, END)
-                self.scp.insert(0, scps)
+        if self.P.USE_SCP:
+            scps,scps2 = self.P.KEYING.SCP.match(call,VERBOSITY=0)
+            self.scp.delete(0, END)
+            self.scp.insert(0, scps)
 
-                # Auto-complete
-                if len(key)==1 and self.P.AUTO_COMPLETE:
-                    KEY=key.upper()
-                    #if KEY>='A' and KEY<='Z' and ( len(scps2)==1 or (len(scps2)==0 and len(scps)==1) ):
-                    if KEY>='A' and KEY<='Z' and len(scps2)==1:
-                        call2=scps[0]
-                        print('AUTO-COMPLETE: call=',call,'\tcall2=',call2,'\tkey=',key)
-                        self.call.delete(0, END)
-                        self.call.insert(0,call2)
-                        self.call.select_range( len(call), END )
-                        call=call2
+            # Auto-complete
+            if key=='@@@' or (len(key)==1 and self.P.AUTO_COMPLETE):
+                KEY=key.upper()
+                if KEY=='@@@' or (KEY>='A' and KEY<='Z' and len(scps2)==1):
+                    call2=scps[0]
+                    print('AUTO-COMPLETE: call=',call,'\tcall2=',call2,'\tkey=',key)
+                    self.call.delete(0, END)
+                    self.call.insert(0,call2)
+                    self.call.select_range( len(call), END )
+                    call=call2
 
-                # Highlight callsign if we have an exact match
-                if len(scps)>0 and call==scps[0]:
-                    self.call.configure(fg='red')
-                else:
-                    self.call.configure(fg='black')
+            # Highlight callsign if we have an exact match
+            if len(scps)>0 and call==scps[0]:
+                self.call.configure(fg='red')
+            else:
+                self.call.configure(fg='black')
 
-            # Take care of hints
-            if self.contest:
-                self.get_hint(call)
-                if self.P.AUTOFILL:
-                    self.P.KEYING.insert_hint()
+        # Take care of hints
+        if self.contest:
+            self.get_hint(call)
+            if self.P.AUTOFILL:
+                self.P.KEYING.insert_hint()
 
     
     # Callback when something changes in an entry box
