@@ -40,7 +40,10 @@ Over the years, a number of very good logging programs have been developed.  The
    - pip3 install -r requirements.txt
 4) Make sure its executable:
    - chmod +x pyKeyer.py start start_cw
-5) Bombs away:
+5) Set PYTHON PATH so os can find libraries:
+   - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
+   - Under bash:      export PYTHONPATH="$HOME/Python/libs"
+6) Bombs away:
    - ./pyKeyer.py
    - See also start and start_cw for examples how to run this thing         
 
@@ -94,7 +97,11 @@ Over the years, a number of very good logging programs have been developed.  The
    - cd ~/Python/pyKeyer
    - pip3 install -r requirements.txt
 
-6) To run pyKeyer, we need to preface with "python" so it doesn't run in
+6) Set PYTHON PATH so os can find libraries:
+   - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
+   - Under bash:      export PYTHONPATH="$HOME/Python/libs"
+
+7) To run pyKeyer, we need to specify python interpreter so it doesn't run in
    the default system environment:
    - cd ~/Python/pyKeyer
    - conda activate aa2il
@@ -109,4 +116,5 @@ Over the years, a number of very good logging programs have been developed.  The
 
 1) Best bet is to use mini-conda and follow the instructions above.
 2) There is an older compiled binary/installer listed on the right panel
-     of this screen.  If you want/need a more recent binary, email me.
+   of this screen.  If you want/need a more recent binary, email me
+   or follow the steps in windoz.bat to build it from the source.
