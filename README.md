@@ -25,7 +25,7 @@ Over the years, a number of very good logging programs have been developed.  The
 - Variety of text generation facilities for practicing with keyer paddles.
 - ...
 
-# Installation under linux:
+# Installation under Linux:
 
 1) Uses python3 and pyqt
 2) Clone gitub pyKeyer, libs and data repositories
@@ -44,7 +44,7 @@ Over the years, a number of very good logging programs have been developed.  The
    - ./pyKeyer.py
    - See also start and start_cw for examples how to run this thing         
 
-# Installation notes for development/use under Mini-conda:
+# Installation under Mini-conda:
 
 0) Good video:  https://www.youtube.com/watch?v=23aQdrS58e0&t=552s
 
@@ -104,3 +104,8 @@ Over the years, a number of very good logging programs have been developed.  The
    - Fonts look awful - probably need to install these also
    - Looks like it is pulling something(s) out of Python/data
      - need to make sure these are available
+
+# Installation for Windoz:
+
+     - Best bet is to use mini-conda and follow the instructions above.
+     - There is an older compiled binary/installer listed on the right panel of this screen.  If you want/need a more recent binary, email me.
