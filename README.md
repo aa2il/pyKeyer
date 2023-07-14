@@ -62,12 +62,12 @@ Over the years, a number of very good logging programs have been developed.  The
       conda config --set auto_activate_base false
 
    - To get it to work under tcsh:
-       -- bash
-       -- conda init tcsh
-       -- This creates ~/.tcshrc - move its contents to .cshrc if need be
-       -- relaunch tcsh and all should be fine!
-       -- Test with:
-               conda list
+       - bash
+       - conda init tcsh
+       - This creates ~/.tcshrc - move its contents to .cshrc if need be
+       - relaunch tcsh and all should be fine!
+       - Test with:
+              conda list
 
 3) Create a working enviroment for ham radio stuff:
    - Check which python version we have:
@@ -102,4 +102,4 @@ Over the years, a number of very good logging programs have been developed.  The
 99) Known issues using this:
    - Fonts look awful - probably need to install these also
    - Looks like it is pulling something(s) out of Python/data
-     -- need to make sure these are available
+     - need to make sure these are available
