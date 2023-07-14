@@ -27,10 +27,10 @@ Over the years, a number of very good logging programs have been developed.  The
 
 # Installation under Linux:
 
-1) Uses python3 and pyqt
+1) Uses python3 and tkinter
 2) Clone gitub pyKeyer, libs and data repositories
     - cd
-    - mkdir ~/Python
+    - mkdir Python
     - cd Python
     - git clone https://github.com/aa2il/pyKeyer
     - git clone https://github.com/aa2il/libs
@@ -52,7 +52,7 @@ Over the years, a number of very good logging programs have been developed.  The
 0) Good video:  https://www.youtube.com/watch?v=23aQdrS58e0&t=552s
 
 1) Point browser to https://docs.conda.io/en/latest/miniconda.html
-2) Download and install latest & greatest Mini-cond for particular OS:
+2) Download and install latest & greatest Mini-conda for your particular OS:
    - I used the bash installer for linux
    - As of July 2023: Conda 23.5.2 Python 3.11.3 released July 13, 2023
    - cd ~/Downloads
@@ -87,7 +87,7 @@ Over the years, a number of very good logging programs have been developed.  The
 
 4) Clone gitub pyKeyer, libs and data repositories:
     - cd
-    - mkdir ~/Python
+    - mkdir Python
     - cd Python
     - git clone https://github.com/aa2il/pyKeyer
     - git clone https://github.com/aa2il/libs
@@ -107,7 +107,7 @@ Over the years, a number of very good logging programs have been developed.  The
    - conda activate aa2il
    - python pyKeyer.py
 
-99) Known issues using this (as of July 2023):
+8) Known issues using this (as of July 2023):
    - Fonts look awful - probably need to install these also
    - Looks like it is pulling something(s) out of Python/data
      - need to make sure these are available
