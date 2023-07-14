@@ -10,7 +10,7 @@ Also can be used as a sending and receiving CW trainer.
 
 # Background
 
-Over the years, a number of very good logging programs have been developed.  The most popular of these today is the N1MM logger.  Unfortunately, this is a Windoz-only application and is very difficult to get working under linux.  My experience with the other options available for linux are either not being actively maintained and/or are too bloated and/or lacking to be useful for contesting.  Hence, the development of yet another keyin/logging program.
+Over the years, a number of very good logging programs have been developed.  The most popular of these today is the N1MM logger.  Unfortunately, this is a Windoz-only application and is very difficult to get working under linux.  My experience with the other options available for linux are either not being actively maintained and/or are too bloated and/or lacking to be useful for contesting.  Hence, the development of yet another keying/logging program.
 
 # Features
 
@@ -35,7 +35,7 @@ Over the years, a number of very good logging programs have been developed.  The
     - git clone https://github.com/aa2il/pyKeyer
     - git clone https://github.com/aa2il/libs
     - git clone https://github.com/aa2il/data
-3) Install packages we need for pyKeyer:
+3) Install packages needed for pyKeyer:
    - cd ~/Python/pyKeyer
    - pip3 install -r requirements.txt
 4) Make sure its executable:
@@ -71,18 +71,18 @@ Over the years, a number of very good logging programs have been developed.  The
 
 3) Create a working enviroment for ham radio stuff:
    - Check which python version we have:
-          - conda list   
+       - conda list   
    - conda create --name aa2il python=3.11
 
-   - To activate this environment, use
-          - conda activate aa2il
-   - To deactivate an active environment, use
-          - conda deactivate
+   - To activate this environment, use:
+       - conda activate aa2il
+   - To deactivate an active environment, use:
+       - conda deactivate
 
    - conda env list
    - conda activate aa2il
 
-4) Clone gitub pyKeyer, libs and data repositories
+4) Clone gitub pyKeyer, libs and data repositories:
     - cd
     - mkdir ~/Python
     - cd Python
@@ -90,7 +90,7 @@ Over the years, a number of very good logging programs have been developed.  The
     - git clone https://github.com/aa2il/libs
     - git clone https://github.com/aa2il/data
 
-5) Install packages we need for pyKeyer:
+5) Install packages needed by pyKeyer:
    - cd ~/Python/pyKeyer
    - pip3 install -r requirements.txt
 
@@ -107,5 +107,6 @@ Over the years, a number of very good logging programs have been developed.  The
 
 # Installation for Windoz:
 
-     - Best bet is to use mini-conda and follow the instructions above.
-     - There is an older compiled binary/installer listed on the right panel of this screen.  If you want/need a more recent binary, email me.
+1) Best bet is to use mini-conda and follow the instructions above.
+2) There is an older compiled binary/installer listed on the right panel
+     of this screen.  If you want/need a more recent binary, email me.
