@@ -223,7 +223,7 @@ class GUI():
                         print(qso)
                         sys.exit(0)
                     if not call in P.calls:
-                        print('Call not in Master list:',call,'\t- Adding it')
+                        #print('Call not in Master list:',call,'\t- Adding it')
                         self.log_book.append(qso)
                         P.calls.append(call)
             print(n,' QSOs read.')

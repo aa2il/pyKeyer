@@ -1,14 +1,21 @@
 # pip3 install -r requirements.txt
+#
+# Also need the "libs" directory which is available in this repository and to
+# set the PYTHONPATH environment variable to point to where "libs" is installed,
+# e.g. for csh/tcsh:
+#
+#     setenv PYTHONPATH $HOME/Python/libs
 
 pyqt5
-matplotlib
-pyqtgraph
-basemap
+#matplotlib
+#pyqtgraph
+#basemap
 pyserial
 xlrd
 unidecode
 pyhamtools
 pyautogui
+pyaudio
 
 pandas
 scipy

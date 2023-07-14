@@ -134,7 +134,7 @@ class CODE_PRACTICE():
     # Routine to execute a single practice qso
     def practice_qso(self):
 
-        DEBUG=1
+        DEBUG=0
 
         P     = self.P
         HIST  = self.HIST
