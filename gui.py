@@ -30,6 +30,7 @@ else:
     from Tkinter import *
     import tkFont
     import tkMessageBox
+
 import csv
 import pytz
 from datetime import datetime, date, tzinfo
@@ -144,13 +145,21 @@ class GUI():
         self.last_text=None
 
         # Select font
+        FAMILY='monospace'
+        #FAMILY='DejaVu Sans Mono'
         if sys.version_info[0]==3:
-            self.font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
-            self.font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
+            self.font1 = tkinter.font.Font(family=FAMILY,size=12,weight="bold")
+            self.font2 = tkinter.font.Font(family=FAMILY,size=28,weight="bold")
         else:
-            self.font1 = tkFont.Font(family="monospace",size=12,weight="bold")
-            self.font2 = tkFont.Font(family="monospace",size=28,weight="bold")
-        
+            self.font1 = tkFont.Font(family=FAMILY,size=12,weight="bold")
+            self.font2 = tkFont.Font(family=FAMILY,size=28,weight="bold")
+
+        if False:
+            print('\nfamilies=',tkinter.font.families())
+            print('\nnames=',tkinter.font.names())
+            print('\nfont1=',self.font1.actual())
+            print('font2=',self.font2.actual())
+            sys.exit(0)
 
     # Function to actually construct the gui
     def construct_gui(self):

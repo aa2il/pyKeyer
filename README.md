@@ -72,6 +72,10 @@ Over the years, a number of very good logging programs have been developed.  The
        - Test with:
            - conda list
 
+   - To blow away a work environment and start over:
+       - conda deactivate
+       - conda remove -n work --all
+           
 3) Create a working enviroment for ham radio stuff:
    - Check which python version we have:
        - conda list   
@@ -107,10 +111,15 @@ Over the years, a number of very good logging programs have been developed.  The
    - conda activate aa2il
    - python pyKeyer.py
 
-8) Known issues using this (as of July 2023):
-   - Fonts look awful - probably need to install these also
-   - Looks like it is pulling something(s) out of Python/data
-     - need to make sure these are available
+8) Fonts look awful - this seems to be a long-known issue with conda.
+   - The ugly fix is replace the offending library in conda:
+      - cd ~/miniconda3/envs/aa2il/lib/
+      - mv libtk8.6.so libtk8.6.sav
+      - ln -s usr/lib/x86_64-linux-gnu/libtk8.6.so .
+   - This is not a good solution but the best I've found so far
+   
+9) Known issues using this (as of July 2023):
+   - Fonts look awful - need a better fix than step 8 above
 
 # Installation for Windoz:
 
