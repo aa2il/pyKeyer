@@ -30,6 +30,7 @@ else:
     from Tkinter import *
     import tkFont
     import tkMessageBox
+import random
 
 import csv
 import pytz
@@ -1096,6 +1097,12 @@ class GUI():
             else:
                 txt = txt.replace('[GDAY]','GE' )
 
+        # Vary the greeting for friends
+        if '[HOWDY]' in txt:
+            GREETINGS=['FB','HI','TNX']
+            i = random.randint(0, len(GREETINGS)-1)
+            txt = txt.replace('[HOWDY]',GREETINGS[i])
+
         # Check if call has changed - if so, repeat it
         call = self.get_call().upper()
         if '[CALL_CHANGED]' in txt:
@@ -1309,7 +1316,8 @@ class GUI():
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
-                                      'FOC-BW','JIDX','CQMM','HOLYLAND','AADX']:
+                                      'FOC-BW','JIDX','CQMM','HOLYLAND','AADX',
+                                      'IOTA','MARAC']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)

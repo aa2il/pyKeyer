@@ -114,7 +114,7 @@ class DEFAULT_KEYING():
             EXCH2=''
             LAB3=None
             EXCH3=''
-            if self.contest_name in ['OCQP','WAG','RAC','BERU','HOLYLAND']:
+            if self.contest_name in ['OCQP','WAG','RAC','BERU','HOLYLAND','IOTA']:
                 
                 # RST + Serial No.
                 LAB1  = 'RST'
@@ -171,6 +171,15 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
+            elif self.contest_name in ['MARAC']:
+
+                # RST State + County 
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE] SDGO'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['PAQP']:

@@ -37,7 +37,7 @@ VERBOSITY=0
 class SST_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'SST')
+        DEFAULT_KEYING.__init__(self,P,'SST',SCP_FNAME='~/Python/history/data/K1USNSST-*.txt')
 
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/K1USNSST*.txt')
         P.CONTEST_ID='K1USN-SST'
@@ -69,7 +69,7 @@ class SST_KEYING(DEFAULT_KEYING):
             MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
             MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
 
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] FB [NAME] 73EE [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] 73EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -240,10 +240,10 @@ class SST_KEYING(DEFAULT_KEYING):
             h = h.split(' ')
         #print('SST INSERT_HINT: h2=',h)
 
+        gui.name.delete(0, END)
+        gui.qth.delete(0, END)
         if len(h)>=1:
-            gui.name.delete(0, END)
             gui.name.insert(0,h[0])
             if len(h)>=2:
-                gui.qth.delete(0, END)
                 gui.qth.insert(0,h[1])
         

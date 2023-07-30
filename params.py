@@ -78,6 +78,10 @@ class PARAMS:
                               help='CQMM DX')
         arg_proc.add_argument('-holy', action='store_true',
                               help='Holyland DX')
+        arg_proc.add_argument('-iota', action='store_true',
+                              help='RSGB IOTA')
+        arg_proc.add_argument('-marac', action='store_true',
+                              help='MARAC US Counties')
         arg_proc.add_argument('-sat', action='store_true',
                               help='Satellites')
         arg_proc.add_argument('-sprint', action='store_true',
@@ -267,7 +271,7 @@ class PARAMS:
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO','FOC-BW',
-                           'JIDX','CQMM','HOLYLAND','AADX']
+                           'JIDX','CQMM','HOLYLAND','AADX','IOTA','MARAC']
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
@@ -299,6 +303,12 @@ class PARAMS:
             MAX_AGE_HOURS=48-9
         elif args.holy:
             self.contest_name='HOLYLAND'
+            MAX_AGE_HOURS=24
+        elif args.marac:
+            self.contest_name='MARAC'
+            MAX_AGE_HOURS=48
+        elif args.iota:
+            self.contest_name='IOTA'
             MAX_AGE_HOURS=24
         elif args.aa:
             self.contest_name='AADX'
