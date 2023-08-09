@@ -913,6 +913,28 @@ class GUI():
             # Turn off TX clarifier (XIT split)
             SetTXSplit(self.P,0,False)
         
+    # Callback to toggle filter width
+    def Toggle_FilterWidth(self):
+        print('TOGGLE FILTER ...',self.FilterWidth)
+        
+        # Manage button appearance
+        if self.FilterWidth==200:
+            self.FilterWidth=50
+            self.FilterWidthBtn.configure(text=str(self.FilterWidth)+' Hz',
+                                          background='red',
+                                          highlightbackground= 'red')
+            self.FilterWidthBtn.configure(relief='sunken')
+        else:
+            self.FilterWidth=200
+            self.FilterWidthBtn.configure(text=str(self.FilterWidth)+' Hz',
+                                          background='Green',
+                                          highlightbackground= 'Green')
+            self.FilterWidthBtn.configure(relief='raised')
+            
+        print('TOGGLE FILTER - Setting filter to',self.FilterWidth)
+        self.sock.set_filter(['Narrow',str(self.FilterWidth)])
+
+            
     # Callback to look up a call on qrz.com
     def Call_LookUp(self):
         call = self.get_call()
@@ -3022,19 +3044,26 @@ class GUI():
             self.So2vBtn = Button(toolbar,text="SO2V", command=self.Toggle_SO2V)
             self.So2vBtn.pack(side=LEFT, padx=2, pady=2)
             
-            self.DXSplitBtn = Button(toolbar,text="DX Split", command=self.Toggle_DXSplit)
+            self.DXSplitBtn = Button(toolbar,
+                                     text="DX Split",
+                                     command=self.Toggle_DXSplit)
             self.DXSplitBtn.pack(side=LEFT, padx=2, pady=2)
+
+            self.FilterWidth=200
+            self.FilterWidthBtn = Button(toolbar,
+                                         text=str(self.FilterWidth)+' Hz',
+                                         command=self.Toggle_FilterWidth)
+            self.FilterWidthBtn.pack(side=LEFT, padx=2, pady=2)
             
             # Spin box to control paddle keying speed (WPM)
-            if True:
-                SB2=Spinbox(toolbar,
-                            from_=15, to=50,       
-                            textvariable=self.PaddlingWin.WPM_TXT, 
-                            bg='white', justify='center',            
-                            command=lambda j=0: self.PaddlingWin.SetWpm(0))
-                SB2.pack(side=RIGHT, padx=2, pady=2)
-                SB2.bind("<Key>", self.key_press )
-                Label(toolbar, text='Paddles:').pack(side=RIGHT, padx=2, pady=2)
+            SB2=Spinbox(toolbar,
+                        from_=15, to=50,       
+                        textvariable=self.PaddlingWin.WPM_TXT, 
+                        bg='white', justify='center',            
+                        command=lambda j=0: self.PaddlingWin.SetWpm(0))
+            SB2.pack(side=RIGHT, padx=2, pady=2)
+            SB2.bind("<Key>", self.key_press )
+            Label(toolbar, text='Paddles:').pack(side=RIGHT, padx=2, pady=2)
 
             # Screen capture
             #Button(toolbar,text="PrtScrn",command=self.PrtScrn) \

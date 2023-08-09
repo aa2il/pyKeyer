@@ -51,6 +51,7 @@ class DEFAULT_KEYING():
         self.key1=None
         self.key2=None
         self.NAME=''
+        self.Uses_Serial=False
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
@@ -75,7 +76,6 @@ class DEFAULT_KEYING():
         self.key2=None
         #EXCH1 = ''
         #EXCH2 = ''
-        self.Uses_Serial=False
         
         MACROS = OrderedDict()
         if self.contest_name=='CW Default':
@@ -147,13 +147,15 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSEC]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['ARQP','AZQP','DEQP','GAQP','ILQP',
-                                       'INQP','KYQP','LAQP','MIQP','MOQP',
-                                       'MSQP',
-                                       'NCQP','NDQP','NEQP','NMQP','NYQP',
-                                       'OKQP','SCQP','SDQP','VTQP','WVQP',
+            elif self.contest_name in ['ALQP','ARQP','AZQP','COQP','DEQP',
+                                       'GAQP','HIQP','IAQP','ILQP','INQP',
+                                       'KSQP','KYQP','LAQP','MEQP','MIQP',
+                                       'MOQP','MSQP','NCQP','NDQP','NEQP',
+                                       'NHQP','NJQP','NMQP','NYQP','OHQP',
+                                       'OKQP','SCQP','SDQP','TNQP','TXQP',
+                                       'VTQP','WAQP','WVQP',
                                        'BCQP','ONQP','QCQP',
-                                       'W1QP','W7QP','NEQP','CPQP']:
+                                       'W1QP','W7QP','CPQP']:
 
                 # RST + State
                 LAB1  = 'RST'
@@ -173,6 +175,15 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
+            elif self.contest_name in ['MDQP','MDCQP']:
+
+                # Entry Class + State - need to put this in .rc file params
+                LAB1  = 'CLASS'
+                EXCH1 = 'F'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                
             elif self.contest_name in ['MARAC']:
 
                 # RST State + County 
@@ -180,7 +191,7 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSTATE] SDGO'
-                self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
+                self.P.CONTEST_ID=self.contest_name+'-QSO-PARTY'
                 
             elif self.contest_name in ['PAQP']:
                 
