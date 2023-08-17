@@ -111,6 +111,7 @@ if __name__ == '__main__':
     import argparse
     from settings import read_settings
     from load_history import load_history
+    from fileio import *
 
     # Structure to contain processing params
     class QRZ_PARAMS:
@@ -149,7 +150,30 @@ if __name__ == '__main__':
     # Read config file
     P=QRZ_PARAMS()
     #print('SETTINGS=',P.SETTINGS)
+
+    # Read adif input file(s)
+    QSOs=[]
+    fnames=['~/Python/pyKeyer/'+P.SETTINGS['MY_CALL']+'.adif']
+    last_qso=None
+    for f in fnames:
+        fname=os.path.expanduser( f )
+        print('Reading log file:',fname)
+
+        p,n,ext=parse_file_name(fname)
+        if ext=='.csv':
+            print('Reading CSV file ...')
+            qsos1,hdr=read_csv_file(fname)
+        else:
+            qsos1 = parse_adif(fname)
+
+        for qso in qsos1:
+            if qso['call']==call:
+                last_qso=qso
+            
+        QSOs = QSOs + qsos1
     
-    qrzWin = CALL_INFO_GUI(None,P,call,None)
+    print("\nThere are ",len(QSOs)," input QSOs ...")
+    
+    qrzWin = CALL_INFO_GUI(None,P,call,last_qso)
     mainloop()
 

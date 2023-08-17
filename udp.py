@@ -27,6 +27,7 @@ from tkinter import END
 def UDP_msg_handler(self,sock,msg):
     print('UDP Message Handler: msg=',msg.rstrip())
     P=self.P
+    MY_CALL = P.SETTINGS['MY_CALL']
 
     msgs=msg.split('\n')
     for m in msgs:
@@ -35,30 +36,27 @@ def UDP_msg_handler(self,sock,msg):
 
         if mm[0]=='Call':
         
+            # Op clicked on a spot in the SDR or Bandmap
             # Call:callsign:VFO
             call = mm[1]
             vfo  = mm[2]
             print('UDP Message Handler: Setting call to:',call,vfo,P.gui.contest)
-            call2=P.gui.get_call()
+            call2=P.gui.get_call()  
             if call!=call2 and vfo=='A':
             
                 P.gui.Clear_Log_Fields()
-                P.gui.call.insert(0,call)
-                P.gui.dup_check(call)
-                if P.gui.contest or True:
+                if call!=MY_CALL:
+                    P.gui.call.insert(0,call)
+                    P.gui.dup_check(call)
                     P.gui.get_hint(call)
                     if P.AUTOFILL:
                         P.KEYING.insert_hint()
-                if P.USE_SCP and False:
-                    # Not why we would need this?
-                    scps,scps2 = P.KEYING.SCP.match(call,VERBOSITY=0)
-                    P.gui.scp.delete(0, END)
-                    P.gui.scp.insert(0, scps)
 
             elif vfo=='B':
 
                 P.gui.OnDeckCircle.delete(0, END)
-                P.gui.OnDeckCircle.insert(0,call)
+                if call!=MY_CALL:
+                    P.gui.OnDeckCircle.insert(0,call)
                 
             return
 
