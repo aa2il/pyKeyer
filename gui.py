@@ -2448,6 +2448,16 @@ class GUI():
             # Update bandmap spots
             self.UpdateBandmap()
     
+        elif key=='Left' and (alt or control):
+            
+            # Left arrow - get a suggested run freq from the bandmap
+            self.SuggestRunFreq('DOWN')
+                
+        elif key=='Right' and (alt or control):
+            
+            # Right arrow - get a suggested run freq from the bandmap
+            self.SuggestRunFreq('UP')
+                
         elif key=='Home' and False:
             
             # DON'T REMAP THE HOME KEY - ITS USEFUL FOR EDITing
@@ -2860,6 +2870,14 @@ class GUI():
     def UpdateBandmap(self):
         print('UPDATE BANDMAP - Requesting updated spot list ...')
         self.P.udp_server.Broadcast('SpotList:Refresh')
+
+    # Callback to request a suggested run freq from the bandmap
+    def SuggestRunFreq(self,opt):
+        frq = int( 1e-3*self.sock.get_freq() )
+        print('SUGGEST RUN FREQ - Requesting suggested run freq ...',opt,frq)
+        msg='RunFreq:'+opt+':'+str(frq)
+        self.P.udp_server.Broadcast(msg)
+        print('msg=',msg)
 
     # Callback to capture the screen 
     def PrtScrn(self):

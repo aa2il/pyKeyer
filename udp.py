@@ -75,6 +75,14 @@ def UDP_msg_handler(self,sock,msg):
             print('UDP Message Handler: Client Name=',name)
             return
                     
+        elif mm[0]=='RunFreq' and mm[1]=='TRY':
+        
+            # Name:Client_name
+            frq=float(mm[2])
+            print('UDP Message Handler: Suggested Run Freq =',frq)
+            P.gui.sock.set_freq(frq)
+            return
+                    
         print('UDP MSG HANDLER: Not sure what to do with this',mm)
 
 
