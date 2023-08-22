@@ -1164,7 +1164,8 @@ class GUI():
 
         # ... and his name
         his_name=self.get_name().replace('?','')
-        if '?' in his_name:
+        my_name = self.P.SETTINGS['MY_NAME']
+        if ('?' in his_name) or (his_name==my_name and '[NAME] '+my_name in txt):
             his_name=' '
         txt = txt.replace('[NAME]',his_name )
         txt = txt.replace('[RST]', self.get_rst_out() )
@@ -1241,6 +1242,9 @@ class GUI():
             try:
                 call=self.get_call().upper()
                 name2=self.P.MASTER[call]['name']
+                my_name = self.P.SETTINGS['MY_NAME']
+                if name2==my_name and '[NAME] '+my_name in txt:
+                    name2=' '
                 txt = txt.replace('[NAME]',name2)
             except Exception as e: 
                 print('Unable to retrieve NAME')
@@ -1825,10 +1829,12 @@ class GUI():
                                   'SRX_STRING','STX_STRING','NAME','QTH','SRX',
                                   'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES'],
                                  [date_on,time_on,date_off,time_off,
-                                  call,str(1e-3*freq_kHz),band,mode, 
+                                  call,
+                                  str( round(1e-3*freq_kHz,3) ),band,mode, 
                                   exch,self.exch_out,name,qth,str(serial),
                                   str(self.cntr),satellite,
-                                  str(1e-3*freq_kHz_rx),band_rx,notes] )))
+                                  str( round(1e-3*freq_kHz_rx,3)),
+                                  band_rx,notes] )))
             qso.update(qso2)
 
             if self.P.sock_log.connection=='FLLOG':
@@ -2448,15 +2454,29 @@ class GUI():
             # Update bandmap spots
             self.UpdateBandmap()
     
-        elif key=='Left' and (alt or control):
+        elif key=='Left':
             
-            # Left arrow - get a suggested run freq from the bandmap
-            self.SuggestRunFreq('DOWN')
+            # Left arrow - move down the bandmap
+            if alt or control:
+                # Get a suggested run freq from the bandmap
+                self.SuggestRunFreq('DOWN')
+            elif shift:
+                # Tune to next spot
+                self.NextSpotFreq('DOWN')
+            else:
+                return
                 
-        elif key=='Right' and (alt or control):
+        elif key=='Right':
             
-            # Right arrow - get a suggested run freq from the bandmap
-            self.SuggestRunFreq('UP')
+            # Right arrow - move up the bandmap
+            if alt or control:
+                # Get a suggested run freq from the bandmap
+                self.SuggestRunFreq('UP')
+            elif shift:
+                # Tune to next spot
+                self.NextSpotFreq('UP')
+            else:
+                return
                 
         elif key=='Home' and False:
             
@@ -2873,9 +2893,17 @@ class GUI():
 
     # Callback to request a suggested run freq from the bandmap
     def SuggestRunFreq(self,opt):
-        frq = int( 1e-3*self.sock.get_freq() )
+        frq = round( 1e-3*self.sock.get_freq() , 2)
         print('SUGGEST RUN FREQ - Requesting suggested run freq ...',opt,frq)
         msg='RunFreq:'+opt+':'+str(frq)
+        self.P.udp_server.Broadcast(msg)
+        print('msg=',msg)
+
+    # Callback to request freq of next spot from the bandmap
+    def NextSpotFreq(self,opt):
+        frq = round( 1e-3*self.sock.get_freq() , 2)
+        print('NEXT SPOT FREQ - Requesting spot freq ...',opt,frq)
+        msg='SpotFreq:'+opt+':'+str(frq)
         self.P.udp_server.Broadcast(msg)
         print('msg=',msg)
 
