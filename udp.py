@@ -23,11 +23,34 @@ from tkinter import END
 
 #########################################################################################
 
+# Routine to handle details of inserting a new call - e.g. when op clicks on a spot
+def insert_new_call(self,call,vfo):
+
+    P=self.P
+    MY_CALL = P.SETTINGS['MY_CALL']
+    call2=P.gui.get_call()  
+    if call!=call2 and vfo=='A':
+            
+        P.gui.Clear_Log_Fields()
+        if call!=MY_CALL:
+            P.gui.call.insert(0,call)
+            P.gui.dup_check(call)
+            P.gui.get_hint(call)
+            if P.AUTOFILL:
+                P.KEYING.insert_hint()
+
+    elif vfo=='B':
+
+        P.gui.OnDeckCircle.delete(0, END)
+        if call!=MY_CALL:
+            P.gui.OnDeckCircle.insert(0,call)
+                
+
+
 # UDP Message handler for pyKeyer
 def UDP_msg_handler(self,sock,msg):
     print('UDP Message Handler: msg=',msg.rstrip())
     P=self.P
-    MY_CALL = P.SETTINGS['MY_CALL']
 
     msgs=msg.split('\n')
     for m in msgs:
@@ -41,23 +64,7 @@ def UDP_msg_handler(self,sock,msg):
             call = mm[1]
             vfo  = mm[2]
             print('UDP Message Handler: Setting call to:',call,vfo,P.gui.contest)
-            call2=P.gui.get_call()  
-            if call!=call2 and vfo=='A':
-            
-                P.gui.Clear_Log_Fields()
-                if call!=MY_CALL:
-                    P.gui.call.insert(0,call)
-                    P.gui.dup_check(call)
-                    P.gui.get_hint(call)
-                    if P.AUTOFILL:
-                        P.KEYING.insert_hint()
-
-            elif vfo=='B':
-
-                P.gui.OnDeckCircle.delete(0, END)
-                if call!=MY_CALL:
-                    P.gui.OnDeckCircle.insert(0,call)
-                
+            insert_new_call(self,call,vfo)
             return
 
         elif mm[0]=='Sat':
@@ -81,6 +88,14 @@ def UDP_msg_handler(self,sock,msg):
             frq=float(mm[2])
             print('UDP Message Handler: '+mm[0]+' Tuning to Freq =',frq)
             P.gui.sock.set_freq(frq)
+
+            # SpotFreq:TRY:freq:call:vfo
+            if mm[0]=='SpotFreq' and True:
+                call = mm[3]
+                vfo  = mm[4]
+                print('UDP Message Handler: Setting call to:',call,vfo,P.gui.contest)
+                insert_new_call(self,call,vfo)
+            
             return
                     
         print('UDP MSG HANDLER: Not sure what to do with this',mm)

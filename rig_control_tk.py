@@ -71,6 +71,7 @@ class RIG_CONTROL():
             # Only show bands that the connected rig supports
             if ((b=='10m')   and (self.sock.rig_type2=='TS850'   )) or \
                ((b=='2m' )   and (self.sock.rig_type2=='FTdx3000')) or \
+               ((b=='2m' )   and (self.sock.rig_type2=='IC7300'))   or \
                ((b=='1.25m') and (self.sock.rig_type2=='IC706'   )) or \
                ((b=='33cm')  and (self.sock.rig_type2=='FT991a'  )) or \
                ((b=='GEN')   and (self.sock.rig_type2=='IC9700'  )):

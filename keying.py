@@ -86,20 +86,20 @@ def open_keying_port(P,sock,rig_num):
         #sys.exit(0)
         
     elif sock.rig_type=='Icom' or \
-         (sock.rig_type=='Hamlib' and sock.rig_type2=='IC9700') or \
-         (sock.rig_type=='FLRIG'  and sock.rig_type2=='IC9700'):
+         (sock.rig_type=='Hamlib' and sock.rig_type2 in ['IC9700','IC7300']) or \
+         (sock.rig_type=='FLRIG'  and sock.rig_type2 in ['IC9700','IC7300']):
 
         if P.PRACTICE_MODE:
             ser=serial_dummy()
     
-        elif sock.rig_type2=='IC9700':
+        elif sock.rig_type2 in ['IC9700','IC7300']:
             # If direct connect, could use USB A ...
             #ser = P.sock.s
             # but, in general, we'll use USB B in case we are using hamlib for rig control
             print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
             try:
                 #port=SERIAL_PORT10     # Old
-                port=find_serial_device('IC9700',1,VERBOSITY=1)
+                port=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
                 print('OPEN KEYING PORT: Sock Init...')
                 sock.init_keyer()
