@@ -1121,7 +1121,7 @@ class GUI():
 
         # Vary the greeting for friends
         if '[HOWDY]' in txt:
-            GREETINGS=['FB','HI','TNX']
+            GREETINGS=['FB','HI','TNX','GL']
             i = random.randint(0, len(GREETINGS)-1)
             txt = txt.replace('[HOWDY]',GREETINGS[i])
 
@@ -1343,7 +1343,7 @@ class GUI():
             self.P.KEYING=CQP_KEYING(self.P)
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
                                       'FOC-BW','JIDX','CQMM','HOLYLAND','AADX',
-                                      'IOTA','MARAC']:
+                                      'IOTA','MARAC','SAC']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)

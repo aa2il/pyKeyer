@@ -165,9 +165,19 @@ class CQP_KEYING(DEFAULT_KEYING):
         gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
         gui.qth.grid(column=col,columnspan=cspan)
         
+        col+=cspan
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+            
         gui.boxes=[gui.call]
         gui.boxes.append(gui.serial_box)
         gui.boxes.append(gui.qth)
+        gui.boxes.append(gui.scp)
+
         gui.counter_lab.grid()
         gui.counter.grid()
         

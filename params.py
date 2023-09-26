@@ -98,6 +98,8 @@ class PARAMS:
                               help='FOC BW')
         arg_proc.add_argument('-wag', action='store_true',
                               help='Work All Germany')
+        arg_proc.add_argument('-sac', action='store_true',
+                              help='Scandinavia Activity')
         arg_proc.add_argument('-beru', action='store_true',
                               help='RSGB Commonwealth')
         arg_proc.add_argument('-rac', action='store_true',
@@ -267,7 +269,7 @@ class PARAMS:
             self.STATE_QPs.append(state+'QP')
             
         self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
-                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'RAC', 'BERU',
+                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'SAC', 'RAC', 'BERU',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO','FOC-BW',
@@ -315,6 +317,9 @@ class PARAMS:
             MAX_AGE_HOURS=48
         elif args.wag:
             self.contest_name='WAG'
+            MAX_AGE_HOURS=48
+        elif args.sac:
+            self.contest_name='SAC'
             MAX_AGE_HOURS=48
         elif args.beru:
             self.contest_name='BERU'

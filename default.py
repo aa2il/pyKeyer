@@ -114,7 +114,8 @@ class DEFAULT_KEYING():
             EXCH2=''
             LAB3=None
             EXCH3=''
-            if self.contest_name in ['OCQP','WAG','RAC','BERU','HOLYLAND','IOTA']:
+            if self.contest_name in ['OCQP','WAG','RAC','BERU','HOLYLAND',
+                                     'IOTA','SAC']:
                 
                 # RST + Serial No.
                 LAB1  = 'RST'
