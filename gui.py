@@ -754,7 +754,7 @@ class GUI():
             # Right click --> tune
             self.Spots_cb(idx,2)
         
-    # callback to set logs fields, optionally from fldigi
+    # Callback to set logs fields, optionally from fldigi
     def Set_Log_Fields(self,fields=None):
         if fields==None:
             fields  = self.sock.get_log_fields()
@@ -997,6 +997,7 @@ class GUI():
             self.P.DIRTY = True
 
         elif idir==1:
+            
             # Save
             call=self.get_call().upper()
             frq = 1e-3*self.sock.get_freq()
@@ -1005,7 +1006,15 @@ class GUI():
             spot['Fields'] = self.Read_Log_Fields()
             self.P.DIRTY = True
 
+            #if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
+            if True:
+                print('Save SPOT:',frq,self.sock.rig_type,self.sock.fldigi_active)
+                foffset=self.sock.modem_carrier()
+                print('foffset=',foffset)
+                spot['Offset']=foffset
+
         elif idir==2:
+            
             # Restore
             try:
                 frq = spot['Freq']
@@ -1014,6 +1023,12 @@ class GUI():
                 call=self.get_call().upper()
                 self.dup_check(call)
                 self.auto_fill(call,'')
+
+                if 'Offset' in spot:
+                    foffset = spot['Offset']
+                    print('Restore SPOT:',frq,self.sock.rig_type,self.sock.fldigi_active,foffset)
+                    self.sock.modem_carrier(foffset)
+                    
             except:
                 pass
 
@@ -2422,14 +2437,20 @@ class GUI():
             
             # Page up or big +
             print('WPM Up')
-            self.set_wpm(dWPM=+WPM_STEP)
+            if P.SENDING_PRACTICE:
+                self.PaddlingWin.SetWpm(+1)
+            else:
+                self.set_wpm(dWPM=+WPM_STEP)
             #return('break')
                 
         elif key in ['Next','KP_Subtract']:
             
             # Page down or big -
             print('WPM Down')
-            self.set_wpm(dWPM=-WPM_STEP)
+            if P.SENDING_PRACTICE:
+                self.PaddlingWin.SetWpm(-1)
+            else:
+                self.set_wpm(dWPM=-WPM_STEP)
             #return('break')
 
         elif key in ['slash','question'] and (alt or control):
@@ -3103,7 +3124,8 @@ class GUI():
             
             # Spin box to control paddle keying speed (WPM)
             SB2=Spinbox(toolbar,
-                        from_=15, to=50,       
+                        from_=cw_keyer.MIN_WPM, 
+                        to=50,       
                         textvariable=self.PaddlingWin.WPM_TXT, 
                         bg='white', justify='center',            
                         command=lambda j=0: self.PaddlingWin.SetWpm(0))

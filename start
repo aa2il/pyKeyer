@@ -315,6 +315,7 @@ else
 endif
 
 # Start keyer
+pkill pyKeyer
 set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE $SCP $AGGRESSIVE"
 if( $RIG2 != "NONE" )then
     set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
