@@ -49,9 +49,9 @@ class CQP_KEYING(DEFAULT_KEYING):
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CQP [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[0+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYCOUNTY] '}
-        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [+2]73 EE [-2] [LOG]'}
+        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -67,7 +67,7 @@ class CQP_KEYING(DEFAULT_KEYING):
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
         MACROS[8]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
-        MACROS[8+12]  = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
+        #MACROS[8+12]  = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
         MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[-2][MYCOUNTY] [MYCOUNTY] [+2]'}
         MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[10+12] = {'Label' : 'COUNTY? '  , 'Text' : 'COUNTY? '}
@@ -80,6 +80,7 @@ class CQP_KEYING(DEFAULT_KEYING):
     def hint(self,call):
         P=self.P
 
+        self.NAME = P.MASTER[call]['name']
         state=P.MASTER[call]['state']
         if state=='CA':
             county=P.MASTER[call]['county']
@@ -165,6 +166,13 @@ class CQP_KEYING(DEFAULT_KEYING):
         gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
         gui.qth.grid(column=col,columnspan=cspan)
         
+        if False:
+            # Debug name insertion
+            col+=cspan
+            cspan=2
+            gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+            gui.name.grid(column=col,columnspan=cspan)
+        
         col+=cspan
         cspan=12-col
         gui.scp_lab.grid(column=col,columnspan=cspan)
@@ -180,13 +188,13 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         gui.counter_lab.grid()
         gui.counter.grid()
-        
+
         if not gui.P.NO_HINTS:
             col+=cspan
             cspan=3
             gui.hint_lab.grid(columnspan=cspan,column=col,sticky=E+W)
             gui.hint.grid(column=col,columnspan=cspan,sticky=E+W)
-            
+                    
         
     # Gather together logging info for this contest
     def logging(self):
@@ -228,7 +236,14 @@ class CQP_KEYING(DEFAULT_KEYING):
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
+        if False:
+            gui.name.delete(0, END)
+            gui.name.insert(0,self.NAME)
+        if True:
+            gui.info.delete(0, END)
+            gui.info.insert(0,self.NAME)
 
+        
     # Hints if we're in the qth window
     def qth_hints(self):
         gui  = self.P.gui

@@ -173,6 +173,13 @@ class IARU_KEYING(DEFAULT_KEYING):
         gui.boxes.append(gui.hint)
         gui.boxes.append(gui.scp)
         
+        if False:
+            # Debug name insertion
+            col+=cspan
+            cspan=2
+            gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+            gui.name.grid(column=col,columnspan=cspan)
+        
         
     # Gather together logging info for this contest
     def logging(self):
@@ -220,3 +227,9 @@ class IARU_KEYING(DEFAULT_KEYING):
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
+        if False:
+            gui.name.delete(0, END)
+            gui.name.insert(0,self.NAME)
+        if True:
+            gui.info.delete(0, END)
+            gui.info.insert(0,self.NAME)

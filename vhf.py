@@ -153,7 +153,7 @@ class VHF_KEYING(DEFAULT_KEYING):
         gui.boxes.append(gui.qth)
         gui.boxes.append(gui.hint)
             
-        if True:
+        if False:
             # Debug name insertion
             col+=cspan
             cspan=2
@@ -198,5 +198,9 @@ class VHF_KEYING(DEFAULT_KEYING):
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
-        gui.name.delete(0, END)
-        gui.name.insert(0,self.NAME)
+        if False:
+            gui.name.delete(0, END)
+            gui.name.insert(0,self.NAME)
+        if True:
+            gui.info.delete(0, END)
+            gui.info.insert(0,self.NAME)
