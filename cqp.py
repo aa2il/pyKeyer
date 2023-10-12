@@ -41,7 +41,7 @@ class CQP_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,'CQP')
 
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/QSOP_CA*.txt')
-        P.CONTEST_ID='CQ-QSO-PARTY'
+        P.CONTEST_ID='CA-QSO-PARTY'
         
     # Routient to set macros for this contest
     def macros(self):
@@ -66,9 +66,9 @@ class CQP_KEYING(DEFAULT_KEYING):
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
-        MACROS[8]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
-        #MACROS[8+12]  = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
-        MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[-2][MYCOUNTY] [MYCOUNTY] [+2]'}
+        MACROS[8]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL]  [SERIAL] [+2]'}
+        MACROS[8+12]  = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
+        MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[-2][MYCOUNTY]  [MYCOUNTY] [+2]'}
         MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[10+12] = {'Label' : 'COUNTY? '  , 'Text' : 'COUNTY? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
@@ -149,7 +149,7 @@ class CQP_KEYING(DEFAULT_KEYING):
     def enable_boxes(self,gui):
 
         gui.contest=True
-        gui.ndigits=2
+        gui.ndigits=1
         gui.hide_all()
         self.macros=[1,None,2]
 

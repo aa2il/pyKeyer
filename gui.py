@@ -207,7 +207,7 @@ class GUI():
         if not os.path.exists(fname):
             
             self.fp_log = open(fname,"w")
-            self.fp_log.write('QSO_DATE_OFF,TIME_OFF,CALL,FREQ,BAND,MODE,SRX_STRING,STX_STRING,SAT_NAME\n')
+            self.fp_log.write('qso_date_off,time_off,call,freq,band,mode,srx_string,stx_string,sat_name\n')
             self.fp_log.flush()
 
         else:
@@ -242,7 +242,7 @@ class GUI():
         if P.LOG_FILE==None:
             P.LOG_FILE = P.WORK_DIR+MY_CALL.replace('/','_')+".adif"
         if P.USE_ADIF_HISTORY:
-            print('fname_adif=',P.LOG_FILE)
+            print('GUI: Reading ADIF log file',P.LOG_FILE)
             qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
             for qso in qsos:
                 self.log_book.append(qso)
@@ -1845,7 +1845,7 @@ class GUI():
                                   'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES'],
                                  [date_on,time_on,date_off,time_off,
                                   call,
-                                  str( round(1e-3*freq_kHz,3) ),band,mode, 
+                                  str( round(1e-3*freq_kHz,4) ),band,mode, 
                                   exch,self.exch_out,name,qth,str(serial),
                                   str(self.cntr),satellite,
                                   str( round(1e-3*freq_kHz_rx,3)),
@@ -1894,6 +1894,7 @@ class GUI():
             self.check.delete(0,END)
             self.exch.delete(0,END)
             self.cat.delete(0,END)
+            self.info.delete(0,END)
             self.qsl_rcvd.set(0)
             
             self.rstin.delete(0,END)
@@ -1908,11 +1909,14 @@ class GUI():
                 self.rstout.insert(0,'5NN')
 
             # Save out to simple log file also
+            freq_MHz=1e-3*freq
             self.fp_log.write('%s,%s,%s,%s,%s,%s,"%s","%s","%s"\n' % \
-                              (date_off,time_off,call,str(freq),band,mode,exch,self.exch_out,satellite) )
+                              (date_off,time_off,call,str(freq_MHz),
+                               band,mode,exch,self.exch_out,satellite) )
             self.fp_log.flush()
             self.fp_txt.write('%s,%s,%s,%s,%s,%s,"%s","%s","%s"\n' % \
-                              (date_off,time_off,call,str(freq),band,mode,exch,self.exch_out,satellite) )
+                              (date_off,time_off,call,str(freq_MHz),
+                               band,mode,exch,self.exch_out,satellite) )
             self.fp_txt.write('----------\n')
             self.fp_txt.flush()
 

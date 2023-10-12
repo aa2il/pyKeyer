@@ -342,13 +342,15 @@ class DEFAULT_KEYING():
             qth = P.MASTER[call][self.key2]
             txt += qth
             
-        self.NAME = P.MASTER[call]['name']
-        if True:
-            gui.name.delete(0,END)
-            gui.name.insert(0,self.NAME)
-        if True:
-            gui.info.delete(0,END)
-            gui.info.insert(0,self.NAME)
+        if 'name' in P.MASTER[call]:
+            self.NAME = P.MASTER[call]['name']
+        else:
+            self.NAME = 'OM'
+
+        gui.name.delete(0,END)
+        gui.name.insert(0,self.NAME)
+        gui.info.delete(0,END)
+        gui.info.insert(0,self.NAME)
 
         return txt
 
