@@ -210,10 +210,7 @@ class PADDLING_GUI():
             else:
                 print('Paddling->SetWpm: NANO - Setting speed to WPM=',
                       WPM,'...')
-                nano_set_wpm(self.P.ser,WPM,idev=2)
-                #nano_read(self.P.ser,True)
-                #nano_write(self.P.ser,'~?')
-                #nano_read(self.P.ser,True)
+                self.P.keyer_device.set_wpm(WPM,idev=2)
             self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram, call, etc.

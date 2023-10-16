@@ -25,7 +25,6 @@ import socket
 import threading
 import sys
 import serial
-from nano_io import nano_write,nano_set_wpm,nano_tune
 
 ############################################################################################
 
@@ -147,8 +146,8 @@ class Keyer():
         print('CW_KEYER - ABORT!')
         self.evt.clear()
         self.stop=True
-        if self.P.NANO_IO:
-            nano_write(self.P.ser,'\\')
+        if self.P.USE_KEYER:
+            self.P.keyer_device.nano_write('\\')
             return
 
     # Routine to send a message in cw by toggling DTR line
@@ -165,14 +164,14 @@ class Keyer():
         dotlen = self.dotlen
 
         # If using nano IO interface, send the char & let the nano do the rest
-        if self.P.NANO_IO:
+        if self.P.USE_KEYER:
             wght=0
             for char in msg.upper():
                 wght+=self.weight[ord(char)]
 
             dt=dotlen*wght
             #print('send_cw: msg=',msg,'\t@ wpm=',self.WPM,'\twght=',wght,'\tdt=',dt)
-            nano_write(ser,msg)
+            self.P.keyer_device.nano_write(msg)
             
             time.sleep(dt)
             return
@@ -239,17 +238,13 @@ class Keyer():
             self.WPM = wpm
             self.dotlen=1.2/self.WPM
 
-            if self.P.NANO_IO:
+            if self.P.USE_KEYER:
                 print("SET_WPM: Setting NANO speed to ",wpm)
                 if self.P.LOCK_SPEED:  
-                    #print("SET_WPM 1: Setting NANO speed to ",wpm)
-                    nano_set_wpm(ser,wpm,idev=3)
-                    #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
+                    self.P.keyer_device.set_wpm(wpm,idev=3)
                     self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
-                    #print('Howdy Ho!',self.P.gui.PaddlingWin.WPM_TXT.get())
                 else:
-                    #print("SET_WPM 2: Setting NANO speed to ",wpm)
-                    nano_set_wpm(ser,wpm)
+                    self.P.keyer_device.set_wpm(wpm)
                 self.P.gui.WPM_TXT.set(str(wpm))
 
     def txt2morse(self,msg):
@@ -304,9 +299,9 @@ class Keyer():
         ser = self.P.ser
 
         # Testing only
-        if self.P.NANO_IO and False:
+        if self.P.USE_KEYER and ('[' not in msg) and (']' not in msg) and True:
             print('send_msg: msg=',msg,'\t@ wpm=',self.WPM)
-            nano_write(ser,msg)
+            self.P.keyer_device.nano_write(msg)
             return
         
         self.stop   = False
@@ -465,24 +460,24 @@ class Keyer():
                     if len(cmd2)>4:
                         SEC=int(cmd2[4:])
                         print("Keying TX for ",SEC)
-                        if self.P.NANO_IO:
-                            nano_tune(ser,True)
+                        if self.P.USE_KEYER:
+                            self.P.keyer_device.tune(ser,True)
                             time.sleep(SEC)
-                            nano_tune(ser,False)
+                            self.P.keyer_device.tune(ser,False)
                         else:
                             ser.setDTR(True)
                             time.sleep(SEC)
                             ser.setDTR(False)
                     elif self.KEY_DOWN:
-                        if self.P.NANO_IO:
-                            nano_tune(ser,False)
+                        if self.P.USE_KEYER:
+                            self.P.keyer_device.tune(ser,False)
                         else:
                             ser.setDTR(False)
                         self.KEY_DOWN=False
                         print('TUNE - key up')
                     else:
-                        if self.P.NANO_IO:
-                            nano_tune(ser,True)
+                        if self.P.USE_KEYER:
+                            self.P.keyer_device.tune(ser,True)
                         else:
                             ser.setDTR(True)
                         self.KEY_DOWN=True

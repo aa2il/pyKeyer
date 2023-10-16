@@ -19,6 +19,8 @@
 #
 ############################################################################################
 #
+# For NANO_IO:
+#
 # Use ~~ to view list of keyer command, ~? to see current settings ...
 # ~     Show cmds
 # C,c   CW
@@ -44,12 +46,57 @@
 # W     Write EEPROM
 #
 ############################################################################################
+#
+# For K3NG_IO, CLI commands:
+# \#		: Play memory # x
+# \A		: Iambic A
+# \B		: Iambic B
+# \C		: Single paddle
+# \D		: Ultimatic
+# \E####	: Set serial number to ####
+# \F####	: Set sidetone to #### hz
+# \G		: Switch to bug mode
+# \I		: TX line disable/enable
+# \J###		: Set dah to dit ratio
+# \L##		: Set weighting (50 = normal)
+# \N		: Toggle paddle reverse
+# \O		: Toggle sidetone on/off
+# \Px<string>	: Program memory #x with <string>
+# \Q#[#]	: Switch to QRSS mode with ## second dit length
+# \R		: Switch to regular speed (wpm) mode
+# \S		: Status report
+# \T		: Tune mode
+# \U		: PTT toggle
+# \W#[#][#]	: Change WPM to ###
+# \X#		: Swith to transmitter #
+# \Y#		: Change wordspace to #
+# \+		: Create prosign
+# \!##		: Repeat play memoy
+# \|####	: Set memory repeat (milliseconds)
+# \*		: Toggle paddle echo
+# \`		: Toggle straight key echo
+# \^		: Togle wait for carriage return to send CW / send C immediately
+# \.		: Toggle dit buffer on/off
+# \-		: Toggle dah buffer on/off
+# \~		: Reset unit
+# \:		: Toggle cw send echo
+# \>		: Send serial number, then increment
+# \<		: Send current serial umber
+# \(		: Send current serial number in cut numbers
+# \)		: Send serial number with cut numbers, then increment
+# \[		: Set quiet paddle interruption - 0 to 20 element lengths; 0 = off
+# \]		: PTT disable/enable
+# \@		: Mill Mode
+# \\		: Empty keyboard send bufer
+# \/		: Paginated help
+#
+############################################################################################
 
 import sys
 import serial
-from rig_io.ft_tables import SERIAL_NANO_IO
 import time
-from utilities import find_serial_device,list_all_serial_devices
+from utilities import find_serial_device,list_all_serial_devices,show_hex
+import termios
 
 ############################################################################################
 
@@ -58,96 +105,199 @@ NANO_BAUD=3*38400
 
 ############################################################################################
 
-# Read responses from the nano IO
-def nano_read(ser,echo=False):
-    txt=''
-    while ser and ser.in_waiting>0:
-        try:
-            txt = ser.read(256).decode("utf-8")
-        except:
-            txt=''
-        if echo:
-            print('Nano:',txt)
-    return txt
+"""
+#  stty -F /dev/ttyUSB0 -hupcl
+#
 
-# Send chars/commands to the nano IO
-def nano_write(ser,txt):
-    # Need to make sure serial buffer doesn't over run - h/w/ flow control doesn't seem to work
-    if ser:
-        if ser.out_waiting>10:
-            print('WAITING ....')
-            while ser.out_waiting>0:
-                time.sleep(1)
-        cnt=ser.write(bytes(txt,'utf-8'))
+import termios
 
-# Key down/key up for tuning
-# This isn't working - need to explore when updating nanoIO code
-def nano_tune(ser,tune):
-    if tune:
-        # Key down
-        txt='~T'
-    else:
-        # Cancel - see nanoIO.ino for this little gem
-        txt=']'
-    print('NANO_TUNE:',txt)
-    if ser:
-        ser.write(bytes(txt,'utf-8'))
+path = '/dev/ttyACM0'
 
-# Open up comms to nano IO
-def open_nano(baud=NANO_BAUD):
+# Disable reset after hangup
+with open(path) as f:
+    attrs = termios.tcgetattr(f)
+    attrs[2] = attrs[2] & ~termios.HUPCL
+    termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
 
-    # Open port
-    #list_all_serial_devices()
-    device=find_serial_device('nanoIO',0,1)
-    #device=find_serial_device('nanoIO32',0,1)
-    ser = serial.Serial(device,baud,timeout=0.1,dsrdtr=0,rtscts=0)
- 
-    # Wait for nano to wake up
-    print('Waiting for Nano IO to start-up ...')
-    ntries=0
-    while ser.in_waiting==0 and ntries<100:
-        ntries += 1
-        time.sleep(.1)
+ser = serial.Serial(path, 9600)
 
-    #nano_write(ser,"Test")
-    #sys.exit(0)
-    
-    # Make sure its in CW & Iambic-A mode
-    nano_command(ser,'C')
-    nano_command(ser,'A')
-
-    # Show settings
-    # nano_command(ser,'~')
-    nano_command(ser,'?')
-
-    # Let's see what we've got
-    if True:
-        time.sleep(2)
-        txt=nano_read(ser)
-        print('OPEN NANO:',txt,'\n')
-
-    return ser
-
-# Send a command to the nano 
-def nano_command(ser,txt):
-
-    try:
-        nano_write(ser,'~'+txt)
-    except Exception as e: 
-        print('NANO COMMAND: Problem with write - giving up')
-        print( str(e) )
+"""
 
 
-# Command nano to change WPM
-def nano_set_wpm(ser,wpm,idev=1):
+# Interface to keying device
+class KEYING_DEVICE():
+    def __init__(self,P,protocol,baud=NANO_BAUD):
 
-    if idev==1 or idev==3:
-        # Set wpm of chars sent from the keyboard
-        txt='S'+str(wpm).zfill(3)+'s'
-        nano_command(ser,txt)
+        # Find serial port to the device
+        print("\nOpening keyer ...")
+        self.device=find_serial_device('nanoIO',0,1)
+
+        # Disable reset after hangup - should be done at system level already
+        print('Turning off DTR hangup ...')
+        with open(self.device) as f:
+            attrs = termios.tcgetattr(f)
+            attrs[2] = attrs[2] & ~termios.HUPCL
+            termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
+
+        # Open serial port to the device
+        self.ser = serial.Serial(self.device,baud,timeout=0.1,
+                                 dsrdtr=True,rtscts=0)
+        #                                 dsrdtr=False,rtscts=0)
             
-    if idev==2 or idev==3:
-        # Set wpm for the paddles
-        txt='U'+str(wpm).zfill(3)+'u'
-        nano_command(ser,txt)
+        self.protocol=protocol
+ 
+        # Make sure its in CW & Iambic-A mode & show current settings
+        if self.protocol=='NANO_IO':
+            self.wait4it(.1,.1,100)
+            self.delim='~'
+            self.send_command('C')
+            self.send_command('A')
+            self.send_command('?')
+        elif self.protocol=='K3NG_IO':
+            self.wait4it(2,.1,1000)
+            self.delim='\\'
+            self.send_command('R')
+            self.send_command('A')
+            self.send_command('S')
+        elif self.protocol=='WINKEYER':
+            self.delim=''
+            ntries = self.wait4it(0,.1,100)
+            print('Found it after',ntries,'tries')
+            #self.send_command(chr(0)+chr(2))          # Open
+            #time.sleep(1)
+            #self.send_command(chr(2)+chr(20))          # 20 wpm
+            #time.sleep(1)
+            #self.send_command(chr(0)+chr(4)+chr(65))  # Echo test
+            #time.sleep(1)
+            #self.send_command(chr(0)+chr(9))          # Get FW major version
+            #time.sleep(1)
+            #self.send_command(chr(0)+chr(12))          # Dump eprom
+            #time.sleep(1)
+            #self.send_command('test')                   # Test Msg - make sure we can send lower case text!
+            #self.send_command('TEST')                   # Test Msg
+
+            self.send_command(chr(0x0E)+chr(0x55))       # Iambic A + paddle echo + serial echo + contest spacing
+            time.sleep(1)
+            
+        else:
+            print('KEYER_DEVICE INIT: Unknown device protocol:',protocol)
+            sys.exit(0)
+
+        # Let's see what we've got so far
+        time.sleep(1)
+        txt=self.nano_read()
+        print('KEYING DEVICE INIT:',txt,'\n',
+              show_hex(txt),len(txt),'\n')
+        time.sleep(1)
+        #sys.exit(0)
+
+    # Wait for the device to wake-up
+    def wait4it(self,t1,t2,n):
+
+        # Wait for nano to wake up
+        print('Waiting for Nano IO to start-up ...')
+        time.sleep(t1)
+        ntries=0
+        while self.ser.in_waiting==0 and ntries<n:
+            if self.protocol=='WINKEYER':
+                self.send_command(chr(0)+chr(2)) 
+            ntries += 1
+            time.sleep(t2)
+        return ntries
+
+    # Send a command to the nano 
+    def send_command(self,txt):
+        try:
+            self.nano_write(self.delim+txt)
+        except Exception as e: 
+            print('SEND NANO COMMAND: Problem with write - giving up')
+            print( str(e) )
+
+    # Read responses from the nano IO
+    def nano_read(self,echo=False):
+        txt=''
+        while self.ser and self.ser.in_waiting>0:
+            try:
+                if True:
+                    txt1 = self.ser.read(256).decode("utf-8",'ignore')
+                    txt += txt1
+                else:
+                    # Winkeyer returns some funny combos
+                    # It looks like it sends some flow control chars
+                    # in the form of 0xc2 and 0xc6.  These appear to be
+                    # use to keep the computer from trying to send something
+                    # while the paddles are engaged.  We aren't that
+                    # sophisticated so it probablt safe to ignore these for now.
+                    txt1 = self.ser.read(256)
+                    txt = txt + txt1.decode("utf-8",'ignore')
+                    print('NANO READ ECHO:',txt1,'\t',len(txt1),
+                          '\n',show_hex(txt1),
+                          '\n',txt,'\t',show_hex(txt),'\t',len(txt))
+            except Exception as e: 
+                print('NANO READ ECHO Error:',str(e) )
+                
+        if echo:
+            print('NANO READ ECHO:',txt,'\t',show_hex(txt))
+        return txt
+
+    # Send chars/commands to the nano IO
+    def nano_write(self,txt):
+        # Need to make sure serial buffer doesn't over run - h/w flow control doesn't seem to work
+        if self.ser:
+            if self.ser.out_waiting>10:
+                print('WAITING ....')
+                while self.ser.out_waiting>0:
+                    time.sleep(1)
+            cnt=self.ser.write(bytes(txt,'utf-8'))
+            print('NANO WRITE: txt=',txt,'\t',show_hex(txt),'\tcnt=',cnt)
+
+            #time.sleep(1)
+            #txt2=self.nano_read(echo=True)
+
+    # Change WPM
+    def set_wpm(self,wpm,idev=1):
+
+        if idev==1 or idev==3:
+            # Set wpm of chars sent from the keyboard
+            if self.protocol=='NANO_IO':
+                txt='S'+str(wpm).zfill(3)+'s'
+            elif self.protocol=='K3NG_IO':
+                txt='W'+str(wpm)+chr(13)
+            elif self.protocol=='WINKEYER':
+                txt=chr(2)+chr(wpm)
+            else:
+                txt=None
+            #print('NANO SET WPM1: txt=',txt,show_hex(txt))
+            if txt:
+                self.send_command(txt)
+            
+        if idev==2 or idev==3:
+            # Set wpm for the paddles
+            if self.protocol=='NANO_IO':
+                txt='U'+str(wpm).zfill(3)+'u'
+            elif self.protocol=='K3NG_IO':
+                txt='W'+str(wpm)+chr(13)
+            elif self.protocol=='WINKEYER':
+                txt=chr(2)+chr(wpm)
+            else:
+                txt=None
+            #print('NANO SET WPM2: txt=',txt,show_hex(txt))
+            if txt:
+                self.send_command(txt)
+                
+        #sys.exit(0)
+
+    # Key down/key up for tuning
+    # This isn't working - need to explore when updating nanoIO code
+    def tune(self,tune):
+        if tune:
+            # Key down
+            txt='~T'
+        else:
+            # Cancel - see nanoIO.ino for this little gem
+            txt=']'
+        print('NANO_TUNE:',txt)
+        #if ser:
+        self.ser.write(bytes(txt,'utf-8'))
+
             

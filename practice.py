@@ -33,7 +33,6 @@ else:
     from Tkinter import END
 from load_history import *
 from sidetone import *
-from nano_io import nano_write
 
 ############################################################################################
 
@@ -199,8 +198,8 @@ class CODE_PRACTICE():
                                     
             if DEBUG:
                 print('PRACTICE_QSO: Sending call=',txt1,'\top_state=',P.OP_STATE)
-            if self.P.NANO_IO:
-                nano_write(self.P.ser,txt1)
+            if self.P.USE_KEYER:
+                self.P.keyer_device.nano_write(txt1)
             else:
                 P.osc.send_cw(txt1,keyer.WPM,1,True)
 
@@ -255,8 +254,8 @@ class CODE_PRACTICE():
             lock.acquire()
             if DEBUG:
                 print('PRACTICE_QSO: Sending exch=',txt2)
-            if self.P.NANO_IO:
-                nano_write(self.P.ser,txt2)
+            if self.P.USE_KEYER:
+                self.P.keyer_device.nano_write(txt2)
             else:
                 P.osc.send_cw(txt2,keyer.WPM,1,True)
             lock.release()

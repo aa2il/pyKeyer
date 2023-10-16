@@ -74,6 +74,10 @@ class PARAMS:
                               help='Stew Parry')
         arg_proc.add_argument('-jidx', action='store_true',
                               help='JIDX CW')
+        arg_proc.add_argument('-ocdx', action='store_true',
+                              help='OC DX CW')
+        arg_proc.add_argument('-solar', action='store_true',
+                              help='Solar Eclipse')
         arg_proc.add_argument('-cqmm', action='store_true',
                               help='CQMM DX')
         arg_proc.add_argument('-holy', action='store_true',
@@ -164,6 +168,10 @@ class PARAMS:
                               type=int,default=1)
         arg_proc.add_argument('-nano', action='store_true',
                               help="Use Nano IO Interface")
+        arg_proc.add_argument('-k3ng', action='store_true',
+                              help="Use K3NG IO Interface")
+        arg_proc.add_argument('-winkeyer', action='store_true',
+                              help="Use Winkeyer IO Interface")
         arg_proc.add_argument('-echo', action='store_true',
                               help="Echo response from Nano IO to text box")
         arg_proc.add_argument('-cwio', action='store_true',
@@ -206,8 +214,11 @@ class PARAMS:
         self.RX_Clar_On    = True
         
         self.SENDING_PRACTICE = args.sending
-        self.NANO_IO       = args.nano or args.sending
-        self.NANO_ECHO     = self.NANO_IO and args.echo
+        self.WINKEYER      = args.winkeyer
+        self.K3NG_IO       = args.k3ng
+        self.NANO_IO       = args.nano # or args.sending
+        self.USE_KEYER     = self.NANO_IO or self.K3NG_IO or self.WINKEYER
+        self.NANO_ECHO     = self.USE_KEYER and args.echo
         self.CW_IO         = args.cwio
         self.LOCK_SPEED    = args.lock
         self.SPECIAL       = args.special
@@ -252,7 +263,7 @@ class PARAMS:
         self.USE_LOG_HISTORY  = args.use_log_hist
         self.USE_ADIF_HISTORY = args.use_adif_hist
         self.SIDETONE      = args.sidetone or self.PORT==1 or \
-            (self.PRACTICE_MODE and not self.NANO_IO)
+            (self.PRACTICE_MODE and not self.USE_KEYER)
 
         self.MY_CNTR       = 1
         self.PRECS         = PRECS
@@ -264,7 +275,7 @@ class PARAMS:
         self.HIST          = {}
 
         self.STATE_LIST=args.state
-        self.STATE_QPs = ['OCQP','BCQP','ONQP','QCQP','W1QP','W7QP','CPQP']
+        self.STATE_QPs = ['BCQP','ONQP','QCQP','W1QP','W7QP','CPQP']
         for state in STATES:
             self.STATE_QPs.append(state+'QP')
             
@@ -273,7 +284,8 @@ class PARAMS:
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO','FOC-BW',
-                           'JIDX','CQMM','HOLYLAND','AADX','IOTA','MARAC']
+                           'JIDX','CQMM','HOLYLAND','AADX','IOTA','MARAC',
+                           'SOLAR','OCDX']
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
@@ -300,6 +312,12 @@ class PARAMS:
         elif args.jidx:
             self.contest_name='JIDX'
             MAX_AGE_HOURS=30
+        elif args.ocdx:
+            self.contest_name='OCDX'
+            MAX_AGE_HOURS=24
+        elif args.solar:
+            self.contest_name='SE'
+            MAX_AGE_HOURS=10
         elif args.cqmm:
             self.contest_name='CQMM'
             MAX_AGE_HOURS=48-9

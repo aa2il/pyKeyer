@@ -108,12 +108,12 @@ else:
 #sys.exit(0)
 
 # Check if we need nano device
-if P.SENDING_PRACTICE and not P.NANO_IO:
-    print('\n*******************************************************')
-    print('*******************************************************')
-    print('*** We need the NANO IO device for sending practice ***')
-    print('*******************************************************')
-    print('*******************************************************')
+if P.SENDING_PRACTICE and not P.USE_KEYER:
+    print('\n**************************************************************')
+    print('**************************************************************')
+    print('*** We need the EXTERNAL KEYER device for sending practice ***')
+    print('**************************************************************')
+    print('**************************************************************')
     sys.exit(1)
 
 # Open keying port(s)

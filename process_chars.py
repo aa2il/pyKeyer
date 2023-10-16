@@ -35,11 +35,14 @@ def process_chars(P):
     q         = P.q
     VERBOSITY = 0
     nano_txt  = ''
+
+    last_char_time=time.time()
+    need_eol=False
     
     while not P.Stopper.isSet():
 
         if VERBOSITY>0:
-            print('PROCESSS_CHARS: Checking ...',q.qsize())
+            print('PROCESSS_CHARS: Checking msg queue ...',q.qsize())
             
         # Anything available?
         if q.qsize()>0:
@@ -94,29 +97,36 @@ def process_chars(P):
         else:
 
             # Check NanoIO device for any messages
-            if P.NANO_IO:
-                
+            if P.USE_KEYER:
+
                 if VERBOSITY>0:
-                    print('PROCESSS_CHARS: Nano 1')
+                    print('PROCESSS_CHARS: Checking rx from keyer ...')
 
                 # This has thrown an error in the past
                 try:
                     if P.ser and P.ser.in_waiting>0:
                         if VERBOSITY>0:
-                            print('PROCESSS_CHARS: Nano 2A')
-                        txt=nano_read(P.ser)
-                        if VERBOSITY>0:
-                            print('PROCESSS_CHARS: Nano 3',P.NANO_ECHO)
-                        if P.NANO_ECHO:
-                            # Put it in the big text box also
-                            if VERBOSITY>0:
-                                print('PROCESSS_CHARS: Nano 4:',txt)
-
+                            print('PROCESSS_CHARS: Getting data from keyer ... echo=',P.NANO_ECHO,P.ser,P.ser.in_waiting)
+                        txt=P.keyer_device.nano_read()
+                        if P.NANO_ECHO and len(txt)>0:
+                            # Check if its been a while since the last char was received
+                            # This won't work properly bx linux is not real-time - need to put this in the keyer
+                            if (P.WINKEYER or P.K3NG_IO) and True:
+                                t=time.time()
+                                dt=t-last_char_time
+                                #print(t,last_char_time,dt,10*P.keyer.dotlen,need_eol)
+                                if need_eol and dt>1.5:      # 10*P.keyer.dotlen:
+                                    txt='\n'+txt
+                                    need_eol=False
+                                else:
+                                    need_eol=True
+                                last_char_time=t
+                            
                             # Add a <CR/LF> if we are echoing back a command
-                            if txt[0]=='~' and txt[-1] in ['u','s']:
+                            if P.NANO_IO and txt[0]=='~' and txt[-1] in ['u','s']:
                                 txt+='\n'
                                 
-                            #P.gui.txt.insert(END, txt+'\n')
+                            # Put it in the big text box also
                             P.gui.txt.insert(END, txt)
                             P.gui.txt.see(END)
                             P.gui.root.update_idletasks()
@@ -126,17 +136,15 @@ def process_chars(P):
                                 #P.gui.fp_txt.write('NANO: %s\n' % (nano_txt) )
                                 #P.gui.fp_txt.flush()
                                 nano_txt = ''
-                            if VERBOSITY>0:
-                                print('PROCESSS_CHARS: Nano 5')
+                        if VERBOSITY>0:
+                            print('PROCESSS_CHARS: Getting data from keyer ... txt=',txt)
                     else:
                         time.sleep(0.1)
                         
                 except Exception as e: 
-                    print( str(e) )
+                    print("PROCESS CHARS - ERROR:",str(e) )
                     time.sleep(0.1)
                     
-                if VERBOSITY>0:
-                    print('PROCESSS_CHARS: Nano 6')
             else:
                 time.sleep(0.1)
         

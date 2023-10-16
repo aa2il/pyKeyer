@@ -114,7 +114,7 @@ class DEFAULT_KEYING():
             EXCH2=''
             LAB3=None
             EXCH3=''
-            if self.contest_name in ['OCQP','WAG','RAC','BERU','HOLYLAND',
+            if self.contest_name in ['OCDX','WAG','RAC','BERU','HOLYLAND',
                                      'IOTA','SAC']:
                 
                 # RST + Serial No.
@@ -275,6 +275,16 @@ class DEFAULT_KEYING():
                 EXCH2   = 'NA'
                 self.P.CONTEST_ID=self.contest_name
                 
+            elif self.contest_name in ['SOLAR']:
+                
+                # RST + Grid
+                CONTEST = 'SE'
+                LAB1    = 'RST'
+                EXCH1   = '5NN'
+                LAB2    = 'QTH'
+                EXCH2   = '[MYGRID]'
+                self.P.CONTEST_ID=self.contest_name
+                
             else:
 
                 # RST + State
@@ -342,15 +352,14 @@ class DEFAULT_KEYING():
             qth = P.MASTER[call][self.key2]
             txt += qth
             
-        if 'name' in P.MASTER[call]:
-            self.NAME = P.MASTER[call]['name']
-        else:
-            self.NAME = 'OM'
-
         gui.name.delete(0,END)
-        gui.name.insert(0,self.NAME)
         gui.info.delete(0,END)
-        gui.info.insert(0,self.NAME)
+        try:
+            self.NAME = P.MASTER[call]['name']
+            gui.name.insert(0,self.NAME)
+            gui.info.insert(0,self.NAME)
+        except:
+            self.NAME = ''
 
         return txt
 
@@ -445,7 +454,7 @@ class DEFAULT_KEYING():
             gui.contest=False
         else:
             gui.contest=True
-        gui.ndigits=2
+        gui.ndigits=1
         gui.hide_all()
         self.macros=[1,None,2]
 
@@ -603,9 +612,9 @@ class DEFAULT_KEYING():
                 gui.name.delete(0, END)
                 gui.name.insert(0,h[idx])
                 idx+=1
-            else:
-                gui.name.delete(0, END)
-                gui.name.insert(0,self.NAME)
+            #else:
+            #    gui.name.delete(0, END)
+            #    gui.name.insert(0,self.NAME)
 
             if self.key2!=None and len(h)>idx:
                 if self.key2 in ['sec','qth','state']:

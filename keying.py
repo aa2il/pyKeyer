@@ -59,9 +59,22 @@ def open_keying_port(P,sock,rig_num):
         return None
     
     print('Opening keying port ...',sock.rig_type,sock.rig_type2)
-    if P.NANO_IO and rig_num==1:
+    if P.USE_KEYER and rig_num==1:
         try:
-            ser = open_nano(baud=NANO_BAUD)
+            if P.NANO_IO:
+                protocol='NANO_IO'
+                BAUD=NANO_BAUD
+            elif P.K3NG_IO:
+                protocol='K3NG_IO'
+                BAUD=NANO_BAUD
+            elif P.WINKEYER:
+                protocol='WINKEYER'
+                BAUD=1200
+            else:
+                print('OPEN KEYING PORT - Unknown protocol')
+                sys.exit(0)
+            P.keyer_device = KEYING_DEVICE(P,protocol,baud=BAUD)
+            ser = P.keyer_device.ser
         except Exception as e: 
             print( str(e) )
             print('\n*************************************')

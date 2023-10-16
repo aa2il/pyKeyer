@@ -32,9 +32,13 @@ set FIND_RIG="~/Python/findRig/findRig.py"
 set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
 #set PRACTICE="-prac -nrows 0 -lock"
+
 set NANO=""
 set NANO="-nano"
 set NANO="-nano -echo"
+#set NANO="-k3ng -echo"
+#set NANO="-winkeyer -echo"
+
 #set NANO="-sidetone"
 #set NANO="-nano -sidetone"
 
@@ -320,12 +324,17 @@ set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CA
 if( $RIG2 != "NONE" )then
     set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
 endif
+echo " "
 echo OPTS=$OPTS
+echo " "
 
 cd ~/Python/pyKeyer
 set EXE="pyKeyer.py"
 #cd dist
 #set EXE="pyKeyer"
 echo $EXE $OPTS 
-echo $EXE $OPTS >& /tmp/KEYER
-$EXE $OPTS >>& /tmp/KEYER &
+echo " "        >& /tmp/KEYER
+echo $EXE $OPTS >>& /tmp/KEYER
+echo " "        >& /tmp/KEYER
+$EXE $OPTS      >>& /tmp/KEYER &
+#$EXE $OPTS
