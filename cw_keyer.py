@@ -147,7 +147,8 @@ class Keyer():
         self.evt.clear()
         self.stop=True
         if self.P.USE_KEYER:
-            self.P.keyer_device.nano_write('\\')
+            #self.P.keyer_device.nano_write('\\')
+            self.P.keyer_device.abort()
             return
 
     # Routine to send a message in cw by toggling DTR line

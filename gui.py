@@ -1848,7 +1848,7 @@ class GUI():
                                   str( round(1e-3*freq_kHz,4) ),band,mode, 
                                   exch,self.exch_out,name,qth,str(serial),
                                   str(self.cntr),satellite,
-                                  str( round(1e-3*freq_kHz_rx,3)),
+                                  str( round(1e-3*freq_kHz_rx,4)),
                                   band_rx,notes] )))
             qso.update(qso2)
 

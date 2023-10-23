@@ -87,7 +87,7 @@
 # \[		: Set quiet paddle interruption - 0 to 20 element lengths; 0 = off
 # \]		: PTT disable/enable
 # \@		: Mill Mode
-# \\		: Empty keyboard send bufer
+# \\		: Empty keyboard send buffer
 # \/		: Paginated help
 #
 ############################################################################################
@@ -300,4 +300,15 @@ class KEYING_DEVICE():
         #if ser:
         self.ser.write(bytes(txt,'utf-8'))
 
+            
+    # Immediate abort
+    def abort(self):
+        
+        if self.protocol=='NANO_IO':
+            self.nano_write('\\')
+        elif self.protocol=='K3NG_IO':
+            self.nano_write('\\')
+        elif self.protocol=='WINKEYER':
+            self.send_command(chr(0x0A))             # Clear buffer should do the trick
+                              
             

@@ -37,7 +37,7 @@ set NANO=""
 set NANO="-nano"
 set NANO="-nano -echo"
 #set NANO="-k3ng -echo"
-#set NANO="-winkeyer -echo"
+set NANO="-winkeyer -echo"
 
 #set NANO="-sidetone"
 #set NANO="-nano -sidetone"
@@ -332,6 +332,7 @@ cd ~/Python/pyKeyer
 set EXE="pyKeyer.py"
 #cd dist
 #set EXE="pyKeyer"
+pwd
 echo $EXE $OPTS 
 echo " "        >& /tmp/KEYER
 echo $EXE $OPTS >>& /tmp/KEYER
