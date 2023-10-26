@@ -22,6 +22,8 @@
 
 import threading
 from utilities import freq2band
+from tcp_server import open_udp_client,BANDMAP_UDP_PORT
+from udp import UDP_msg_handler
 
 ################################################################################
 
@@ -29,6 +31,60 @@ VERBOSITY=0
 
 ################################################################################
 
+# Function to monitor udp connections
+def check_udp_clients(P):
+
+    print('CHECK UDP CLIENTS:',P.UDP_SERVER,P.udp_client,P.udp_ntries)
+    if True:
+        if P.UDP_SERVER != None:
+
+            # Client to BANDMAP
+            if not P.udp_client:
+                P.udp_ntries+=1
+                if P.udp_ntries<=1000:
+                    P.udp_client=open_udp_client(P,BANDMAP_UDP_PORT,
+                                                 UDP_msg_handler)
+                    if P.udp_client:
+                        print('CHECK UDP CLIENTS: Opened connection to BANDMAP - port=',
+                              BANDMAP_UDP_PORT)
+                        P.udp_ntries=0
+                else:
+                    print('CHECK UDP CLIENTS: Unable to open UDP client - too many attempts',
+                          P.udp_ntries)
+
+            """ 
+            # Client to SDR - don't need this yet?
+
+            Get rid of "self"s
+
+            if not self.P.udp_client2:
+                self.P.udp_ntries2+=1
+                if self.P.udp_ntries2<=1000:
+                    self.P.udp_client2=open_udp_client(self.P,SDR_UDP_PORT,
+                                                       UDP_msg_handler,BUFFER_SIZE=32*1024)
+                    if self.P.udp_client2:
+                        print('WATCHDOG->CHECK UDP CLIENTS: Opened connection to BANDMAP.')
+                        self.P.udp_ntries2=0
+                        self.Last_BM_Check=time.time() - BANDMAP_UPDATE_INTERVAL+2     # Force first update in 2-seconds
+                else:
+                    print('Unable to open 2nd UDP client - too many attempts',self.P.udp_ntries2)
+            """
+
+        """
+        # Query spot data to populate bandmap - SDR should take care of this for now
+        if self.P.udp_client2:
+            t = time.time()
+            dt = t - self.P.Last_BM_Check
+            band=self.P.BAND
+            #print('WATCHDOG->CHECK_UDP_CLIENTS: t=',t,self.Last_BM_Check,
+            #dt,'\tband=',band)
+            if dt>BANDMAP_UPDATE_INTERVAL:
+                msg='SpotList:'+band+':?\n'
+                self.P.udp_client2.Send(msg)
+                self.Last_BM_Check=t
+                print('WATCHDOG->CHECK_UDP_CLIENTS: Spot List Query sent ..,',msg)
+        """
+   
 def WatchDog(P):
     #print('Watch Dog ....')
 
@@ -109,6 +165,9 @@ def WatchDog(P):
     if P.UDP_SERVER and False:
         print('WATCHDOG - Broadcasting heart beat ...')
         P.udp_server.Broadcast('HeartBeat:Keyer:Thump Thump - kerr chunk')
+
+    # Open clients to BANDMAP and SDR
+    #check_udp_clients(P)
     
     # Read rotor position
     if P.sock_rotor.connection!='NONE' or False:

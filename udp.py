@@ -49,7 +49,7 @@ def insert_new_call(self,call,vfo):
 
 # UDP Message handler for pyKeyer
 def UDP_msg_handler(self,sock,msg):
-    print('UDP Message Handler: msg=',msg.rstrip())
+    print('UDP Message Handler: msg=',msg.rstrip(),'\nsock=',sock)
     P=self.P
 
     msgs=msg.split('\n')
@@ -78,10 +78,14 @@ def UDP_msg_handler(self,sock,msg):
         elif mm[0]=='Name':
         
             # Name:Client_name
-            name=mm[1]
-            print('UDP Message Handler: Client Name=',name)
+            if mm[1]=='?':
+                print('UDP MSG HANDLER: Server name query')
+                msg2='Name:KEYER\n'
+                sock.send(msg2.encode())
+            else:
+                print('UDP MSG HANDLER: Client name is',mm[1])
             return
-                    
+                
         elif mm[0] in ['RunFreq','SpotFreq'] and mm[1]=='TRY':
         
             # RunFreq:TRY:freq

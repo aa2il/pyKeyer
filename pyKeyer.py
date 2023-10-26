@@ -247,6 +247,12 @@ if P.UDP_SERVER:
     worker.daemon=True
     worker.start()
     P.threads.append(worker)
+    
+    P.udp_client  = False
+    P.udp_ntries  = 0
+    #P.udp_client2 = False
+    #P.udp_ntries2 = 0
+    #P.Last_BM_Check = 0
 
 # WatchDog - runs in its own thread
 P.WATCHDOG = True

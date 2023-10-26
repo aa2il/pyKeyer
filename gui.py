@@ -140,6 +140,7 @@ class GUI():
         self.contest = False
         self.P = P
         self.P.LAST_MSG = -1
+        self.RUNNING=False
         self.P.root = self.root
         self.text_buff=''
         self.macro_label=''
@@ -1007,11 +1008,16 @@ class GUI():
             self.P.DIRTY = True
 
             #if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
+            print('Save SPOT:',frq,self.sock.rig_type,self.sock.fldigi_active)
+            foffset=self.sock.modem_carrier()
+            print('foffset=',foffset)
+            spot['Offset']=foffset
+
             if True:
-                print('Save SPOT:',frq,self.sock.rig_type,self.sock.fldigi_active)
-                foffset=self.sock.modem_carrier()
-                print('foffset=',foffset)
-                spot['Offset']=foffset
+                mode = self.sock.get_mode()
+                msg  = 'SPOT:'+call+':'+str(frq)+':'+mode
+                print('Save SPOT: Broadcasting spot:',msg)
+                self.P.udp_server.Broadcast(msg)
 
         elif idir==2:
             
@@ -1215,6 +1221,10 @@ class GUI():
 
         P=self.P
         P.LAST_MACRO=arg
+        if arg<=2 or (arg>=0+12 and arg<=2+12):
+            self.RUNNING = True
+        elif arg in [5,5+12]:
+            self.RUNNING = False
 
         # Keep track of what we last sent
         txt = self.macros[arg]["Text"]
@@ -1222,7 +1232,6 @@ class GUI():
             self.P.LAST_MSG = arg                # Last was a reply - make sure he got it ok
         elif arg in [2,4]:
             self.P.LAST_MSG = -1                 # Last was TU or my call
-        #print 'LAST_MSG=',txt,arg,self.P.LAST_MSG
 
         # Set register to tell practice exec what op has done
         P.OP_STATE=0
@@ -1851,6 +1860,12 @@ class GUI():
                                   str( round(1e-3*freq_kHz_rx,4)),
                                   band_rx,notes] )))
             qso.update(qso2)
+
+            # Send spot to bandmap - only do if S&P
+            if not self.RUNNING:
+                msg  = 'SPOT:'+call+':'+str(freq_kHz)+':'+mode
+                print('LOG QSO: Broadcasting spot:',msg)
+                self.P.udp_server.Broadcast(msg)
 
             if self.P.sock_log.connection=='FLLOG':
                 print('GUI: =============== via FLLOG ...')
