@@ -200,6 +200,8 @@ class PARAMS:
                               help='Use history from adif log')
         arg_proc.add_argument('-geo',type=str,default=None,
                               help='Geometry')
+        arg_proc.add_argument('-desktop',type=int,default=None,
+                              help='Desk Top Work Space No.')
         arg_proc.add_argument('-special', action='store_true',
                               help='Special settings for VHF work')
         args = arg_proc.parse_args()
@@ -212,6 +214,7 @@ class PARAMS:
         self.AGGRESSIVE    = args.aggressive
         self.TEST_MODE     = args.test
         self.RX_Clar_On    = True
+        self.DESKTOP       = args.desktop
         
         self.SENDING_PRACTICE = args.sending
         self.WINKEYER      = args.winkeyer

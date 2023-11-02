@@ -148,14 +148,14 @@ class KEYING_DEVICE():
  
         # Make sure its in CW & Iambic-A mode & show current settings
         if self.protocol=='NANO_IO':
-            self.wait4it(.1,.1,100)
             self.delim='~'
+            self.wait4it(.1,.1,10)
             self.send_command('C')
             self.send_command('A')
             self.send_command('?')
         elif self.protocol=='K3NG_IO':
-            self.wait4it(2,.1,1000)
             self.delim='\\'
+            self.wait4it(2,.1,1000)
             self.send_command('R')
             self.send_command('A')
             self.send_command('S')
@@ -167,9 +167,9 @@ class KEYING_DEVICE():
             #time.sleep(1)
             #self.send_command(chr(2)+chr(20))          # 20 wpm
             #time.sleep(1)
-            #self.send_command(chr(0)+chr(4)+chr(65))  # Echo test
+            #self.send_command(chr(16+5))               # Get status byte - Doesn't seem to work
             #time.sleep(1)
-            #self.send_command(chr(0)+chr(9))          # Get FW major version
+            #self.send_command(chr(0)+chr(9))          # Get FW major version - not in WK2
             #time.sleep(1)
             #self.send_command(chr(0)+chr(12))          # Dump eprom
             #time.sleep(1)
@@ -188,8 +188,8 @@ class KEYING_DEVICE():
         txt=self.nano_read()
         print('KEYING DEVICE INIT:',txt,'\n',
               show_hex(txt),len(txt),'\n')
-        time.sleep(1)
         #sys.exit(0)
+        
 
     # Wait for the device to wake-up
     def wait4it(self,t1,t2,n):
@@ -199,10 +199,45 @@ class KEYING_DEVICE():
         time.sleep(t1)
         ntries=0
         while self.ser.in_waiting==0 and ntries<n:
-            if self.protocol=='WINKEYER':
-                self.send_command(chr(0)+chr(2)) 
             ntries += 1
-            time.sleep(t2)
+            if self.protocol=='NANO_IO':
+
+                # Check for proper device by issuing status query and looking for proper response:
+                self.send_command('?')
+                time.sleep(t2)
+                txt=self.nano_read()
+                print(ntries,txt)
+                if 'nanoIO ver' in txt:
+                    print('WAIT4IT: Found NANO_IO keying device - yippee!')
+                    break
+                
+            elif self.protocol=='WINKEYER':
+
+                # First, we need to open the device
+                self.send_command(chr(0)+chr(2))
+                time.sleep(t2)
+                if self.ser.in_waiting:
+                    print('WAIT4IT: WINKEYER appears to be opened ...')
+
+                    # Send 'ABC' and see if it gets echoed back
+                    self.send_command(chr(0)+chr(4)+'A')  # Echo test
+                    self.send_command(chr(0)+chr(4)+'B')  # Echo test
+                    self.send_command(chr(0)+chr(4)+'C')  # Echo test
+                    time.sleep(t2)
+                    txt=self.nano_read()
+                    print(ntries,txt,'\t',show_hex(txt))
+                    if txt==chr(0x17)+'ABC':
+                        print('WAIT4IT: Found WINKEYER keying device - yippee!')
+                        break
+                
+            else:
+                print('WAIT4IT: ERROR - no test specified for UNKNOWN KEYER!!!')
+                time.sleep(t2)
+                sys.exit(0)
+                
+        else:
+            print('NANO_io->WAIT4IT: Could not find keyer device - giving up!!!')
+            sys.exit(0)
         return ntries
 
     # Send a command to the nano 
@@ -249,7 +284,7 @@ class KEYING_DEVICE():
                 while self.ser.out_waiting>0:
                     time.sleep(1)
             cnt=self.ser.write(bytes(txt,'utf-8'))
-            print('NANO WRITE: txt=',txt,'\t',show_hex(txt),'\tcnt=',cnt)
+            #print('NANO WRITE: txt=',txt,'\t',show_hex(txt),'\tcnt=',cnt)
 
             #time.sleep(1)
             #txt2=self.nano_read(echo=True)

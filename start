@@ -37,7 +37,7 @@ set NANO=""
 set NANO="-nano"
 set NANO="-nano -echo"
 #set NANO="-k3ng -echo"
-set NANO="-winkeyer -echo"
+#set NANO="-winkeyer -echo"
 
 #set NANO="-sidetone"
 #set NANO="-nano -sidetone"
@@ -127,6 +127,13 @@ if( $CONTEST == "paddling" )then
     set HINTS="-adjust -sending  -immediate"
     #exit
     
+# Determine current workspace number - we'll use this later to
+# keep windows on this workspace instead of wandering
+echo " "
+set WS=`wmctrl -d | fgrep " * " | cut -f 1 -d ' '`
+echo Current Workspace = $WS
+echo " "
+
 ########################################################################
     
 # Settings for NAQP contest
@@ -320,7 +327,7 @@ endif
 
 # Start keyer
 pkill pyKeyer
-set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE $SCP $AGGRESSIVE"
+set OPTS="-wpm ${WPM} $PRACTICE $NANO -${CONTEST} -rig $RIG $RIG_TYPE $HINTS $CAPTURE $SCP $AGGRESSIVE -desktop $WS"
 if( $RIG2 != "NONE" )then
     set OPTS="$OPTS -rig2 $RIG2 $RIG_TYPE2"
 endif

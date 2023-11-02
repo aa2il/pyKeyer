@@ -623,6 +623,11 @@ class GUI():
         self.root.deiconify()
         self.splash.destroy()
         self.root.update_idletasks()
+        if P.DESKTOP!=None:
+            cmd='wmctrl -r "'+self.root.title()+'" -t '+str(P.DESKTOP)
+            os.system(cmd)
+            cmd='wmctrl -r "'+self.PaddlingWin.win.title()+'" -t '+str(P.DESKTOP)
+            os.system(cmd)
 
 
     # Callback to show or hide the upper text box
