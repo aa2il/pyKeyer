@@ -291,8 +291,10 @@ class PADDLING_GUI():
             
             # Call signs
             #print('There are',self.Ncalls,'call signs loaded')
-            i = random.randint(0, self.Ncalls-1)
-            txt = self.calls[i]
+            txt=''
+            for j in range(5):
+                i = random.randint(0, self.Ncalls-1)
+                txt += ' '+self.calls[i]
             #print('call=',txt)
             
         elif Selection>=2 and Selection<=5:
@@ -308,9 +310,11 @@ class PADDLING_GUI():
                 items=self.letters+self.numbers+self.specials
 
             txt=''
-            for j in range(5):
-                i = random.randint(0, len(items)-1)
-                txt += items[i]
+            for k in range(5):
+                for j in range(5):
+                    i = random.randint(0, len(items)-1)
+                    txt += items[i]
+                txt += ' '
             #print('letters=',txt)
             
         elif Selection==6:

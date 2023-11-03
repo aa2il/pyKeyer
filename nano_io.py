@@ -155,10 +155,11 @@ class KEYING_DEVICE():
             self.send_command('?')
         elif self.protocol=='K3NG_IO':
             self.delim='\\'
-            self.wait4it(2,.1,1000)
-            self.send_command('R')
-            self.send_command('A')
-            self.send_command('S')
+            self.wait4it(2,.1,10)
+            self.send_command('R')          # Regular speed mode
+            self.send_command('A')          # Iambic A
+            self.send_command('Y5')         # Contest word spacing
+            self.send_command('S')          # Show status
         elif self.protocol=='WINKEYER':
             self.delim=''
             ntries = self.wait4it(0,.1,100)
@@ -186,8 +187,10 @@ class KEYING_DEVICE():
         # Let's see what we've got so far
         time.sleep(1)
         txt=self.nano_read()
-        print('KEYING DEVICE INIT:',txt,'\n',
-              show_hex(txt),len(txt),'\n')
+        print('KEYING DEVICE INIT: txt=',txt,len(txt))
+        if self.protocol=='WINKEYER':
+            print(show_hex(txt))
+        print('')
         #sys.exit(0)
         
 
@@ -211,6 +214,17 @@ class KEYING_DEVICE():
                     print('WAIT4IT: Found NANO_IO keying device - yippee!')
                     break
                 
+            elif self.protocol=='K3NG_IO':
+
+                # Check for proper device by issuing status query and looking for proper response:
+                self.send_command('?')
+                time.sleep(t2)
+                txt=self.nano_read()
+                print(ntries,txt)
+                if 'K3NG Keyer' in txt:
+                    print('WAIT4IT: Found NANO_IO keying device - yippee!')
+                    break
+                
             elif self.protocol=='WINKEYER':
 
                 # First, we need to open the device
@@ -231,6 +245,7 @@ class KEYING_DEVICE():
                         break
                 
             else:
+
                 print('WAIT4IT: ERROR - no test specified for UNKNOWN KEYER!!!')
                 time.sleep(t2)
                 sys.exit(0)
@@ -284,7 +299,7 @@ class KEYING_DEVICE():
                 while self.ser.out_waiting>0:
                     time.sleep(1)
             cnt=self.ser.write(bytes(txt,'utf-8'))
-            #print('NANO WRITE: txt=',txt,'\t',show_hex(txt),'\tcnt=',cnt)
+            #print('NANO WRITE: txt=',txt,'\n',show_hex(txt),'\tcnt=',cnt)
 
             #time.sleep(1)
             #txt2=self.nano_read(echo=True)
@@ -292,6 +307,8 @@ class KEYING_DEVICE():
     # Change WPM
     def set_wpm(self,wpm,idev=1):
 
+        #print('NANO SET WPM: wpm=',wpm,'\tidev=',idev,'\tprot=',self.protocol)
+        
         if idev==1 or idev==3:
             # Set wpm of chars sent from the keyboard
             if self.protocol=='NANO_IO':
@@ -311,12 +328,12 @@ class KEYING_DEVICE():
             if self.protocol=='NANO_IO':
                 txt='U'+str(wpm).zfill(3)+'u'
             elif self.protocol=='K3NG_IO':
-                txt='W'+str(wpm)+chr(13)
+                txt='w'+str(wpm)+chr(13)
             elif self.protocol=='WINKEYER':
                 txt=chr(2)+chr(wpm)
             else:
                 txt=None
-            #print('NANO SET WPM2: txt=',txt,show_hex(txt))
+            #print('NANO SET WPM2: txt=',txt,'\n',show_hex(txt))
             if txt:
                 self.send_command(txt)
                 
