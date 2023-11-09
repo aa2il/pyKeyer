@@ -108,8 +108,9 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
         MACROS[9]     = {'Label' : 'No. 2x'    , 'Text' : '[-2][MYCWOPS] [MYCWOPS] [+2]'}
         MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
+        MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
-        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
+        MACROS[11+12] = {'Label' : 'QRL?'      , 'Text' : 'QRL? '}
 
         return MACROS
         

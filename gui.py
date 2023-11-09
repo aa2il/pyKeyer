@@ -257,7 +257,10 @@ class GUI():
             self.fp_adif = open(P.LOG_FILE,"a+")
         else:
             self.fp_adif = open(P.LOG_FILE,"w")
-            self.fp_adif.write('Simple Log Export<eoh>\n')
+            #self.fp_adif.write('Simple Log Export<eoh>\n')
+            self.fp_adif.write('Created by pyKeyer by AA2IL\n')
+            self.fp_adif.write('<USERDEF1:12>RUN_SP,{R,S}\n')
+            self.fp_adif.write('<eoh>\n')
             self.fp_adif.flush()
         print("GUI: ADIF file name=",P.LOG_FILE) 
 
@@ -1209,7 +1212,9 @@ class GUI():
         self.q.put(txt)
 
         # ... and to big text box ...
-        self.txt.insert(END, txt+'\n')
+        if '[LOG]' not in txt:
+            txt+='\n'
+        self.txt.insert(END, txt)
         self.txt.see(END)
         self.root.update_idletasks()
 
@@ -1949,6 +1954,15 @@ class GUI():
                 print("GUI: ADIF writing QSO=",qso2)
                 write_adif_record(self.fp_adif,qso2,self.P)
                 print(' ')
+
+                try:
+                    #txt=qso2['CALL']+' '+qso2['FREQ']+' '+qso2['SRX_STRING']
+                    txt=' '+call+' '+str(freq)+' '+exch+'\n'
+                    self.txt.insert(END,txt)
+                except Exception as e: 
+                    print('GUI: ERROR writing logged info to big text box')
+                    print( str(e) )
+                    #print('qso2=',qso2)
 
             # Clobber any presets that have this call
             idx=0
