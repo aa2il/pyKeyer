@@ -259,7 +259,7 @@ class GUI():
             self.fp_adif = open(P.LOG_FILE,"w")
             #self.fp_adif.write('Simple Log Export<eoh>\n')
             self.fp_adif.write('Created by pyKeyer by AA2IL\n')
-            self.fp_adif.write('<USERDEF1:12>RUN_SP,{R,S}\n')
+            self.fp_adif.write('<USERDEF1:13>RUNNING,{1,0}\n')
             self.fp_adif.write('<eoh>\n')
             self.fp_adif.flush()
         print("GUI: ADIF file name=",P.LOG_FILE) 
@@ -1377,7 +1377,7 @@ class GUI():
             self.P.KEYING=CQP_KEYING(self.P)
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
                                       'FOC-BW','JIDX','CQMM','HOLYLAND','AADX',
-                                      'IOTA','MARAC','SAC','OCDX','SOLAR']:
+                                      'IOTA','MARAC','SAC','OCDX','SOLAR','POTA']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)
@@ -1861,14 +1861,15 @@ class GUI():
                                   'QSO_DATE_OFF','TIME_OFF',
                                   'CALL','FREQ','BAND','MODE', 
                                   'SRX_STRING','STX_STRING','NAME','QTH','SRX',
-                                  'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES'],
+                                  'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES',
+                                  'RUNNING'],
                                  [date_on,time_on,date_off,time_off,
                                   call,
                                   str( round(1e-3*freq_kHz,4) ),band,mode, 
                                   exch,self.exch_out,name,qth,str(serial),
                                   str(self.cntr),satellite,
                                   str( round(1e-3*freq_kHz_rx,4)),
-                                  band_rx,notes] )))
+                                  band_rx,notes,str(int(self.RUNNING)) ] )))
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P

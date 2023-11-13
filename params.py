@@ -52,6 +52,8 @@ class PARAMS:
                               help='CWops Mini Tests')
         arg_proc.add_argument('-cwopen', action='store_true',
                               help='CWops CW Open')
+        arg_proc.add_argument('-pota', action='store_true',
+                              help='POTA')
         arg_proc.add_argument('-wpx', action='store_true',
                               help='CQ WPX')
         arg_proc.add_argument('-arrl_dx', action='store_true',
@@ -288,7 +290,7 @@ class PARAMS:
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO','FOC-BW',
                            'JIDX','CQMM','HOLYLAND','AADX','IOTA','MARAC',
-                           'SOLAR','OCDX']
+                           'SOLAR','OCDX','POTA']
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
@@ -300,6 +302,8 @@ class PARAMS:
             sys.exit(0)
             self.KEYING=SPRINT_KEYING(self)
             MAX_AGE_HOURS=1
+        elif args.pota:
+            self.contest_name='POTA'
         elif args.cwt:
             self.contest_name='CWT'
         elif args.sst:
