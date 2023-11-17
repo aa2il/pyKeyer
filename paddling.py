@@ -62,6 +62,10 @@ class PADDLING_GUI():
         self.WIN_NAME='PADDLING WINDOW'
         self.OnTop=False
 
+        self.suffixes=['/M','/P','/QRP','/MM']
+        for i in range(10):
+            self.suffixes.append('/'+str(i))
+
         # Open main or pop-up window depending on if "root" is given
         if root:
             self.win=Toplevel(root)
@@ -289,12 +293,20 @@ class PADDLING_GUI():
 
         elif Selection==1:
             
-            # Call signs
+            # Call signs 
             #print('There are',self.Ncalls,'call signs loaded')
             txt=''
             for j in range(5):
                 i = random.randint(0, self.Ncalls-1)
                 txt += ' '+self.calls[i]
+
+                # Add a "/" once in a while more practice
+                if '/' not in txt:
+                    i = random.randint(0,10)
+                    if i>6:
+                        i = random.randint(0,len(self.suffixes)-1)
+                        txt+=self.suffixes[i]                        
+                
             #print('call=',txt)
             
         elif Selection>=2 and Selection<=5:
