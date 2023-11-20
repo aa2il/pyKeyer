@@ -1195,15 +1195,20 @@ class GUI():
         his_name=self.get_name().replace('?','')
         my_name = self.P.SETTINGS['MY_NAME']
         if ('?' in his_name) or (his_name==my_name and '[NAME] '+my_name in txt):
-            his_name=' '
-        txt = txt.replace('[NAME]',his_name )
+            #his_name=''
+            txt = txt.replace('[NAME] ','')
+        else:
+            txt = txt.replace('[NAME]',his_name )
         txt = txt.replace('[RST]', self.get_rst_out() )
+        #txt = txt.replace('  ',' ')
 
         # Take care of exchange
         if '[EXCH]' in txt:
             txt = txt.replace('[EXCH]', '' )
             self.exch_out = txt
-                
+
+        # Collapse whitespace
+        #txt=" ".join(txt.split())
         return txt
 
     # Function to send cw text 
