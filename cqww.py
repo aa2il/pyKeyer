@@ -3,7 +3,11 @@
 # cqww.py - Rev 1.0
 # Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for CQ World Wdie contest
+# Keying routines for CQ World Wide contest.
+#
+# To Do - nothing urgent:
+#     - Put NAME in INFO box
+#     - Enable SCP
 #
 ############################################################################################
 #
@@ -58,6 +62,7 @@ class CQWW_KEYING(DEFAULT_KEYING):
         MACROS[6]    = {'Label' : '? '       , 'Text' : '? '}
         MACROS[6+12] = {'Label' : 'AGN?'     , 'Text' : 'AGN? '}
         MACROS[7]    = {'Label' : 'Log QSO'  , 'Text' : '[LOG] '}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
         MACROS[8]    = {'Label' : 'Zone 2x'  , 'Text' : '[MYCQZ] [MYCQZ] '}
         MACROS[9]    = {'Label' : 'NR?'      , 'Text' : 'NR? '}

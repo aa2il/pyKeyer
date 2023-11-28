@@ -38,13 +38,11 @@ class CALL_INFO_GUI():
     def __init__(self,root,P,call,qso):
         self.P = P
         
-        if call in P.calls:
-            print('CALL_LOOKUP:',call,' is in master list')
+        try:
             info=P.MASTER[call]
-        else:
+            print('CALL_LOOKUP:',call,' is in master list')
+        except:
             print('CALL_LOOKUP:',call,' is not in master list')
-            #print(P.calls)
-            #return
             info = OrderedDict()
         print(info)
 
@@ -136,7 +134,7 @@ if __name__ == '__main__':
     print('call=',call)
 
     # Reverse member no. lookup for CWops
-    if args.cwops:
+    if args.cwops or call.isdigit():
         MASTER,junk = load_history('~/Python/history/data/Shareable CWops data.xlsx')
         calls=[]
         num=call

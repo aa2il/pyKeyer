@@ -693,8 +693,8 @@ class DEFAULT_KEYING():
                     gui.Send_Macro(0)
                         
                 else:    # if (P.OP_STATE & 32)==0 or event.widget!=gui.call
-                    #print('idx=',idx)
-                    #print('macros=',self.macros)
+                    if DEBUG:
+                        print('idx=',idx,'\tmacros=',self.macros)
 
                     n=self.macros[idx]
                     if n!=None:

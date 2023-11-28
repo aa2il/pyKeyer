@@ -59,6 +59,7 @@ set CONTEST="paddling"
 #set CONTEST="cwt"
 #set CONTEST="sst"
 #set CONTEST="mst"
+set CONTEST="sprint"
 
 #set CONTEST="naqp"
 #set CONTEST="cq160m"
@@ -95,6 +96,13 @@ set CONTEST="paddling"
 
 ########################################################################
 
+# Determine current workspace number - we'll use this later to
+# keep windows on this workspace instead of wandering
+echo " "
+set WS=`wmctrl -d | fgrep " * " | cut -f 1 -d ' '`
+echo Current Workspace = $WS
+echo " "
+
 # Settings for sending practice
 if( ($CONTEST == "paddling") && ($RIG != "NONE") )then
     pkill flrig
@@ -127,13 +135,6 @@ if( $CONTEST == "paddling" )then
     set HINTS="-adjust -sending  -immediate"
     #exit
     
-# Determine current workspace number - we'll use this later to
-# keep windows on this workspace instead of wandering
-echo " "
-set WS=`wmctrl -d | fgrep " * " | cut -f 1 -d ' '`
-echo Current Workspace = $WS
-echo " "
-
 ########################################################################
     
 # Settings for NAQP contest
@@ -147,6 +148,13 @@ else if( $CONTEST == "cwt" )then
     set WPM=30
     set HINTS="-adjust"
     #set HINTS=""
+
+# Settings for NCCC Sprints
+else if( $CONTEST == "sprint" )then
+    set WPM=25
+    set HINTS="-adjust"
+    #set HINTS=""
+    set SCP=""
 
 # Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then
@@ -344,5 +352,5 @@ echo $EXE $OPTS
 echo " "        >& /tmp/KEYER
 echo $EXE $OPTS >>& /tmp/KEYER
 echo " "        >& /tmp/KEYER
-$EXE $OPTS      >>& /tmp/KEYER &
-#$EXE $OPTS
+#$EXE $OPTS      >>& /tmp/KEYER &
+$EXE $OPTS

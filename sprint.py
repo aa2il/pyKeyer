@@ -5,31 +5,7 @@
 #
 # Keying routines for Sprints
 #
-############################################################################################
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-############################################################################################
-
-from tkinter import END,E,W
-from collections import OrderedDict
-from macros import MACROS,CONTEST
-from utilities import cut_numbers
-
-############################################################################################
-
-VERBOSITY=0
-
 """
-# Sprints:
 If you call CQ, you should send your report as follows:
 
 HIS CALLSIGN  -  YOUR CALLSIGN   -  NUMBER  -  NAME  -  STATE
@@ -63,53 +39,84 @@ AA3B: R
 (AA3B must now QSY)
 K0AD: NA K0AD K0AD CQ
 N6RO: N6RO N6RO
-
 """
+############################################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+############################################################################################
+
+import os
+from tkinter import END,E,W
+from collections import OrderedDict
+from random import random
+from rig_io.ft_tables import SST_SECS
+from default import DEFAULT_KEYING
+from datetime import datetime
+from utilities import cut_numbers
+from random import randint, random
 
 ############################################################################################
 
-# Keying class for NCCC sprints - WAY OUT OF DATE!!!!!
-class SPRINT_KEYING():
+VERBOSITY=0
+
+############################################################################################
+
+# Keying class for NCCC sprints - inherits base class
+class SPRINT_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
-        self.P=P
+        DEFAULT_KEYING.__init__(self,P,'NS')
 
-        P.HISTORY = P.HIST_DIR+'master.csv'
-            
-        self.contest_name  = 'NCCC-Sprint'
-        self.macros()
-
+        print('SPRINT INIT ...')
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/NAQPCW.txt')
+        P.CONTEST_ID='NCCC-SPRINT'
+        self.contest_duration = 1
+        P.MAX_AGE = self.contest_duration *60
+                
     # Routient to set macros for this contest
     def macros(self):
 
-        Key='Sprint'
-        self.Key=Key
-        MACROS[Key] = OrderedDict()
-        MACROS[Key][0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NA [MYCALL] '}
-        MACROS[Key][1]     = {'Label' : 'Reply1'    , 'Text' : '[CALL] [MYCALL] [SERIAL] [MYNAME] [MYSTATE] '}
-        MACROS[Key][1+12]  = {'Label' : 'QSY -1'    , 'Text' : '[QSY-1] '}
-        MACROS[Key][2]     = {'Label' : 'TU/QSY'    , 'Text' : '[LOG] [CALL_CHANGED] TU '}
-        MACROS[Key][2+12]  = {'Label' : 'QSY +1'    , 'Text' : '[QSY+1] '}
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NS [MYCALL] '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYCALL] [SERIAL] [MYNAME] [MYSTATE] '}
+        MACROS[1+12]  = {'Label' : 'QSY -1'    , 'Text' : '[QSY-1] '}
         
-        MACROS[Key][4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[Key][3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        MACROS[Key][3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [LOG]'}
+        MACROS[2+12]  = {'Label' : 'QSY +1'    , 'Text' : '[QSY+1] '}
+
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[Key][5]     = {'Label' : 'S&P Reply' , 'Text' : '[CALL] [SERIAL] [MYNAME] [MYSTATE] [MYCALL]'}
-        MACROS[Key][6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
-        MACROS[Key][6+12]  = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[Key][7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
-        MACROS[Key][7+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
+        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         
-        MACROS[Key][8]     = {'Label' : 'Call?'    , 'Text' : 'CALL? '}
-        MACROS[Key][8+12]  = {'Label' : '[MYCALL] 2x' , 'Text' : '[MYCALL] [MYCALL] '}
-        MACROS[Key][9]     = {'Label' : 'NR?'      , 'Text' : 'NR? '}
-        MACROS[Key][9+12]  = {'Label' : 'Serial 2x', 'Text' : '[SERIAL] [SERIAL] '}
-        MACROS[Key][10]    = {'Label' : 'NAME?'    , 'Text' : 'NAME? '}
-        MACROS[Key][10+12] = {'Label' : 'Name 2x'  , 'Text' : '[MYNAME] [MYNAME] '}
-        MACROS[Key][11]    = {'Label' : 'QTH?'     , 'Text' : 'QTH? '}
-        MACROS[Key][11+12] = {'Label' : 'State 2x' , 'Text' : '[MYSTATE] [MYSTATE] '}
-        CONTEST[Key]=True
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : '[CALL] [SERIAL] [MYNAME] [MYSTATE] [MYCALL]'}
+
+        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
+        
+        MACROS[8]     = {'Label' : 'Call?'    , 'Text' : 'CALL? '}
+        MACROS[8+12]  = {'Label' : '[MYCALL] 2x' , 'Text' : '[MYCALL] [MYCALL] '}
+        MACROS[9]     = {'Label' : 'NR?'      , 'Text' : 'NR? '}
+        MACROS[9+12]  = {'Label' : 'Serial 2x', 'Text' : '[SERIAL] [SERIAL] '}
+        MACROS[10]    = {'Label' : 'NAME?'    , 'Text' : 'NAME? '}
+        MACROS[10+12] = {'Label' : 'Name 2x'  , 'Text' : '[MYNAME] [MYNAME] '}
+        MACROS[11]    = {'Label' : 'QTH?'     , 'Text' : 'QTH? '}
+        MACROS[11+12] = {'Label' : 'State 2x' , 'Text' : '[MYSTATE] [MYSTATE] '}
+        
+        return MACROS
 
     # Routine to generate a hint for a given call
     def hint(self,call):
@@ -124,74 +131,66 @@ class SPRINT_KEYING():
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
-        name  = HIST[call]['name'].split(' ')
-        name  = name[0]
-        qth   = HIST[call]['state']
+        MY_CALL = self.P.SETTINGS['MY_CALL']
+        name    = HIST[call]['name'].split(' ')
+        name    = name[0]
+        qth     = HIST[call]['state']
 
         if iopt==1:
-            
+
+            print('SPRINT_KEYING->QSO INFO:',name,qth)
             done = len(name)>0 and len(qth)>0
-            return name,qth,done
+            return done
 
         else:
 
             self.call = call
             self.name = name
-            self.qth = qth
+            self.qth  = qth
 
             serial = cut_numbers( randint(0, 999) )
             self.serial = serial
             if self.P.LAST_MSG==0:
-                txt2 = MY_CALL+' '+serial+' '+name+' '+sec+' '+call
+                # Last macro was a reply
+                txt2 = MY_CALL+' '+serial+' '+name+' '+qth+' '+call
             else:
-                txt1 = 'NA '+call+' CQ'
-                txt2 = MY_CALL+' '+call+' '+serial+' '+name+' '+sec
+                # Last macro was TU or MY CALL 
+                txt1 = 'NS '+call+' CQ'
+                txt2 = MY_CALL+' '+call+' '+serial+' '+name+' '+qth
 
             return txt2
             
-    # Routine to process qso element repeats
-    def repeat(self,label,exch2):
-            
-        if 'CALL' in label:
-            txt2=self.call+' '+self.call
-        elif 'NR?' in label:
-            txt2=serial+' '+serial
-        elif 'NAME?' in label:
-            txt2=self.name+' '+self.name
-        elif 'QTH?' in label:
-            txt2=self.qth+' '+self.qth
-        else:
-            txt2=exch2
-
-        return txt2
-
     # Error checking
     def error_check(self):
         P=self.P
 
-        call2 = P.gui.get_call().upper()
+        call2   = P.gui.get_call().upper()
         serial2 = P.gui.get_serial().upper()
-        name2 = P.gui.get_name().upper()
-        qth2  = P.gui.get_qth().upper()
-        match = self.call==call2 and self.serial==serial2 and self.name==name2 and self.qth==qth2
-        
+        name2   = P.gui.get_name().upper()
+        qth2    = P.gui.get_qth().upper()
+        match   = self.call==call2 and self.serial==serial2 and self.name==name2 and self.qth==qth2
+
         if not match:
             txt='********************** ERROR **********************'
             print(txt)
             P.gui.txt.insert(END, txt+'\n')
 
-            print('Call sent:',self.call,' - received:',call2)
-            P.gui.txt.insert(END,'Call sent: '+self.call+' - received: '+call2+'\n')
+            txt2='Call sent:'+self.call+'\t- received:'+call2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
             
-            print('Serial sent:',self.name,' - received:',name2)
-            P.gui.txt.insert(END,'Serial sent: '+self.serial+' - received: '+serial2+'\n')
+            txt2='Serial sent:'+self.serial+'\t- received:'+serial2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
 
-            print('Name sent:',self.name,' - received:',name2)
-            P.gui.txt.insert(END,'Name sent: '+self.name+' - received: '+name2+'\n')
+            txt2='Name sent:'+self.name+'\t- received:'+name2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
 
-            print('QTH  sent:',self.qth,' - received:',qth2)
-            P.gui.txt.insert(END,'QTH  sent: '+self.qth+ ' - received: '+qth2+'\n')
-            
+            txt2='QTH sent:'+self.qth+'\t- received:'+qth2
+            print(txt2)
+            P.gui.txt.insert(END, txt2+'\n')
+
             print(txt+'\n')
             P.gui.txt.insert(END, txt+'\n')
             P.gui.txt.see(END)
@@ -199,79 +198,86 @@ class SPRINT_KEYING():
         return match
             
 
-    # Highlight function keys that make sense in the current context
-    def highlight(self,gui,arg):
-        
-        if arg==0:
-            gui.btns1[1].configure(background='green',highlightbackground='green')
-            gui.btns1[2].configure(background='green',highlightbackground='green')
-            gui.call.focus_set()
-        elif arg==1:
-            gui.cat.focus_set()
-        elif arg==4:
-            gui.btns1[5].configure(background='red',highlightbackground= 'red')
-            gui.btns1[7].configure(background='red',highlightbackground= 'red')
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[2].configure(background='pale green',highlightbackground=gui.default_color)
-        elif arg==7:
-            gui.btns1[1].configure(background='pale green',highlightbackground=gui.default_color)
-            gui.btns1[5].configure(background='indian red',highlightbackground=gui.default_color)
-            gui.btns1[7].configure(background='indian red',highlightbackground=gui.default_color)
-        
-
     # Specific contest exchange for SST
     def enable_boxes(self,gui):
 
         gui.contest=True
+        gui.ndigits=-3
         gui.hide_all()
-        gui.ndigits=1
+        self.macros=[1,None,None,2]
 
-        gui.serial_lab.grid()
-        gui.serial_box.grid()
-        gui.name_lab.grid(columnspan=1,column=5,sticky=E+W)
-        gui.name.grid(column=5,columnspan=1)
-        gui.qth_lab.grid(columnspan=1,column=6,sticky=E+W)
-        gui.qth.grid(column=6,columnspan=1)
-        
+        col=0
+        cspan=3
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.serial_lab.grid(column=col,columnspan=cspan)
+        gui.serial_box.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=2
+        gui.name_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.name.grid(column=col,columnspan=cspan)
+        col+=cspan
+        cspan=1
+        gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.qth.grid(column=col,columnspan=cspan)
+
+        col+=cspan
+        cspan=2
+        gui.hint_lab.grid(column=col,columnspan=cspan)
+        gui.hint.grid(column=col,columnspan=cspan)
+        if self.P.NO_HINTS:
+            gui.hint_lab.grid_remove()
+            gui.hint.grid_remove()
+        else:
+            col+=cspan
+                    
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+            
         gui.boxes=[gui.call]
         gui.boxes.append(gui.serial_box)
+        gui.boxes.append(gui.name)
         gui.boxes.append(gui.qth)
-        gui.counter_lab.grid()
-        gui.counter.grid()
+        gui.boxes.append(gui.hint)
+        gui.boxes.append(gui.scp)
         
-        if not gui.P.NO_HINTS:
-            gui.hint_lab.grid(columnspan=3,column=7,sticky=E+W)
-            gui.hint.grid(column=7,columnspan=3)
-
     # Gather together logging info for this contest
     def logging(self):
 
         gui=self.P.gui
-
-        call=gui.get_call().upper()
-        serial = self.get_serial().upper()
-        name=gui.get_name().upper()
-        qth = gui.get_qth().upper()
-        exch=serial+' '+name+','+qth
-        valid = len(call)>=3 and len(serial)>0 and len(name)>0 and len(qth)>0
+        
+        call   = gui.get_call().upper()
+        serial = gui.get_serial().upper()
+        name   = gui.get_name().upper()
+        qth    = gui.get_qth().upper()
+        exch   = serial+' '+name+','+qth
+        valid  = len(call)>=3 and len(serial)>0 and len(name)>0 and len(qth)>0
 
         MY_NAME     = self.P.SETTINGS['MY_NAME']
         MY_STATE    = self.P.SETTINGS['MY_STATE']
         exch_out = str(gui.cntr)+','+MY_NAME+','+MY_STATE
+
+        qso2={}
         
-        return exch,valid,exch_out
+        return exch,valid,exch_out,qso2
     
     # Dupe processing for this contest
     def dupe(self,a):
 
         gui=self.P.gui
 
-        gui.cat.delete(0,END)
-        gui.cat.insert(0,a[0])
+        gui.name.delete(0,END)
+        gui.name.insert(0,a[0])
         if len(a)>=2:
             gui.qth.delete(0,END)
             gui.qth.insert(0,a[1])
-            
+
     # Hint insertion
     def insert_hint(self,h=None):
 
@@ -281,38 +287,11 @@ class SPRINT_KEYING():
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
-        
-        gui.cat.delete(0, END)
-        gui.cat.insert(0,h[0])
+
+        gui.name.delete(0, END)
         gui.qth.delete(0, END)
-        gui.qth.insert(0,h[1])
-
-
-    # Move on to next entry box & optionally play a macros
-    def next_event(self,key,event,n=None):
-
-        gui=self.P.gui
-
-        if n!=None:
-            gui.Send_Macro(n) 
-
-        if event.widget==gui.txt:
-            #print('txt->call')
-            next_widget = gui.call
-        else:
-            idx=gui.boxes.index(event.widget)
-            nn = len(gui.boxes)
-            #if idx==nn and key in ['Return','KP_Enter']:
-            #    idx2 = idx
-            if key in ['Tab','Return','KP_Enter']:
-                idx2 = (idx+1) % nn
-            elif key=='ISO_Left_Tab':
-                idx2 = (idx-1) % nn
-            else:
-                print('We should never get here!!')
-            #print(idx,'->',idx2)
-            next_widget = gui.boxes[idx2]
-
-        next_widget.focus_set()
-        return next_widget
-            
+        if len(h)>=1:
+            gui.name.insert(0,h[0])
+            if len(h)>=2:
+                gui.qth.insert(0,h[1])
+        

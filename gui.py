@@ -51,6 +51,7 @@ from threading import enumerate
 from cwt import *
 from cwopen import *
 from sst import *
+from sprint import *
 from mst import *
 from skcc import *
 from calls import *
@@ -1368,6 +1369,8 @@ class GUI():
             self.P.KEYING=SST_KEYING(self.P)
         elif val=='MST':
             self.P.KEYING=MST_KEYING(self.P)
+        elif val=='NS':
+            self.P.KEYING=SPRINT_KEYING(self.P)
         elif val=='SKCC':
             self.P.KEYING=SKCC_KEYING(self.P)
         elif val=='CALLS':
@@ -1412,8 +1415,6 @@ class GUI():
             #return
             sys.exit(0)
             
-        self.P.SPRINT   = val.find('Sprint')         >= 0
-        
         self.P.contest_name  = self.P.KEYING.contest_name
         self.macros = self.P.KEYING.macros()
         
@@ -1857,10 +1858,6 @@ class GUI():
                 self.txt.insert(END, txt+'\n')
                 self.txt.see(END)
             
-            # Construct exchange out
-            if self.contest and self.P.SPRINT:
-                self.exch_out = str(self.cntr)+','+MY_NAME+','+MY_STATE
-
             # Construct QSO record
             qso = dict( list(zip(['QSO_DATE_ON','TIME_ON',
                                   'QSO_DATE_OFF','TIME_OFF',

@@ -26,9 +26,55 @@ from settings import *
 import os
 import platform
 from utilities import find_resource_file
+from collections import OrderedDict
+import datetime
 
 ################################################################################
 
+# Structure to contain basic info about various contests
+CONTESTS = OrderedDict()
+ALL=list(range(1,13))
+CONTESTS['Default']    = {'Months' : ALL}
+CONTESTS['Ragchew']    = {'Months' : ALL}
+CONTESTS['CWT']        = {'Months' : ALL}
+CONTESTS['MST']        = {'Months' : ALL}
+CONTESTS['SST']        = {'Months' : ALL}
+CONTESTS['SPRINT']     = {'Months' : ALL}
+CONTESTS['SKCC']       = {'Months' : ALL}
+CONTESTS['POTA']       = {'Months' : ALL}
+CONTESTS['CW Open']    = {'Months' : [10]}
+CONTESTS['ARRL-VHF']   = {'Months' : [1,6,9]}
+CONTESTS['NAQP-CW']    = {'Months' : [1,8]}
+CONTESTS['TEN-TEN']    = {'Months' : []}
+CONTESTS['WAG']        = {'Months' : []}
+CONTESTS['SAC']        = {'Months' : []}
+CONTESTS['RAC']        = {'Months' : [12]}
+CONTESTS['BERU']       = {'Months' : []}
+CONTESTS['CQP']        = {'Months' : [10]}
+CONTESTS['IARU-HF']    = {'Months' : [7]}
+CONTESTS['CQWW']       = {'Months' : [11]}
+CONTESTS['CQ-WPX-CW']  = {'Months' : [5]}
+CONTESTS['CQ-160M']    = {'Months' : []}
+CONTESTS['ARRL-10M']   = {'Months' : [12]}
+CONTESTS['ARRL-160M']  = {'Months' : []}
+CONTESTS['ARRL-DX']    = {'Months' : [2]}
+CONTESTS['ARRL-FD']    = {'Months' : [6]}
+CONTESTS['ARRL-SS-CW'] = {'Months' : [11]}
+CONTESTS['STEW PERRY'] = {'Months' : []}
+CONTESTS['SATELLITES'] = {'Months' : ALL}
+CONTESTS['DX-QSO']     = {'Months' : ALL}
+CONTESTS['FOC-BW']     = {'Months' : []}
+CONTESTS['JIDX']       = {'Months' : []}
+CONTESTS['CQMM']       = {'Months' : []}
+CONTESTS['HOLYLAND']   = {'Months' : []}
+CONTESTS['AADX']       = {'Months' : []}
+CONTESTS['IOTA']       = {'Months' : []}
+CONTESTS['MARAC']      = {'Months' : []}
+CONTESTS['SOLAR']      = {'Months' : []}
+CONTESTS['OCDX']       = {'Months' : []}
+#CONTESTS[]= {'Months' : []}
+#CONTESTS[]= {'Months' : []}
+                   
 # Structure to contain processing params
 class PARAMS:
     def __init__(self):
@@ -283,14 +329,24 @@ class PARAMS:
         self.STATE_QPs = ['BCQP','ONQP','QCQP','W1QP','W7QP','CPQP']
         for state in STATES:
             self.STATE_QPs.append(state+'QP')
-            
-        self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','SKCC','CW Open',
+
+        """
+        self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','NS','SKCC','CW Open',
                            'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'SAC', 'RAC', 'BERU',
                            'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
                            'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
                            'STEW PERRY','SATELLITES','DX-QSO','FOC-BW',
                            'JIDX','CQMM','HOLYLAND','AADX','IOTA','MARAC',
                            'SOLAR','OCDX','POTA']
+        """
+        #self.CONTEST_LIST = CONTESTS.keys()
+
+        now = datetime.datetime.utcnow()
+        self.CONTEST_LIST = []
+        for contest in CONTESTS.keys():
+            if now.month in CONTESTS[contest]['Months']:
+                self.CONTEST_LIST.append(contest)
+            
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
@@ -298,9 +354,7 @@ class PARAMS:
         self.SHOW_TEXT_BOX2=args.split
         MAX_AGE_HOURS = args.max_age
         if self.SPRINT:
-            print('NEED TO FIX THIS!!!!!!!!!!!!!')
-            sys.exit(0)
-            self.KEYING=SPRINT_KEYING(self)
+            self.contest_name='NS'
             MAX_AGE_HOURS=1
         elif args.pota:
             self.contest_name='POTA'

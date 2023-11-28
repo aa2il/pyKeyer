@@ -303,6 +303,7 @@ class Keyer():
         if self.P.USE_KEYER and ('[' not in msg) and (']' not in msg) and True:
             print('send_msg: msg=',msg,'\t@ wpm=',self.WPM)
             self.P.keyer_device.nano_write(msg)
+            self.evt.set()           # Signal to other processes that we've went the message
             return
         
         self.stop   = False
@@ -511,6 +512,7 @@ class Keyer():
                     self.send_cw(""+ch)
                     txt2+=ch
 
+        # Signal to other processes that we've went the message
         #print('SEND_MSG: Setting evt...')
         self.evt.set()
         return txt2
