@@ -7,6 +7,8 @@
 
 ############################################################################################
 
+cls
+
 # Primary rig
 set RIG="NONE"
 #set RIG="HAMLIB"
@@ -35,7 +37,7 @@ set PRACTICE="-prac -nrows 0"
 
 set NANO=""
 set NANO="-nano"
-set NANO="-nano -echo"
+#set NANO="-nano -echo"
 #set NANO="-k3ng -echo"
 #set NANO="-winkeyer -echo"
 
@@ -58,8 +60,8 @@ set AGGRESSIVE="-aggressive"
 set CONTEST="paddling"
 #set CONTEST="cwt"
 #set CONTEST="sst"
-#set CONTEST="mst"
-set CONTEST="sprint"
+set CONTEST="mst"
+#set CONTEST="sprint"
 
 #set CONTEST="naqp"
 #set CONTEST="cq160m"
@@ -152,8 +154,8 @@ else if( $CONTEST == "cwt" )then
 # Settings for NCCC Sprints
 else if( $CONTEST == "sprint" )then
     set WPM=25
-    set HINTS="-adjust"
-    #set HINTS=""
+    #set HINTS="-adjust"
+    set HINTS=""
     set SCP=""
 
 # Settings for K1USN slow speed tests

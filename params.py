@@ -308,6 +308,7 @@ class PARAMS:
         self.NUM_ROWS      = args.nrows
         self.HAMLIB_SERVER = args.server
         self.UDP_SERVER    = args.udp
+        self.udp_server    = None
         self.SO2V          = False
         self.DXSPLIT       = False
         self.GPS           = args.gps

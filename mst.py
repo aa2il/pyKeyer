@@ -81,7 +81,9 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
         MACROS[8]     = {'Label' : 'My Name 2x', 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
+        #MACROS[8+12]  = {'Label' : 'Dec'       , 'Text' : '[DEC]'}
         MACROS[9]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
+        #MACROS[9+12]  = {'Label' : 'Inc'       , 'Text' : '[INC]'}
         MACROS[10]    = {'Label' : 'NAME? '    , 'Text' : 'NAME? '}
         MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
@@ -203,6 +205,8 @@ class MST_KEYING(DEFAULT_KEYING):
         
         gui.counter_lab.grid()
         gui.counter.grid()
+        gui.inc_btn.grid()
+        gui.dec_btn.grid()
         
         
     # Gather together logging info for this contest

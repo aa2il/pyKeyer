@@ -140,7 +140,6 @@ class GUI():
         self.Done=False
         self.contest = False
         self.P = P
-        self.P.LAST_MSG = -1
         self.RUNNING=False
         self.P.root = self.root
         self.text_buff=''
@@ -513,6 +512,14 @@ class GUI():
         self.counter_lab.grid_remove()
         self.counter.grid_remove()
 
+        self.dec_btn = Button(self.root, text='Dec', command=lambda j=-1: self.update_counter(j) )
+        self.dec_btn.grid(row=row+1,column=col+1,sticky=E+W)
+        tip = ToolTip(self.dec_btn,' Decrement Serial')
+        
+        self.inc_btn = Button(self.root, text='Inc', command=lambda j=+1: self.update_counter(j) )
+        self.inc_btn.grid(row=row+1,column=col,sticky=E+W)
+        tip = ToolTip(self.inc_btn,' Increment Serial')
+                
         # Radio button group to support SO2R
         col += 2
         self.iRadio = IntVar(value=1)
@@ -1236,7 +1243,6 @@ class GUI():
             return
 
         P=self.P
-        P.LAST_MACRO=arg
         if arg<=2 or (arg>=0+12 and arg<=2+12):
             self.RUNNING = True
         elif arg in [5,5+12]:
@@ -1244,10 +1250,7 @@ class GUI():
 
         # Keep track of what we last sent
         txt = self.macros[arg]["Text"]
-        if arg in [0,5]:
-            self.P.LAST_MSG = arg                # Last was a reply - make sure he got it ok
-        elif arg in [2,4]:
-            self.P.LAST_MSG = -1                 # Last was TU or my call
+        P.LAST_MACRO=arg
 
         # Set register to tell practice exec what op has done
         P.OP_STATE=0
@@ -1260,6 +1263,10 @@ class GUI():
             P.OP_STATE |= 4
         if '?' in label and 'QRZ?' not in label:
             P.OP_STATE |= 8
+        if '[MYCALL]' in label:
+            P.OP_STATE |= 16
+        if 'Log QSO' in label:
+            P.OP_STATE |= 64
         self.macro_label=label
         print('SEND_MACRO: arg=',arg,'\tlabel=',label,'\tOP_STATE=',P.OP_STATE)
 
@@ -1315,6 +1322,8 @@ class GUI():
         self.serial_lab.grid_remove()
         self.serial_box.grid_remove()
         self.counter.grid_remove()
+        self.inc_btn.grid_remove()
+        self.dec_btn.grid_remove()
         
         self.prec_lab.grid_remove()
         self.prec.grid_remove()
@@ -1487,16 +1496,16 @@ class GUI():
         self.WPM_TXT.set(str(WPM))
 
     # Read counter from the entry box
-    def update_counter(self):
+    def update_counter(self,adj=0):
         cntr = self.counter.get()
-        #print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UPDATE COUNTER ^^^^^^^^^^^^^^^^^^^^',cntr)
+        #print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ UPDATE COUNTER ^^^^^^^^^^^^^^^^^^^^',cntr,adj)
         try:
             if cntr=='':
                 self.P.MY_CNTR = 1
-                self.counter.delete(0, END)
-                self.counter.insert(0,str(self.P.MY_CNTR))
             else:
-                self.P.MY_CNTR = int( cntr )
+                self.P.MY_CNTR = max(1,int(cntr)+adj)
+            self.counter.delete(0, END)
+            self.counter.insert(0,str(self.P.MY_CNTR))
         except Exception as e: 
             print('*** GUI  - ERROR *** Unable to convert counter entry to int:',cntr)
             print( str(e) )
@@ -1799,7 +1808,6 @@ class GUI():
             #print(self.sock.run_macro(-1))
 
             # Get time stamp, freq, mode, etc.
-            #UTC       = pytz.utc
             now       = datetime.utcnow().replace(tzinfo=UTC)
             if not self.start_time:
                 self.start_time = now
@@ -1875,7 +1883,7 @@ class GUI():
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P
-            if not self.RUNNING:
+            if self.P.udp_server and not self.RUNNING:
                 msg  = 'SPOT:'+call+':'+str(freq_kHz)+':'+mode
                 print('LOG QSO: Broadcasting spot:',msg)
                 self.P.udp_server.Broadcast(msg)
@@ -1896,12 +1904,12 @@ class GUI():
 
             # Make sure practice exec gets what it needs
             if self.P.PRACTICE_MODE:
-                print('LOG_QSO - PRACTICE MODE: Waiting for handshake ...',\
+                print('LOG_QSO - PRACTICE MODE: Waiting for handshake ... EVT=',\
                       self.keyer.evt.isSet(),\
                       '\nIf you want to log an actual contact, exit PRACTICE_MODE and try again')
                 while self.keyer.evt.isSet():
-                    #print( self.keyer.evt.isSet(), self.keyer.stop )
-                    time.sleep(0.1)
+                    print('EVT:',self.keyer.evt.isSet(), '\tSTOP:',self.keyer.stop )
+                    time.sleep(1)
                 print('LOG_QSO: Got handshake ...',\
                       self.keyer.evt.isSet(), self.keyer.stop )
 

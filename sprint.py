@@ -5,6 +5,7 @@
 #
 # Keying routines for Sprints
 #
+############################################################################################
 """
 If you call CQ, you should send your report as follows:
 
@@ -138,8 +139,8 @@ class SPRINT_KEYING(DEFAULT_KEYING):
 
         if iopt==1:
 
-            print('SPRINT_KEYING->QSO INFO:',name,qth)
             done = len(name)>0 and len(qth)>0
+            print('SPRINT_KEYING->QSO INFO:',call,name,qth,done)
             return done
 
         else:
@@ -149,14 +150,20 @@ class SPRINT_KEYING(DEFAULT_KEYING):
             self.qth  = qth
 
             serial = cut_numbers( randint(0, 999) )
-            self.serial = serial
-            if self.P.LAST_MSG==0:
-                # Last macro was a reply
+            print('SPRINT_KEYING->QSO INFO: LAST_MACRO=',self.P.LAST_MACRO)
+            if iopt==3:
+                # Last macro was TU or MY CALL (S&Ping) - Tune into a another QSO
+                # There's no need to remeber the serial no.
+                call1 = self.P.practice.grab_call()
+                txt2  = call1+' '+serial+' '+name+' '+qth+' '+call
+            elif self.P.LAST_MACRO in [0,1,7]:
+                # Last macro was a CQ - he inherits the freq
                 txt2 = MY_CALL+' '+serial+' '+name+' '+qth+' '+call
+                self.serial = serial
             else:
-                # Last macro was TU or MY CALL 
-                txt1 = 'NS '+call+' CQ'
+                # Respond to my S&P - I'll be inheritting the freq
                 txt2 = MY_CALL+' '+call+' '+serial+' '+name+' '+qth
+                self.serial = serial
 
             return txt2
             

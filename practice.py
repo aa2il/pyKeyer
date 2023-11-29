@@ -6,7 +6,7 @@
 #
 # Functions related code and contest practice
 #
-# To Do - does the standalone version of this still work and under python 3?
+# To Do - does the standalone version of this still work under python 3?
 #
 ############################################################################################
 #
@@ -133,41 +133,29 @@ class CODE_PRACTICE():
     # Routine to execute a single practice qso
     def practice_qso(self):
 
-        DEBUG=0
+        DEBUG=1
 
-        P     = self.P
-        HIST  = self.HIST
-        keyer = P.keyer
-        lock  = P.lock1
+        P       = self.P
+        HIST    = self.HIST
+        keyer   = P.keyer
+        lock    = P.lock1
         MY_CALL = P.SETTINGS['MY_CALL']
+        repeats = False
     
         # Pick a call at random
         if DEBUG:
-            print('\nPRACTICE_QSO: Waiting 0 - Picking call ... ',self.Ncalls-1)
-        done = False
-        repeats=False
-        ntries=0
-        while not done:
-            ntries+=1
-            i = random.randint(0, self.Ncalls-1)
-            call = self.calls[i]
-            done = P.KEYING.qso_info(HIST,call,1)
-            
-            print('PRACTICE_QSO: call=',call,'\tdone=',done,'\thist=',HIST[call])
-            if ntries>100:
-                print('PRACTICE_QSO: Something is rotten in Denmark - Probably a bad history file!!!')
-                P.SHUTDOWN=True
-                sys.exit(0)
-
+            print('\nPRACTICE_QSO: Waiting 0 - Picking call ... ncalls=',self.Ncalls-1)
+        call = self.grab_call()
+        
         # Wait for op to hit CQ
         if DEBUG:
-            print('PRACTICE_QSO: Waiting 1a - op CQ ... call=',call,'\t',P.OP_STATE)
+            print('PRACTICE_QSO: Waiting 1a - op CQ ... call=',call,'\tOP_STATE=',P.OP_STATE)
         self.wait_for_keyer()
         Done=False
         while not Done:
-            Done = (P.OP_STATE & 1) or self.P.Stopper.isSet()
+            Done = (P.OP_STATE & (1+64)) or self.P.Stopper.isSet()
             time.sleep(0.1)
-        P.OP_STATE &= ~1          # Clear CQ/QRZ
+        P.OP_STATE &= ~(1+64)          # Clear CQ/QRZ
 
         # Abort ?
         if DEBUG:
@@ -182,20 +170,37 @@ class CODE_PRACTICE():
         if DEBUG:
             print('PRACTICE_QSO: Waiting 1d - Got handshake with keyer ...')
 
-        # Send a call
+        # Get info for qso partner
         done = False
+        txt1 = ' '+call
+        if P.KEYING:
+            txt2 = P.KEYING.qso_info(HIST,call,2)
+            exch2 = txt2
+        else:
+            txt2='?????'
+            print('PRACTICE_QSO: Unknown Contest')
+        print('PRACTICE_QSO: txt1=',txt1)
+        print('PRACTICE_QSO: txt2=',txt2)
+                                    
+        # Decision time for sprints
+        if P.CONTEST_ID=='NCCC-SPRINT':
+            print('\nPRACTICE_QSO: Sprint!!!\tCONTEST_ID=',P.CONTEST_ID,'\tLAST_MACRO=',P.LAST_MACRO,'\n') 
+            time.sleep(1)
+            if P.LAST_MACRO in [0,7]:
+                txt3 = ' '+txt2
+            elif P.LAST_MACRO==2:
+                txt3 = P.KEYING.qso_info(HIST,call,3)
+                txt1 = ' '+txt3
+            else:
+                print('I dont know what I am doing here!!!')
+                sys.exit(0)
+            print('PRACTICE_QSO: txt3=',txt3)
+
+        # Send a call
         while not done:
 
             # Timing is critical so we make sure we have control
             lock.acquire()
-            txt1 = ' '+call
-            if P.KEYING:
-                txt2 = P.KEYING.qso_info(HIST,call,2)
-                exch2 = txt2
-            else:
-                txt2='?????'
-                print('PRACTICE_QSO: Unknown Contest')
-                                    
             if DEBUG:
                 print('PRACTICE_QSO: Sending call=',txt1,'\top_state=',P.OP_STATE)
             if self.P.USE_KEYER:
@@ -211,7 +216,7 @@ class CODE_PRACTICE():
                 print('PRACTICE_QSO: Waiting 2a - op exchange ...\top_state=',P.OP_STATE)
             self.wait_for_keyer()
             while not Done:
-                Done = (P.OP_STATE & (2+8)) or self.P.Stopper.isSet()
+                Done = (P.OP_STATE & (2+8+16)) or self.P.Stopper.isSet()
                 time.sleep(0.1)
 
             # Abort
@@ -221,8 +226,8 @@ class CODE_PRACTICE():
                 return
             
             # Check for repeats
-            done = P.OP_STATE & 2
-            P.OP_STATE &= ~2          # Clear Reply
+            done = P.OP_STATE & (2+16)
+            P.OP_STATE &= ~(2+16)          # Clear Reply
             if not done:
                 repeats=repeats or (P.OP_STATE & 8)
                 P.OP_STATE &= ~8          # Clear Repeat
@@ -233,6 +238,15 @@ class CODE_PRACTICE():
             keyer.evt.clear()
             if DEBUG:
                 print('PRACTICE_QSO: Waiting 2d - keyer ... done=',done,'\trepeats=',repeats,'\top_state=',P.OP_STATE)
+
+        # Decision time again for sprints
+        if P.CONTEST_ID=='NCCC-SPRINT':
+            print('\nPRACTICE_QSO: Sprint @@@\tCONTEST_ID=',P.CONTEST_ID,'\tLAST_MACRO=',P.LAST_MACRO,'\n') 
+            print('PRACTICE_QSO: txt1=',txt1)
+            print('PRACTICE_QSO: txt2=',txt2)
+            print('PRACTICE_QSO: txt3=',txt3)
+            if P.LAST_MACRO in [1]:
+                txt2=txt3
 
         # Send exchange 
         done = False
@@ -266,7 +280,7 @@ class CODE_PRACTICE():
                 print('PRACTICE_QSO: Waiting 3a - op to Answer ... op_state=',P.OP_STATE)
             self.wait_for_keyer()
             while not Done:
-                Done = (P.OP_STATE & (4+8)) or self.P.Stopper.isSet()
+                Done = (P.OP_STATE & (4+8+32)) or self.P.Stopper.isSet()
                 time.sleep(0.1)
 
             # Abort ?
@@ -274,8 +288,8 @@ class CODE_PRACTICE():
                 print('PRACTICE_QSO: Waiting 3b - Got Answer, keyer ... op_state=',P.OP_STATE)
             if self.P.Stopper.isSet():
                 return
-            done = P.OP_STATE & 4
-            P.OP_STATE &= ~4          # Clear TU
+            done = P.OP_STATE & (4+32)
+            P.OP_STATE &= ~(4+32)          # Clear TU
 
             if DEBUG:
                 print('PRACTICE_QSO: Waiting 3c - Got keyer ... done=',done)
@@ -286,7 +300,7 @@ class CODE_PRACTICE():
                 if DEBUG:
                     print('Waiting 3d - Repeats=',repeats,'\tlabel=',label)
                 
-                # Determine next elementx
+                # Determine next element
                 if P.KEYING:
                     txt2 = P.KEYING.repeat(label,exch2)
                 elif 'CALL' in label:
@@ -295,15 +309,43 @@ class CODE_PRACTICE():
                 # Get ready to try again
                 keyer.evt.clear()
                 
+        # Decision time once again for sprints
+        if P.CONTEST_ID=='NCCC-SPRINT':
+            print('\nPRACTICE_QSO: Sprint %%%\tCONTEST_ID=',P.CONTEST_ID,'\tLAST_MACRO=',P.LAST_MACRO,'\n') 
+            
+            # Timing is critical so we make sure we have control
+            if P.LAST_MACRO==5:
+                txt3=' TU'
+                lock.acquire()
+                if DEBUG:
+                    print('PRACTICE_QSO: Sending final TU ...')
+                if self.P.USE_KEYER:
+                    self.P.keyer_device.nano_write(txt3)
+                else:
+                    P.osc.send_cw(txt3,keyer.WPM,1,True)
+                lock.release()
+
+                # Wait for op to log contact
+                Done=False
+                if DEBUG:
+                    print('PRACTICE_QSO: Waiting 4a - op to Log contact ... op_state=',P.OP_STATE)
+                self.wait_for_keyer()
+                while not Done:
+                    Done = (P.OP_STATE & 64) or self.P.Stopper.isSet()
+                    time.sleep(0.1)
+
+                
         # Error checking - keyer event hasn't been cleared yet so the gui boxes won't get erased too fast
-        if DEBUG:
-            print('PRACTICE_QSO: Error check ...')
         call2 = P.gui.get_call().upper()
         if P.KEYING:
             match = P.KEYING.error_check()
+        if DEBUG:
+            print('PRACTICE_QSO: Error check ... match=',match)
 
         # We have everything we need, now the main program can clear the gui boxes
         keyer.evt.clear()
+        if DEBUG:
+            print('PRACTICE_QSO: Keyer EVT Cleared ...')
 
         # Check call & exchange matching
         if not match and not P.KEYING:
@@ -330,10 +372,35 @@ class CODE_PRACTICE():
     # Routine to wait for keyer to flush - bail out if stopper gets set
     def wait_for_keyer(self):
         while not self.P.keyer.evt.wait(timeout=1):
+            #print('Blah')
             if self.P.Stopper.isSet():
                 break
         return
+
+
+    # Routine to grab a call at random
+    def grab_call(self):
+        P     = self.P
+        HIST  = self.HIST
         
+        done = False
+        ntries=0
+        while not done:
+            ntries+=1
+            i = random.randint(0, self.Ncalls-1)
+            call = self.calls[i]
+            done = P.KEYING.qso_info(HIST,call,1)
+            
+            #print('PRACTICE_QSO: call=',call,'\tdone=',done,'\thist=',HIST[call])
+            if ntries>100:
+                print('PRACTICE_QSO: Something is rotten in Denmark - Probably a bad history file!!!')
+                P.SHUTDOWN=True
+                sys.exit(0)
+
+        print('PRACTICE_QSO: call=',call,'\tdone=',done,'\thist=',HIST[call])
+        return call
+
+    
 
 # If this file is called as main, convert history file into simple log format
 # At some point, chnage this into a function
