@@ -39,7 +39,7 @@ CONTESTS['Ragchew']    = {'Months' : ALL}
 CONTESTS['CWT']        = {'Months' : ALL}
 CONTESTS['MST']        = {'Months' : ALL}
 CONTESTS['SST']        = {'Months' : ALL}
-CONTESTS['SPRINT']     = {'Months' : ALL}
+CONTESTS['NS']         = {'Months' : ALL}
 CONTESTS['SKCC']       = {'Months' : ALL}
 CONTESTS['POTA']       = {'Months' : ALL}
 CONTESTS['CW Open']    = {'Months' : [10]}
@@ -240,6 +240,8 @@ class PARAMS:
                               help='Start hamlib server')
         arg_proc.add_argument('-udp', action='store_true',
                               help='Start UDP server')
+        arg_proc.add_argument('-shadow', action='store_true',
+                              help='Shadow helper')
         arg_proc.add_argument('-gps', action='store_true',
                               help='Read GPS info from .gpsrc file')
         arg_proc.add_argument('-use_log_hist', action='store_true',
@@ -256,6 +258,7 @@ class PARAMS:
 
         self.OP_STATE      = 0
         self.SPRINT        = args.sprint
+        self.SHADOW        = args.shadow
         self.CAPTURE       = args.capture
         self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force

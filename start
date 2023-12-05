@@ -60,7 +60,7 @@ set AGGRESSIVE="-aggressive"
 set CONTEST="paddling"
 #set CONTEST="cwt"
 #set CONTEST="sst"
-set CONTEST="mst"
+#set CONTEST="mst"
 #set CONTEST="sprint"
 
 #set CONTEST="naqp"

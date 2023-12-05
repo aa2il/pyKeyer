@@ -253,6 +253,12 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         gui.boxes.append(gui.qth)
         gui.boxes.append(gui.hint)
         gui.boxes.append(gui.scp)
+
+        gui.counter_lab.grid()
+        gui.counter.grid()
+        gui.inc_btn.grid()
+        gui.dec_btn.grid()
+        
         
     # Gather together logging info for this contest
     def logging(self):

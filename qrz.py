@@ -44,7 +44,7 @@ class CALL_INFO_GUI():
         except:
             print('CALL_LOOKUP:',call,' is not in master list')
             info = OrderedDict()
-        print(info)
+        #print('info=',info)
 
         if root:
             self.win=Toplevel(root)
@@ -119,6 +119,7 @@ if __name__ == '__main__':
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
 
             # Load master call list
+            print('Reading master history file ...')
             MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
             self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
             self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')

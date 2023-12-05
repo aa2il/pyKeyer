@@ -291,7 +291,7 @@ if P.sock.active:
     elif band=='2m':
         print('PYKEYER - Setting freq to',f1+200)
         P.sock.set_freq(f1+200) 
-    elif frq>f1+79:     # frq>0.5*(f1+f2):
+    elif not P.SHADOW and frq>f1+79:     # frq>0.5*(f1+f2):
         print('PYKEYER - Setting freq to',f1+30)
         P.sock.set_freq(f1+30) 
 

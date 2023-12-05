@@ -462,24 +462,26 @@ class Keyer():
                     if len(cmd2)>4:
                         SEC=int(cmd2[4:])
                         print("Keying TX for ",SEC)
+                        self.P.sock.set_power(5)
                         if self.P.USE_KEYER:
-                            self.P.keyer_device.tune(ser,True)
+                            self.P.keyer_device.tune(True)
                             time.sleep(SEC)
-                            self.P.keyer_device.tune(ser,False)
+                            self.P.keyer_device.tune(False)
                         else:
                             ser.setDTR(True)
                             time.sleep(SEC)
                             ser.setDTR(False)
+                        self.P.sock.set_power(99)
                     elif self.KEY_DOWN:
                         if self.P.USE_KEYER:
-                            self.P.keyer_device.tune(ser,False)
+                            self.P.keyer_device.tune(False)
                         else:
                             ser.setDTR(False)
                         self.KEY_DOWN=False
                         print('TUNE - key up')
                     else:
                         if self.P.USE_KEYER:
-                            self.P.keyer_device.tune(ser,True)
+                            self.P.keyer_device.tune(True)
                         else:
                             ser.setDTR(True)
                         self.KEY_DOWN=True

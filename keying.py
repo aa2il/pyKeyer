@@ -63,17 +63,17 @@ def open_keying_port(P,sock,rig_num):
         try:
             if P.NANO_IO:
                 protocol='NANO_IO'
-                BAUD=NANO_BAUD
+                BAUD_KEYER=NANO_BAUD
             elif P.K3NG_IO:
                 protocol='K3NG_IO'
-                BAUD=NANO_BAUD
+                BAUD_KEYER=NANO_BAUD
             elif P.WINKEYER:
                 protocol='WINKEYER'
-                BAUD=1200
+                BAUD_KEYER=1200
             else:
                 print('OPEN KEYING PORT - Unknown protocol')
                 sys.exit(0)
-            P.keyer_device = KEYING_DEVICE(P,protocol,baud=BAUD)
+            P.keyer_device = KEYING_DEVICE(P,protocol,baud=BAUD_KEYER)
             ser = P.keyer_device.ser
         except Exception as e: 
             print( str(e) )
@@ -111,7 +111,6 @@ def open_keying_port(P,sock,rig_num):
             # but, in general, we'll use USB B in case we are using hamlib for rig control
             print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
             try:
-                #port=SERIAL_PORT10     # Old
                 port=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
                 print('OPEN KEYING PORT: Sock Init...')
@@ -149,7 +148,6 @@ def open_keying_port(P,sock,rig_num):
 
             if sock.rig_type2=='FT991a':
                 
-                #port=SERIAL_PORT4     # Old
                 port=find_serial_device('FT991a',1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
                 ser.setDTR(True)
@@ -181,7 +179,6 @@ def open_keying_port(P,sock,rig_num):
                     
             elif sock.rig_type2=='FTdx3000':
 
-                #port=SERIAL_PORT2     # Old
                 port=find_serial_device('FTdx3000',1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1)
                 ser.setDTR(False)

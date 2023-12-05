@@ -775,7 +775,7 @@ class GUI():
     def Set_Log_Fields(self,fields=None):
         if fields==None:
             fields  = self.sock.get_log_fields()
-        print("Set Log Fields =",fields)
+        print("GUI: Set Log Fields ===============",fields)
         self.call.delete(0, END)
         self.call.insert(0,fields['Call'])
         self.call.configure(fg='black')
@@ -1158,7 +1158,7 @@ class GUI():
 
         # Vary the greeting for friends
         if '[HOWDY]' in txt:
-            GREETINGS=['FB','HI','TNX','GL']
+            GREETINGS=['FB','FB','TNX','GL']
             i = random.randint(0, len(GREETINGS)-1)
             txt = txt.replace('[HOWDY]',GREETINGS[i])
 
@@ -2729,7 +2729,8 @@ class GUI():
             self.get_hint(call)
             if self.P.AUTOFILL:
                 self.P.KEYING.insert_hint()
-
+                if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
+                    self.Read_Log_Fields()
     
     # Callback when something changes in an entry box
     def process_entry_boxes(self,event):
@@ -2769,7 +2770,7 @@ class GUI():
             print('Call=',call)
 
             # Update fldigi and check for dupes
-            self.sock.set_log_fields({'Call':call}) 
+            #self.sock.set_log_fields({'Call':call}) 
             self.dup_check(call)
             self.auto_fill(call,key)
 
