@@ -72,8 +72,12 @@ class VHF_KEYING(DEFAULT_KEYING):
     def hint(self,call):
         P=self.P
 
-        gridsq = P.MASTER[call]['grid']
-        self.NAME = P.MASTER[call]['name']
+        try:
+            gridsq    = P.MASTER[call]['grid']
+            self.NAME = P.MASTER[call]['name']
+        except:
+            gridsq    = ''
+            self.NAME = ''
         
         return gridsq
 

@@ -54,10 +54,11 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
         #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYSTATE] '}
         #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] 73EE [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -72,11 +73,8 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
 
         MACROS[8]     = {'Label' : 'My QTH 2x' , 'Text' : '[-2][MYSTATE] [MYSTATE] [+2]'}
         MACROS[9]     = {'Label' : ' '         , 'Text' : ' '}
-        MACROS[10]    = {'Label' : ' '         , 'Text' : ' '}
-        if self.P.contest_name=='ARRL-DX':
-            MACROS[11]    = {'Label' : 'NR? '  , 'Text' : 'NR? '}
-        else:
-            MACROS[11]    = {'Label' : 'QTH? ' , 'Text' : 'QTH? '}
+        MACROS[10]    = {'Label' : 'NR? '      , 'Text' : 'NR? '}
+        MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
         
         return MACROS
@@ -91,8 +89,10 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
                 # Try deciphering from section info
                 sec   = P.MASTER[call]['fdsec']
                 state=arrl_sec2state(sec)
+            self.NAME = P.MASTER[call]['name']
         except:
             state=''
+            self.NAME = ''
             
         return state
 
@@ -211,3 +211,7 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
+        if True:
+            gui.info.delete(0, END)
+            gui.info.insert(0,self.NAME)
+        
