@@ -5,6 +5,9 @@
 #
 # Keying routines for ARRL 10m, ARRL Intl DX and CQ 160m contests.
 #
+# Notes:
+#  - For 10m contest, mults are States+Provvinces+Mexican States+DXCCs
+#
 ############################################################################################
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,6 +22,7 @@
 #
 ############################################################################################
 
+import sys
 from tkinter import END,E,W
 from collections import OrderedDict
 from default import DEFAULT_KEYING
@@ -38,7 +42,7 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
 
         if self.P.contest_name=='ARRL-DX':
             P.CONTEST_ID='ARRL-DX-CW'
-        elif self.P.contest_name=='ARRL-10':
+        elif self.P.contest_name=='ARRL-10M':
             P.CONTEST_ID='ARRL-10'
         elif self.P.contest_name=='CQ-160M':
             P.CONTEST_ID='CQ-160M'
@@ -155,14 +159,31 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         gui.hide_all()
         self.macros=[1,None,2]
 
-        gui.rstin_lab.grid(columnspan=1,column=4,sticky=E+W)
-        gui.rstin.grid(column=4,columnspan=1)
+        col=0
+        cspan=4
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+        
+        col+=cspan
+        cspan=1
+        gui.rstin_lab.grid(column=col,columnspan=cspan,sticky=E+W)
+        gui.rstin.grid(column=col,columnspan=1)
         gui.rstin.delete(0,END)
         gui.rstin.insert(0,'5NN')
         
-        gui.qth_lab.grid(columnspan=1,column=5,sticky=E+W)
-        gui.qth.grid(column=5,columnspan=1)
+        col+=cspan
+        cspan=1
+        gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.qth.grid(column=col,columnspan=col)
 
+        col+=cspan
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+            
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.qth)

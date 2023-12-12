@@ -57,8 +57,8 @@ class MST_KEYING(DEFAULT_KEYING):
         # Check date for any special greetings
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
         elif now.month==12 and now.day>=28:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
