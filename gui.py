@@ -1202,13 +1202,11 @@ class GUI():
         # ... and his name
         his_name=self.get_name().replace('?','')
         my_name = self.P.SETTINGS['MY_NAME']
-        if ('?' in his_name) or (his_name==my_name and '[NAME] '+my_name in txt):
-            #his_name=''
+        if ('?' in his_name) or (his_name==my_name and '[NAME] '+my_name in txt and False):
             txt = txt.replace('[NAME] ','')
         else:
             txt = txt.replace('[NAME]',his_name )
         txt = txt.replace('[RST]', self.get_rst_out() )
-        #txt = txt.replace('  ',' ')
 
         # Take care of exchange
         if '[EXCH]' in txt:
@@ -2993,18 +2991,12 @@ class GUI():
     # Function to create menu bar
     def create_menu_bar(self):
         print('Creating Menubar ...')
-        OLD_WAY=False
 
-        if OLD_WAY:
-            menubar = Menu(self.root)
-        else:
-            toolbar = Frame(self.root, bd=1, relief=RAISED)
-            #toolbar.pack(side=TOP, fill=X)
-            toolbar.grid(row=0,columnspan=self.ncols,column=0,sticky=E+W)
-            #Label(toolbar,text='HEY').pack(side=LEFT, padx=2, pady=2)
-
-            menubar = Menubutton(toolbar,text='File',relief='flat')
-            menubar.pack(side=LEFT, padx=2, pady=2)
+        toolbar = Frame(self.root, bd=1, relief=RAISED)
+        toolbar.grid(row=0,columnspan=self.ncols,column=0,sticky=E+W)
+        
+        menubar = Menubutton(toolbar,text='File',relief='flat')
+        menubar.pack(side=LEFT, padx=2, pady=2)
             
         Menu1 = Menu(menubar, tearoff=0)
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
@@ -3126,69 +3118,59 @@ class GUI():
         Menu1.add_separator()
         Menu1.add_command(label="Exit", command=self.Quit)
 
-        if OLD_WAY:
-            menubar.add_cascade(label="File", menu=Menu1)
-            menubar.add_command(label="VFO A",
-                                command=lambda: SetVFO(self,'A'))
-            menubar.add_command(label="VFO B",
-                                command=lambda: SetVFO(self,'B'))
-            menubar.add_command(label="A-->B",
-                                command=lambda: SetVFO(self,'A->B'))
-            self.root.config(menu=menubar)
-        else:
-            menubar.menu =  Menu1
-            menubar["menu"]= menubar.menu  
+        menubar.menu =  Menu1
+        menubar["menu"]= menubar.menu  
 
-            self.OnDeckCircle=Entry(toolbar,text='On Deck Circle')
-            self.OnDeckCircle.pack(side=LEFT, padx=2, pady=2)
-            self.OnDeckCircle.bind("<Key>", self.key_press )
-            Button(toolbar,text="Batter Up",command=self.BatterUp) \
-                .pack(side=LEFT, padx=2, pady=2)
-
-            Button(toolbar,text="VFO A",command=lambda: SetVFO(self,'A')) \
-                .pack(side=LEFT, padx=2, pady=2)
-            Button(toolbar,text="VFO B",command=lambda: SetVFO(self,'B')) \
-                .pack(side=LEFT, padx=2, pady=2)
-            Button(toolbar,text="A->B",command=lambda: SetVFO(self,'A->B')) \
-                .pack(side=LEFT, padx=2, pady=2)
-            Button(toolbar,text="Swap",command=lambda: SetVFO(self,'A<->B')) \
-                .pack(side=LEFT, padx=2, pady=2)
-            #Button(toolbar,text="Split",command=lambda: SetVFO(self,'SPLIT')) \
+        self.OnDeckCircle=Entry(toolbar,text='On Deck Circle')
+        self.OnDeckCircle.pack(side=LEFT, padx=2, pady=2)
+        self.OnDeckCircle.bind("<Key>", self.key_press )
+        Button(toolbar,text="Batter Up",command=self.BatterUp) \
+            .pack(side=LEFT, padx=2, pady=2)
+        
+        Button(toolbar,text="VFO A",command=lambda: SetVFO(self,'A')) \
+            .pack(side=LEFT, padx=2, pady=2)
+        Button(toolbar,text="VFO B",command=lambda: SetVFO(self,'B')) \
+            .pack(side=LEFT, padx=2, pady=2)
+        Button(toolbar,text="A->B",command=lambda: SetVFO(self,'A->B')) \
+            .pack(side=LEFT, padx=2, pady=2)
+        Button(toolbar,text="Swap",command=lambda: SetVFO(self,'A<->B')) \
+            .pack(side=LEFT, padx=2, pady=2)
+        #Button(toolbar,text="Split",command=lambda: SetVFO(self,'SPLIT')) \
             #    .pack(side=LEFT, padx=2, pady=2)
-            #Button(toolbar,text="TXW",command=lambda: SetVFO(self,'TXW')) \
+        #Button(toolbar,text="TXW",command=lambda: SetVFO(self,'TXW')) \
             #    .pack(side=LEFT, padx=2, pady=2)
             
-            self.So2vBtn = Button(toolbar,text="SO2V", command=self.Toggle_SO2V)
-            self.So2vBtn.pack(side=LEFT, padx=2, pady=2)
-            
-            self.DXSplitBtn = Button(toolbar,
-                                     text="DX Split",
-                                     command=self.Toggle_DXSplit)
-            self.DXSplitBtn.pack(side=LEFT, padx=2, pady=2)
-
-            self.FilterWidth=200
-            self.FilterWidthBtn = Button(toolbar,
-                                         text=str(self.FilterWidth)+' Hz',
-                                         command=self.Toggle_FilterWidth)
-            self.FilterWidthBtn.pack(side=LEFT, padx=2, pady=2)
-            
-            # Spin box to control paddle keying speed (WPM)
-            SB2=Spinbox(toolbar,
-                        from_=cw_keyer.MIN_WPM, 
-                        to=50,       
-                        textvariable=self.PaddlingWin.WPM_TXT, 
-                        bg='white', justify='center',            
-                        command=lambda j=0: self.PaddlingWin.SetWpm(0))
-            SB2.pack(side=RIGHT, padx=2, pady=2)
-            SB2.bind("<Key>", self.key_press )
-            Label(toolbar, text='Paddles:').pack(side=RIGHT, padx=2, pady=2)
-
-            # Screen capture
-            #Button(toolbar,text="PrtScrn",command=self.PrtScrn) \
+        self.So2vBtn = Button(toolbar,text="SO2V", command=self.Toggle_SO2V)
+        self.So2vBtn.pack(side=LEFT, padx=2, pady=2)
+        
+        self.DXSplitBtn = Button(toolbar,
+                                 text="DX Split",
+                                 command=self.Toggle_DXSplit)
+        self.DXSplitBtn.pack(side=LEFT, padx=2, pady=2)
+        
+        self.FilterWidth=200
+        self.FilterWidthBtn = Button(toolbar,
+                                     text=str(self.FilterWidth)+' Hz',
+                                     command=self.Toggle_FilterWidth)
+        self.FilterWidthBtn.pack(side=LEFT, padx=2, pady=2)
+        
+        # Spin box to control paddle keying speed (WPM)
+        SB2=Spinbox(toolbar,
+                    from_=cw_keyer.MIN_WPM, 
+                    to=50,       
+                    textvariable=self.PaddlingWin.WPM_TXT, 
+                    bg='white', justify='center',            
+                    command=lambda j=0: self.PaddlingWin.SetWpm(0))
+        SB2.pack(side=RIGHT, padx=2, pady=2)
+        SB2.bind("<Key>", self.key_press )
+        Label(toolbar, text='Paddles:').pack(side=RIGHT, padx=2, pady=2)
+        
+        # Screen capture
+        #Button(toolbar,text="PrtScrn",command=self.PrtScrn) \
             #    .pack(side=RIGHT, padx=2, pady=2)
 
-            # A place to put some info
-            self.info = Entry(toolbar,font=self.font1,selectbackground='lightgreen')
-            self.info.pack(side=RIGHT, padx=2, pady=2)
-            self.info.bind("<Key>", self.key_press )
+        # A place to put some info
+        self.info = Entry(toolbar,font=self.font1,selectbackground='lightgreen')
+        self.info.pack(side=RIGHT, padx=2, pady=2)
+        self.info.bind("<Key>", self.key_press )
 

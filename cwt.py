@@ -80,7 +80,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         # Consider "GBA" for week around July 4?
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU MC [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [MYCALL] [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
         elif now.month==12 and now.day>=28:
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [LOG]'}

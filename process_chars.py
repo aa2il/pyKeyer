@@ -111,7 +111,7 @@ def process_chars(P):
                         if P.NANO_ECHO and len(txt)>0:
                             # Check if its been a while since the last char was received
                             # This won't work properly bx linux is not real-time - need to put this in the keyer
-                            if (P.WINKEYER or P.K3NG_IO) and True:
+                            if P.WINKEYER or P.K3NG_IO:
                                 t=time.time()
                                 dt=t-last_char_time
                                 #print(t,last_char_time,dt,10*P.keyer.dotlen,need_eol)
@@ -122,17 +122,22 @@ def process_chars(P):
                                     need_eol=True
                                 last_char_time=t
                             
+                            # Check is user has responded to current paddling text
+                            if P.SENDING_PRACTICE and '\n' in txt:
+                                P.gui.PaddlingWin.responded=True
+                                #print('HEY 4',P.gui.PaddlingWin.responded)
+                                
                             # Add a <CR/LF> if we are echoing back a command
                             if P.NANO_IO and txt[0]=='~' and txt[-1] in ['u','s']:
                                 txt+='\n'
-                                
+
                             # Put it in the big text box also
                             P.gui.txt.insert(END, txt)
                             P.gui.txt.see(END)
                             P.gui.root.update_idletasks()
                             nano_txt += txt
                             if '\n' in txt:
-                                print('\nNANO: ',nano_txt)
+                                print('NANO: ',nano_txt)
                                 #P.gui.fp_txt.write('NANO: %s\n' % (nano_txt) )
                                 #P.gui.fp_txt.flush()
                                 nano_txt = ''

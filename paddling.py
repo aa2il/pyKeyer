@@ -61,6 +61,7 @@ class PADDLING_GUI():
         self.last_focus=None
         self.WIN_NAME='PADDLING WINDOW'
         self.OnTop=False
+        self.responded=True       # Need to show initial text
 
         self.suffixes=['/M','/P','/QRP','/MM']
         for i in range(10):
@@ -218,9 +219,12 @@ class PADDLING_GUI():
             self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram, call, etc.
-        Selection=self.Selection.get()
-        if Selection!=7 or RANDOM_QSO_MODE:
-            self.NewItem()
+        #print('HEY 1', self.responded)
+        if self.responded:
+            Selection=self.Selection.get()
+            if Selection!=7 or RANDOM_QSO_MODE:
+                self.NewItem()
+        #print('HEY 2', self.responded)
         
     # Callback when a key is pressed 
     def KeyPress(self,event,id=None):
@@ -277,6 +281,8 @@ class PADDLING_GUI():
         P=self.P
         Selection=self.Selection.get()
         #print("You selected",Selection)
+        self.responded=False
+        #print('HEY 3', self.responded)
 
         if Selection==0:
             
