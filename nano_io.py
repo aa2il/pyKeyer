@@ -335,7 +335,7 @@ class KEYING_DEVICE():
             elif self.protocol=='K3NG_IO':
                 txt='w'+str(wpm)+chr(13)
             elif self.protocol=='WINKEYER':
-                txt=chr(2)+chr(wpm)
+                txt=chr(2)+chr(wpm+64)
             else:
                 txt=None
             #print('NANO SET WPM2: txt=',txt,'\n',show_hex(txt))

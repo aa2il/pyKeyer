@@ -61,6 +61,8 @@ class RIG_CONTROL():
         self.tabs.add(tab1, text='Rig Ctrl')   # Add the tab
         self.tabs.pack(expand=1, fill="both")  # Pack to make visible
 
+        ######################################################################
+
         # Create a frame with buttons to select operating band
         self.band = StringVar(parent)
         BandFrame = Frame(tab1)
@@ -89,6 +91,8 @@ class RIG_CONTROL():
                         command=lambda: SelectBand(self),
                         value=b).pack(side=LEFT,anchor=W)
 
+        ######################################################################
+
         # Create a frame with buttons to select operating mode
         self.mode    = StringVar(parent)
         ModeFrame = Frame(tab1)
@@ -100,6 +104,8 @@ class RIG_CONTROL():
                         variable=self.mode, 
                         command=lambda: SelectMode(self),
                         value=m).pack(side=LEFT,anchor=W)
+
+        ######################################################################
 
         # Create a frame with buttons to select antenna
         self.ant     = StringVar(parent)
@@ -113,12 +119,15 @@ class RIG_CONTROL():
                         command=lambda: SelectAnt(self),
                         value=a).pack(side=LEFT,anchor=W)
 
+        ######################################################################
+
         # Create a frame with sliders to adjust tx power, mic and monitor gains
         SliderFrame = Frame(tab1)
         SliderFrame.pack(side=TOP)
 
+        # Slider for TX power
         self.slider0 = Scale(SliderFrame, 
-                             from_=0, to=100, 
+                             from_=5, to=100, 
                              orient=HORIZONTAL,
                              length=300,
                              label="TX Power",
@@ -128,6 +137,7 @@ class RIG_CONTROL():
         print(("POWER: %d" % self.tx_pwr))
         self.slider0.set(self.tx_pwr)
 
+        # Slider for Mic Gain
         self.slider1 = Scale(SliderFrame, 
                              from_=0, to=100, 
                              orient=HORIZONTAL,
@@ -143,6 +153,7 @@ class RIG_CONTROL():
                text="Auto Adj Mic", 
                command=lambda: Auto_Adjust_Mic_Gain(self) ).pack()
 
+        # Slider for Monitor level (volume)
         self.slider2 = Scale(SliderFrame, 
                              from_=0, to=100, 
                              orient=HORIZONTAL,
@@ -153,6 +164,8 @@ class RIG_CONTROL():
         read_monitor_level(self)
         print(("LEVEL: %d" % self.mon_level))
         self.slider2.set(self.mon_level)
+
+        ######################################################################
 
         # Create a frame with buttons to support other misc functions
         MiscFrame = Frame(tab1)
@@ -200,6 +213,8 @@ class RIG_CONTROL():
                text="TXW",     
                command=lambda: SetVFO(self,'TXW') ).pack(side=LEFT,anchor=W)
         
+        ######################################################################
+
         # Add a tab for key pad
         if self.sock.rig_type1=='Yaesu':
             tab2 = ttk.Frame(self.tabs)              # Create a tab 

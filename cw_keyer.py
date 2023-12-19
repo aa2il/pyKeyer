@@ -462,6 +462,7 @@ class Keyer():
                     if len(cmd2)>4:
                         SEC=int(cmd2[4:])
                         print("Keying TX for ",SEC)
+                        #pwr=read_tx_pwr(self)
                         self.P.sock.set_power(5)
                         if self.P.USE_KEYER:
                             self.P.keyer_device.tune(True)
@@ -479,7 +480,10 @@ class Keyer():
                             ser.setDTR(False)
                         self.KEY_DOWN=False
                         print('TUNE - key up')
+                        self.P.sock.set_power(99)
                     else:
+                        #pwr=read_tx_pwr(self)
+                        self.P.sock.set_power(5)
                         if self.P.USE_KEYER:
                             self.P.keyer_device.tune(True)
                         else:

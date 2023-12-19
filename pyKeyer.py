@@ -107,8 +107,8 @@ else:
 #print('P.sock3=',P.sock3,P.sock3.rig_type,P.sock3.rig_type1,P.sock3.rig_type2)
 #sys.exit(0)
 
-# Check if we need nano device
-if P.SENDING_PRACTICE and not P.USE_KEYER:
+# Check if we need keying device
+if P.SENDING_PRACTICE and not P.USE_KEYER and False:
     print('\n**************************************************************')
     print('**************************************************************')
     print('*** We need the EXTERNAL KEYER device for sending practice ***')
@@ -117,6 +117,7 @@ if P.SENDING_PRACTICE and not P.USE_KEYER:
     sys.exit(1)
 
 # Open keying port(s)
+print('\nPYKEYER: Opening connection to keyer ...',P.FIND_KEYER,P.USE_KEYER)
 P.ser1=open_keying_port(P,P.sock1,1)
 P.ser2=open_keying_port(P,P.sock2,2)
 P.ser3=open_keying_port(P,P.sock3,2)

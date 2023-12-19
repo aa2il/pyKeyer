@@ -51,7 +51,46 @@ def toggle_dtr(n=1):
             
         #sys.exit(0)
 
+################################################################################
 
+def find_keyer():
+
+    DEVICES   = ['NANO IO','K3NG','WINKEYER']
+    BAUDS     = [NANO_BAUD,NANO_BAUD,1200]
+    CMDS      = ['~?','\\?',chr(0)+chr(2)]
+    RESPONSES = ['nanoIO ver','K3NG Keyer',chr(0x17)]
+
+    print('Looking for a keyer device ...')
+    device=find_serial_device('nanoIO',0,2)
+    print('device=',device)
+    if not device:
+        print('\nNo serial keyer device found')
+        return None
+    
+    for i in range(len(DEVICES)):
+        print('Looking for',DEVICES[i],'device ...')
+        
+        baud=BAUDS[i]
+        ser = serial.Serial(device,baud,timeout=0.1,
+                            dsrdtr=True,rtscts=0)
+        print('ser=',ser)
+    
+        txt1=CMDS[i]
+        cnt=ser.write(bytes(txt1,'utf-8'))
+        print('cnt=',cnt)
+    
+        time.sleep(.1)
+        txt2 = ser.read(256).decode("utf-8",'ignore')
+        print('txt2=',txt2,'\t',len(txt2),'\n',show_hex(txt2))
+        if RESPONSES[i] in txt2:
+            print('Found',DEVICES[i],'Device')
+            return DEVICES[i]
+
+        ser.close()
+        
+    return None
+
+################################################################################
 
 # Function to open keying control port
 def open_keying_port(P,sock,rig_num):
@@ -60,6 +99,19 @@ def open_keying_port(P,sock,rig_num):
     
     print('Opening keying port ...',sock.rig_type,sock.rig_type2)
     if P.USE_KEYER and rig_num==1:
+        if P.FIND_KEYER:
+            
+            dev=find_keyer()
+            print('dev=',dev)
+            if dev==None:
+                print('Unable to find keyer device - giving up!')
+                sys.exit(0)
+            else:
+                P.NANO_IO  = dev=='NANO IO'
+                P.K3NG_IO  = dev=='K3NG'
+                P.WINKEYER = dev=='WINKEYER'
+                time.sleep(.1)
+        
         try:
             if P.NANO_IO:
                 protocol='NANO_IO'
