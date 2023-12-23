@@ -216,7 +216,7 @@ class PARAMS:
                               type=int,default=1)
         arg_proc.add_argument("-keyer", help="Keyer type",
                               type=str,default=None,
-                              choices=['NONE','NANO','K3NG','WIN','ANY'])
+                              choices=['NONE','NANO','K3NG','WINKEY','ANY'])
         arg_proc.add_argument('-nano', action='store_true',
                               help="Use Nano IO Interface")
         arg_proc.add_argument('-k3ng', action='store_true',
@@ -271,7 +271,7 @@ class PARAMS:
         self.DESKTOP       = args.desktop
         
         self.SENDING_PRACTICE = args.sending
-        self.WINKEYER      = args.winkeyer or args.keyer=='WIN'
+        self.WINKEYER      = args.winkeyer or args.keyer=='WINKEY'
         self.K3NG_IO       = args.k3ng or args.keyer=='K3NG'
         self.NANO_IO       = args.nano or args.keyer=='NANO'
         self.FIND_KEYER    = args.keyer=='ANY'

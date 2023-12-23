@@ -129,17 +129,25 @@ class KEYING_DEVICE():
     def __init__(self,P,device,protocol,baud=NANO_BAUD):
 
         # Find serial port to the device
-        print("\nNANO_IO INIT: Opening keyer ...",device)
+        print("\nNANO_IO INIT: Opening keyer ... device=",device)
         if device:
             self.device=device
         else:
+            print("NANO_IO INIT: Searching for nanoIO device ...")
             self.device=find_serial_device('nanoIO',0,1)
+            if not self.device:
+                print("NANO_IO INIT: Couldn't find nanoIO device - trying nanIO32 ...")
+                self.device=find_serial_device('nanoIO32',0,1)
+                if not self.device:
+                    print("NANO_IO INIT: Couldn't find nanoIO32 device - giving up!")
+                    sys.exit(0)
 
         # Disable reset after hangup - should be done at system level already
         print('Turning off DTR hangup ...')
         with open(self.device) as f:
             attrs = termios.tcgetattr(f)
-            if True:
+            #if True:
+            if False:
                 # Normally, everything is fine so disable DTR Hangup
                 attrs[2] = attrs[2] & ~termios.HUPCL
             else:

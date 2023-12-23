@@ -108,21 +108,21 @@ def open_keying_port(P,sock,rig_num):
     if P.USE_KEYER and rig_num==1:
         if P.FIND_KEYER:
             
-            device,dev=find_keyer()
-            print('device=',device,'\tdev=',dev)
-            if dev==None:
+            device,dev_type=find_keyer()
+            print('device=',device,'\tdev_type=',dev_type)
+            if dev_type==None:
                 print('Unable to find keyer device - giving up!')
                 sys.exit(0)
             else:
-                P.NANO_IO  = dev=='NANO IO'
-                P.K3NG_IO  = dev=='K3NG'
-                P.WINKEYER = dev=='WINKEYER'
+                P.NANO_IO  = dev_type=='NANO IO'
+                P.K3NG_IO  = dev_type=='K3NG'
+                P.WINKEYER = dev_type=='WINKEYER'
                 time.sleep(.1)
 
         else:
+            
             device=None
-            dev=None
-        
+            
         try:
             if P.NANO_IO:
                 protocol='NANO_IO'

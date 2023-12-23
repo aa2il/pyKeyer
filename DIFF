@@ -10,7 +10,7 @@
 #set ROOT="/media/${USER}/pi"
 #set ROOT="/media/${USER}/aa2il"
 set ROOT="/media/${USER}/marconi"
-#set ROOT="/media/${USER}/sproul"
+set ROOT="/media/${USER}/sproul"
 #set ROOT="/media/${USER}/3D76-ECB1"
 #set ROOT="/media/${USER}/acer"
 #set ROOT="../clone"
@@ -29,10 +29,10 @@ set old=${ROOT}${PTH}
 #exit
 
 # Overide if necessary
-set old="work"
-echo OLD=$old
+#set old="work"
 
 rm -f DIFFS
+echo OLD=$old
 foreach i (*.py AA2IL.adif sats.adif start* DIFF *.txt *.bat *.md dist/*.iss)
     echo $i
     set n=`diff -w $old/$i $i | wc -l`
