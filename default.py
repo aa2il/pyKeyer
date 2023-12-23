@@ -122,8 +122,8 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
                 EXCH2 = '[SERIAL]'
-                self.key1 = 'rst'
-                self.key2 = 'exch'
+                #self.key1 = 'rst'
+                #self.key2 = 'exch'
                 self.Uses_Serial=True
                 self.P.CONTEST_ID=self.contest_name+'-QSO-PARTY'
                 
@@ -135,8 +135,8 @@ class DEFAULT_KEYING():
                 EXCH1   = '5NN'
                 LAB2    = 'QTH'
                 EXCH2   = '[MYSEC]'
-                self.key1 = 'rst'
-                self.key2 = 'sec'
+                #self.key1 = 'rst'
+                #self.key2 = 'sec'
                 self.P.CONTEST_ID=self.contest_name
                 
             elif self.contest_name in ['NVQP']:
@@ -146,6 +146,8 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
+                #self.key1 = 'rst'
+                #self.key2 = 'qth'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['ALQP','ARQP','AZQP','COQP','DEQP',
@@ -307,8 +309,10 @@ class DEFAULT_KEYING():
 
             print('LAB2=',LAB2,'\tEXCH2=',EXCH2)
             self.LAB1=LAB1
+            self.key1 = self.LAB1.lower()
             if LAB2!=None:
                 self.LAB2=LAB2
+                self.key2 = self.LAB2.lower()
             else:
                 self.LAB2=LAB1
                 LAB2=LAB1
@@ -355,23 +359,38 @@ class DEFAULT_KEYING():
         P=self.P
         gui=self.P.gui
 
+        print('DEFAULFT HINT: call=',call,self.key1,self.key2)
+
         txt=''
+        qth=''
         if self.key1!=None and self.key1!='rst':
             txt+='TBD '
 
-        if self.key2!=None and self.key2 in ['sec']:
-            qth = P.MASTER[call][self.key2]
+        if self.key2!=None and self.key2 in ['sec','qth']:
+            if self.key2=='qth':
+                key2='state'
+            else:
+                key2=self.key2
+            qth = P.MASTER[call][key2]
+            print('DEFAULFT HINT: key2=',key2,'\tqth=',qth)
             txt += qth
             
         gui.name.delete(0,END)
         gui.info.delete(0,END)
         try:
             self.NAME = P.MASTER[call]['name']
+            gui.name.delete(0,END)
             gui.name.insert(0,self.NAME)
+            gui.info.delete(0,END)
             gui.info.insert(0,self.NAME)
-        except:
-            self.NAME = ''
+            gui.qth.delete(0,END)
+            gui.qth.insert(0,qth)
+        except Exception as e: 
+            print('Unable to retrieve NAME')
+            print( str(e) )
+            self.NAME = 'NO NAME'
 
+        print('DEFAU:FT HINT: txt=',txt)
         return txt
 
     # Routine to get practice qso info
@@ -602,19 +621,20 @@ class DEFAULT_KEYING():
     # Hint insertion
     def insert_hint(self,h=None):
 
-        #print('DEFAULT INSERT HINT 1: h=',h)
-
+        print('DEFAULT INSERT HINT B4: h=',h,'\tname=',self.NAME)
         gui=self.P.gui
 
         if h==None:
             h = gui.hint.get()              # Read hint box
             if h=='':
                 h = gui.get_hint()          # Nothing in hint box, try getting a hint
+                print('DEFAULT INSERT HINT DURING: h=',h,'\tname=',self.NAME)
                 if h==None:
                     return
 
         if type(h) == str:
             h = h.split(' ')
+        print('DEFAULT INSERT HINT AFTER: h=',h,'\tname=',self.NAME)
 
         if len(h)>=1:
 
@@ -623,9 +643,9 @@ class DEFAULT_KEYING():
                 gui.name.delete(0, END)
                 gui.name.insert(0,h[idx])
                 idx+=1
-            #else:
-            #    gui.name.delete(0, END)
-            #    gui.name.insert(0,self.NAME)
+            else:
+                gui.name.delete(0, END)
+                gui.name.insert(0,self.NAME)
 
             if self.key2!=None and len(h)>idx:
                 if self.key2 in ['sec','qth','state']:

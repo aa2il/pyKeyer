@@ -26,23 +26,24 @@ set RIG2="NONE"
 #set RIG_TYPE2="FT991a"
 #set RIG_TYPE2="IC9700"
 
-set KILL_OLD = 0
 set FIND_RIG="~/Python/findRig/findRig.py"
-
-############################################################################################
 
 set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
 #set PRACTICE="-prac -nrows 0 -lock"
 
 set NANO=""
-set NANO="-nano"
+set NANO="-keyer ANY"
+#set NANO="-keyer NONE"
+#set NANO="-nano"
 #set NANO="-nano -echo"
 #set NANO="-k3ng -echo"
 #set NANO="-winkeyer -echo"
 
 #set NANO="-sidetone"
 #set NANO="-nano -sidetone"
+
+set KILL_OLD = 0
 
 set WPM=25
 set HINTS=""

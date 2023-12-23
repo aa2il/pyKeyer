@@ -126,11 +126,14 @@ ser = serial.Serial(path, 9600)
 
 # Interface to keying device
 class KEYING_DEVICE():
-    def __init__(self,P,protocol,baud=NANO_BAUD):
+    def __init__(self,P,device,protocol,baud=NANO_BAUD):
 
         # Find serial port to the device
-        print("\nOpening keyer ...")
-        self.device=find_serial_device('nanoIO',0,1)
+        print("\nNANO_IO INIT: Opening keyer ...",device)
+        if device:
+            self.device=device
+        else:
+            self.device=find_serial_device('nanoIO',0,1)
 
         # Disable reset after hangup - should be done at system level already
         print('Turning off DTR hangup ...')
@@ -145,6 +148,7 @@ class KEYING_DEVICE():
             termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
 
         # Open serial port to the device
+        print('Opening serial port ...')
         self.ser = serial.Serial(self.device,baud,timeout=0.1,
                                  dsrdtr=True,rtscts=0)
         #                                 dsrdtr=False,rtscts=0)
@@ -152,6 +156,7 @@ class KEYING_DEVICE():
         self.protocol=protocol
  
         # Make sure its in CW & Iambic-A mode & show current settings
+        print('Initial setup ...')
         if self.protocol=='NANO_IO':
             self.delim='~'
             self.wait4it(.1,.1,10)
@@ -245,7 +250,8 @@ class KEYING_DEVICE():
                     time.sleep(t2)
                     txt=self.nano_read()
                     print(ntries,txt,'\t',show_hex(txt))
-                    if txt==chr(0x17)+'ABC':
+                    #if txt==chr(0x17)+'ABC':
+                    if chr(0x17) in txt and 'ABC' in txt:
                         print('WAIT4IT: Found WINKEYER keying device - yippee!')
                         break
                 

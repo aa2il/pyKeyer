@@ -137,7 +137,7 @@ def process_chars(P):
                             P.gui.root.update_idletasks()
                             nano_txt += txt
                             if '\n' in txt:
-                                print('NANO: ',nano_txt)
+                                print('NANO: ',nano_txt.strip())
                                 #P.gui.fp_txt.write('NANO: %s\n' % (nano_txt) )
                                 #P.gui.fp_txt.flush()
                                 nano_txt = ''

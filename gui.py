@@ -2723,7 +2723,7 @@ class GUI():
                 self.call.configure(fg='black')
 
         # Take care of hints
-        if self.contest:
+        if self.contest or True:
             self.get_hint(call)
             if self.P.AUTOFILL:
                 self.P.KEYING.insert_hint()

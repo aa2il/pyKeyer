@@ -23,6 +23,7 @@
 import sys
 from nano_io import *
 from rig_io.ft_tables import *
+import traceback
 
 ################################################################################
 
@@ -60,12 +61,18 @@ def find_keyer():
     CMDS      = ['~?','\\?',chr(0)+chr(2)]
     RESPONSES = ['nanoIO ver','K3NG Keyer',chr(0x17)]
 
-    print('Looking for a keyer device ...')
+    print('\nLooking for nanoIO keyer device ...')
     device=find_serial_device('nanoIO',0,2)
     print('device=',device)
     if not device:
+        print('... Not found - Looking for ESP32 keyer device ...')
+        device=find_serial_device('nanoIO32',0,2)
+        print('device=',device)
+    if device:
+        print(' ... There it is on port',device,' ...')
+    else:
         print('\nNo serial keyer device found')
-        return None
+        return None,None
     
     for i in range(len(DEVICES)):
         print('Looking for',DEVICES[i],'device ...')
@@ -84,11 +91,11 @@ def find_keyer():
         print('txt2=',txt2,'\t',len(txt2),'\n',show_hex(txt2))
         if RESPONSES[i] in txt2:
             print('Found',DEVICES[i],'Device')
-            return DEVICES[i]
+            return device,DEVICES[i]
 
         ser.close()
         
-    return None
+    return device,None
 
 ################################################################################
 
@@ -101,8 +108,8 @@ def open_keying_port(P,sock,rig_num):
     if P.USE_KEYER and rig_num==1:
         if P.FIND_KEYER:
             
-            dev=find_keyer()
-            print('dev=',dev)
+            device,dev=find_keyer()
+            print('device=',device,'\tdev=',dev)
             if dev==None:
                 print('Unable to find keyer device - giving up!')
                 sys.exit(0)
@@ -111,6 +118,10 @@ def open_keying_port(P,sock,rig_num):
                 P.K3NG_IO  = dev=='K3NG'
                 P.WINKEYER = dev=='WINKEYER'
                 time.sleep(.1)
+
+        else:
+            device=None
+            dev=None
         
         try:
             if P.NANO_IO:
@@ -125,10 +136,9 @@ def open_keying_port(P,sock,rig_num):
             else:
                 print('OPEN KEYING PORT - Unknown protocol')
                 sys.exit(0)
-            P.keyer_device = KEYING_DEVICE(P,protocol,baud=BAUD_KEYER)
+            P.keyer_device = KEYING_DEVICE(P,device,protocol,baud=BAUD_KEYER)
             ser = P.keyer_device.ser
         except Exception as e: 
-            print( str(e) )
             print('\n*************************************')
             print(  '*** Unable to open Nano IO device ***')
             print(  '***  Make sure it is plugged in   ***')
@@ -136,6 +146,8 @@ def open_keying_port(P,sock,rig_num):
             print(  '*************************************')
             print(  '***          Giving up            ***')
             print('*************************************\n')
+            print( str(e) )
+            traceback.print_exc()
             sys.exit(0)
 
     elif sock.rig_type2=='TS850':

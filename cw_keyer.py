@@ -270,7 +270,7 @@ class Keyer():
             else:
                 tdown+=4*dotlen_ms                    # Space between letters = 7 dits
 
-        print('IDEAL TIMING:',times,'\n')
+        #print('IDEAL TIMING:',times,'\n')
               
                     
     # Get speed

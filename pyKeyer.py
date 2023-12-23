@@ -313,7 +313,7 @@ if os.path.isfile(FNAME):
         grid = unidecode( sheet1.cell(i,3).value )
         if len(grid)>0 and 'Paper' not in grid:
             P.grids.append( grid.upper() )
-    print('Grids:',P.grids)
+    #print('Grids:',P.grids)
 
 # Start sidetone and capture audio processing
 if P.SIDETONE or P.CAPTURE:

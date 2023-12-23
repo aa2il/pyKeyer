@@ -27,6 +27,7 @@ from rig_io.ft_tables import CA_COUNTIES
 # info (qth, member no. etc.)
 def master(P,call,dx_station=None,VERBOSITY=0):
 
+    call=call.upper()
     if VERBOSITY>0:
         print('HINT-MASTER: call=',call,len(P.calls))
     
@@ -36,7 +37,7 @@ def master(P,call,dx_station=None,VERBOSITY=0):
     
     if call in P.calls:
         if VERBOSITY>0:
-            print('MASTER:',call,' is in master list')
+            print('HINT-MASTER:',call,' is in master list')
         if P.KEYING:
             h=P.KEYING.hint(call)
             try:

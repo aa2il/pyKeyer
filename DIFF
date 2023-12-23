@@ -29,7 +29,7 @@ set old=${ROOT}${PTH}
 #exit
 
 # Overide if necessary
-#set old="save64"
+set old="work"
 echo OLD=$old
 
 rm -f DIFFS
