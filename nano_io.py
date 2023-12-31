@@ -146,8 +146,8 @@ class KEYING_DEVICE():
         print('Turning off DTR hangup ...')
         with open(self.device) as f:
             attrs = termios.tcgetattr(f)
-            #if True:
-            if False:
+            if True:
+            #if False:
                 # Normally, everything is fine so disable DTR Hangup
                 attrs[2] = attrs[2] & ~termios.HUPCL
             else:

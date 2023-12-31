@@ -60,8 +60,8 @@ class SST_KEYING(DEFAULT_KEYING):
             MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
             MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'MC [NAME] [MYNAME] [MYSTATE]'}
         elif now.month==12 and now.day>=28:
-            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC HNY [NAME] EE [LOG]'}
-            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'MC HNY [NAME] [MYNAME] [MYSTATE]'}
+            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'HNY [NAME] [MYNAME] [MYSTATE]'}
         elif now.month==1 and now.day<=14:
             MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
             MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'HNY [NAME] [MYNAME] [MYSTATE]'}
