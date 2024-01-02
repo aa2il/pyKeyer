@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # mst.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ICWC Medium Speed mini-tests
 #
@@ -57,15 +57,19 @@ class MST_KEYING(DEFAULT_KEYING):
         # Check date for any special greetings
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
+            GREET3='MC'
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
         elif now.month==12 and now.day>=28:
+            GREET3='HNY'
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73EE [LOG]'}
         elif now.month==1 and now.day<=14:
+            GREET3='HNY'
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73EE [LOG]'}
         else:
+            GREET3='TU'
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] 73EE [LOG]'}
 
@@ -76,16 +80,15 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
 
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [SERIAL] '}
-        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [SERIAL] '}
+        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : GREET3+' [NAME] [MYNAME] [SERIAL] '}
+            
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
         MACROS[8]     = {'Label' : 'My Name 2x', 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
-        #MACROS[8+12]  = {'Label' : 'Dec'       , 'Text' : '[DEC]'}
         MACROS[9]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
-        #MACROS[9+12]  = {'Label' : 'Inc'       , 'Text' : '[INC]'}
         MACROS[10]    = {'Label' : 'NAME? '    , 'Text' : 'NAME? '}
         MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}

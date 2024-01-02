@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # default.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for default qsos, most state QSO parties and some other contests.
 #
@@ -25,6 +25,7 @@ from collections import OrderedDict
 from random import randint
 from utilities import cut_numbers,reverse_cut_numbers
 from dx.spot_processing import Station
+from datetime import datetime
 import Levenshtein
 from scp import *
 
@@ -122,8 +123,6 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
                 EXCH2 = '[SERIAL]'
-                #self.key1 = 'rst'
-                #self.key2 = 'exch'
                 self.Uses_Serial=True
                 self.P.CONTEST_ID=self.contest_name+'-QSO-PARTY'
                 
@@ -324,8 +323,23 @@ class DEFAULT_KEYING():
             MACROS[0+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU '+EXCH1+' '+EXCH2+' '}
             MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [+2]73 EE [-2] [LOG]'}
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+
+            # Check date for any special greetings
+            # Consider "GBA" for week around July 4?
+            now = datetime.utcnow()
+            if now.month==12 and now.day>=11 and now.day<28:
+                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [MYCALL] [LOG]'}
+                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
+            elif now.month==12 and now.day>=28:
+                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [MYCALL] [LOG]'}
+                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+            elif now.month==1 and now.day<=14:
+                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [MYCALL] [LOG]'}
+                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+            else:            
+                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+            
             MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
             MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -346,6 +360,8 @@ class DEFAULT_KEYING():
             MACROS[11]    = {'Label' : self.LAB2+'? '        , 'Text' : self.LAB2+'? '}
             if self.LAB3:
                 MACROS[10+12]    = {'Label' : self.LAB3+'?'         , 'Text' : self.LAB3+'? '}
+            if self.LAB1=='NR' or self.LAB2=='NR' or self.LAB3=='NR':
+                MACROS[11+12]    = {'Label' : 'His #?'       , 'Text' : '[SERIAL_IN]? '}
 
         # Put up QRL? macro also
         MACROS[11+12] = {'Label' : 'QRL? '          , 'Text' : 'QRL? '}
@@ -559,7 +575,7 @@ class DEFAULT_KEYING():
         else:
             gui.boxes.append(gui.hint)
 
-        if gui.contest and self.LAB2!='NAME':
+        if gui.contest and self.LAB2!='NAME' and False:
             # Debug name insertion
             col+=cspan
             cspan=2
@@ -569,6 +585,8 @@ class DEFAULT_KEYING():
         if self.Uses_Serial:
             gui.counter_lab.grid()
             gui.counter.grid()
+            gui.inc_btn.grid()
+            gui.dec_btn.grid()
             
         print('DEFAULT ENABLE BOXES: col=',col,'\tcspan=',cspan)
         
@@ -577,7 +595,7 @@ class DEFAULT_KEYING():
 
         gui=self.P.gui
 
-        # Get his cll
+        # Get his call
         call    = gui.get_call().upper()
         valid = len(call)>=3 
 
@@ -648,7 +666,8 @@ class DEFAULT_KEYING():
                 gui.name.insert(0,self.NAME)
 
             if self.key2!=None and len(h)>idx:
-                if self.key2 in ['sec','qth','state']:
+                if (self.key2 in ['sec','qth','state']) or \
+                   (self.contest_name=='RAC' and gui.dx_station and gui.dx_station.country=='Canada'):
                     gui.qth.delete(0,END)
                     gui.qth.insert(0,h[idx])
                     idx+=1

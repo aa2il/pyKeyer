@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cwt.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for CWops mini tests.
 #
@@ -70,10 +70,8 @@ class CWOPS_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CWT [MYCALL] '}
-        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYCWOPS] '}
-        #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
         MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
 
         # Check date for any special greetings

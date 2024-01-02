@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # gui.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # GUI for CW keyer.
 #
@@ -70,7 +70,7 @@ from paddling import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
-from utilities import cut_numbers,freq2band
+from utilities import cut_numbers,freq2band,Oh_Canada
 import pyautogui
 from utilities import find_resource_file
 
@@ -111,6 +111,7 @@ class GUI():
         self.last_focus=None
         self.WIN_NAME='ROOT WINDOW'
         self.OnTop=False
+        self.dx_station = None
         
         # Create spash screen
         self.splash  = Toplevel(self.root)
@@ -171,7 +172,6 @@ class GUI():
         self.keyer=P.keyer;
         self.start_time = None
         self.time_on = None
-        print('TiMe On=',self.time_on)
         self.nqsos_start = 0
         self.sock = self.P.sock
 
@@ -1199,6 +1199,12 @@ class GUI():
             txt = txt.replace('[CALL]',call)
             self.last_call=call
 
+        # Fill in his serial ...
+        if '[SERIAL_IN]' in txt:
+            serial=self.get_serial().upper()
+            txt = txt.replace('[SERIAL_IN]',str(serial))
+            self.last_call=call
+
         # ... and his name
         his_name=self.get_name().replace('?','')
         my_name = self.P.SETTINGS['MY_NAME']
@@ -1245,6 +1251,9 @@ class GUI():
             self.RUNNING = True
         elif arg in [5,5+12]:
             self.RUNNING = False
+
+        if arg in [1,4]:
+            self.time_on = datetime.utcnow().replace(tzinfo=UTC)
 
         # Keep track of what we last sent
         txt = self.macros[arg]["Text"]
@@ -1596,9 +1605,11 @@ class GUI():
             #pprint(vars(self.dx_station))
             h = hint.master(self.P,call,self.dx_station,VERBOSITY=1)
             if not h:
-                h = hint.oh_canada(self.dx_station)
+                #h = hint.oh_canada(self.dx_station)
+                h,junk = Oh_Canada(self.dx_station)
         else:
             h=None
+            self.dx_station = None
             
         self.hint.delete(0, END)
         #print('GET_HINT: h=',h)
@@ -1811,8 +1822,8 @@ class GUI():
                 self.start_time = now
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
-            if self.P.contest_name=='Ragchew':
-                print('TIME ON=',self.time_on)
+            if self.P.contest_name=='Ragchew' or True:
+                print('LOG IT! TIME ON=',self.time_on)
                 if self.time_on:
                     date_on = self.time_on.strftime('%Y%m%d')
                     time_on = self.time_on.strftime('%H%M%S')
@@ -1915,6 +1926,7 @@ class GUI():
             self.prefill=False
             self.call.delete(0,END)
             self.prev_call=''
+            self.time_on=None
             self.call.focus_set()
             self.call.configure(bg=self.default_color,fg='black')
             self.name.delete(0,END)
@@ -2765,7 +2777,8 @@ class GUI():
         elif event.widget==self.call:
 
             call=self.get_call().upper()
-            print('Call=',call)
+            self.time_on = datetime.utcnow().replace(tzinfo=UTC)
+            print('Updated Call=',call,'\ttime on=',self.time_on)
 
             # Update fldigi and check for dupes
             #self.sock.set_log_fields({'Call':call}) 

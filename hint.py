@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # hint.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Routines for generating hints from past contest logs and/or contacts.
 #
@@ -73,11 +73,12 @@ def commie_fornia(dx_station,qth):
         return ' '.join(hints)
     else:
         return None
-    
+
+"""    
 # Routine to give a hint of QTH of a Canadian station
 def oh_canada(dx_station):
 
-    """ Prefixes	Province/Territory
+    Prefixes	Province/Territory
     VE1 VA1	Nova Scotia
     VE2 VA2	Quebec	
     VE3 VA3	Ontario	
@@ -105,7 +106,7 @@ def oh_canada(dx_station):
     SK      Saskatchewan
     AB      Alberta
     BC      British Columbia
-    NT """
+    NT 
 
     # For Cali QSO Party:
     # MR = Maritime provinces plus Newfoundland and Labrador (NB, NL, NS, PE)
@@ -141,3 +142,4 @@ def oh_canada(dx_station):
     return qth
     
 
+"""
