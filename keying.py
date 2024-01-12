@@ -2,7 +2,7 @@
 ################################################################################
 #
 # Keying.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Routines relating to keying the rig.
 #
@@ -69,26 +69,56 @@ def find_keyer():
         device=find_serial_device('nanoIO32',0,2)
         print('device=',device)
     if device:
-        print(' ... There it is on port',device,' ...')
+        print(' ... There it is on port',device,' ...\n')
     else:
-        print('\nNo serial keyer device found')
+        print('\nNo serial keyer device found\n')
         return None,None
     
     for i in range(len(DEVICES)):
         print('Looking for',DEVICES[i],'device ...')
         
         baud=BAUDS[i]
-        ser = serial.Serial(device,baud,timeout=0.1,
-                            dsrdtr=True,rtscts=0)
+        ser = serial.Serial(device,baud,timeout=1,
+                            xonxoff=False,dsrdtr=False,rtscts=False)
         print('ser=',ser)
-    
-        txt1=CMDS[i]
-        cnt=ser.write(bytes(txt1,'utf-8'))
-        print('cnt=',cnt)
-    
+
+        #time.sleep(.1)
+        #ser.reset_input_buffer
+        #ser.reset_output_buffer
+        #time.sleep(.1)
+        
+        cnt=ser.write(bytes(CMDS[i],'utf-8'))
+        #print('cnt=',cnt)
         time.sleep(.1)
         txt2 = ser.read(256).decode("utf-8",'ignore')
-        print('txt2=',txt2,'\t',len(txt2),'\n',show_hex(txt2))
+        print('txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2),
+              '\t',show_hex(CMDS[i]))
+
+        """
+        if i==0 and len(txt2)==0 and False:
+            print('Try again ...')
+            time.sleep(5)
+            cnt=ser.write(bytes(CMDS[i],'utf-8'))
+            time.sleep(.1)
+            txt2 = ser.read(256).decode("utf-8",'ignore')
+            print('txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2))
+
+        ntries=1
+        while len(txt2)==256 and ntries<10:
+            ntries+=1
+            print('Try again ...')
+            ser.close()
+            time.sleep(.1)
+            ser.open()
+            time.sleep(.1)
+            ser.reset_input_buffer
+            ser.reset_output_buffer
+            time.sleep(.1)
+        
+            txt2 = ser.read(256).decode("utf-8",'ignore')
+            print('txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2))
+        """
+        
         if RESPONSES[i] in txt2:
             print('Found',DEVICES[i],'Device')
             return device,DEVICES[i]

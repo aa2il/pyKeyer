@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # nano_io.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Functions related to the nano IO interface
 #
@@ -162,6 +162,10 @@ class KEYING_DEVICE():
         #                                 dsrdtr=False,rtscts=0)
             
         self.protocol=protocol
+        #time.sleep(.1)
+        #self.ser.reset_input_buffer
+        #self.ser.reset_output_buffer
+        #time.sleep(.1)
  
         # Make sure its in CW & Iambic-A mode & show current settings
         print('Initial setup ...')
@@ -196,6 +200,7 @@ class KEYING_DEVICE():
             #self.send_command('TEST')                   # Test Msg
 
             self.send_command(chr(0x0E)+chr(0x55))       # Iambic A + paddle echo + serial echo + contest spacing
+            #self.send_command(chr(0x0E)+chr(0x15))       # Iambic A + no paddle echo + serial echo + contest spacing
             time.sleep(1)
             
         else:

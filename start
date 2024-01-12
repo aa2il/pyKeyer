@@ -12,7 +12,7 @@ cls
 # Primary rig
 set RIG="NONE"
 #set RIG="HAMLIB"
-#set RIG="DIRECT"
+set RIG="DIRECT"
 #set RIG="ANY"
 
 set RIG_TYPE=""
