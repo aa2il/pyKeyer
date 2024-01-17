@@ -32,6 +32,7 @@ import random
 from nano_io import *
 from fileio import read_text_file
 from utilities import cut_numbers
+from pprint import pprint
 
 ################################################################################
 
@@ -116,8 +117,9 @@ class PADDLING_GUI():
         row+=3
         self.Selection = IntVar(value=0)
         col=0
-        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers','Special Chars', \
-                      'All Chars','Stumble','QSO','Book']:
+        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers',\
+                      'Special Chars', 'All Chars','Stumble','QSO','Book',\
+                      'Sprint']:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
@@ -394,6 +396,17 @@ class PADDLING_GUI():
             txt = self.Book[self.bookmark]
             self.bookmark= (self.bookmark+1) % len(self.Book)
             
+        elif Selection==9:
+            
+            call1,name1,state1 = self.get_sprint_call()
+            call2,name2,state2 = self.get_sprint_call()
+            serial = str( random.randint(0,999) )
+            i = random.randint(0,1)
+            if i==0:
+                txt=call1+' '+call2+' '+name2+' '+state2+' '+serial
+            else:
+                txt=call1+' '+name2+' '+state2+' '+serial+' '+call2
+            
         else:
             print('Unknown selection')
             txt='*** ERROR *** ERROR *** ERROR ***'
@@ -409,6 +422,24 @@ class PADDLING_GUI():
         if self.P.NANO_ECHO:
             self.P.keyer.txt2morse(txt)
 
+    # Routine to sift through call history and find a good complete sprint entry
+    def get_sprint_call(self):
+        
+        call=None
+        while not call:
+            i = random.randint(0, self.Ncalls-1)
+            c = self.calls[i]
+            print(i,c)
+            print(self.P.MASTER[c])
+            name  = self.P.MASTER[c]['name'].replace('.','')
+            state = self.P.MASTER[c]['state']
+            print(name,state)
+            if len(name)>1 and len(state)>=2:
+                call=c
+
+        return call,name,state
+            
+            
     # Routine to show the main window
     def show(self):
         
