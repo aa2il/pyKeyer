@@ -1,3 +1,4 @@
+#! /usr/bin/python3 -u
 ################################################################################
 #
 # paddling.py - Rev. 1.0
@@ -33,6 +34,7 @@ from nano_io import *
 from fileio import read_text_file
 from utilities import cut_numbers
 from pprint import pprint
+import Levenshtein
 
 ################################################################################
 
@@ -65,8 +67,12 @@ class PADDLING_GUI():
         self.responded=True       # Need to show initial text
         self.item=''
         self.response=''
+        
         self.STRICT_MODE=False
         self.CASUAL_MODE=False
+        self.dxs=[]
+        self.ntries=1
+        self.down=True
 
         self.suffixes=['/M','/P','/QRP','/MM']
         for i in range(10):
@@ -109,11 +115,12 @@ class PADDLING_GUI():
             
         # Put up a box for the practice text - use large font
         # Make this the default object to take the focus & bind keys to effect special mappings
+        NCOLS=12
         row=0
         lab = Label(self.win, text="",font=font1)
-        lab.grid(row=row,rowspan=1,column=0,columnspan=12,sticky=E+W)
+        lab.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
         self.txt = Text(self.win, height=2, width=60, bg='white', font=font2)
-        self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=12,sticky=E+W)
+        self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=NCOLS,sticky=E+W)
         self.default_object=self.txt
         self.txt.bind("<Key>", self.KeyPress )
 
@@ -181,19 +188,26 @@ class PADDLING_GUI():
         self.CasualBtn.grid(row=row,column=col,sticky=E+W)
 
         # ... and to Quit
-        col+=1
-        Button(self.win, text="Quit",command=self.hide) \
+        col=NCOLS-1
+        Button(self.win, text="Quit",command=self.Quit) \
             .grid(row=row,column=col,sticky=E+W)
 
+        # Entry box to hold levenstien distance
+        col=NCOLS-3
+        self.LevDx = Entry(self.root,font=font1,\
+                           selectbackground='lightgreen',justify='center')
+        self.LevDx.grid(row=row,column=col,sticky=E+W)
+
         # Make sure all columns are adjusted when we resize the width of the window
-        for i in range(12):
+        for i in range(NCOLS):
             Grid.columnconfigure(self.win, i, weight=1,uniform='twelve')
         
         # Bind callbacks for whenever a key is pressed or the mouse enters or leaves the window
         self.win.bind("<Key>", self.KeyPress )
-        self.win.bind("<Enter>", self.P.gui.Hoover )
-        self.win.bind("<Leave>", self.P.gui.Leave )
-        self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
+        if self.P.gui:
+            self.win.bind("<Enter>", self.P.gui.Hoover )
+            self.win.bind("<Leave>", self.P.gui.Leave )
+            self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
 
         # Not sure what this does?
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
@@ -207,8 +221,18 @@ class PADDLING_GUI():
 
 ################################################################################
 
+    # Callback to either hide or quit the paddling practice
+    def Quit(self):
+        if self.P.gui:
+            self.hide()
+        else:
+            sys.exit(0)
+
     # Callback for monitor level setter
     def SetMonitorLevel(self,level=None):
+        if not self.P.sock:
+            return
+
         print('\nSet Monitor Level ...',level)
         if level==None:
             level=self.P.sock.get_monitor_gain()
@@ -229,8 +253,6 @@ class PADDLING_GUI():
                       WPM,'...')
                 self.P.keyer.set_wpm(WPM)
                 self.P.sock.set_speed(WPM)
-                #self.P.gui.WPM_TXT.set(str(WPM))
-                #self.P.gui.set_wpm()
             else:
                 print('Paddling->SetWpm: NANO - Setting speed to WPM=',
                       WPM,'...')
@@ -299,9 +321,8 @@ class PADDLING_GUI():
     def NewItem(self):
         P=self.P
         Selection=self.Selection.get()
-        #print("You selected",Selection)
+        #print("NEW ITEM - Your selection=",Selection)
         self.responded=False
-        #print('HEY 3', self.responded)
 
         if Selection==0:
             
@@ -409,12 +430,14 @@ class PADDLING_GUI():
             #print('QSO=',txt)
             
         elif Selection==8:
-            
+
+            # Send a book line by line
             txt = self.Book[self.bookmark]
             self.bookmark= (self.bookmark+1) % len(self.Book)
             
         elif Selection==9:
-            
+
+            # Sprint contest - mimicing IambicMaster
             call1,name1,state1 = self.get_sprint_call()
             call2,name2,state2 = self.get_sprint_call()
             serial = str( random.randint(0,999) )
@@ -438,6 +461,10 @@ class PADDLING_GUI():
 
         self.response=''
         self.item=txt.upper()
+        self.dxs=[]
+        self.ntries=1
+        self.down=True
+        #print("NEW ITEM - txt=",txt)
         
         if self.P.NANO_ECHO:
             self.P.keyer.txt2morse(txt)
@@ -449,11 +476,10 @@ class PADDLING_GUI():
         while not call:
             i = random.randint(0, self.Ncalls-1)
             c = self.calls[i]
-            print(i,c)
-            print(self.P.MASTER[c])
+            #print('GET SPRINT CALL:',i,c,self.P.MASTER[c])
             name  = self.P.MASTER[c]['name'].replace('.','')
             state = self.P.MASTER[c]['state']
-            print(name,state)
+            #print('GET SPRINT CALL:',name,state)
             if len(name)>1 and len(state)>=2:
                 call=c
 
@@ -515,10 +541,72 @@ class PADDLING_GUI():
         n2=len(txt2)
         print('response:',txt2,n2)
 
-        if n2>=n1:
+        if n2>n1:
             txt3=txt2[-n1:]
+        else:
+            txt3=txt2
+        dx=Levenshtein.distance(txt1,txt3)
+        self.LevDx.delete(0, END)
+        self.LevDx.insert(0,str(dx))        
+        self.dxs.append(dx)
+
+        if dx>self.dxs[-2] and self.down:
+            self.ntries+=1
+            self.down=False
+        elif dx<self.dxs[-2] and not self.down:
+            self.down=True
+        
+        if n2>=n1:
             print('txt3    :',txt3,len(txt3))
             if txt3==txt1:
-                print('!!! DING DING DING !!!')
+                print(self.dxs)
+                print('!!! DING DING DING !!!\t# Tries=',self.ntries)
                 if self.STRICT_MODE or self.CASUAL_MODE:
                     self.NewItem()
+
+################################################################################
+
+# If this file is called as main, run as independent exe
+# Not quite there yet ...
+if __name__ == '__main__':
+
+    import cw_keyer
+    from settings import read_settings
+    from load_history import load_history
+    
+    print('Howdy Ho!')
+
+    # Structure to contain processing params
+    class PADDLING_PARAMS:
+        def __init__(self):
+            print('Howdy Ho Ho!')
+
+            # Init
+            self.sock=None
+            self.gui=None
+            self.LOCK_SPEED=False
+            wpm=20
+    
+            # Read config file
+            self.SETTINGS,RCFILE = read_settings('.keyerrc')
+
+            # Load master call list
+            print('Reading master history file ...')
+            MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
+            self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+            self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')
+            self.calls = list(self.MASTER.keys())
+
+            # We need a keyer
+            self.keyer=cw_keyer.Keyer(self,wpm)
+            
+            
+    # Read config file
+    P=PADDLING_PARAMS()
+    
+    print('Howdy Ho Ho!')
+    P.PaddlingWin = PADDLING_GUI(None,P)
+    P.PaddlingWin.show()
+    print('Howdy Ho Ho Ho!')
+    mainloop()
+
