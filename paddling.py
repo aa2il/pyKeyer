@@ -1,7 +1,7 @@
 ################################################################################
 #
 # paddling.py - Rev. 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Gui for sending practice (i.e. fun with paddles)
 #
@@ -63,6 +63,10 @@ class PADDLING_GUI():
         self.WIN_NAME='PADDLING WINDOW'
         self.OnTop=False
         self.responded=True       # Need to show initial text
+        self.item=''
+        self.response=''
+        self.STRICT_MODE=False
+        self.CASUAL_MODE=False
 
         self.suffixes=['/M','/P','/QRP','/MM']
         for i in range(10):
@@ -154,16 +158,29 @@ class PADDLING_GUI():
         #label="Monitor Level",       
         self.Slider2.grid(row=row,column=col+1,columnspan=4,sticky=E+W)
         self.SetMonitorLevel()
-        
+
+        # Buttons for Previous ...
         row+=1
         col=0
         Button(self.win, text="Previous",command=self.PrevItem) \
             .grid(row=row,column=col,sticky=E+W)
 
+        # ... and Next practice text ...
         col+=1
         Button(self.win, text="Next",command=self.NextItem) \
             .grid(row=row,column=col,sticky=E+W)
-        
+
+        # ... to toggle STRICT Mode ...
+        col+=1
+        self.StrictBtn=Button(self.win, text="Strict",command=self.toggle_strict)
+        self.StrictBtn.grid(row=row,column=col,sticky=E+W)
+
+        # ... to toggle CASUAL Mode ...
+        col+=1
+        self.CasualBtn=Button(self.win, text="Casual",command=self.toggle_casual)
+        self.CasualBtn.grid(row=row,column=col,sticky=E+W)
+
+        # ... and to Quit
         col+=1
         Button(self.win, text="Quit",command=self.hide) \
             .grid(row=row,column=col,sticky=E+W)
@@ -419,6 +436,9 @@ class PADDLING_GUI():
             self.stack.pop(0)
         self.stack_ptr=len(self.stack)-1
 
+        self.response=''
+        self.item=txt.upper()
+        
         if self.P.NANO_ECHO:
             self.P.keyer.txt2morse(txt)
 
@@ -456,3 +476,49 @@ class PADDLING_GUI():
     def hide(self):
         print('Hide Settings Window ...')
         self.win.withdraw()
+
+################################################################################
+
+    # Callback to toggle STRICT_MODE
+    def toggle_strict(self):
+        self.STRICT_MODE = not self.STRICT_MODE
+        if self.STRICT_MODE:
+            self.StrictBtn.configure(relief='sunken')
+            if self.CASUAL_MODE:
+                self.toggle_casual()
+        else:
+            self.StrictBtn.configure(relief='raised')
+        
+    # Callback to toggle CASUAL_MODE
+    def toggle_casual(self):
+        self.CASUAL_MODE = not self.CASUAL_MODE
+        if self.CASUAL_MODE:
+            self.CasualBtn.configure(relief='sunken')
+            if self.STRICT_MODE:
+                self.toggle_strict()
+        else:
+            self.CasualBtn.configure(relief='raised')
+        
+    # Routine to check response
+    def check_response(self,txt):
+        self.response+=txt.replace('\n',' ')
+        if self.CASUAL_MODE:
+            txt1=self.item.replace(' ','')
+            txt2=self.response.replace(' ','')
+        else:
+            txt1=self.item
+            txt2=self.response
+            
+        n1=len(txt1)
+        print('\nitem:    ',txt1,n1)
+
+        n2=len(txt2)
+        print('response:',txt2,n2)
+
+        if n2>=n1:
+            txt3=txt2[-n1:]
+            print('txt3    :',txt3,len(txt3))
+            if txt3==txt1:
+                print('!!! DING DING DING !!!')
+                if self.STRICT_MODE or self.CASUAL_MODE:
+                    self.NewItem()

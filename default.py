@@ -356,6 +356,7 @@ class DEFAULT_KEYING():
             MACROS[8]     = {'Label' : 'My '+self.LAB1+' 2x' , 'Text' : '[-2]'+EXCH1+' '+EXCH1+' [+2]'}
             MACROS[8+12]  = {'Label' : 'My Exch 2x'          , 'Text' : '[-2]'+EXCH1+' '+EXCH2+' '+EXCH1+' '+EXCH2+' [+2]'}
             MACROS[9]     = {'Label' : 'My '+self.LAB2+' 2x' , 'Text' : '[-2]'+EXCH2+' '+EXCH2+' [+2]'}
+            MACROS[9+12]  = {'Label' : self.LAB1+'73'        , 'Text' : '73 GL '}
             MACROS[10]    = {'Label' : self.LAB1+'?'         , 'Text' : self.LAB1+'? '}
             MACROS[11]    = {'Label' : self.LAB2+'? '        , 'Text' : self.LAB2+'? '}
             if self.LAB3:

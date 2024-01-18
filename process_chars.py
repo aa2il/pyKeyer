@@ -141,6 +141,12 @@ def process_chars(P):
                                 #P.gui.fp_txt.write('NANO: %s\n' % (nano_txt) )
                                 #P.gui.fp_txt.flush()
                                 nano_txt = ''
+
+                            # Get text
+                            if P.SENDING_PRACTICE:
+                                P.gui.PaddlingWin.check_response(txt)
+
+                                
                         if VERBOSITY>0:
                             print('PROCESSS_CHARS: Getting data from keyer ... txt=',txt)
                     else:
