@@ -23,6 +23,7 @@
 import time
 from nano_io import *
 from tkinter import END
+import traceback
 
 ################################################################################
 
@@ -153,8 +154,11 @@ def process_chars(P):
                         time.sleep(0.1)
                         
                 except Exception as e: 
-                    print("PROCESS CHARS - ERROR:",str(e) )
+                    print("\nPROCESS CHARS - *** ERROR ***")
+                    print('e=',e,'\n')
+                    traceback.print_exc()
                     time.sleep(0.1)
+
                     
             else:
                 time.sleep(0.1)
