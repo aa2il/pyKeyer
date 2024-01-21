@@ -35,6 +35,8 @@ from fileio import read_text_file
 from utilities import cut_numbers
 from pprint import pprint
 import Levenshtein
+from keying import *
+import traceback
 
 ################################################################################
 
@@ -123,9 +125,16 @@ class PADDLING_GUI():
         self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=NCOLS,sticky=E+W)
         self.default_object=self.txt
         self.txt.bind("<Key>", self.KeyPress )
+        row+=3
+
+        # Create another txt box to put echo from keying device into
+        if not self.P.gui:
+            self.txt2 = Text(self.win, height=5, width=60, bg='white', font=font1)
+            self.txt2.grid(row=row+1,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
+            row+=5
+            self.win.geometry('1700x320+100+10')  
 
         # Radio button group to select type of practice
-        row+=3
         self.Selection = IntVar(value=0)
         col=0
         for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers',\
@@ -209,14 +218,17 @@ class PADDLING_GUI():
             self.win.bind("<Leave>", self.P.gui.Leave )
             self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
 
-        # Not sure what this does?
-        self.win.protocol("WM_DELETE_WINDOW", self.hide)
+        # If user clicks on 'x' in upper RH corner, hide or quit
+        #self.win.protocol("WM_DELETE_WINDOW", self.hide)
+        self.win.protocol("WM_DELETE_WINDOW", self.Quit)
 
         # Start the ball rolling with this window not visible
         try:
             self.SetWpm(0)
-        except:
-            pass
+        except Exception as e: 
+            print('\n*** WARNING - PADDLING GUI - Problem setting initial WPM ***')
+            print('e=',e,'\n')
+            traceback.print_exc()
         self.hide()
 
 ################################################################################
@@ -247,6 +259,7 @@ class PADDLING_GUI():
     # Callback for WPM spinner
     def SetWpm(self,dWPM=0):
         WPM=int( self.WPM_TXT.get() ) + dWPM
+        print('SET WPM: WPM=',WPM)
         if WPM>5:
             if self.P.LOCK_SPEED:
                 print('Paddling->SetWpm: LOCKED - Setting speed to WPM=',
@@ -550,11 +563,12 @@ class PADDLING_GUI():
         self.LevDx.insert(0,str(dx))        
         self.dxs.append(dx)
 
-        if dx>self.dxs[-2] and self.down:
-            self.ntries+=1
-            self.down=False
-        elif dx<self.dxs[-2] and not self.down:
-            self.down=True
+        if len(self.dxs)>3:
+            if dx>self.dxs[-2] and self.down:
+                self.ntries+=1
+                self.down=False
+            elif dx<self.dxs[-2] and not self.down:
+                self.down=True
         
         if n2>=n1:
             print('txt3    :',txt3,len(txt3))
@@ -573,20 +587,22 @@ if __name__ == '__main__':
     import cw_keyer
     from settings import read_settings
     from load_history import load_history
-    
-    print('Howdy Ho!')
 
+    print('Howdy Ho!')
+    
     # Structure to contain processing params
     class PADDLING_PARAMS:
         def __init__(self):
-            print('Howdy Ho Ho!')
 
             # Init
             self.sock=None
             self.gui=None
             self.LOCK_SPEED=False
-            wpm=20
-    
+            self.WPM=20
+            self.USE_KEYER=True
+            self.FIND_KEYER=True
+            self.NANO_ECHO=True
+
             # Read config file
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
 
@@ -598,15 +614,33 @@ if __name__ == '__main__':
             self.calls = list(self.MASTER.keys())
 
             # We need a keyer
-            self.keyer=cw_keyer.Keyer(self,wpm)
+            self.keyer=cw_keyer.Keyer(self,self.WPM)
             
             
+    # Function to ckeck keyer to see if the op has responded
+    def check_keyer(P):
+
+        txt=P.keyer_device.nano_read()
+        #print('CHECK KEYER - txt=',txt)
+        if len(txt)>0:
+            P.PaddlingWin.txt2.insert(END,txt)
+            P.PaddlingWin.check_response(txt)
+            
+        timer = P.PaddlingWin.win.after(100, check_keyer, P)
+
+
     # Read config file
     P=PADDLING_PARAMS()
-    
-    print('Howdy Ho Ho!')
+
+    P.ser1=open_keying_port(P,True,1)
+        
     P.PaddlingWin = PADDLING_GUI(None,P)
     P.PaddlingWin.show()
-    print('Howdy Ho Ho Ho!')
+
+    timer = P.PaddlingWin.win.after(1000, check_keyer, P)
+    
     mainloop()
 
+    print("Y'all come on back now ya hear!")
+
+    

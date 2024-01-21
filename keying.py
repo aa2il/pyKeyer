@@ -134,7 +134,7 @@ def open_keying_port(P,sock,rig_num):
     if not sock:
         return None
     
-    print('Opening keying port ...',sock.rig_type,sock.rig_type2)
+    print('Opening keying port ...')   # ,sock.rig_type,sock.rig_type2)
     if P.USE_KEYER and rig_num==1:
         if P.FIND_KEYER:
             
@@ -180,6 +180,7 @@ def open_keying_port(P,sock,rig_num):
             traceback.print_exc()
             sys.exit(0)
 
+            
     elif sock.rig_type2=='TS850':
         if P.PRACTICE_MODE and False:
             ser=serial_dummy()
