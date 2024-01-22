@@ -10,13 +10,16 @@
 #set ROOT="/media/${USER}/pi"
 #set ROOT="/media/${USER}/aa2il"
 set ROOT="/media/${USER}/marconi"
-set ROOT="/media/${USER}/sproul"
+set ROOT="/media/${USER}/hertz"
+#set ROOT="/media/${USER}/sproul"
 #set ROOT="/media/${USER}/3D76-ECB1"
 #set ROOT="/media/${USER}/acer"
 #set ROOT="../clone"
 #set ROOT="/media/${USER}/cartman"
-if( !(-e $ROOT) )then
+if( !(-e $ROOT) && (-e ${ROOT}2) )then
     set ROOT="${ROOT}2"
+else
+    set ROOT="${ROOT}3"
 endif
 
 # Add path down to old version
@@ -30,6 +33,7 @@ set old=${ROOT}${PTH}
 
 # Overide if necessary
 #set old="work"
+#set old="save71"
 
 rm -f DIFFS
 echo OLD=$old
@@ -37,7 +41,7 @@ foreach i (*.py AA2IL.adif sats.adif start* DIFF *.txt *.bat *.md dist/*.iss)
     echo $i
     set n=`diff -w $old/$i $i | wc -l`
     if( !( -e $old/$i ) )then
-        echo NO SUCH FILE $old/$i
+        echo NO SUCH FILE $old/$i --- Copying $i to $old/$i ...
         cp $i $old/$i
     else if( $n > 0 ) then
         echo ---------------------------------- >> DIFFS

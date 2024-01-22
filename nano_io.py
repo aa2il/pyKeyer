@@ -123,6 +123,23 @@ ser = serial.Serial(path, 9600)
 
 """
 
+# Function to disable/enable DTR hangup
+def set_DTR_hangup(device,ENABLE=False):
+
+    # Disable reset after hangup - should be done at system level already
+    with open(device) as f:
+        attrs = termios.tcgetattr(f)
+        if ENABLE:
+            # If the keyer needs a full reset, enable the DTR hangup
+            print('Turning on DTR hangup ...')
+            attrs[2] = attrs[2] | termios.HUPCL
+        else:
+            # Normally, everything is fine so disable DTR Hangup
+            print('Turning off DTR hangup ...')
+            attrs[2] = attrs[2] & ~termios.HUPCL
+        termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
+
+
 
 # Interface to keying device
 class KEYING_DEVICE():
@@ -143,17 +160,7 @@ class KEYING_DEVICE():
                     sys.exit(0)
 
         # Disable reset after hangup - should be done at system level already
-        print('Turning off DTR hangup ...')
-        with open(self.device) as f:
-            attrs = termios.tcgetattr(f)
-            if True:
-            #if False:
-                # Normally, everything is fine so disable DTR Hangup
-                attrs[2] = attrs[2] & ~termios.HUPCL
-            else:
-                # If the keyer needs a full reset, enable the DTR hangup
-                attrs[2] = attrs[2] | termios.HUPCL
-            termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
+        set_DTR_hangup(self.device,False)
 
         # Open serial port to the device
         print('Opening serial port ...')

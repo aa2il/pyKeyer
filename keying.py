@@ -61,15 +61,16 @@ def find_keyer():
     CMDS      = ['~?','\\?',chr(0)+chr(2)]
     RESPONSES = ['nanoIO ver','K3NG Keyer',chr(0x17)]
 
-    print('\nLooking for nanoIO keyer device ...')
+    print('\nFIND KEYER: Looking for nanoIO keyer device ...')
     device=find_serial_device('nanoIO',0,2)
-    print('device=',device)
+    print('FIND KEYER: device=',device)
     if not device:
         print('... Not found - Looking for ESP32 keyer device ...')
         device=find_serial_device('nanoIO32',0,2)
         print('device=',device)
     if device:
         print(' ... There it is on port',device,' ...\n')
+        set_DTR_hangup(device,False)
     else:
         print('\nNo serial keyer device found\n')
         return None,None
@@ -80,7 +81,7 @@ def find_keyer():
         baud=BAUDS[i]
         ser = serial.Serial(device,baud,timeout=1,
                             xonxoff=False,dsrdtr=False,rtscts=False)
-        print('ser=',ser)
+        print('FIND KEYER: ser=',ser)
 
         #time.sleep(.1)
         #ser.reset_input_buffer
@@ -91,7 +92,7 @@ def find_keyer():
         #print('cnt=',cnt)
         time.sleep(.1)
         txt2 = ser.read(256).decode("utf-8",'ignore')
-        print('txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2),
+        print('FIND KEYER: txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2),
               '\t',show_hex(CMDS[i]))
 
         """
