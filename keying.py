@@ -22,7 +22,6 @@
 
 import sys
 from nano_io import *
-from rig_io.ft_tables import *
 import traceback
 
 ################################################################################
@@ -71,6 +70,7 @@ def find_keyer():
     if device:
         print(' ... There it is on port',device,' ...\n')
         set_DTR_hangup(device,False)
+        #set_DTR_hangup(device,True)
     else:
         print('\nNo serial keyer device found\n')
         return None,None
@@ -92,8 +92,8 @@ def find_keyer():
         #print('cnt=',cnt)
         time.sleep(.1)
         txt2 = ser.read(256).decode("utf-8",'ignore')
-        print('FIND KEYER: txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2),
-              '\t',show_hex(CMDS[i]))
+        print('FIND KEYER: txt2=',txt2,'\ntxt2=',show_hex(txt2),
+              '\tlen=',len(txt2),'\tCMD=',show_hex(CMDS[i]))
 
         """
         if i==0 and len(txt2)==0 and False:

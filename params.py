@@ -21,7 +21,7 @@
 ################################################################################
 
 import argparse
-from rig_io.ft_tables import CONNECTIONS,RIGS,PRECS,STATES
+from rig_io import CONNECTIONS,RIGS,PRECS,STATES
 from settings import *
 import os
 import platform

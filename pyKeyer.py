@@ -2,7 +2,7 @@
 ################################################################################
 #
 # pyKeyer.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 #    Main program for CW Keyer and server.
 #
@@ -29,7 +29,8 @@ import re
 import serial
 import practice 
 import audio_capture
-import rig_io.socket_io as socket_io
+from rig_io import socket_io 
+from rig_io import hamlibserver as rigctl
 import threading
 if sys.version_info[0]==3:
     import queue
@@ -39,7 +40,6 @@ from subprocess import call
 from gui import *
 from load_history import *
 from pprint import pprint
-import rig_io.hamlibserver as rigctl
 from sidetone import *
 import time
 import os
@@ -128,11 +128,16 @@ P.ser=P.ser1
 if not P.PRACTICE_MODE:
     print('Initial mode=',P.INIT_MODE)
     P.sock.set_mode(P.INIT_MODE,VFO='A')
-    split = P.sock.split_mode(-1)
-    if split:
-        P.sock.set_mode(P.INIT_MODE,VFO='B')
-    #sys.exit(0)
-
+    if False:
+        # OLD - might make sense for IC9700?
+        split = P.sock.split_mode(-1)
+        if split:
+            P.sock.set_mode(P.INIT_MODE,VFO='B')
+        #sys.exit(0)
+    else:
+        P.sock.split_mode(0)
+        P.sock.set_vfo(op='A->B')
+ 
 # Open connection to rotor
 P.sock_rotor = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT9,0,'ROTOR')
 if not P.sock_rotor.active and P.sock_rotor.connection!='NONE':

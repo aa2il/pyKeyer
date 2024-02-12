@@ -48,8 +48,9 @@ RANDOM_QSO_MODE=True
 
 # GUI for paddle (sending) practice
 class PADDLING_GUI():
-    def __init__(self,root,P):
+    def __init__(self,root,P,STAND_ALONE=False):
         self.P = P
+        self.STAND_ALONE=STAND_ALONE
 
         # Inits
         self.letters=[]
@@ -75,6 +76,7 @@ class PADDLING_GUI():
         self.dxs=[]
         self.ntries=1
         self.down=True
+        self.last_txt=None
 
         self.suffixes=['/M','/P','/QRP','/MM']
         for i in range(10):
@@ -128,9 +130,16 @@ class PADDLING_GUI():
         row+=3
 
         # Create another txt box to put echo from keying device into
-        if not self.P.gui:
+        if self.STAND_ALONE:
             self.txt2 = Text(self.win, height=5, width=60, bg='white', font=font1)
-            self.txt2.grid(row=row+1,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
+            self.txt2.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
+
+            """
+            self.S2 = Scrollbar(self.win)
+            self.S2.grid(row=row,column=NCOLS,sticky=N+S)
+            self.S2.config(command=self.txt2.yview)
+            self.txt2.config(yscrollcommand=self.S2.set)
+            """
             row+=5
             self.win.geometry('1700x320+100+10')  
 
@@ -203,9 +212,19 @@ class PADDLING_GUI():
 
         # Entry box to hold levenstien distance
         col=NCOLS-3
+        lab = Label(self.win, text="Current",font=font1)
+        lab.grid(row=row,column=col,sticky=E+W)
         self.LevDx = Entry(self.root,font=font1,\
                            selectbackground='lightgreen',justify='center')
         self.LevDx.grid(row=row,column=col,sticky=E+W)
+
+        # Entry box to hold result from previous attemp
+        col+=1
+        lab = Label(self.win, text="Previous",font=font1)
+        lab.grid(row=row,column=col,sticky=E+W)
+        self.Prior = Entry(self.root,font=font1,\
+                           selectbackground='lightgreen',justify='center')
+        self.Prior.grid(row=row,column=col,sticky=E+W)
 
         # Make sure all columns are adjusted when we resize the width of the window
         for i in range(NCOLS):
@@ -213,7 +232,7 @@ class PADDLING_GUI():
         
         # Bind callbacks for whenever a key is pressed or the mouse enters or leaves the window
         self.win.bind("<Key>", self.KeyPress )
-        if self.P.gui:
+        if not self.STAND_ALONE:
             self.win.bind("<Enter>", self.P.gui.Hoover )
             self.win.bind("<Leave>", self.P.gui.Leave )
             self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
@@ -235,10 +254,10 @@ class PADDLING_GUI():
 
     # Callback to either hide or quit the paddling practice
     def Quit(self):
-        if self.P.gui:
-            self.hide()
-        else:
+        if self.STAND_ALONE:
             sys.exit(0)
+        else:
+            self.hide()
 
     # Callback for monitor level setter
     def SetMonitorLevel(self,level=None):
@@ -273,12 +292,11 @@ class PADDLING_GUI():
             self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram, call, etc.
-        #print('HEY 1', self.responded)
         if self.responded:
+            print('PADDLING->SetWpm responded=',self.responded)
             Selection=self.Selection.get()
             if Selection!=7 or RANDOM_QSO_MODE:
                 self.NewItem()
-        #print('HEY 2', self.responded)
         
     # Callback when a key is pressed 
     def KeyPress(self,event,id=None):
@@ -393,10 +411,14 @@ class PADDLING_GUI():
             # Words I stumble on
             n=len(self.Stumble)
             #print('There are',n,'stumble-bumblers loaded')
-            i = random.randint(0,n-1)
-            txt = self.Stumble[i]
+            Done=False
+            while not Done:
+                i = random.randint(0,n-1)
+                txt = self.Stumble[i]
+                Done = txt!=self.last_txt
+            self.last_txt=txt
             #print('Stumble=',txt)
-            
+
         elif Selection==7:
             
             # Normal QSO
@@ -452,7 +474,9 @@ class PADDLING_GUI():
 
             # Sprint contest - mimicing IambicMaster
             call1,name1,state1 = self.get_sprint_call()
+            call1=call1.replace('/SK','/P')
             call2,name2,state2 = self.get_sprint_call()
+            call1=call1.replace('/SK','/M')
             serial = str( random.randint(0,999) )
             i = random.randint(0,1)
             if i==0:
@@ -472,6 +496,13 @@ class PADDLING_GUI():
             self.stack.pop(0)
         self.stack_ptr=len(self.stack)-1
 
+        # Show results for this attempt
+        self.Prior.delete(0, END)
+        if len(self.dxs)>0:
+            self.Prior.insert(0,str(self.dxs[-1])+' - '+str(self.ntries))
+        
+        # Reset
+        self.responded=False
         self.response=''
         self.item=txt.upper()
         self.dxs=[]
@@ -481,6 +512,8 @@ class PADDLING_GUI():
         
         if self.P.NANO_ECHO:
             self.P.keyer.txt2morse(txt)
+        if self.STAND_ALONE:
+            self.txt2.insert(END,'\n')
 
     # Routine to sift through call history and find a good complete sprint entry
     def get_sprint_call(self):
@@ -540,13 +573,16 @@ class PADDLING_GUI():
         
     # Routine to check response
     def check_response(self,txt):
-        self.response+=txt.replace('\n',' ')
+        txt0=txt.replace('\n',' ')
+        if txt0==' ' and self.response=='':
+            return
+        
+        self.response+=txt0
+        txt1=self.item.replace("'","")
+        txt2=self.response.lstrip()
         if self.CASUAL_MODE:
-            txt1=self.item.replace(' ','')
-            txt2=self.response.replace(' ','')
-        else:
-            txt1=self.item
-            txt2=self.response
+            txt1=txt1.replace(' ','')
+            txt2=txt2.replace(' ','')
             
         n1=len(txt1)
         print('\nitem:    ',txt1,n1)
@@ -577,6 +613,9 @@ class PADDLING_GUI():
                 print('!!! DING DING DING !!!\t# Tries=',self.ntries)
                 if self.STRICT_MODE or self.CASUAL_MODE:
                     self.NewItem()
+                    return True
+                
+        return False
 
 ################################################################################
 
@@ -602,7 +641,9 @@ if __name__ == '__main__':
             self.USE_KEYER=True
             self.FIND_KEYER=True
             self.NANO_ECHO=True
-
+            self.last_char_time=time.time()
+            self.need_eol=False
+            
             # Read config file
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
 
@@ -616,16 +657,36 @@ if __name__ == '__main__':
             # We need a keyer
             self.keyer=cw_keyer.Keyer(self,self.WPM)
             
-            
+
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):
 
         txt=P.keyer_device.nano_read()
         #print('CHECK KEYER - txt=',txt)
+
+        """
+        # Check if its been a while since the last char was received
+        # This won't work properly bx linux is not real-time - need to put this in the keyer
+        if P.WINKEYER or P.K3NG_IO:
+            t=time.time()
+            dt=t-P.last_char_time
+            if P.need_eol and dt>1.5:
+                txt='\n'+txt
+                P.need_eol=False
+            else:
+                P.need_eol=True
+                P.last_char_time=t
+        """
+        
         if len(txt)>0:
             P.PaddlingWin.txt2.insert(END,txt)
-            P.PaddlingWin.check_response(txt)
-            
+            ding=P.PaddlingWin.check_response(txt)
+            if ding:
+                P.PaddlingWin.txt2.insert(END,'\n')
+            P.PaddlingWin.txt2.see(END)
+            P.PaddlingWin.responded=True
+
+        # Do it again in 100ms
         timer = P.PaddlingWin.win.after(100, check_keyer, P)
 
 
@@ -634,7 +695,7 @@ if __name__ == '__main__':
 
     P.ser1=open_keying_port(P,True,1)
         
-    P.PaddlingWin = PADDLING_GUI(None,P)
+    P.PaddlingWin = PADDLING_GUI(None,P,STAND_ALONE=True)
     P.PaddlingWin.show()
 
     timer = P.PaddlingWin.win.after(1000, check_keyer, P)

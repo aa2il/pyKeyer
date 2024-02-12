@@ -126,7 +126,7 @@ def process_chars(P):
                             # Check is user has responded to current paddling text
                             if P.SENDING_PRACTICE and '\n' in txt:
                                 P.gui.PaddlingWin.responded=True
-                                #print('HEY 4',P.gui.PaddlingWin.responded)
+                                print('PROCESS CHARS: repsonded=',P.gui.PaddlingWin.responded)
                                 
                             # Add a <CR/LF> if we are echoing back a command
                             if P.NANO_IO and txt[0]=='~' and txt[-1] in ['u','s']:

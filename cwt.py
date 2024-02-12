@@ -23,7 +23,7 @@ import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import random
-from rig_io.ft_tables import SST_SECS
+from rig_io import SST_SECS
 from default import DEFAULT_KEYING
 from utilities import cut_numbers,reverse_cut_numbers
 from datetime import datetime

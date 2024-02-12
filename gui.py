@@ -41,7 +41,8 @@ import hint
 from dx.spot_processing import Station
 from pprint import pprint
 import webbrowser
-from rig_io.socket_io import ClarReset,SetTXSplit
+from rig_io import ClarReset,SetTXSplit
+from rig_io import DELAY
 from rig_control_tk import *
 from rotor_control_tk import *
 from ToolTip import *
@@ -888,7 +889,7 @@ class GUI():
     def Toggle_SO2V(self,iop=None):
         if iop==None:
             self.P.SO2V = not self.P.SO2V
-        print('TOOGLE SO2V:',self.P.SO2V,iop)
+        print('TOOGLE SO2V:',self.P.SO2V,'\top=',iop)
 
         # Manage button appearance
         if self.P.SO2V:
@@ -896,9 +897,30 @@ class GUI():
             self.P.udp_server.Broadcast('SO2V:ON')
             self.So2vBtn.configure(relief='sunken')
 
-            # Set VFO to A and copy to B
-            SetVFO(self,'A')
-            SetVFO(self,'A->B')
+            # Get antenna and tuner settings from VFO A
+            self.sock.set_vfo('A')
+            time.sleep(DELAY)
+            ant=self.sock.get_ant()
+            time.sleep(DELAY)
+            tuner=self.sock.tuner(-1)
+            time.sleep(DELAY)
+            print('TOOGLE SO2V: ant=',ant,'\ttuner=',tuner)
+
+            # Copy settings to VFO B
+            self.sock.set_vfo(op='A->B')
+            time.sleep(DELAY)
+            #self.sock.set_vfo('B')
+            #time.sleep(DELAY)
+            
+            # Set RX VFO to A and TX VFO to B
+            self.sock.set_vfo(rx='A',tx='B')
+            time.sleep(DELAY)
+
+            self.sock.set_ant(ant)
+            time.sleep(DELAY)
+            self.sock.tuner(tuner)
+            time.sleep(DELAY)
+            
         else:
             self.So2vBtn.configure(background='Green',highlightbackground= 'Green')
             self.P.udp_server.Broadcast('SO2V:OFF')

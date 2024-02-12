@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # Rig Control GUI - Tk version - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Portion of GUI related to rig controls - Tk version
 #
@@ -29,7 +29,7 @@ else:
     from Tkinter import *
     import ttk
 from rig_io.socket_io import *
-from rig_io.ft_tables import *
+from rig_io import bands,modes,CONTEST_BANDS,NON_CONTEST_BANDS
 from ft_keypad import *
 from functools import partial
 from os import system

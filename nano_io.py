@@ -338,7 +338,10 @@ class KEYING_DEVICE():
     # Change WPM
     def set_wpm(self,wpm,idev=1):
 
-        #print('NANO SET WPM: wpm=',wpm,'\tidev=',idev,'\tprot=',self.protocol)
+        DEBUG=False
+
+        if DEBUG:
+            print('NANO_IO: SET WPM: wpm=',wpm,'\tidev=',idev,'\tprot=',self.protocol)
         
         if idev==1 or idev==3:
             # Set wpm of chars sent from the keyboard
@@ -350,7 +353,8 @@ class KEYING_DEVICE():
                 txt=chr(2)+chr(wpm)
             else:
                 txt=None
-            #print('NANO SET WPM1: txt=',txt,show_hex(txt))
+            if DEBUG:
+                print('NANO SET WPM1: txt=',txt,'\t',show_hex(txt))
             if txt:
                 self.send_command(txt)
             
@@ -364,7 +368,8 @@ class KEYING_DEVICE():
                 txt=chr(2)+chr(wpm+64)
             else:
                 txt=None
-            #print('NANO SET WPM2: txt=',txt,'\n',show_hex(txt))
+            if DEBUG:
+                print('NANO SET WPM2: txt=',txt,'\n',show_hex(txt))
             if txt:
                 self.send_command(txt)
                 
