@@ -2,7 +2,7 @@
 ############################################################################################
 #
 # practice.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Functions related code and contest practice
 #
@@ -352,7 +352,7 @@ class CODE_PRACTICE():
             txt='********************** ERROR **********************'
             print(txt)
             print('Call sent:',call,' - received:',call2)
-            P.gui.txt.insert(END, txt+'\n')
+            P.gui.txt.insert(END,'\n\n'+txt+'\n')
             P.gui.txt.insert(END,'Call sent: '+call+' - received: '+call2+'\n')
 
             print(txt+'\n')

@@ -1,6 +1,6 @@
 ############################################################################################
 #
-# gui.py - Rev 1.0
+# gui.py - Rev 1.1
 # Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # GUI for CW keyer.
@@ -74,6 +74,7 @@ from qrz import *
 from utilities import cut_numbers,freq2band,Oh_Canada
 import pyautogui
 from utilities import find_resource_file
+from widgets_tk import StatusBar
 
 ############################################################################################
 
@@ -107,6 +108,7 @@ class GUI():
             #pyKeyer.py -geo 1500x400+0+240
             geo=P.GEO
         self.root.geometry(geo)
+        self.root.withdraw()
 
         # Init
         self.last_focus=None
@@ -126,18 +128,23 @@ class GUI():
                 print('GUI INIT: Unknown OS',P.PLATFORM)
                 sys.exit(0)
         else:
-            self.splash.overrideredirect(1)
+            self.splash.overrideredirect(True)           # Remove bvorder
             self.splash.geometry('+500+500')
-            
-        fname=find_resource_file('keyer_splash.png')
-        pic = tk.PhotoImage(file=fname)
-        lab = tk.Label(self.splash, bg='white', image=pic)
-        lab.pack()
-        self.root.withdraw()
+
         self.splash.update()
         self.splash.deiconify()
+        
+        fname=find_resource_file('keyer_splash.png')
+        self.pic = tk.PhotoImage(file=fname)
+        self.splash_lab = tk.Label(self.splash, bg='white', image=self.pic)
+        self.splash_lab.pack()
         self.root.update_idletasks()
-
+        
+        self.status_bar = StatusBar(self.splash,relief=None)
+        self.status_bar.pack(fill=tk.X, side = tk.BOTTOM)
+        self.status_bar.setText("Howdy Ho!")
+        #self.splash.update()
+            
         # More inits
         self.Done=False
         self.contest = False
@@ -165,9 +172,11 @@ class GUI():
             print('font2=',self.font2.actual())
             sys.exit(0)
 
+
     # Function to actually construct the gui
     def construct_gui(self):
         P=self.P
+        self.status_bar.setText("Constructing GUI ...")
 
         # More inits
         self.keyer=P.keyer;
@@ -206,6 +215,7 @@ class GUI():
         fname = P.WORK_DIR+MY_CALL.replace('/','_')+".csv"
         self.log_book = []
         print('Opening log file',fname,'...')
+        self.status_bar.setText("Reading log book ...")
         if not os.path.exists(fname):
             
             self.fp_log = open(fname,"w")
@@ -269,6 +279,7 @@ class GUI():
         self.fp_txt = open(P.WORK_DIR+MY_CALL.replace('/','_')+".TXT","a+")
 
         # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
+        self.status_bar.setText("Constructing GUI ...")
         self.SettingsWin = SETTINGS_GUI(self.root,self.P)
         self.SettingsWin.hide()
         self.PaddlingWin = PADDLING_GUI(self.root,self.P)
@@ -626,6 +637,12 @@ class GUI():
                 spot['Freq']   = None
                 spot['Fields'] = None
                 self.spots.append(spot)
+
+        # Status bar along the bottom
+        row+=1
+        self.status_bar = StatusBar(self.root)
+        self.status_bar.setText("Howdy Ho!")
+        self.status_bar.grid(row=row+1,rowspan=1,column=0,columnspan=self.ncols,sticky=E+W)
 
         # Set macros & restore the state from the last time in
         self.set_macros()
@@ -1227,13 +1244,15 @@ class GUI():
             txt = txt.replace('[SERIAL_IN]',str(serial))
             self.last_call=call
 
-        # ... and his name
+        # ... and his name ...
         his_name=self.get_name().replace('?','')
         my_name = self.P.SETTINGS['MY_NAME']
         if ('?' in his_name) or (his_name==my_name and '[NAME] '+my_name in txt and False):
             txt = txt.replace('[NAME] ','')
         else:
             txt = txt.replace('[NAME]',his_name )
+
+        # ... and his RST
         txt = txt.replace('[RST]', self.get_rst_out() )
 
         # Take care of exchange
@@ -1271,8 +1290,10 @@ class GUI():
         P=self.P
         if arg<=2 or (arg>=0+12 and arg<=2+12):
             self.RUNNING = True
+            P.gui.status_bar.setText("Running ...")
         elif arg in [5,5+12]:
             self.RUNNING = False
+            P.gui.status_bar.setText("S&P ...")
 
         if arg in [1,4]:
             self.time_on = datetime.utcnow().replace(tzinfo=UTC)
@@ -1321,10 +1342,11 @@ class GUI():
                 my_name = self.P.SETTINGS['MY_NAME']
                 if name2==my_name and '[NAME] '+my_name in txt:
                     name2=' '
-                txt = txt.replace('[NAME]',name2)
+                txt = txt.replace('[NAME]',name2).replace('  ',' ')
             except Exception as e: 
                 print('Unable to retrieve NAME')
-                print( str(e) )
+                print('e=',e,'\n')
+                traceback.print_exc()
 
         # Send cw text 
         txt = self.Patch_Macro2(txt,state)
@@ -1912,6 +1934,7 @@ class GUI():
                                   str( round(1e-3*freq_kHz_rx,4)),
                                   band_rx,notes,str(int(self.RUNNING)) ] )))
             qso.update(qso2)
+            self.P.gui.status_bar.setText('Contact with '+call+' Logged!!!')
 
             # Send spot to bandmap - only do if S&P
             if self.P.udp_server and not self.RUNNING:

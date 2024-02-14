@@ -68,11 +68,12 @@ if True:
     #sys.exit(0)
     
 # Initialize GUI
-P.gui     = GUI(P)
+P.gui = GUI(P)
     
 # Open connection to 1st rig
 print('\nPYKEYER: Opening connection to primary rig - connection=',
       P.connection,'\trig=',P.rig,'...')
+P.gui.status_bar.setText("Opening connection to primary rig ...")
 P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',
                                         rig=P.rig,force=P.FORCE)
 #sys.exit(0)
@@ -118,6 +119,7 @@ if P.SENDING_PRACTICE and not P.USE_KEYER and False:
 
 # Open keying port(s)
 print('\nPYKEYER: Opening connection to keyer ...',P.FIND_KEYER,P.USE_KEYER)
+P.gui.status_bar.setText("Opening connection to keyer ...")
 P.ser1=open_keying_port(P,P.sock1,1)
 P.ser2=open_keying_port(P,P.sock2,2)
 P.ser3=open_keying_port(P,P.sock3,2)
@@ -139,6 +141,7 @@ if not P.PRACTICE_MODE:
         P.sock.set_vfo(op='A->B')
  
 # Open connection to rotor
+P.gui.status_bar.setText("Opening connection to rotor ...")
 P.sock_rotor = socket_io.open_rig_connection(P.ROTOR_CONNECTION,0,P.PORT9,0,'ROTOR')
 if not P.sock_rotor.active and P.sock_rotor.connection!='NONE':
     print('*** No connection available to rotor ***')
@@ -160,6 +163,7 @@ P.sock_log = socket_io.open_rig_connection('FLLOG',0,0,0,'KEYER')
 #print(P.sock_log.active)
 
 # Create hamlib-like server for clients like SDR to talk through
+P.gui.status_bar.setText("Creating HAMLIB servers ...")
 P.threads=[]
 P.SO2V=False
 P.NUM_RX=0
@@ -173,6 +177,7 @@ if not P.PRACTICE_MODE and P.sock.connection!='HAMLIB' and P.HAMLIB_SERVER:
         P.threads.append(th)
 
 # Instaniate the keyer
+P.gui.status_bar.setText("Init keyer ...")
 if P.WPM==0:
     #wpm = socket_io.read_speed(sock)
     wpm = P.sock.read_speed()
@@ -199,6 +204,7 @@ P.keyer.evt =  threading.Event()
 P.keyer.evt.clear()
 
 # Start a thread that controls keying of TX
+P.gui.status_bar.setText("Spawning worker-bee threads ...")
 print('Creating thread to Process Chars ...')
 worker = threading.Thread(target=process_chars, args=(P,),name='Process Chars')
 worker.daemon=True
@@ -229,6 +235,7 @@ if P.CAPTURE or True:
     P.threads.append(worker)
 
 # Load history from previous contests
+P.gui.status_bar.setText("Loading Master Call History file ...")
 print('Loading Master History file ...')
 P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
 P.calls = list(P.MASTER.keys())
@@ -238,6 +245,7 @@ print('... Info for',len(P.calls),'calls were loaded.')
 P.gui.construct_gui()
 
 # Set up a thread for code practice
+P.gui.status_bar.setText("Spawning Practice exec ...")
 print('Creating Practice Exec thread ...')
 P.practice = practice.CODE_PRACTICE(P)
 worker = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
@@ -247,6 +255,7 @@ P.threads.append(worker)
 
 # Start thread with UDP server
 if P.UDP_SERVER:
+    P.gui.status_bar.setText("Spawning UDP Server ...")
     P.udp_server = TCP_Server(P,None,KEYER_UDP_PORT,Server=True,
                               Handler=UDP_msg_handler)
     worker = Thread(target=P.udp_server.Listener, args=(), name='UDP Server' )
@@ -263,6 +272,7 @@ if P.UDP_SERVER:
 # WatchDog - runs in its own thread
 P.WATCHDOG = True
 if P.WATCHDOG:
+    P.gui.status_bar.setText("Spawning Watchdog ...")
     P.Timer = threading.Timer(1.0, WatchDog, args=(P,))
     P.Timer.daemon=True                       # This prevents timer thread from blocking shutdown
     P.Timer.start()
@@ -271,6 +281,7 @@ else:
 
 # Init rig to useful settings    
 if P.sock.active:
+    P.gui.status_bar.setText("Init Rig ...")
     print('PYKEYER - Init rig ...')
     
     # Set TX power
@@ -305,6 +316,7 @@ if P.sock.active:
     #    P.sock.set_mon_level(25)
         
 # Read satellite grids confirmed - this will be used to alert station in new grid
+P.gui.status_bar.setText("Reading sat grids ...")
 FNAME = P.HIST_DIR+'states.xls'
 P.grids=[]
 if os.path.isfile(FNAME):
@@ -328,5 +340,6 @@ if P.CAPTURE:
     P.capture.start()
 
 # Spin
+P.gui.status_bar.setText("And away we go !!!")
 mainloop()
 
