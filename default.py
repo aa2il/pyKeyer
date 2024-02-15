@@ -839,3 +839,6 @@ class DEFAULT_KEYING():
         return m
         
         
+    # On-the-fly scoring
+    def scoring(self,qso):
+        self.status_bar.setText("No scoring available")

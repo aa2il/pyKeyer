@@ -73,8 +73,7 @@ from dx_qso import *
 from qrz import *
 from utilities import cut_numbers,freq2band,Oh_Canada
 import pyautogui
-from utilities import find_resource_file
-from widgets_tk import StatusBar
+from widgets_tk import StatusBar,SPLASH_SCREEN
 
 ############################################################################################
 
@@ -93,7 +92,6 @@ def show_threads():
         print(th,th.getName())
     print(' ')
 
-    
 # The GUI 
 class GUI():
     def __init__(self,P):
@@ -108,7 +106,6 @@ class GUI():
             #pyKeyer.py -geo 1500x400+0+240
             geo=P.GEO
         self.root.geometry(geo)
-        self.root.withdraw()
 
         # Init
         self.last_focus=None
@@ -117,34 +114,9 @@ class GUI():
         self.dx_station = None
         
         # Create spash screen
-        self.splash  = Toplevel(self.root)
-        self.splash.title("Splish Splash")
-        if False:
-            if P.PLATFORM=='Linux':
-                self.splash.attributes("-topmost", True,'-type', 'splash')
-            elif P.PLATFORM=='Windows':
-                self.splash.attributes("-topmost", True)
-            else:
-                print('GUI INIT: Unknown OS',P.PLATFORM)
-                sys.exit(0)
-        else:
-            self.splash.overrideredirect(True)           # Remove bvorder
-            self.splash.geometry('+500+500')
-
-        self.splash.update()
-        self.splash.deiconify()
+        self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
+        self.status_bar = self.splash.status_bar
         
-        fname=find_resource_file('keyer_splash.png')
-        self.pic = tk.PhotoImage(file=fname)
-        self.splash_lab = tk.Label(self.splash, bg='white', image=self.pic)
-        self.splash_lab.pack()
-        self.root.update_idletasks()
-        
-        self.status_bar = StatusBar(self.splash,relief=None)
-        self.status_bar.pack(fill=tk.X, side = tk.BOTTOM)
-        self.status_bar.setText("Howdy Ho!")
-        #self.splash.update()
-            
         # More inits
         self.Done=False
         self.contest = False
@@ -1290,10 +1262,10 @@ class GUI():
         P=self.P
         if arg<=2 or (arg>=0+12 and arg<=2+12):
             self.RUNNING = True
-            P.gui.status_bar.setText("Running ...")
+            #P.gui.status_bar.setText("Running ...")
         elif arg in [5,5+12]:
             self.RUNNING = False
-            P.gui.status_bar.setText("S&P ...")
+            #P.gui.status_bar.setText("S&P ...")
 
         if arg in [1,4]:
             self.time_on = datetime.utcnow().replace(tzinfo=UTC)
@@ -1934,7 +1906,6 @@ class GUI():
                                   str( round(1e-3*freq_kHz_rx,4)),
                                   band_rx,notes,str(int(self.RUNNING)) ] )))
             qso.update(qso2)
-            self.P.gui.status_bar.setText('Contact with '+call+' Logged!!!')
 
             # Send spot to bandmap - only do if S&P
             if self.P.udp_server and not self.RUNNING:
@@ -2029,6 +2000,15 @@ class GUI():
                     print('GUI: ERROR writing logged info to big text box')
                     print( str(e) )
                     #print('qso2=',qso2)
+            self.P.gui.status_bar.setText('Contact with '+call+' Logged!!!')
+                    
+            # On the fly scoring
+            try:
+                self.P.KEYING.scoring(qso)
+            except Exception as e: 
+                print('Failed to update score :-(')
+                print('e=',e,'\n')
+                traceback.print_exc()
 
             # Clobber any presets that have this call
             idx=0
