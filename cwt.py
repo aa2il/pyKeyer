@@ -48,10 +48,9 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         P.MAX_AGE = self.contest_duration *60
 
         # On-the-fly scoring - NEW!
-        #self.BANDS = ['160m','80m','40m','20m','15m','10m']
-        #self.sec_cnt = np.zeros(len(self.BANDS),dtype=int)
         self.nqsos=0
         self.calls=set([])
+        self.init_scoring()
 
 
         """
@@ -313,7 +312,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         score=self.nqsos * mults
         print("SCORING: score=",score)
 
-        txt='{:3d} QSOs  x {:3d} Uniques = {:5d} \t\t\t Last Worked: {:s}' \
+        txt='{:3d} QSOs  x {:3d} Uniques = {:6,d} \t\t\t Last Worked: {:s}' \
             .format(self.nqsos,mults,score,call)
         self.P.gui.status_bar.setText(txt)
         

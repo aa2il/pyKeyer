@@ -2,7 +2,7 @@
 ############################################################################################
 #
 # playpen.py - Rev 1.0
-# Copyright (C) 2021 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Work area to get various components up and running.
 #
@@ -23,7 +23,7 @@
 ############################################################################################
 
 import sys
-from dx.spot_processing import Station, Spot, WWV, Comment, ChallengeData
+from dx import Station, Spot, WWV, Comment, ChallengeData
 from pprint import pprint
 import hint
 import webbrowser

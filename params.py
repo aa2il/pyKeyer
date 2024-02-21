@@ -2,7 +2,7 @@
 ################################################################################
 #
 # Params.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Command line param parser for pyKeyer.
 #
@@ -190,7 +190,7 @@ class PARAMS:
                               help='Force rig connection (debugging)')
         arg_proc.add_argument('-ca_only', action='store_true',
                               help='Only use California Stations for Practice')
-        arg_proc.add_argument("-wpm", help="CW speed",type=int,default=20)
+        arg_proc.add_argument("-wpm", help="CW speed",type=int,default=22)
         arg_proc.add_argument('-adjust', action='store_true',
                               help='Adjust speed based on correct copy')
         arg_proc.add_argument('-scp', action='store_true',
@@ -259,6 +259,7 @@ class PARAMS:
                               help='Special settings for VHF work')
         args = arg_proc.parse_args()
 
+        self.CONTEST_ID    = ''
         self.OP_STATE      = 0
         self.SPRINT        = args.sprint
         self.SHADOW        = args.shadow
@@ -320,8 +321,13 @@ class PARAMS:
         self.SO2V          = False
         self.DXSPLIT       = False
         self.GPS           = args.gps
-        self.USE_LOG_HISTORY  = args.use_log_hist
-        self.USE_ADIF_HISTORY = args.use_adif_hist
+
+        # Overrride as these are depricated
+        #self.USE_LOG_HISTORY  = args.use_log_hist
+        #self.USE_ADIF_HISTORY = args.use_adif_hist
+        self.USE_LOG_HISTORY  = False
+        self.USE_ADIF_HISTORY = True        
+        
         self.SIDETONE      = args.sidetone or self.PORT==1 or \
             (self.PRACTICE_MODE and not self.USE_KEYER)
 
@@ -486,6 +492,7 @@ class PARAMS:
         else:
             self.contest_name='Default'
             #self.SHOW_TEXT_BOX2=True
+            
         self.ROTOR_CONNECTION = args.rotor
         self.PORT9            = args.port9
         self.Immediate_TX     = args.immediate

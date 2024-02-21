@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # ten.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ARRL 10m, ARRL Intl DX and CQ 160m contests.
 #
@@ -26,7 +26,8 @@ import sys
 from tkinter import END,E,W
 from collections import OrderedDict
 from default import DEFAULT_KEYING
-from rig_io.ft_tables import CA_COUNTIES,arrl_sec2state
+from rig_io import CA_COUNTIES,arrl_sec2state
+from dx import Station
 
 ############################################################################################
 
@@ -52,6 +53,15 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         self.contest_duration = 48
         P.MAX_AGE = self.contest_duration *60
 
+        # On-the-fly scoring - NEW!
+        self.nqsos=0
+        self.BANDS = ['160m','80m','40m','20m','15m','10m']
+        dxccs  = []
+        for b in self.BANDS:
+            dxccs.append((b,set([])))
+        self.dxccs = OrderedDict(dxccs)
+        self.init_scoring()
+        
     # Routient to set macros for this contest
     def macros(self):
 
@@ -222,6 +232,7 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
     # Hint insertion
     def insert_hint(self,h=None):
 
+        #print('TEN->INSERT HINT - Why am I here?!?!?!?!?!?!?!?!?')
         gui=self.P.gui
 
         if h==None:
@@ -236,3 +247,29 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
             gui.info.delete(0, END)
             gui.info.insert(0,self.NAME)
         
+    # On-the-fly scoring
+    def scoring(self,qso):
+        print("\nTEN SCORING: qso=",qso)
+        if self.P.contest_name!='ARRL-DX':
+            print('TEN SCORING: Whoops - need to update scoring routine for this contest!')
+            return
+
+        call=qso['CALL']
+        dx_station = Station(call)
+        if dx_station.country in ['United States','Canada']:
+            return
+        band = qso["BAND"]
+        self.dxccs[band].add(dx_station.country)
+        self.nqsos+=1        
+
+        mults = 0
+        for b in self.BANDS:
+            mults+=len( self.dxccs[b] )
+
+        score=self.nqsos * mults
+        print("SCORING: score=",score,self.nqsos,mults)
+
+        txt='{:5,d} QSOs  x {:5,d} Mults = {:8,d} \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,call)
+        self.P.gui.status_bar.setText(txt)
+            

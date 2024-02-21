@@ -2,7 +2,7 @@
 ################################################################################
 #
 # ProcessChars.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Executive thread to process individual characters.
 #
@@ -164,6 +164,3 @@ def process_chars(P):
                 time.sleep(0.1)
         
     print('PROCESSS_CHARS Done.')
-
-
-

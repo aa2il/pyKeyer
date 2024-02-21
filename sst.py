@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # sst.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for slow speed mini tests.
 #
@@ -23,9 +23,10 @@ import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import random
-from rig_io.ft_tables import SST_SECS
+from rig_io import SST_SECS
 from default import DEFAULT_KEYING
 from datetime import datetime
+import numpy as np
 
 ############################################################################################
 
@@ -43,7 +44,14 @@ class SST_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID='K1USN-SST'
         self.contest_duration = 1
         P.MAX_AGE = self.contest_duration *60
-                
+
+        # On-the-fly scoring - NEW!
+        self.nqsos=0
+        self.calls=set([])
+        self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for pratice mode
+        self.sec_cnt = np.zeros((len(SST_SECS),len(self.BANDS)),dtype=np.int)
+        self.init_scoring()
+        
     # Routient to set macros for this contest
     def macros(self):
 
@@ -248,3 +256,27 @@ class SST_KEYING(DEFAULT_KEYING):
             if len(h)>=2:
                 gui.qth.insert(0,h[1])
         
+    # On-the-fly scoring
+    def scoring(self,qso):
+        print("\nSCORING: qso=",qso)
+        self.nqsos+=1        
+        call=qso['CALL']
+
+        band = qso["BAND"]
+        idx = self.BANDS.index(band)
+
+        try:
+            qth  = qso["QTH"].upper()
+            idx1 = SST_SECS.index(qth)
+        except:
+            self.P.gui.status_bar.setText('Unrecognized/invalid section!')
+            return
+        self.sec_cnt[idx1,idx] = 1
+        
+        mults = np.sum( np.sum(self.sec_cnt,axis=0) )
+        score=self.nqsos * mults
+        print("SCORING: score=",score,self.nqsos,mults)
+
+        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,call)
+        self.P.gui.status_bar.setText(txt)

@@ -37,6 +37,7 @@ from pprint import pprint
 import Levenshtein
 from keying import *
 import traceback
+from widgets_tk import StatusBar,SPLASH_SCREEN
 
 ################################################################################
 
@@ -88,17 +89,15 @@ class PADDLING_GUI():
         else:
             self.win = Tk()
         self.win.title("Sending Practice by AA2IL")
-        self.win.geometry('1700x220+100+10')
+        self.win.geometry('1700x240+100+10')
         self.root=self.win
 
-        # Load fonts we want to use
-        if sys.version_info[0]==3:
-            font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
-            font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
-        else:
-            font1 = tkFont.Font(family="monospace",size=12,weight="bold")
-            font2 = tkFont.Font(family="monospace",size=28,weight="bold")
-
+        # Create spash screen
+        if self.STAND_ALONE:
+            self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
+            self.status_bar = self.splash.status_bar
+            self.status_bar.setText("Howdy Ho!!!!!")
+        
         # Read list of Panagrams
         self.panagrams = read_text_file('Panagrams.txt')
         
@@ -113,10 +112,14 @@ class PADDLING_GUI():
         # Read Book
         self.Book = read_text_file('Book.txt',KEEP_BLANKS=False)
 
-        # Form list of calls - just use what we loaded from the master list
-        self.calls = P.calls
-        self.Ncalls = len(self.calls)
-            
+        # Load fonts we want to use
+        if sys.version_info[0]==3:
+            font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
+            font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
+        else:
+            font1 = tkFont.Font(family="monospace",size=12,weight="bold")
+            font2 = tkFont.Font(family="monospace",size=28,weight="bold")
+
         # Put up a box for the practice text - use large font
         # Make this the default object to take the focus & bind keys to effect special mappings
         NCOLS=12
@@ -141,7 +144,7 @@ class PADDLING_GUI():
             self.txt2.config(yscrollcommand=self.S2.set)
             """
             row+=5
-            self.win.geometry('1700x320+100+10')  
+            self.win.geometry('1700x340+100+10')  
 
         # Radio button group to select type of practice
         self.Selection = IntVar(value=0)
@@ -218,7 +221,7 @@ class PADDLING_GUI():
                            selectbackground='lightgreen',justify='center')
         self.LevDx.grid(row=row,column=col,sticky=E+W)
 
-        # Entry box to hold result from previous attemp
+        # Entry box to hold result from previous attempt
         col+=1
         lab = Label(self.win, text="Previous",font=font1)
         lab.grid(row=row,column=col,sticky=E+W)
@@ -241,14 +244,25 @@ class PADDLING_GUI():
         #self.win.protocol("WM_DELETE_WINDOW", self.hide)
         self.win.protocol("WM_DELETE_WINDOW", self.Quit)
 
+        # Status bar along the bottom
+        row+=1
+        self.status_bar = StatusBar(self.root)
+        self.status_bar.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
+        self.status_bar.setText("Howdy Ho!")
+        if self.STAND_ALONE:
+            self.root.deiconify()
+            self.splash.destroy()
+            self.root.update_idletasks()
+
         # Start the ball rolling with this window not visible
-        try:
-            self.SetWpm(0)
-        except Exception as e: 
-            print('\n*** WARNING - PADDLING GUI - Problem setting initial WPM ***')
-            print('e=',e,'\n')
-            traceback.print_exc()
-        self.hide()
+        if not self.STAND_ALONE:
+            try:
+                self.SetWpm(0)
+            except Exception as e: 
+                print('\n*** WARNING - PADDLING GUI - Problem setting initial WPM ***')
+                print('e=',e,'\n')
+                traceback.print_exc()
+            self.hide()
 
 ################################################################################
 
@@ -374,8 +388,8 @@ class PADDLING_GUI():
             #print('There are',self.Ncalls,'call signs loaded')
             txt=''
             for j in range(5):
-                i = random.randint(0, self.Ncalls-1)
-                txt += ' '+self.calls[i]
+                i = random.randint(0, P.Ncalls-1)
+                txt += ' '+P.calls[i]
 
                 # Add a "/" once in a while more practice
                 if '/' not in txt:
@@ -426,8 +440,8 @@ class PADDLING_GUI():
                 # Pick a call at random
                 done = False
                 while not done:
-                    i = random.randint(0, self.Ncalls-1)
-                    call = self.calls[i]
+                    i = random.randint(0, P.Ncalls-1)
+                    call = P.calls[i]
                     name = P.MASTER[call]['name']
                     done = len(call)>2 and len(name)>2
 
@@ -520,8 +534,8 @@ class PADDLING_GUI():
         
         call=None
         while not call:
-            i = random.randint(0, self.Ncalls-1)
-            c = self.calls[i]
+            i = random.randint(0, P.Ncalls-1)
+            c = P.calls[i]
             #print('GET SPRINT CALL:',i,c,self.P.MASTER[c])
             name  = self.P.MASTER[c]['name'].replace('.','')
             state = self.P.MASTER[c]['state']
@@ -574,8 +588,8 @@ class PADDLING_GUI():
     # Routine to check response
     def check_response(self,txt):
         txt0=txt.replace('\n',' ')
-        if txt0==' ' and self.response=='':
-            return
+        #if txt0==' ' and self.response=='':
+        #    return
         
         self.response+=txt0
         txt1=self.item.replace("'","")
@@ -647,17 +661,7 @@ if __name__ == '__main__':
             # Read config file
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
 
-            # Load master call list
-            print('Reading master history file ...')
-            MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
-            self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
-            self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')
-            self.calls = list(self.MASTER.keys())
-
-            # We need a keyer
-            self.keyer=cw_keyer.Keyer(self,self.WPM)
             
-
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):
 
@@ -690,16 +694,31 @@ if __name__ == '__main__':
         timer = P.PaddlingWin.win.after(100, check_keyer, P)
 
 
-    # Read config file
+    # Set basic run-time params
     P=PADDLING_PARAMS()
 
-    P.ser1=open_keying_port(P,True,1)
-        
+    # Create GUI
     P.PaddlingWin = PADDLING_GUI(None,P,STAND_ALONE=True)
-    P.PaddlingWin.show()
 
-    timer = P.PaddlingWin.win.after(1000, check_keyer, P)
+    # Load master call list
+    print('Reading master history file ...')
+    P.PaddlingWin.status_bar.setText('Reading master history file ...')
+    MY_CALL2 = P.SETTINGS['MY_CALL'].split('/')[0]
+    P.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+    P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
+    P.calls = list(P.MASTER.keys())
+    P.Ncalls = len(P.calls)
     
+    # We need the keyer
+    P.PaddlingWin.status_bar.setText('Opening keyer ...')
+    P.keyer=cw_keyer.Keyer(P,P.WPM)
+    P.ser1=open_keying_port(P,True,1)
+
+    # And away we go!
+    P.PaddlingWin.status_bar.setText("Let's Rock!")
+    P.PaddlingWin.NewItem()
+    #P.PaddlingWin.show()
+    timer = P.PaddlingWin.win.after(1000, check_keyer, P)
     mainloop()
 
     print("Y'all come on back now ya hear!")

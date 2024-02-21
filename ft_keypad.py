@@ -27,7 +27,6 @@ if sys.version_info[0]==3:
     from tkinter import END
 else:
     from Tkinter import END
-#from rig_io.ft_tables import *
 
 ############################################################################################
 

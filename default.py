@@ -24,10 +24,15 @@ from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
 from utilities import cut_numbers,reverse_cut_numbers
-from dx.spot_processing import Station
+from dx import Station
 from datetime import datetime
 import Levenshtein
 from scp import *
+
+from datetime import datetime, date, tzinfo
+import time
+import pytz
+UTC = pytz.utc
 
 ############################################################################################
 
@@ -841,4 +846,22 @@ class DEFAULT_KEYING():
         
     # On-the-fly scoring
     def scoring(self,qso):
-        self.status_bar.setText("No scoring available")
+        print("DEFAULTS SCORING: qso=",qso)
+
+    # Routine to restore scoring if exited during a contest
+    def init_scoring(self):
+        P=self.P
+        print('INIT SCORING: There are',len(P.gui.log_book),' QSOs in the log book.')
+        now = datetime.utcnow().replace(tzinfo=UTC)
+        MAX_AGE = 60*P.MAX_AGE       # In seconds
+        for qso in P.gui.log_book:
+            if ('CONTEST_ID' in qso) and (qso['CONTEST_ID']==P.CONTEST_ID):
+                date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
+                                       .replace(tzinfo=UTC)
+                age = (now - date_off).total_seconds() # In seconds
+                #print('qso=',qso)
+                #print('age=',age)
+                if age<MAX_AGE:
+                    self.scoring(qso)
+        
+    

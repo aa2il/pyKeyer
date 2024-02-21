@@ -38,7 +38,7 @@ from datetime import datetime, date, tzinfo
 import time
 import cw_keyer
 import hint
-from dx.spot_processing import Station
+from dx import Station
 from pprint import pprint
 import webbrowser
 from rig_io import ClarReset,SetTXSplit
@@ -144,7 +144,6 @@ class GUI():
             print('font2=',self.font2.actual())
             sys.exit(0)
 
-
     # Function to actually construct the gui
     def construct_gui(self):
         P=self.P
@@ -181,55 +180,17 @@ class GUI():
         self.prefill=False
         self.cntr=0
 
-        # Open simple log file & read its contents
-        # It probably time to jetison this & just use the adif file 
+        # Read adif log
         MY_CALL = P.SETTINGS['MY_CALL']
-        fname = P.WORK_DIR+MY_CALL.replace('/','_')+".csv"
         self.log_book = []
-        print('Opening log file',fname,'...')
-        self.status_bar.setText("Reading log book ...")
-        if not os.path.exists(fname):
-            
-            self.fp_log = open(fname,"w")
-            self.fp_log.write('qso_date_off,time_off,call,freq,band,mode,srx_string,stx_string,sat_name\n')
-            self.fp_log.flush()
-
-        else:
-            
-            self.fp_log = open(fname,"r+")
-            csvReader = csv.reader(self.fp_log, dialect='excel')
-            hdrs = list(map(cleanup, next(csvReader)))
-            #print('hdrs=',hdrs)
-
-            n=0
-            for line in csvReader:
-                n+=1
-                #print 'line=',line
-                qso = dict(list(zip(hdrs, line)))
-                #print 'qso=',qso
-                if P.USE_LOG_HISTORY:
-                    self.log_book.append(qso)
-                else:
-                    try:
-                        call=qso['CALL']
-                    except:
-                        print('Looks like LOG file is hosed up')
-                        print(qso)
-                        sys.exit(0)
-                    if not call in P.calls:
-                        #print('Call not in Master list:',call,'\t- Adding it')
-                        self.log_book.append(qso)
-                        P.calls.append(call)
-            print(n,' QSOs read.')
-
-        # Read adif log also
         if P.LOG_FILE==None:
             P.LOG_FILE = P.WORK_DIR+MY_CALL.replace('/','_')+".adif"
-        if P.USE_ADIF_HISTORY:
-            print('GUI: Reading ADIF log file',P.LOG_FILE)
-            qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
-            for qso in qsos:
-                self.log_book.append(qso)
+        print('Opening log file',P.LOG_FILE,'...')
+        self.status_bar.setText("Reading log book "+P.LOG_FILE+" ...")
+        print('GUI: Reading ADIF log file',P.LOG_FILE)
+        qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
+        for qso in qsos:
+            self.log_book.append(qso)
 
         self.nqsos_start = len(self.log_book)
         print('There are',len(self.log_book),'QSOs in the log book')
@@ -1007,30 +968,37 @@ class GUI():
             txt = spot['Button']['text']
             if txt=='--':
                 frq = 1e-3*self.sock.get_freq() 
+                ant = self.sock.get_ant()
                 spot['Button']['text'] = "{:,.1f}".format(frq)
                 spot['Freq']=frq
+                spot['Ant']=ant
                 spot['Fields'] = self.Read_Log_Fields()
             else:
                 #frq = float( txt.replace(',','') )
                 frq = spot['Freq']
+                ant = spot['Ant']
                 self.sock.set_freq(frq)
+                self.sock.set_ant(ant)
                 spot['Button']['text']='--'
                 self.Set_Log_Fields(spot['Fields'])
 
         elif idir==-1:
             # Clear
             spot['Button']['text'] = '--'
-            spot['Freq'] = None
+            spot['Freq']   = None
+            spot['Ant']    = None
             spot['Fields'] = None
-            self.P.DIRTY = True
+            self.P.DIRTY   = True
 
         elif idir==1:
             
             # Save
             call=self.get_call().upper()
             frq = 1e-3*self.sock.get_freq()
+            ant = self.sock.get_ant()
             spot['Button']['text'] = call+" {:,.1f} ".format(frq)
             spot['Freq']=frq
+            spot['Ant']=ant
             spot['Fields'] = self.Read_Log_Fields()
             self.P.DIRTY = True
 
@@ -1040,18 +1008,19 @@ class GUI():
             print('foffset=',foffset)
             spot['Offset']=foffset
 
-            if True:
-                mode = self.sock.get_mode()
-                msg  = 'SPOT:'+call+':'+str(frq)+':'+mode
-                print('Save SPOT: Broadcasting spot:',msg)
-                self.P.udp_server.Broadcast(msg)
+            mode = self.sock.get_mode()
+            msg  = 'SPOT:'+call+':'+str(frq)+':'+mode
+            print('Save SPOT: Broadcasting spot:',msg)
+            self.P.udp_server.Broadcast(msg)
 
         elif idir==2:
             
             # Restore
             try:
                 frq = spot['Freq']
+                ant = spot['Ant']
                 self.sock.set_freq(frq)
+                self.sock.set_ant(ant)
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
                 self.dup_check(call)
@@ -1746,7 +1715,6 @@ class GUI():
             return
         
         self.SaveState()
-        self.fp_log.close()
         self.fp_adif.close()
         self.fp_txt.close()
         self.P.SHUTDOWN=True
@@ -1897,14 +1865,15 @@ class GUI():
                                   'CALL','FREQ','BAND','MODE', 
                                   'SRX_STRING','STX_STRING','NAME','QTH','SRX',
                                   'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES',
-                                  'RUNNING'],
+                                  'RUNNING','CONTEST_ID'],
                                  [date_on,time_on,date_off,time_off,
                                   call,
                                   str( round(1e-3*freq_kHz,4) ),band,mode, 
                                   exch,self.exch_out,name,qth,str(serial),
                                   str(self.cntr),satellite,
                                   str( round(1e-3*freq_kHz_rx,4)),
-                                  band_rx,notes,str(int(self.RUNNING)) ] )))
+                                  band_rx,notes,str(int(self.RUNNING)),
+                                  self.P.CONTEST_ID] )))
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P
@@ -1972,10 +1941,6 @@ class GUI():
 
             # Save out to simple log file also
             freq_MHz=1e-3*freq
-            self.fp_log.write('%s,%s,%s,%s,%s,%s,"%s","%s","%s"\n' % \
-                              (date_off,time_off,call,str(freq_MHz),
-                               band,mode,exch,self.exch_out,satellite) )
-            self.fp_log.flush()
             self.fp_txt.write('%s,%s,%s,%s,%s,%s,"%s","%s","%s"\n' % \
                               (date_off,time_off,call,str(freq_MHz),
                                band,mode,exch,self.exch_out,satellite) )
@@ -2224,7 +2189,7 @@ class GUI():
             else:
                 self.call.configure(bg="lemon chiffon")
                 
-            if len( self.exch.get() )==0:
+            if self.match2 and len( self.exch.get() )==0:
                 self.prefill=True
                 a=last_exch.split(',')
                 print('last_exch - a=',a)
@@ -2410,12 +2375,12 @@ class GUI():
         master=widget
         while master!=None:
             #print('MASTER: master=',master,master==self.root,master==self.PaddlingWin.win)
-            if master==self.P.gui.PaddlingWin.win:
-                #print('MASTER: In Paddling Window ...')
-                return self.P.gui.PaddlingWin
-            elif master==self.P.gui.root:
+            if master==self.P.gui.root:
                 #print('MASTER: In Main Root Window ...')
                 return self.P.gui
+            elif master==self.P.gui.PaddlingWin.win:
+                #print('MASTER: In Paddling Window ...')
+                return self.P.gui.PaddlingWin
             else:
                 master=master.master
             

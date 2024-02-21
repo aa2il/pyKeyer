@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # iaru.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for IARU HF Chanpionships
 #
@@ -22,7 +22,7 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from default import DEFAULT_KEYING
-from dx.spot_processing import Station
+from dx import Station
 
 ############################################################################################
 

@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # sprint.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for Sprints
 #
@@ -59,7 +59,7 @@ import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import random
-from rig_io.ft_tables import SST_SECS
+from rig_io import SST_SECS
 from default import DEFAULT_KEYING
 from datetime import datetime
 from utilities import cut_numbers

@@ -2,7 +2,7 @@
 #########################################################################################
 #
 # qrz.py - Rev. 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Gui to display what we know about a call.
 #
@@ -31,20 +31,37 @@ else:
     import tkFont
 import time
 from collections import OrderedDict
+#from dx.spot_processing import Station
+from dx import Station
 
 #########################################################################################
 
 class CALL_INFO_GUI():
     def __init__(self,root,P,call,qso):
         self.P = P
-        
+
+        """
         try:
             info=P.MASTER[call]
             print('CALL_LOOKUP:',call,' is in master list')
         except:
             print('CALL_LOOKUP:',call,' is not in master list')
             info = OrderedDict()
-        #print('info=',info)
+        #print('info=',info,len(info))
+        """
+
+        if call in P.MASTER.keys():
+            print('CALL_LOOKUP:',call,' is in master list')
+            info=P.MASTER[call]
+        else:
+            print('CALL_LOOKUP:',call,' is not in master list')
+            info = OrderedDict()
+            if '/' in call:
+                dx_station = Station(call)
+                call2=dx_station.homecall
+                if call2 in P.MASTER.keys():
+                    print('CALL_LOOKUP:',call2,' is in master list')
+                    info=P.MASTER[call2]
 
         if root:
             self.win=Toplevel(root)
@@ -119,11 +136,13 @@ if __name__ == '__main__':
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
 
             # Load master call list
+            t0=time.time()
             print('Reading master history file ...')
             MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
             self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
             self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')
             self.calls = list(self.MASTER.keys())
+            print('Read time=',time.time()-t0)
             
     # Command line args
     arg_proc = argparse.ArgumentParser(description='QRZ???')

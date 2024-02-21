@@ -39,11 +39,17 @@ class MST_KEYING(DEFAULT_KEYING):
     def __init__(self,P):
         DEFAULT_KEYING.__init__(self,P,'MST')
 
+        self.P=P
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/ICWC-MST*.txt')
         P.CONTEST_ID='ICWC-MST'
-        self.contest_duration = 1
-        P.MAX_AGE = self.contest_duration *60
-        
+        self.contest_duration = 1                # Hours
+        P.MAX_AGE = 60*self.contest_duration     # Minutes
+
+        # On-the-fly scoring - NEW!
+        self.nqsos=0
+        self.calls=set([])
+        self.init_scoring()
+
     # Routient to set macros for this contest
     def macros(self):
 
@@ -254,4 +260,16 @@ class MST_KEYING(DEFAULT_KEYING):
         gui.name.delete(0, END)
         gui.name.insert(0,h[0])
 
+    # On-the-fly scoring
+    def scoring(self,qso):
+        print("MST SCORING: qso=",qso)
+        self.nqsos+=1
+        call=qso['CALL']
+        self.calls.add(call)
+        mults = len(self.calls)
+        score=self.nqsos * mults
+        #print("SCORING: score=",score)
 
+        txt='{:3d} QSOs  x {:3d} Uniques = {:6,d} \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,call)
+        self.P.gui.status_bar.setText(txt)
