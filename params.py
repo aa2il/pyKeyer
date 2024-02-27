@@ -190,7 +190,8 @@ class PARAMS:
                               help='Force rig connection (debugging)')
         arg_proc.add_argument('-ca_only', action='store_true',
                               help='Only use California Stations for Practice')
-        arg_proc.add_argument("-wpm", help="CW speed",type=int,default=22)
+        arg_proc.add_argument("-wpm", help="Keyer speed",type=int,default=25)
+        arg_proc.add_argument("-paddles", help="Paddle speed",type=int,default=22)
         arg_proc.add_argument('-adjust', action='store_true',
                               help='Adjust speed based on correct copy')
         arg_proc.add_argument('-scp', action='store_true',
@@ -290,6 +291,7 @@ class PARAMS:
         self.NO_HINTS      = not args.hints
         self.CA_ONLY       = args.ca_only
         self.WPM           = args.wpm
+        self.PADDLE_WPM    = args.paddles
         self.INIT_MODE     = args.mode
         self.LOG_FILE      = args.log
         

@@ -86,6 +86,7 @@ class PADDLING_GUI():
         # Open main or pop-up window depending on if "root" is given
         if root:
             self.win=Toplevel(root)
+            self.hide()
         else:
             self.win = Tk()
         self.win.title("Sending Practice by AA2IL")
@@ -173,7 +174,7 @@ class PADDLING_GUI():
         if self.P.LOCK_SPEED:
             self.WPM_TXT.set(self.P.WPM)
         else:
-            self.WPM_TXT.set('20')
+            self.WPM_TXT.set(self.P.PADDLE_WPM)
 
         # Slider to control rig monitor level (i.e. sidetone volume)
         col+=2
@@ -490,7 +491,7 @@ class PADDLING_GUI():
             call1,name1,state1 = self.get_sprint_call()
             call1=call1.replace('/SK','/P')
             call2,name2,state2 = self.get_sprint_call()
-            call1=call1.replace('/SK','/M')
+            call2=call1.replace('/SK','/M')
             serial = str( random.randint(0,999) )
             i = random.randint(0,1)
             if i==0:
@@ -534,8 +535,8 @@ class PADDLING_GUI():
         
         call=None
         while not call:
-            i = random.randint(0, P.Ncalls-1)
-            c = P.calls[i]
+            i = random.randint(0, self.P.Ncalls-1)
+            c = self.P.calls[i]
             #print('GET SPRINT CALL:',i,c,self.P.MASTER[c])
             name  = self.P.MASTER[c]['name'].replace('.','')
             state = self.P.MASTER[c]['state']
@@ -651,7 +652,8 @@ if __name__ == '__main__':
             self.sock=None
             self.gui=None
             self.LOCK_SPEED=False
-            self.WPM=20
+            self.WPM=22
+            self.PADDLE_WPM=22
             self.USE_KEYER=True
             self.FIND_KEYER=True
             self.NANO_ECHO=True

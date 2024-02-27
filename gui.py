@@ -567,7 +567,9 @@ class GUI():
                 spot = OrderedDict()
                 spot['Button'] = btn
                 #spot['Call']   = None
-                spot['Freq']   = None
+                spot['FreqA']   = None
+                spot['FreqB']   = None
+                spot['Split']   = None
                 spot['Fields'] = None
                 self.spots.append(spot)
 
@@ -863,8 +865,8 @@ class GUI():
             #time.sleep(DELAY)
             
             # Set RX VFO to A and TX VFO to B
-            self.sock.set_vfo(rx='A',tx='B')
-            time.sleep(DELAY)
+            #self.sock.set_vfo(rx='A',tx='B')
+            #time.sleep(DELAY)
 
             self.sock.set_ant(ant)
             time.sleep(DELAY)
@@ -960,24 +962,34 @@ class GUI():
 
     # Callback to store & retrieve spotted freqs
     def Spots_cb(self,arg,idir):
-        print('\nSPOT_CB:',arg,idir,self.last_shift_key)
+        print('\nSPOTS_CB:',arg,idir,self.last_shift_key)
 
         spot = self.spots[arg]
         if idir==0:
             # Not sure what this does but probably never get here!
             txt = spot['Button']['text']
             if txt=='--':
-                frq = 1e-3*self.sock.get_freq() 
+                frqA = 1e-3*self.sock.get_freq(VFO='A') 
+                frqB = 1e-3*self.sock.get_freq(VFO='B') 
+                split = self.sock.split_mode(-1)
                 ant = self.sock.get_ant()
-                spot['Button']['text'] = "{:,.1f}".format(frq)
-                spot['Freq']=frq
+                if split:
+                    spot['Button']['text'] = "{:,.1f}".format(frqB)
+                else:
+                    spot['Button']['text'] = "{:,.1f}".format(frq)
+                spot['FreqA']=frqA
+                spot['FreqB']=frqB
+                spot['Split']=split
                 spot['Ant']=ant
                 spot['Fields'] = self.Read_Log_Fields()
             else:
                 #frq = float( txt.replace(',','') )
-                frq = spot['Freq']
+                frqA = spot['FreqA']
+                frqB = spot['FreqB']
+                split = spot['Split']
                 ant = spot['Ant']
-                self.sock.set_freq(frq)
+                self.sock.set_freq(frqA,VFO='A')
+                self.sock.set_freq(frqB,VFO='B')
                 self.sock.set_ant(ant)
                 spot['Button']['text']='--'
                 self.Set_Log_Fields(spot['Fields'])
@@ -985,7 +997,9 @@ class GUI():
         elif idir==-1:
             # Clear
             spot['Button']['text'] = '--'
-            spot['Freq']   = None
+            spot['FreqA']   = None
+            spot['FreqB']   = None
+            spot['Split']   = None
             spot['Ant']    = None
             spot['Fields'] = None
             self.P.DIRTY   = True
@@ -994,16 +1008,23 @@ class GUI():
             
             # Save
             call=self.get_call().upper()
-            frq = 1e-3*self.sock.get_freq()
+            frqA = 1e-3*self.sock.get_freq(VFO='A') 
+            frqB = 1e-3*self.sock.get_freq(VFO='B') 
+            split = self.sock.split_mode(-1)
             ant = self.sock.get_ant()
-            spot['Button']['text'] = call+" {:,.1f} ".format(frq)
-            spot['Freq']=frq
+            if split:
+                spot['Button']['text'] = call+" {:,.1f} ".format(frqB)
+            else:
+                spot['Button']['text'] = call+" {:,.1f} ".format(frqA)
+            spot['FreqA']=frqA
+            spot['FreqB']=frqB
+            spot['Split']=split
             spot['Ant']=ant
             spot['Fields'] = self.Read_Log_Fields()
             self.P.DIRTY = True
 
             #if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
-            print('Save SPOT:',frq,self.sock.rig_type,self.sock.fldigi_active)
+            print('Save SPOT:',frqA,frqB,self.sock.rig_type,self.sock.fldigi_active)
             foffset=self.sock.modem_carrier()
             print('foffset=',foffset)
             spot['Offset']=foffset
@@ -1017,9 +1038,12 @@ class GUI():
             
             # Restore
             try:
-                frq = spot['Freq']
+                frqA = spot['FreqA']
+                frqB = spot['FreqB']
+                split = spot['Split']
                 ant = spot['Ant']
-                self.sock.set_freq(frq)
+                self.sock.set_freq(frqA,VFO='A')
+                self.sock.set_freq(frqB,VFO='B')
                 self.sock.set_ant(ant)
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
@@ -1236,8 +1260,9 @@ class GUI():
             self.RUNNING = False
             #P.gui.status_bar.setText("S&P ...")
 
-        if arg in [1,4]:
+        if arg in [1,4,5]:
             self.time_on = datetime.utcnow().replace(tzinfo=UTC)
+            print('TIME_ON set to',self.time_on.strftime('%H%M%S'))
 
         # Keep track of what we last sent
         txt = self.macros[arg]["Text"]
@@ -1608,11 +1633,15 @@ class GUI():
     # Save program state
     def SaveState(self):
         spots = []
-        frqs  = []
+        frqsA = []
+        frqsB = []
+        splits = []
         flds  = []
         for spot in self.spots:
             spots.append( spot['Button']['text'] )
-            frqs.append( spot['Freq'] )
+            frqsA.append( spot['FreqA'] )
+            frqsB.append( spot['FreqB'] )
+            splits.append( spot['Split'] )
             flds.append( spot['Fields'] )
         now = datetime.utcnow().replace(tzinfo=UTC)
 
@@ -1621,7 +1650,9 @@ class GUI():
                'serial'     : self.P.MY_CNTR,
                'contest_id' : self.P.CONTEST_ID,
                'spots'      : spots,
-               'freqs'      : frqs,
+               'freqsA'     : frqsA,
+               'freqsB'     : frqsB,
+               'splits'     : splits,
                'fields'     : flds }
         print('STATE=',STATE)
         with open(self.P.WORK_DIR+'state.json', "w") as outfile:
@@ -1640,7 +1671,9 @@ class GUI():
 
         for i in range(len(self.spots)):
             self.spots[i]['Button']['text'] = '--'
-            self.spots[i]['Freq']=None
+            self.spots[i]['FreqA']=None
+            self.spots[i]['FreqB']=None
+            self.spots[i]['Split']=None
             self.spots[i]['Fields']=None
             self.P.DIRTY = True
                 
@@ -1689,12 +1722,16 @@ class GUI():
             if len(spots)>12*self.P.NUM_ROWS:
                 spots=spots[:12*self.P.NUM_ROWS]
             print('RestoreState: Spots=',spots)
-            frqs = STATE['freqs']
+            frqsA = STATE['freqsA']
+            frqsB = STATE['freqsB']
+            splits = STATE['splits']
             flds = STATE['fields']
             for i in range(len(spots)):
                 print(i,len(spots),len(self.spots))
                 self.spots[i]['Button']['text'] = spots[i]
-                self.spots[i]['Freq']=frqs[i]
+                self.spots[i]['FreqA']=frqsA[i]
+                self.spots[i]['FreqB']=frqsB[i]
+                self.spots[i]['Split']=splits[i]
                 self.spots[i]['Fields']=flds[i]
                 
         self.P.DIRTY=False
@@ -1989,6 +2026,8 @@ class GUI():
                 idx+=1
 
         else:
+            # There was a problem
+            self.status_bar.setText('*** Missing one or more fields ***')
             print('*** Missing one or more fields ***',self.contest)
             print('Call=',call)
             if self.contest:
@@ -2009,6 +2048,15 @@ class GUI():
         self.counter.delete(0, END)
         self.counter.insert(0,str(self.P.MY_CNTR))
         self.P.DIRTY = True
+
+        # Make sure we're on VFO A
+        if self.P.SO2V:
+            try:
+                SetVFO(self,'A')
+            except Exception as e: 
+                print('Unable to set VFO to A')
+                print('e=',e,'\n')
+                traceback.print_exc()
 
         # Save the current state
         self.SaveState()        
@@ -2949,7 +2997,6 @@ class GUI():
         call  = self.OnDeckCircle.get()
         call2 = self.get_call()
         if call!=call2:
-            
             self.Clear_Log_Fields()
             self.call.insert(0,call)
             self.dup_check(call)
@@ -2957,7 +3004,9 @@ class GUI():
                 self.get_hint(call)
                 if self.P.AUTOFILL:
                     self.P.KEYING.insert_hint()
-
+        if self.P.SO2V:
+            self.sock.set_vfo(rx='A',tx='B')
+                    
     # Callback to request updated list of spots on the bandmap
     def UpdateBandmap(self):
         print('UPDATE BANDMAP - Requesting updated spot list ...')

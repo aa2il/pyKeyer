@@ -283,6 +283,12 @@ else:
 if P.sock.active:
     P.gui.status_bar.setText("Init Rig ...")
     print('PYKEYER - Init rig ...')
+
+    # Take care of VFOs
+    P.sock.set_vfo('A')
+    P.sock.set_vfo('A->B')
+    #SetVFO(self,'A')
+    #SetVFO(self,'A->B')
     
     # Set TX power
     P.sock.set_power(99)
