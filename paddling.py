@@ -54,6 +54,7 @@ class PADDLING_GUI():
         self.STAND_ALONE=STAND_ALONE
 
         # Inits
+        P.Ncalls = len(P.calls)
         self.letters=[]
         for i in range(26):
             self.letters.append( chr(i+ord('A')) )
@@ -491,7 +492,7 @@ class PADDLING_GUI():
             call1,name1,state1 = self.get_sprint_call()
             call1=call1.replace('/SK','/P')
             call2,name2,state2 = self.get_sprint_call()
-            call2=call1.replace('/SK','/M')
+            call2=call2.replace('/SK','/M')
             serial = str( random.randint(0,999) )
             i = random.randint(0,1)
             if i==0:
