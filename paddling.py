@@ -54,7 +54,6 @@ class PADDLING_GUI():
         self.STAND_ALONE=STAND_ALONE
 
         # Inits
-        P.Ncalls = len(P.calls)
         self.letters=[]
         for i in range(26):
             self.letters.append( chr(i+ord('A')) )

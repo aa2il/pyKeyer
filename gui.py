@@ -1030,7 +1030,7 @@ class GUI():
             spot['Offset']=foffset
 
             mode = self.sock.get_mode()
-            msg  = 'SPOT:'+call+':'+str(frq)+':'+mode
+            msg  = 'SPOT:'+call+':'+str(frqA)+':'+mode
             print('Save SPOT: Broadcasting spot:',msg)
             self.P.udp_server.Broadcast(msg)
 

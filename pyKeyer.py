@@ -239,6 +239,7 @@ P.gui.status_bar.setText("Loading Master Call History file ...")
 print('Loading Master History file ...')
 P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
 P.calls = list(P.MASTER.keys())
+P.Ncalls = len(P.calls)
 print('... Info for',len(P.calls),'calls were loaded.')
 
 # Actually create the GUI
