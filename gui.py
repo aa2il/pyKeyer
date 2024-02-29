@@ -1262,7 +1262,7 @@ class GUI():
 
         if arg in [1,4,5]:
             self.time_on = datetime.utcnow().replace(tzinfo=UTC)
-            print('TIME_ON set to',self.time_on.strftime('%H%M%S'))
+            print('TIME_ON A set to',self.time_on.strftime('%H%M%S'))
 
         # Keep track of what we last sent
         txt = self.macros[arg]["Text"]
@@ -1844,7 +1844,7 @@ class GUI():
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
             if self.P.contest_name=='Ragchew' or True:
-                print('LOG IT! TIME ON=',self.time_on)
+                print('LOG IT! TIME_ON B=',self.time_on.strftime('%H%M%S'))
                 if self.time_on:
                     date_on = self.time_on.strftime('%Y%m%d')
                     time_on = self.time_on.strftime('%H%M%S')
@@ -2131,7 +2131,7 @@ class GUI():
     def dup_check(self,call):
         #print('DUP_CHECK: call=',call,'\tmax age=',self.P.MAX_AGE)
         self.time_on = datetime.utcnow().replace(tzinfo=UTC)
-        #print('Time on=',self.time_on)
+        print('TIME_ON C set to',self.time_on.strftime('%H%M%S'))
 
         # Look for dupes
         self.match1=False                # True if there is matching call
@@ -2816,7 +2816,7 @@ class GUI():
 
             call=self.get_call().upper()
             self.time_on = datetime.utcnow().replace(tzinfo=UTC)
-            print('Updated Call=',call,'\ttime on=',self.time_on)
+            print('Updated Call=',call,'\tTIME_ON D=',self.time_on.strftime('%H%M%S'))
 
             # Update fldigi and check for dupes
             #self.sock.set_log_fields({'Call':call}) 

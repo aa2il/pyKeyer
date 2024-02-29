@@ -249,7 +249,7 @@ class SKCC_KEYING(DEFAULT_KEYING):
         
         gui.qth.delete(0, END)
         gui.exch.delete(0, END)
-        if len(h)>=1:
+        if len(h)>=2:
             if len( h[1] )>0:
                 gui.qth.insert(0,h[1])
             
