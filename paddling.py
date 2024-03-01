@@ -49,9 +49,8 @@ RANDOM_QSO_MODE=True
 
 # GUI for paddle (sending) practice
 class PADDLING_GUI():
-    def __init__(self,root,P,STAND_ALONE=False):
+    def __init__(self,root,P):
         self.P = P
-        self.STAND_ALONE=STAND_ALONE
 
         # Inits
         self.letters=[]
@@ -94,7 +93,7 @@ class PADDLING_GUI():
         self.root=self.win
 
         # Create spash screen
-        if self.STAND_ALONE:
+        if not P.gui:
             self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
             self.status_bar = self.splash.status_bar
             self.status_bar.setText("Howdy Ho!!!!!")
@@ -134,7 +133,7 @@ class PADDLING_GUI():
         row+=3
 
         # Create another txt box to put echo from keying device into
-        if self.STAND_ALONE:
+        if not P.gui:
             self.txt2 = Text(self.win, height=5, width=60, bg='white', font=font1)
             self.txt2.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
 
@@ -214,20 +213,30 @@ class PADDLING_GUI():
         Button(self.win, text="Quit",command=self.Quit) \
             .grid(row=row,column=col,sticky=E+W)
 
+        # Entry boxes for mock QSO
+        if not P.gui:
+            col=5
+            self.Call = Entry(self.root,font=font1,justify='center')
+            self.Call.grid(row=row,column=col,sticky=E+W)
+            self.Name = Entry(self.root,font=font1,justify='center')
+            self.Name.grid(row=row,column=col+1,sticky=E+W)
+            self.Rst = Entry(self.root,font=font1,justify='center')
+            self.Rst.grid(row=row,column=col+2,sticky=E+W)
+
         # Entry box to hold levenstien distance
         col=NCOLS-3
         lab = Label(self.win, text="Current",font=font1)
-        lab.grid(row=row,column=col,sticky=E+W)
+        lab.grid(row=row-1,column=col,sticky=E+W)
         self.LevDx = Entry(self.root,font=font1,\
-                           selectbackground='lightgreen',justify='center')
+                           background='lightgreen',justify='center')
         self.LevDx.grid(row=row,column=col,sticky=E+W)
 
         # Entry box to hold result from previous attempt
         col+=1
         lab = Label(self.win, text="Previous",font=font1)
-        lab.grid(row=row,column=col,sticky=E+W)
+        lab.grid(row=row-1,column=col,sticky=E+W)
         self.Prior = Entry(self.root,font=font1,\
-                           selectbackground='lightgreen',justify='center')
+                           background='lightgreen',justify='center')
         self.Prior.grid(row=row,column=col,sticky=E+W)
 
         # Make sure all columns are adjusted when we resize the width of the window
@@ -236,7 +245,7 @@ class PADDLING_GUI():
         
         # Bind callbacks for whenever a key is pressed or the mouse enters or leaves the window
         self.win.bind("<Key>", self.KeyPress )
-        if not self.STAND_ALONE:
+        if P.gui:
             self.win.bind("<Enter>", self.P.gui.Hoover )
             self.win.bind("<Leave>", self.P.gui.Leave )
             self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
@@ -250,13 +259,13 @@ class PADDLING_GUI():
         self.status_bar = StatusBar(self.root)
         self.status_bar.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
         self.status_bar.setText("Howdy Ho!")
-        if self.STAND_ALONE:
+        if not P.gui:
             self.root.deiconify()
             self.splash.destroy()
             self.root.update_idletasks()
 
         # Start the ball rolling with this window not visible
-        if not self.STAND_ALONE:
+        if P.gui:
             try:
                 self.SetWpm(0)
             except Exception as e: 
@@ -265,11 +274,19 @@ class PADDLING_GUI():
                 traceback.print_exc()
             self.hide()
 
-################################################################################
+    ################################################################################
+
+    # Some last minute inits that need to be done if keyer gui is being used
+    def final_inits(self):
+        P=self.P
+        if P.gui:
+            self.Call = P.gui.call
+            self.Name = P.gui.name
+            self.Rst  = P.gui.rstout
 
     # Callback to either hide or quit the paddling practice
     def Quit(self):
-        if self.STAND_ALONE:
+        if not P.gui:
             sys.exit(0)
         else:
             self.hide()
@@ -292,18 +309,20 @@ class PADDLING_GUI():
 
     # Callback for WPM spinner
     def SetWpm(self,dWPM=0):
+        P=self.P
         WPM=int( self.WPM_TXT.get() ) + dWPM
         print('SET WPM: WPM=',WPM)
         if WPM>5:
-            if self.P.LOCK_SPEED:
+            if P.LOCK_SPEED:
                 print('Paddling->SetWpm: LOCKED - Setting speed to WPM=',
                       WPM,'...')
-                self.P.keyer.set_wpm(WPM)
-                self.P.sock.set_speed(WPM)
+                P.keyer.set_wpm(WPM)
+                if P.sock:
+                    P.sock.set_speed(WPM)
             else:
                 print('Paddling->SetWpm: NANO - Setting speed to WPM=',
                       WPM,'...')
-                self.P.keyer_device.set_wpm(WPM,idev=2)
+                P.keyer_device.set_wpm(WPM,idev=2)
             self.WPM_TXT.set(str(WPM))
 
         # Get a new panagram, call, etc.
@@ -446,11 +465,11 @@ class PADDLING_GUI():
                     name = P.MASTER[call]['name']
                     done = len(call)>2 and len(name)>2
 
-                P.gui.call.delete(0,END)
-                P.gui.call.insert(0,call)
+                self.Call.delete(0,END)
+                self.Call.insert(0,call)
 
-                P.gui.name.delete(0,END)
-                P.gui.name.insert(0,name)
+                self.Name.delete(0,END)
+                self.Name.insert(0,name)
 
             # Pick RST at random
             i = random.randint(2, 10)
@@ -461,8 +480,8 @@ class PADDLING_GUI():
                 #print('rst1=',rst)
                 rst=cut_numbers('5'+str(i)+'9',3,True)
                 #print('rst2=',rst)
-            P.gui.rstout.delete(0,END)
-            P.gui.rstout.insert(0,rst)
+            self.Rst.delete(0,END)
+            self.Rst.insert(0,rst)
 
             # Select one of the template lines
             n=len(self.QSO_Template)
@@ -475,8 +494,9 @@ class PADDLING_GUI():
                 i=self.qso_ptr
             txt = self.QSO_Template[i]
             #print('QSO=',txt)
-            txt = self.P.gui.Patch_Macro(txt)
-            txt = self.P.gui.Patch_Macro2(txt)
+            if P.gui:
+                txt = P.gui.Patch_Macro(txt)
+                txt = P.gui.Patch_Macro2(txt)
             #print('QSO=',txt)
             
         elif Selection==8:
@@ -525,21 +545,22 @@ class PADDLING_GUI():
         self.down=True
         #print("NEW ITEM - txt=",txt)
         
-        if self.P.NANO_ECHO:
+        if P.NANO_ECHO:
             self.P.keyer.txt2morse(txt)
-        if self.STAND_ALONE:
+        if not P.gui:
             self.txt2.insert(END,'\n')
 
     # Routine to sift through call history and find a good complete sprint entry
     def get_sprint_call(self):
-        
+
+        P=self.P
         call=None
         while not call:
-            i = random.randint(0, self.P.Ncalls-1)
-            c = self.P.calls[i]
-            #print('GET SPRINT CALL:',i,c,self.P.MASTER[c])
-            name  = self.P.MASTER[c]['name'].replace('.','')
-            state = self.P.MASTER[c]['state']
+            i = random.randint(0, P.Ncalls-1)
+            c = P.calls[i]
+            #print('GET SPRINT CALL:',i,c,P.MASTER[c])
+            name  = P.MASTER[c]['name'].replace('.','')
+            state = P.MASTER[c]['state']
             #print('GET SPRINT CALL:',name,state)
             if len(name)>1 and len(state)>=2:
                 call=c
@@ -651,7 +672,7 @@ if __name__ == '__main__':
             # Init
             self.sock=None
             self.gui=None
-            self.LOCK_SPEED=False
+            self.LOCK_SPEED=True
             self.WPM=22
             self.PADDLE_WPM=22
             self.USE_KEYER=True
@@ -700,7 +721,7 @@ if __name__ == '__main__':
     P=PADDLING_PARAMS()
 
     # Create GUI
-    P.PaddlingWin = PADDLING_GUI(None,P,STAND_ALONE=True)
+    P.PaddlingWin = PADDLING_GUI(None,P)
 
     # Load master call list
     print('Reading master history file ...')
@@ -714,7 +735,8 @@ if __name__ == '__main__':
     # We need the keyer
     P.PaddlingWin.status_bar.setText('Opening keyer ...')
     P.keyer=cw_keyer.Keyer(P,P.WPM)
-    P.ser1=open_keying_port(P,True,1)
+    P.ser=open_keying_port(P,True,1)
+    P.PaddlingWin.SetWpm(0)
 
     # And away we go!
     P.PaddlingWin.status_bar.setText("Let's Rock!")

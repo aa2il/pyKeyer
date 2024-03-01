@@ -29,7 +29,7 @@ def master(P,call,dx_station=None,VERBOSITY=0):
 
     call=call.upper()
     if VERBOSITY>0:
-        print('HINT-MASTER: call=',call,len(P.calls))
+        print('HINT->MASTER: call=',call,len(P.calls))
     
     # Check for DX calls
     if (call not in P.calls) and dx_station and ('/' in call):
@@ -37,21 +37,21 @@ def master(P,call,dx_station=None,VERBOSITY=0):
     
     if call in P.calls:
         if VERBOSITY>0:
-            print('HINT-MASTER:',call,' is in master list')
+            print('HINT->MASTER:',call,' is in master list')
         if P.KEYING:
             h=P.KEYING.hint(call)
             try:
                 print(call,'\tmaster=',P.MASTER[call],'\nhint=',h)
             except:
-                print('HINT MASTER - I dont know what I am doing here',call)
+                print('HINT->MASTER - I dont know what I am doing here',call)
             return h
         else:
-            print('HINT.MASTER: No hints available for this contest')
+            print('HINT->MASTER: No hints available for this contest')
             return None
 
     else:
         if VERBOSITY>0:
-            print('HINT.MASTER:',call,' is NOT in master list')
+            print('HINT->MASTER:',call,' is NOT in master list')
         if dx_station:
             if P.contest_name=='CQWW':
                 return dx_station.cqz

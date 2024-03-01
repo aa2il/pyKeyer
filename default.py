@@ -399,20 +399,25 @@ class DEFAULT_KEYING():
             
         gui.name.delete(0,END)
         gui.info.delete(0,END)
+        self.NAME = ''
         try:
             self.NAME = P.MASTER[call]['name']
             gui.name.delete(0,END)
             gui.name.insert(0,self.NAME)
+            cwops = P.MASTER[call]['cwops']
+            if len(cwops)>0:
+                name=self.NAME+' '+cwops
+            else:
+                name=self.NAME
             gui.info.delete(0,END)
-            gui.info.insert(0,self.NAME)
+            gui.info.insert(0,name)
             gui.qth.delete(0,END)
             gui.qth.insert(0,qth)
         except Exception as e: 
-            print('Unable to retrieve NAME')
+            print('DEFAULT HINT: Unable to retrieve NAME')
             print( str(e) )
-            self.NAME = 'NO NAME'
 
-        print('DEFAU:FT HINT: txt=',txt)
+        print('DEFAULFT HINT: txt=',txt)
         return txt
 
     # Routine to get practice qso info
@@ -649,6 +654,7 @@ class DEFAULT_KEYING():
         gui=self.P.gui
 
         if h==None:
+            self.NAME=''
             h = gui.hint.get()              # Read hint box
             if h=='':
                 h = gui.get_hint()          # Nothing in hint box, try getting a hint

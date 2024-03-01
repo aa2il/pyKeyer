@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cw_keyer.py - Rev 1.0
-# Copyright (C) 2021-3 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Routines for translating keyboard strokes into CW chars.  The rig can be keyed
 # via the DTR line or, more reliably, via a nanoIO ardunino-based interface.
@@ -243,10 +243,14 @@ class Keyer():
                 print("SET_WPM: Setting NANO speed to ",wpm)
                 if self.P.LOCK_SPEED:  
                     self.P.keyer_device.set_wpm(wpm,idev=3)
-                    self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
+                    if self.P.gui:
+                        self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
+                    else:
+                        self.P.PaddlingWin.WPM_TXT.set(str(wpm))
                 else:
                     self.P.keyer_device.set_wpm(wpm)
-                self.P.gui.WPM_TXT.set(str(wpm))
+                if self.P.gui:
+                    self.P.gui.WPM_TXT.set(str(wpm))
 
     def txt2morse(self,msg):
         print('\nTXT2MORSE: msg=',msg)

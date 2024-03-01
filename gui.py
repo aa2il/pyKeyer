@@ -580,6 +580,7 @@ class GUI():
         self.status_bar.grid(row=row+1,rowspan=1,column=0,columnspan=self.ncols,sticky=E+W)
 
         # Set macros & restore the state from the last time in
+        self.PaddlingWin.final_inits()
         self.set_macros()
         self.RestoreState()
         
@@ -780,8 +781,9 @@ class GUI():
             self.sock.set_log_fields(fields)
         return fields
 
-    # callback to wipe out log fields
+    # Callback to wipe out log fields
     def Clear_Log_Fields(self):
+        print('CLEAR_LOG_FILEDS: ...')
         self.call.delete(0, END)
         self.call.configure(bg=self.default_color,fg='black')
         self.name.delete(0, END)
@@ -800,6 +802,7 @@ class GUI():
         self.prec.delete(0, END)
         self.check.delete(0, END)
         self.qsl_rcvd.set(0)
+        self.info.delete(0,END)
         
         self.prefill=False
         self.prev_call=''
@@ -1247,8 +1250,8 @@ class GUI():
     
     # Callback to send a pre-defined macro
     def Send_Macro(self,arg,state=0):
-        #print 'arg=',arg,self.macros.has_key(arg)
-        #print self.macros
+        print('SEND_MACRO: arg=',arg,'\t',arg in self.macros)
+        #print(self.macros)
         if arg not in self.macros:
             return
 
@@ -1316,7 +1319,7 @@ class GUI():
 
         # Send cw text 
         txt = self.Patch_Macro2(txt,state)
-        print('\nSend_Macro: txt=',txt)
+        print('\nSEND_MACRO: txt=',txt)
         self.Send_CW_Text(txt)
         
 
@@ -2410,10 +2413,11 @@ class GUI():
             print('HOVER: No Focus -',obj.WIN_NAME,'- Setting focus to',widget)
             try:
                 widget.focus_force()
-            except Exception as e: 
-                print("\n**** GUI->HOVER ERROR ***")
-                print('e=',e,'\n')
-                traceback.print_exc()
+            except Exception as e:
+                #print(' ')
+                print("**** GUI->HOVER ERROR ***")
+                #print('e=',e,'\n')
+                #traceback.print_exc()
 
     def Master(self,widget):
 
