@@ -51,8 +51,8 @@ class DX_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call' , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'Reply'    , 'Text' : 'TU [RST] '}
-        MACROS[5+12]  = {'Label' : 'Report'   , 'Text' : 'RTU [NAME] UR [RST] IN [MYSTATE] OP [MYNAME] [MYNAME] BK '}
-        MACROS[6]     = {'Label' : 'QTH'      , 'Text' : '[MYQTH] '}
+        MACROS[5+12]  = {'Label' : 'Report'   , 'Text' : 'TU [NAME] [RST] [MYSTATE] 73 '}
+        MACROS[6]     = {'Label' : 'QTH'      , 'Text' : '[MYSTATE] '}
         MACROS[6+12]  = {'Label' : 'AGN?'     , 'Text' : 'AGN?'}
         MACROS[7]    = {'Label' : 'LOG QSO'   , 'Text' : '[LOG]'}
         MACROS[7+12]  = {'Label' : 'RR'       , 'Text' : 'RR'}

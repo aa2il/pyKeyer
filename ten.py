@@ -28,6 +28,7 @@ from collections import OrderedDict
 from default import DEFAULT_KEYING
 from rig_io import CA_COUNTIES,arrl_sec2state
 from dx import Station
+from datetime import datetime
 
 ############################################################################################
 
@@ -42,7 +43,13 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,contest_name)
 
         if self.P.contest_name=='ARRL-DX':
-            P.CONTEST_ID='ARRL-DX-CW'
+            now = datetime.utcnow()
+            if now.month==3:
+                self.mode='SSB'
+            else:
+                self.mode='CW'
+            P.CONTEST_ID='ARRL-DX-'+self.mode
+            P.sock.set_mode(self.mode)
         elif self.P.contest_name=='ARRL-10M':
             P.CONTEST_ID='ARRL-10'
         elif self.P.contest_name=='CQ-160M':
@@ -62,12 +69,11 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         self.dxccs = OrderedDict(dxccs)
         self.init_scoring()
         
-    # Routient to set macros for this contest
+    # Routine to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYSTATE] '}
         #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
@@ -98,11 +104,14 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         P=self.P
 
         try:
-            state = P.MASTER[call]['state']
-            if state=='':
-                # Try deciphering from section info
-                sec   = P.MASTER[call]['fdsec']
-                state=arrl_sec2state(sec)
+            if self.P.contest_name=='ARRL-DX':
+                state=''
+            else:
+                state = P.MASTER[call]['state']
+                if state=='':
+                    # Try deciphering from section info
+                    sec   = P.MASTER[call]['fdsec']
+                    state=arrl_sec2state(sec)
             self.NAME = P.MASTER[call]['name']
         except:
             state=''
@@ -177,14 +186,14 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         col+=cspan
         cspan=1
         gui.rstin_lab.grid(column=col,columnspan=cspan,sticky=E+W)
-        gui.rstin.grid(column=col,columnspan=1)
+        gui.rstin.grid(column=col,columnspan=cspan)
         gui.rstin.delete(0,END)
         gui.rstin.insert(0,'5NN')
         
         col+=cspan
         cspan=1
         gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
-        gui.qth.grid(column=col,columnspan=col)
+        gui.qth.grid(column=col,columnspan=cspan)
 
         col+=cspan
         cspan=12-col
@@ -232,20 +241,30 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
     # Hint insertion
     def insert_hint(self,h=None):
 
-        #print('TEN->INSERT HINT - Why am I here?!?!?!?!?!?!?!?!?')
         gui=self.P.gui
 
         if h==None:
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
+
+        call=gui.get_call()
+        dx_station = Station(call)
+        country = dx_station.country
         
+        print('TEN->INSERT HINT: h=',h,'\tName=',self.NAME,'\tCountry=',country)
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
         if True:
             gui.info.delete(0, END)
-            gui.info.insert(0,self.NAME)
+            if self.NAME and len(self.NAME)>0:
+                if country:
+                    gui.info.insert(0,self.NAME+' - '+dx_station.country)
+                else:
+                    gui.info.insert(0,self.NAME)
+            elif country and len(country)>0:
+                gui.info.insert(0,dx_station.country)
         
     # On-the-fly scoring
     def scoring(self,qso):

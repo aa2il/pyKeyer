@@ -341,6 +341,7 @@ class PARAMS:
         self.USE_SCP       = args.scp
         self.AUTO_COMPLETE = args.autocomplete # or self.USE_SCP
         self.HIST          = {}
+        self.PTT           = False
 
         self.STATE_LIST=args.state
         self.STATE_QPs = ['BCQP','ONQP','QCQP','W1QP','W7QP','CPQP']

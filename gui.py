@@ -26,6 +26,7 @@ if sys.version_info[0]==3:
     from tkinter import *
     import tkinter.font
     import tkinter.messagebox
+    from tkinter import ttk
 else:
     from Tkinter import *
     import tkFont
@@ -502,11 +503,22 @@ class GUI():
             tip = ToolTip(self.SendBtn, ' Enable/Disable Immediate Text Sending ' )
         self.Toggle_Immediate_TX(1)
 
-        # Force rig into CW mode and set filters
-        self.CWBtn = Button(self.root, text='CW Mode',command=self.Set_CW_Mode,\
-                                  takefocus=0 ) 
-        self.CWBtn.grid(row=row,column=self.ncols-2)
-        tip = ToolTip(self.CWBtn, ' Set Rig into CW Mode ' )
+        # PTT button
+        self.PTTBtn = Button(self.root, text='  PTT  ',
+                             command=self.Toggle_PTT,\
+                             takefocus=0 ) 
+        self.PTTBtn.grid(row=row,column=self.ncols-3)
+        tip = ToolTip(self.PTTBtn, ' Push-To-Talk ' )
+        
+        # Force rig into a specific mode and set filters
+        self.MODE = StringVar()
+        self.MODE.set('CW')
+        self.ModeBox = ttk.Combobox(self.root, textvariable=self.MODE,
+                                    takefocus=0 )
+        self.ModeBox['values'] = ['CW','USB','LSB','FM']
+        self.ModeBox.bind('<<ComboboxSelected>>', self.Set_Rig_Mode)
+        self.ModeBox.grid(row=row,column=self.ncols-2)
+        tip = ToolTip(self.ModeBox, ' Set Rig Mode ' )
         
         # QRZ button
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
@@ -569,8 +581,10 @@ class GUI():
                 #spot['Call']   = None
                 spot['FreqA']   = None
                 spot['FreqB']   = None
+                spot['Mode']    = None
                 spot['Split']   = None
-                spot['Fields'] = None
+                spot['Ant']     = None
+                spot['Fields']  = None
                 self.spots.append(spot)
 
         # Status bar along the bottom
@@ -824,6 +838,20 @@ class GUI():
         rig=self.P.sock.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
 
+    # Callback to toggle PTT
+    def Toggle_PTT(self,iop=None):
+        if iop==None:
+            self.P.PTT = not self.P.PTT
+        print('TOOGLE PTT:',self.P.PTT,iop)
+        
+        # Manage button appearance
+        if self.P.PTT:
+            self.PTTBtn.configure(background='red',highlightbackground= 'red',relief='sunken')
+            self.P.sock.ptt(True)
+        else:
+            self.PTTBtn.configure(background='green',highlightbackground= 'green',relief='raised')
+            self.P.sock.ptt(False)
+        
     # Callback to toggle sending of text
     def Toggle_Immediate_TX(self,iop=None):
         if iop==None:
@@ -965,15 +993,16 @@ class GUI():
 
     # Callback to store & retrieve spotted freqs
     def Spots_cb(self,arg,idir):
-        print('\nSPOTS_CB:',arg,idir,self.last_shift_key)
+        print('\nSPOTS_CB: arg=',arg,'\tidir=',idir,'\tlast_shift=',self.last_shift_key)
 
         spot = self.spots[arg]
         if idir==0:
             # Not sure what this does but probably never get here!
             txt = spot['Button']['text']
             if txt=='--':
-                frqA = 1e-3*self.sock.get_freq(VFO='A') 
-                frqB = 1e-3*self.sock.get_freq(VFO='B') 
+                frqA  = 1e-3*self.sock.get_freq(VFO='A') 
+                frqB  = 1e-3*self.sock.get_freq(VFO='B') 
+                mode  = self.sock.get_mode()
                 split = self.sock.split_mode(-1)
                 ant = self.sock.get_ant()
                 if split:
@@ -982,17 +1011,19 @@ class GUI():
                     spot['Button']['text'] = "{:,.1f}".format(frq)
                 spot['FreqA']=frqA
                 spot['FreqB']=frqB
+                spot['Mode']=mode
                 spot['Split']=split
                 spot['Ant']=ant
                 spot['Fields'] = self.Read_Log_Fields()
             else:
-                #frq = float( txt.replace(',','') )
-                frqA = spot['FreqA']
-                frqB = spot['FreqB']
+                frqA  = spot['FreqA']
+                frqB  = spot['FreqB']
+                mode  = spot['Mode']
                 split = spot['Split']
-                ant = spot['Ant']
+                ant   = spot['Ant']
                 self.sock.set_freq(frqA,VFO='A')
                 self.sock.set_freq(frqB,VFO='B')
+                self.sock.set_mode(mode)
                 self.sock.set_ant(ant)
                 spot['Button']['text']='--'
                 self.Set_Log_Fields(spot['Fields'])
@@ -1002,37 +1033,38 @@ class GUI():
             spot['Button']['text'] = '--'
             spot['FreqA']   = None
             spot['FreqB']   = None
+            spot['Mode']    = None
             spot['Split']   = None
-            spot['Ant']    = None
-            spot['Fields'] = None
-            self.P.DIRTY   = True
+            spot['Ant']     = None
+            spot['Fields']  = None
+            self.P.DIRTY    = True
 
         elif idir==1:
             
             # Save
             call=self.get_call().upper()
-            frqA = 1e-3*self.sock.get_freq(VFO='A') 
-            frqB = 1e-3*self.sock.get_freq(VFO='B') 
+            frqA  = 1e-3*self.sock.get_freq(VFO='A') 
+            frqB  = 1e-3*self.sock.get_freq(VFO='B') 
+            mode  = self.sock.get_mode()
             split = self.sock.split_mode(-1)
-            ant = self.sock.get_ant()
+            ant   = self.sock.get_ant()
             if split:
                 spot['Button']['text'] = call+" {:,.1f} ".format(frqB)
             else:
                 spot['Button']['text'] = call+" {:,.1f} ".format(frqA)
-            spot['FreqA']=frqA
-            spot['FreqB']=frqB
-            spot['Split']=split
-            spot['Ant']=ant
+            spot['FreqA']  = frqA
+            spot['FreqB']  = frqB
+            spot['Mode']   = mode
+            spot['Split']  = split
+            spot['Ant']    = ant
             spot['Fields'] = self.Read_Log_Fields()
-            self.P.DIRTY = True
+            self.P.DIRTY   = True
 
-            #if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
             print('Save SPOT:',frqA,frqB,self.sock.rig_type,self.sock.fldigi_active)
             foffset=self.sock.modem_carrier()
             print('foffset=',foffset)
             spot['Offset']=foffset
 
-            mode = self.sock.get_mode()
             msg  = 'SPOT:'+call+':'+str(frqA)+':'+mode
             print('Save SPOT: Broadcasting spot:',msg)
             self.P.udp_server.Broadcast(msg)
@@ -1041,12 +1073,14 @@ class GUI():
             
             # Restore
             try:
-                frqA = spot['FreqA']
-                frqB = spot['FreqB']
+                frqA  = spot['FreqA']
+                frqB  = spot['FreqB']
+                mode  = spot['Mode']
                 split = spot['Split']
-                ant = spot['Ant']
+                ant   = spot['Ant']
                 self.sock.set_freq(frqA,VFO='A')
                 self.sock.set_freq(frqB,VFO='B')
+                self.sock.set_mode(mode)
                 self.sock.set_ant(ant)
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
@@ -1055,11 +1089,14 @@ class GUI():
 
                 if 'Offset' in spot:
                     foffset = spot['Offset']
-                    print('Restore SPOT:',frq,self.sock.rig_type,self.sock.fldigi_active,foffset)
+                    print('Restore SPOT:',frqA,self.sock.rig_type,
+                          self.sock.fldigi_active,foffset)
                     self.sock.modem_carrier(foffset)
                     
-            except:
-                pass
+            except Exception as e: 
+                print('Unable to restore spot')
+                print('e=',e,'\n')
+                traceback.print_exc()
 
     # Routine to substitute various keyer commands that are stable in macro text
     def Patch_Macro(self,txt):
@@ -1635,15 +1672,19 @@ class GUI():
 
     # Save program state
     def SaveState(self):
-        spots = []
-        frqsA = []
-        frqsB = []
+        spots  = []
+        frqsA  = []
+        frqsB  = []
+        modes  = []
         splits = []
-        flds  = []
+        ants   = []
+        flds   = []
         for spot in self.spots:
             spots.append( spot['Button']['text'] )
             frqsA.append( spot['FreqA'] )
             frqsB.append( spot['FreqB'] )
+            modes.append( spot['Mode'] )
+            ants.append( spot['Ant'] )
             splits.append( spot['Split'] )
             flds.append( spot['Fields'] )
         now = datetime.utcnow().replace(tzinfo=UTC)
@@ -1655,7 +1696,9 @@ class GUI():
                'spots'      : spots,
                'freqsA'     : frqsA,
                'freqsB'     : frqsB,
+               'modes'      : modes,
                'splits'     : splits,
+               'ants'       : ants,
                'fields'     : flds }
         print('STATE=',STATE)
         with open(self.P.WORK_DIR+'state.json', "w") as outfile:
@@ -1674,19 +1717,23 @@ class GUI():
 
         for i in range(len(self.spots)):
             self.spots[i]['Button']['text'] = '--'
-            self.spots[i]['FreqA']=None
-            self.spots[i]['FreqB']=None
-            self.spots[i]['Split']=None
-            self.spots[i]['Fields']=None
+            self.spots[i]['FreqA']  = None
+            self.spots[i]['FreqB']  = None
+            self.spots[i]['Mode']   = None
+            self.spots[i]['Split']  = None
+            self.spots[i]['Ant']    = None
+            self.spots[i]['Fields'] = None
             self.P.DIRTY = True
                 
     
     # Restore program state
     def RestoreState(self):
         try:
-            with open(self.P.WORK_DIR+'state.json') as json_data_file:
+            fname=self.P.WORK_DIR+'state.json'
+            print('\nRESTORE STATE: fname=',fname)
+            with open(fname) as json_data_file:
                 STATE = json.load(json_data_file)
-            print('STATE=',STATE)
+            print('\tSTATE=',STATE)
             now = datetime.utcnow().replace(tzinfo=UTC)
             if False:
                 with open('keyer.log', "a") as outfile3:
@@ -1725,17 +1772,21 @@ class GUI():
             if len(spots)>12*self.P.NUM_ROWS:
                 spots=spots[:12*self.P.NUM_ROWS]
             print('RestoreState: Spots=',spots)
-            frqsA = STATE['freqsA']
-            frqsB = STATE['freqsB']
+            frqsA  = STATE['freqsA']
+            frqsB  = STATE['freqsB']
+            modes  = STATE['modes']
             splits = STATE['splits']
-            flds = STATE['fields']
+            ants   = STATE['ants']
+            flds   = STATE['fields']
             for i in range(len(spots)):
                 print(i,len(spots),len(self.spots))
                 self.spots[i]['Button']['text'] = spots[i]
-                self.spots[i]['FreqA']=frqsA[i]
-                self.spots[i]['FreqB']=frqsB[i]
-                self.spots[i]['Split']=splits[i]
-                self.spots[i]['Fields']=flds[i]
+                self.spots[i]['FreqA']  = frqsA[i]
+                self.spots[i]['FreqB']  = frqsB[i]
+                self.spots[i]['Mode']   = modes[i]
+                self.spots[i]['Split']  = splits[i]
+                self.spots[i]['Ant']    = ants[i]
+                self.spots[i]['Fields'] = flds[i]
                 
         self.P.DIRTY=False
         #sys.exit(0)
@@ -2608,6 +2659,11 @@ class GUI():
             #if key=='Home' or (key=='r' and (alt or control)):
             self.P.KEYING.reverse_call_lookup()
 
+        elif key=='space' and (alt or control or True):
+
+            # Toggle PTT
+            self.Toggle_PTT()
+    
         elif (key=='Delete' and False) or (key in ['w','W'] and (alt or control)):
 
             # Erase entire entry box
@@ -2739,7 +2795,7 @@ class GUI():
                 print('Modified Function Key not supported',shift,control,alt)
                 
         else:
-            if len(key)>1 or alt or control:
+            if (len(key)>1 or alt or control) and True:
                 print('Key Press: Un-used key combo',key,alt,control)
                 
             # The entry change hasn't happened yet so just schedule updater
@@ -2904,11 +2960,17 @@ class GUI():
 ############################################################################################
 
     # Callback to force rig into CW mode
-    def Set_CW_Mode(self):
-        self.sock.set_mode('CW')
-        #self.P.ContestMode=True
-        #SetFilter(self.P)
-        self.sock.set_filter(['Narrow','200 Hz'],'CW')
+    def Set_Rig_Mode(self,evt):
+        mode = self.MODE.get()
+        self.sock.set_mode(mode)
+        if mode=='CW':
+            self.sock.set_filter(['Narrow','200 Hz'],'CW')
+        """
+        elif mode=='FM':
+            self.sock.set_filter(['Wide','2400 Hz'],'CW')
+        else:
+            self.sock.set_filter(['Narrow','1800 Hz'],'CW')
+        """
 
     # Callback for practice with computer text
     def PracticeCB(self):
