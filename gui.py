@@ -2963,6 +2963,7 @@ class GUI():
     def Set_Rig_Mode(self,evt):
         mode = self.MODE.get()
         self.sock.set_mode(mode)
+        self.P.udp_server.Broadcast('MODE:'+mode)
         if mode=='CW':
             self.sock.set_filter(['Narrow','200 Hz'],'CW')
         """
