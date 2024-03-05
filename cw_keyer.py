@@ -244,6 +244,7 @@ class Keyer():
                 if self.P.LOCK_SPEED:  
                     self.P.keyer_device.set_wpm(wpm,idev=3)
                     if self.P.gui:
+                        #print('P.gui=',self.P.gui)
                         self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
                     else:
                         self.P.PaddlingWin.WPM_TXT.set(str(wpm))

@@ -95,8 +95,8 @@ class PADDLING_GUI():
         # Create spash screen
         if not P.gui:
             self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
-            self.status_bar = self.splash.status_bar
-            self.status_bar.setText("Howdy Ho!!!!!")
+            self.status_bar2 = self.splash.status_bar
+            self.status_bar2.setText("Howdy Ho!!!!! Creating GUI ...")
         
         # Read list of Panagrams
         self.panagrams = read_text_file('Panagrams.txt')
@@ -259,11 +259,7 @@ class PADDLING_GUI():
         self.status_bar = StatusBar(self.root)
         self.status_bar.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
         self.status_bar.setText("Howdy Ho!")
-        if not P.gui:
-            self.root.deiconify()
-            self.splash.destroy()
-            self.root.update_idletasks()
-
+        
         # Start the ball rolling with this window not visible
         if P.gui:
             try:
@@ -275,6 +271,12 @@ class PADDLING_GUI():
             self.hide()
 
     ################################################################################
+
+    # Close splash and Show the gui
+    def show_gui(self):
+        self.root.deiconify()
+        self.splash.destroy()
+        self.root.update_idletasks()
 
     # Some last minute inits that need to be done if keyer gui is being used
     def final_inits(self):
@@ -725,7 +727,7 @@ if __name__ == '__main__':
 
     # Load master call list
     print('Reading master history file ...')
-    P.PaddlingWin.status_bar.setText('Reading master history file ...')
+    P.PaddlingWin.status_bar2.setText('Reading master history file ...')
     MY_CALL2 = P.SETTINGS['MY_CALL'].split('/')[0]
     P.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
     P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
@@ -733,15 +735,16 @@ if __name__ == '__main__':
     P.Ncalls = len(P.calls)
     
     # We need the keyer
-    P.PaddlingWin.status_bar.setText('Opening keyer ...')
+    P.PaddlingWin.status_bar2.setText('Opening keyer ...')
     P.keyer=cw_keyer.Keyer(P,P.WPM)
     P.ser=open_keying_port(P,True,1)
     P.PaddlingWin.SetWpm(0)
 
     # And away we go!
+    P.PaddlingWin.status_bar2.setText('Ready to rock ...')
+    P.PaddlingWin.show_gui()
     P.PaddlingWin.status_bar.setText("Let's Rock!")
     P.PaddlingWin.NewItem()
-    #P.PaddlingWin.show()
     timer = P.PaddlingWin.win.after(1000, check_keyer, P)
     mainloop()
 

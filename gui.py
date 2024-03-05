@@ -881,6 +881,7 @@ class GUI():
             self.So2vBtn.configure(relief='sunken')
 
             # Get antenna and tuner settings from VFO A
+            time.sleep(DELAY)
             self.sock.set_vfo('A')
             time.sleep(DELAY)
             ant=self.sock.get_ant()
