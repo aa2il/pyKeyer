@@ -19,7 +19,6 @@
 #
 ############################################################################################
 
-import traceback
 import sys
 import os
 if sys.version_info[0]==3:
@@ -72,7 +71,7 @@ from paddling import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
-from utilities import cut_numbers,freq2band,Oh_Canada
+from utilities import cut_numbers, freq2band, Oh_Canada, error_trap
 import pyautogui
 from widgets_tk import StatusBar,SPLASH_SCREEN
 
@@ -967,7 +966,7 @@ class GUI():
                 link = 'https://www.qrz.com/db/' + call
                 webbrowser.open(link, new=2)
 
-            self.qrzWin = CALL_INFO_GUI(self.root,self.P,call,self.last_qso)
+            self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],self.last_qso)
             #self.qrzWin.hide()
 
         if self.match1:
@@ -1094,10 +1093,8 @@ class GUI():
                           self.sock.fldigi_active,foffset)
                     self.sock.modem_carrier(foffset)
                     
-            except Exception as e: 
-                print('Unable to restore spot')
-                print('e=',e,'\n')
-                traceback.print_exc()
+            except: 
+                error_trap('GUI->SPOTS_CB -Unable to restore spot',1)
 
     # Routine to substitute various keyer commands that are stable in macro text
     def Patch_Macro(self,txt):
@@ -1220,7 +1217,7 @@ class GUI():
                     prefix1=stn1.call_prefix+stn1.call_number
                     print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
                 except:
-                    print('Problem getting prefix for STN1',call)
+                    error_trap('PATCH MACRO2 - Problem getting prefix for STN1'+call)
                     prefix1=''
                     
                 stn2 = Station(call2)
@@ -1228,7 +1225,7 @@ class GUI():
                     prefix2=stn2.call_prefix+stn2.call_number
                     print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
                 except:
-                    print('Problem getting prefix for STN2',call2)
+                    error_trap('PATCH MACRO2 - Problem getting prefix for STN2'+call2)
                     prefix2=''
 
                 # Only send back part that has changed, provided it is long enough
@@ -1350,10 +1347,8 @@ class GUI():
                 if name2==my_name and '[NAME] '+my_name in txt:
                     name2=' '
                 txt = txt.replace('[NAME]',name2).replace('  ',' ')
-            except Exception as e: 
-                print('Unable to retrieve NAME')
-                print('e=',e,'\n')
-                traceback.print_exc()
+            except:
+                error_trap('GUI->SEND MACRO - Unable to retrieve NAME')
 
         # Send cw text 
         txt = self.Patch_Macro2(txt,state)
@@ -1564,9 +1559,9 @@ class GUI():
                 self.P.MY_CNTR = max(1,int(cntr)+adj)
             self.counter.delete(0, END)
             self.counter.insert(0,str(self.P.MY_CNTR))
-        except Exception as e: 
-            print('*** GUI  - ERROR *** Unable to convert counter entry to int:',cntr)
-            print( str(e) )
+        except: 
+            print('\ncntr=',cntr)
+            error_trap('GUI->UPDATE COUNTER - Unable to convert counter')
             
         return True
 
@@ -1741,9 +1736,8 @@ class GUI():
                     outfile3.write('Restore State: \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
                     json.dump(STATE, outfile3)
                     outfile3.write('\n')
-        except Exception as e: 
-            print('RestoreState: Problem restoring state')
-            print( str(e) )
+        except: 
+            error_trap('GUI->RESTORE STATE: Problem restoring state')
             return
             
         now        = datetime.utcnow().replace(tzinfo=UTC)
@@ -1818,7 +1812,7 @@ class GUI():
                 self.q.get(False)
                 self.q.task_done()
         except:
-            pass                
+            error_trap('QUIT - Problem stopping keyer')
 
         # Loop through all the threads and close (join) them
         #print "Waiting for WatchDog to quit..."
@@ -1845,7 +1839,7 @@ class GUI():
             print('Destroying root window ...')
             self.root.destroy()
         except:
-            print('Failed to destroying root window ... Giving up!')
+            error_trap('QUIT - Failed to destroying root window ... Giving up!')
             sys.exit(0)
             
         show_threads()
@@ -2053,28 +2047,29 @@ class GUI():
                     #txt=qso2['CALL']+' '+qso2['FREQ']+' '+qso2['SRX_STRING']
                     txt=' '+call+' '+str(freq)+' '+exch+'\n'
                     self.txt.insert(END,txt)
-                except Exception as e: 
-                    print('GUI: ERROR writing logged info to big text box')
-                    print( str(e) )
-                    #print('qso2=',qso2)
+                except: 
+                    error_trap('GUI->LOG QSO: ERROR writing logged info to big text box')
+                    
             self.P.gui.status_bar.setText('Contact with '+call+' Logged!!!')
                     
             # On the fly scoring
             try:
                 self.P.KEYING.scoring(qso)
-            except Exception as e: 
-                print('Failed to update score :-(')
-                print('e=',e,'\n')
-                traceback.print_exc()
+            except: 
+                error_trap('GUI->LOG QSO: Failed to update score :-(',1)
 
             # Clobber any presets that have this call
             idx=0
             for spot in self.spots:
                 #print idx,spot
                 try:
-                    call2 = spot['Fields']['Call'].upper()
+                    if spot['Fields']:
+                        call2 = spot['Fields']['Call'].upper()
+                    else:
+                        continue
                 except:
-                    call2 = None
+                    error_trap('LOG QSO - ????????????')
+                    continue
                 if call==call2:
                     print('@@@@@@@@@@@@@ Clobbering spot @@@@@@@@@@@@@@@@@@@@@',idx,spot)
                     self.Spots_cb(idx,-1)
@@ -2108,10 +2103,8 @@ class GUI():
         if self.P.SO2V:
             try:
                 SetVFO(self,'A')
-            except Exception as e: 
-                print('Unable to set VFO to A')
-                print('e=',e,'\n')
-                traceback.print_exc()
+            except: 
+                error_trap('GUI->LOG QSO: Unable to set VFO to A',1)
 
         # Save the current state
         self.SaveState()        
@@ -2165,9 +2158,9 @@ class GUI():
                     date_off = datetime.strptime( doff+" "+toff, \
                                 "%Y%m%d %H%M%S") \
                                 .replace(tzinfo=UTC)
-                except Exception as e: 
-                    print('Problem with qso=',qso)
-                    print( str(e) )
+                except: 
+                    error_trap('GUI->QSO RATE: Problem with qso=')
+                    print('qso',qso)
                     continue
                 
                 age = (now - date_off).total_seconds() # In seconds
@@ -2403,10 +2396,13 @@ class GUI():
             #parent_name = focus.winfo_parent()
             #parent = focus._nametowidget(parent_name)
             obj2 = self.Master(focus)
-            parent=obj2.root
+            if obj2:
+                parent=obj2.root
+            else:
+                parent=None
         except:
+            error_trap('HOVER: Probably outside keyer app?')
             parent=None
-            print('HOVER: Probably outside keyer app?')
 
         if DEBUG:
             print('HOVER: Mouse entering ',obj.WIN_NAME,'- widget',widget,
@@ -2465,11 +2461,8 @@ class GUI():
             print('HOVER: No Focus -',obj.WIN_NAME,'- Setting focus to',widget)
             try:
                 widget.focus_force()
-            except Exception as e:
-                #print(' ')
-                print("**** GUI->HOVER ERROR ***")
-                #print('e=',e,'\n')
-                #traceback.print_exc()
+            except:
+                error_trap('GUI->HOVER ERROR')
 
     def Master(self,widget):
 

@@ -77,7 +77,7 @@ class SST_KEYING(DEFAULT_KEYING):
             MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
             MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
 
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] 73EE [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] ESE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -270,6 +270,7 @@ class SST_KEYING(DEFAULT_KEYING):
             idx1 = SST_SECS.index(qth)
         except:
             self.P.gui.status_bar.setText('Unrecognized/invalid section!')
+            error_trap('SST->SCORING - Unrecognized/invalid section!')
             return
         self.sec_cnt[idx1,idx] = 1
         

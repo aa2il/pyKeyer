@@ -22,7 +22,7 @@
 
 import sys
 from nano_io import *
-import traceback
+from utilities import error_trap
 
 ################################################################################
 
@@ -169,7 +169,8 @@ def open_keying_port(P,sock,rig_num):
                 sys.exit(0)
             P.keyer_device = KEYING_DEVICE(P,device,protocol,baud=BAUD_KEYER)
             ser = P.keyer_device.ser
-        except Exception as e: 
+        except: 
+            error_trap('KEYING->OPEN KEYING PORT',1)
             print('\n*************************************')
             print(  '*** Unable to open Nano IO device ***')
             print(  '***  Make sure it is plugged in   ***')
@@ -177,8 +178,6 @@ def open_keying_port(P,sock,rig_num):
             print(  '*************************************')
             print(  '***          Giving up            ***')
             print('*************************************\n')
-            print( str(e) )
-            traceback.print_exc()
             sys.exit(0)
 
             
@@ -217,8 +216,8 @@ def open_keying_port(P,sock,rig_num):
                 time.sleep(1)
                 ser.setDTR(False)
                 ser.setRTS(False)  
-            except Exception as e: 
-                print( str(e) )
+            except: 
+                error_trap('KEYING->OPEN KEYING PORT')
                 print('\n*************************************')
                 print('Unable to open keying port for rig',rig_num)
                 print('*************************************')

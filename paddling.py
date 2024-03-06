@@ -32,11 +32,10 @@ import time
 import random
 from nano_io import *
 from fileio import read_text_file
-from utilities import cut_numbers
+from utilities import cut_numbers,error_trap
 from pprint import pprint
 import Levenshtein
 from keying import *
-import traceback
 from widgets_tk import StatusBar,SPLASH_SCREEN
 
 ################################################################################
@@ -264,10 +263,8 @@ class PADDLING_GUI():
         if P.gui:
             try:
                 self.SetWpm(0)
-            except Exception as e: 
-                print('\n*** WARNING - PADDLING GUI - Problem setting initial WPM ***')
-                print('e=',e,'\n')
-                traceback.print_exc()
+            except:
+                error_trap('PADDLING GUI - Problem setting initial WPM',1)
             self.hide()
 
     ################################################################################

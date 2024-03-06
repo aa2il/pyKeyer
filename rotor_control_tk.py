@@ -166,9 +166,8 @@ class ROTOR_CONTROL():
                 print('bearing=',bearing)
                 self.azlcd2.set(bearing)
                 self.setRotorAz(bearing)
-            except Exception as e: 
-                print('Problem computing bearing for',self.MY_GRID,txt)
-                print( str(e) )
+            except:
+                error_trap('NEW GRID SQUARE - Problem computing bearing for '+self.MY_GRID,txt)
 
     # Function to give nominal direction info
     def nominalBearing(self):

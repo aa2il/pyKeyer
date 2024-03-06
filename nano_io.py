@@ -95,7 +95,7 @@
 import sys
 import serial
 import time
-from utilities import find_serial_device,list_all_serial_devices,show_hex
+from utilities import find_serial_device,list_all_serial_devices,show_hex,error_trap
 import termios
 
 ############################################################################################
@@ -290,9 +290,8 @@ class KEYING_DEVICE():
     def send_command(self,txt):
         try:
             self.nano_write(self.delim+txt)
-        except Exception as e: 
-            print('SEND NANO COMMAND: Problem with write - giving up')
-            print( str(e) )
+        except: 
+            error_trap('SEND NANO COMMAND: Problem with write - giving up')
 
     # Read responses from the nano IO
     def nano_read(self,echo=False):
@@ -314,8 +313,8 @@ class KEYING_DEVICE():
                     print('NANO READ ECHO:',txt1,'\t',len(txt1),
                           '\n',show_hex(txt1),
                           '\n',txt,'\t',show_hex(txt),'\t',len(txt))
-            except Exception as e: 
-                print('NANO READ ECHO Error:',str(e) )
+            except:
+                error_trap('NANO READ ECHO ERROR')
                 
         if echo:
             print('NANO READ ECHO:',txt,'\t',show_hex(txt))

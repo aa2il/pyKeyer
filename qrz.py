@@ -37,82 +37,82 @@ from dx import Station
 #########################################################################################
 
 class CALL_INFO_GUI():
-    def __init__(self,root,P,call,qso):
+    def __init__(self,root,P,calls,qso):
         self.P = P
 
-        """
-        try:
-            info=P.MASTER[call]
-            print('CALL_LOOKUP:',call,' is in master list')
-        except:
-            print('CALL_LOOKUP:',call,' is not in master list')
-            info = OrderedDict()
-        #print('info=',info,len(info))
-        """
-
-        if call in P.MASTER.keys():
-            print('CALL_LOOKUP:',call,' is in master list')
-            info=P.MASTER[call]
-        else:
-            print('CALL_LOOKUP:',call,' is not in master list')
-            info = OrderedDict()
-            if '/' in call:
-                dx_station = Station(call)
-                call2=dx_station.homecall
-                if call2 in P.MASTER.keys():
-                    print('CALL_LOOKUP:',call2,' is in master list')
-                    info=P.MASTER[call2]
+        infos=[]
+        for call in calls:
+            call=call.replace(',','')
+            if call in P.MASTER.keys():
+                print('CALL_LOOKUP:',call,' is in master list')
+                info=P.MASTER[call]
+            else:
+                print('CALL_LOOKUP:',call,' is not in master list')
+                info = OrderedDict()
+                if '/' in call:
+                    dx_station = Station(call)
+                    call2=dx_station.homecall
+                    if call2 in P.MASTER.keys():
+                        print('CALL_LOOKUP:',call2,' is in master list')
+                        info=P.MASTER[call2]
+            infos.append(info)
+        #print('infos=',infos,len(infos))
 
         if root:
             self.win=Toplevel(root)
         else:
             self.win = Tk()
-        self.win.title("Call Info -"+call)
+        self.win.title("Call Info -".join(calls))
 
-        self.tabs = ttk.Notebook(self.win)
-        self.tab1 = Frame(self.tabs)
-        self.tabs.add(self.tab1, text='Info')
-        if qso:
-            self.tab2 = Frame(self.tabs)
-            self.tabs.add(self.tab2, text='Last QSO')
-        self.tabs.pack(expand=1, fill="both")
+        self.book = ttk.Notebook(self.win)
+        self.tabs=[]
+        for call,info in zip(calls,infos):
+            call=call.replace(',','')
+            
+            #print('info=',info)
+            tab = Frame(self.book)
+            self.tabs.append(tab)
+            self.book.add(tab, text='Info')
 
-        # Info from master list
-        row=0
-        lb=Label(self.tab1, text='Call: ',justify=LEFT)
-        lb.grid(row=row,column=0,sticky=W)
-        self.call = Entry(self.tab1,justify=CENTER)
-        self.call.grid(row=row,column=1,sticky=E+W)
-        #self.call.delete(0, END)
-        self.call.insert(0,call)
+            # Info from master list
+            row=0
+            lb=Label(tab, text='Call: ',justify=LEFT)
+            lb.grid(row=row,column=0,sticky=W)
+            self.call = Entry(tab,justify=CENTER)
+            self.call.grid(row=row,column=1,sticky=E+W)
+            self.call.insert(0,call)
 
-        for key in info.keys():
-            row+=1
-            txt=key[0].upper() + key[1:] +': '
-            lb=Label(self.tab1, text=txt,justify=LEFT)
-            lb.grid(row=row, column=0,sticky=W)
-            e = Entry(self.tab1,justify=CENTER)
-            e.grid(row=row,column=1,sticky=E+W)
-            e.insert(0,info[key])
+            for key in info.keys():
+                row+=1
+                txt=key[0].upper() + key[1:] +': '
+                lb=Label(tab, text=txt,justify=LEFT)
+                lb.grid(row=row, column=0,sticky=W)
+                e = Entry(tab,justify=CENTER)
+                e.grid(row=row,column=1,sticky=E+W)
+                e.insert(0,info[key])
         
-        row+=1
-        button = Button(self.tab1, text="Dismiss",command=self.Dismiss)
-        button.grid(row=row,column=0,columnspan=2,sticky=E+W)
+            row+=1
+            button = Button(tab, text="Dismiss",command=self.Dismiss)
+            button.grid(row=row,column=0,columnspan=2,sticky=E+W)
 
         # Info from last qso
         if qso:
+            tab = Frame(self.book)
+            self.book.add(tab, text='Last QSO')
+            
             row=0
             for key in qso.keys():
-                lb=Label(self.tab2, text=key,justify=LEFT)
+                lb=Label(tab, text=key,justify=LEFT)
                 lb.grid(row=row, column=0,sticky=W)
-                e = Entry(self.tab2,justify=CENTER)
+                e = Entry(tab,justify=CENTER)
                 e.grid(row=row,column=1,sticky=E+W)
                 e.insert(0,qso[key])
                 row+=1
                 
-            button = Button(self.tab2, text="Dismiss",command=self.Dismiss)
+            button = Button(tab, text="Dismiss",command=self.Dismiss)
             button.grid(row=row,column=0,columnspan=2,sticky=E+W)
         
+        self.book.pack(expand=1, fill="both")
         self.win.protocol("WM_DELETE_WINDOW", self.Dismiss)        
 
         
@@ -146,24 +146,27 @@ if __name__ == '__main__':
             
     # Command line args
     arg_proc = argparse.ArgumentParser(description='QRZ???')
-    arg_proc.add_argument('call',type=str)
+    #arg_proc.add_argument('call',type=str)
+    arg_proc.add_argument("call", help="Call(s) worked",
+                          type=str,default=None,nargs='*')
     arg_proc.add_argument('-cwops', action='store_true',
                               help='CWops Reverse Lookup')
     args = arg_proc.parse_args()
-    call = args.call.upper()
-    print('call=',call)
+    calls = list(map(str.upper,args.call))   #.upper()
+    print('calls=',calls)
 
     # Reverse member no. lookup for CWops
-    if args.cwops or call.isdigit():
+    if args.cwops or calls[0].isdigit():
         MASTER,junk = load_history('~/Python/history/data/Shareable CWops data.xlsx')
+        num=calls[0]
         calls=[]
-        num=call
         for c in MASTER.keys():
             num2 = MASTER[c]['cwops']
             if num==num2:
                 calls.append(c)
-        print(calls)
-        call=calls[0]
+        print('calls=',calls,calls[0],len(calls))
+        print(calls[0])
+        #sys.exit(0)
 
     # Read config file
     P=QRZ_PARAMS()
@@ -185,13 +188,13 @@ if __name__ == '__main__':
             qsos1 = parse_adif(fname)
 
         for qso in qsos1:
-            if qso['call']==call:
+            if qso['call'] in calls:
                 last_qso=qso
             
         QSOs = QSOs + qsos1
     
     print("\nThere are ",len(QSOs)," input QSOs ...")
     
-    qrzWin = CALL_INFO_GUI(None,P,call,last_qso)
+    qrzWin = CALL_INFO_GUI(None,P,calls,last_qso)
     mainloop()
 

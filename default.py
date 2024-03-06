@@ -23,7 +23,7 @@ import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
-from utilities import cut_numbers,reverse_cut_numbers
+from utilities import cut_numbers,reverse_cut_numbers,error_trap
 from dx import Station
 from datetime import datetime
 import Levenshtein
@@ -32,10 +32,10 @@ from scp import *
 from datetime import datetime, date, tzinfo
 import time
 import pytz
-UTC = pytz.utc
 
 ############################################################################################
 
+UTC = pytz.utc
 VERBOSITY=0
 
 ############################################################################################
@@ -414,8 +414,7 @@ class DEFAULT_KEYING():
             gui.qth.delete(0,END)
             gui.qth.insert(0,qth)
         except Exception as e: 
-            print('DEFAULT HINT: Unable to retrieve NAME')
-            print( str(e) )
+            error_trap('DEFAULT HINT: Unable to retrieve NAME')
 
         print('DEFAULFT HINT: txt=',txt)
         return txt

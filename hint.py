@@ -19,6 +19,7 @@
 #
 ############################################################################################
 
+from utilities import error_trap
 from rig_io import CA_COUNTIES   
 
 ############################################################################################
@@ -43,7 +44,7 @@ def master(P,call,dx_station=None,VERBOSITY=0):
             try:
                 print(call,'\tmaster=',P.MASTER[call],'\nhint=',h)
             except:
-                print('HINT->MASTER - I dont know what I am doing here',call)
+                error_trap('HINT->MASTER - I dont know what I am doing here'+call,1)
             return h
         else:
             print('HINT->MASTER: No hints available for this contest')

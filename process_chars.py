@@ -23,7 +23,7 @@
 import time
 from nano_io import *
 from tkinter import END
-import traceback
+from utilities import error_trap
 
 ################################################################################
 
@@ -70,9 +70,8 @@ def process_chars(P):
                         print('PROCESSS_CHARS: Set WPM=',WPM)
                         keyer.set_wpm(WPM)
                         P.gui.WPM_TXT.set(str(WPM))
-                except Exception as e: 
-                    print('PROCESS CHARS - Unable to check radio keyer speed')
-                    print( str(e) )
+                except: 
+                    error_trap('PROCESS CHARS - Unable to check radio keyer speed')
 
             print('PROCESSS_CHARS: txt=',txt,'\tWPM=',keyer.WPM)
 
@@ -153,10 +152,8 @@ def process_chars(P):
                     else:
                         time.sleep(0.1)
                         
-                except Exception as e: 
-                    print("\nPROCESS CHARS - *** ERROR ***")
-                    print('e=',e,'\n')
-                    traceback.print_exc()
+                except: 
+                    error_trap('PROCESS CHARS - ?????',1)
                     time.sleep(0.1)
 
                     
