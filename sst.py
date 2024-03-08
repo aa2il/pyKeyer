@@ -47,7 +47,6 @@ class SST_KEYING(DEFAULT_KEYING):
 
         # On-the-fly scoring - NEW!
         self.nqsos=0
-        self.calls=set([])
         self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for pratice mode
         self.sec_cnt = np.zeros((len(SST_SECS),len(self.BANDS)),dtype=np.int)
         self.init_scoring()
