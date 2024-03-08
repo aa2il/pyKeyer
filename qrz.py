@@ -31,8 +31,8 @@ else:
     import tkFont
 import time
 from collections import OrderedDict
-#from dx.spot_processing import Station
 from dx import Station
+from datetime import datetime
 
 #########################################################################################
 
@@ -84,7 +84,7 @@ class CALL_INFO_GUI():
 
             for key in info.keys():
                 row+=1
-                txt=key[0].upper() + key[1:] +': '
+                txt=key.title()
                 lb=Label(tab, text=txt,justify=LEFT)
                 lb.grid(row=row, column=0,sticky=W)
                 e = Entry(tab,justify=CENTER)
@@ -102,11 +102,20 @@ class CALL_INFO_GUI():
             
             row=0
             for key in qso.keys():
-                lb=Label(tab, text=key,justify=LEFT)
+                txt=key.replace('_',' ').title()
+                lb=Label(tab, text=txt,justify=LEFT)
                 lb.grid(row=row, column=0,sticky=W)
                 e = Entry(tab,justify=CENTER)
                 e.grid(row=row,column=1,sticky=E+W)
-                e.insert(0,qso[key])
+
+                txt2=qso[key]
+                if 'date' in key:
+                    date = datetime.strptime(txt2,'%Y%m%d')
+                    txt2 = date.strftime('%m-%d-%Y')
+                elif 'time' in key:
+                    date = datetime.strptime(txt2,'%H%M%S')
+                    txt2 = date.strftime('%H:%M:%S')
+                e.insert(0,txt2)
                 row+=1
                 
             button = Button(tab, text="Dismiss",command=self.Dismiss)

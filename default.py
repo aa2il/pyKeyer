@@ -570,7 +570,7 @@ class DEFAULT_KEYING():
         
         if not gui.contest:
             col+=cspan
-            cspan=2
+            cspan=3
             gui.notes_lab.grid(column=col,columnspan=cspan)
             gui.notes.grid(column=col,columnspan=cspan)
             gui.boxes.append(gui.notes)
