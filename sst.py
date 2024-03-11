@@ -104,6 +104,7 @@ class SST_KEYING(DEFAULT_KEYING):
 
         name  = P.MASTER[call]['name']
         state = P.MASTER[call]['state']
+                    
         if VERBOSITY>0:
             print('SST_KEYEING - Hint:',name+' '+state)
         return name+' '+state
@@ -129,7 +130,7 @@ class SST_KEYING(DEFAULT_KEYING):
 
             txt2  = ' '+name+' '+qth
             return txt2
-            
+        
     # Error checking
     def error_check(self):
         P=self.P
@@ -246,14 +247,18 @@ class SST_KEYING(DEFAULT_KEYING):
             h = gui.hint.get()
         if type(h) == str:
             h = h.split(' ')
-        #print('SST INSERT_HINT: h2=',h)
+        print('SST INSERT_HINT: h2=',h)
 
         gui.name.delete(0, END)
         gui.qth.delete(0, END)
         if len(h)>=1:
-            gui.name.insert(0,h[0])
+            name=h[0]
+            gui.name.insert(0,name)
             if len(h)>=2:
                 gui.qth.insert(0,h[1])
+
+        #self.set_info_box()
+        
         
     # On-the-fly scoring
     def scoring(self,qso):

@@ -70,12 +70,15 @@ class PADDLING_GUI():
         self.item=''
         self.response=''
         
-        self.STRICT_MODE=False
-        self.CASUAL_MODE=False
         self.dxs=[]
         self.ntries=1
         self.down=True
         self.last_txt=None
+        self.CASUAL_MODE=False
+        if not P.gui:
+            self.STAND_ALONE=True
+        else:
+            self.STAND_ALONE=False
 
         self.suffixes=['/M','/P','/QRP','/MM']
         for i in range(10):
@@ -92,7 +95,7 @@ class PADDLING_GUI():
         self.root=self.win
 
         # Create spash screen
-        if not P.gui:
+        if self.STAND_ALONE:
             self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
             self.status_bar2 = self.splash.status_bar
             self.status_bar2.setText("Howdy Ho!!!!! Creating GUI ...")
@@ -132,7 +135,7 @@ class PADDLING_GUI():
         row+=3
 
         # Create another txt box to put echo from keying device into
-        if not P.gui:
+        if self.STAND_ALONE:
             self.txt2 = Text(self.win, height=5, width=60, bg='white', font=font1)
             self.txt2.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
 
@@ -197,15 +200,17 @@ class PADDLING_GUI():
         Button(self.win, text="Next",command=self.NextItem) \
             .grid(row=row,column=col,sticky=E+W)
 
-        # ... to toggle STRICT Mode ...
+        # ... and to toggle STRICT Mode ...
         col+=1
         self.StrictBtn=Button(self.win, text="Strict",command=self.toggle_strict)
         self.StrictBtn.grid(row=row,column=col,sticky=E+W)
+        self.toggle_strict(1)
 
-        # ... to toggle CASUAL Mode ...
+        # ... and to toggle CASUAL Mode ...
         col+=1
         self.CasualBtn=Button(self.win, text="Casual",command=self.toggle_casual)
         self.CasualBtn.grid(row=row,column=col,sticky=E+W)
+        self.toggle_casual(0)
 
         # ... and to Quit
         col=NCOLS-1
@@ -213,7 +218,7 @@ class PADDLING_GUI():
             .grid(row=row,column=col,sticky=E+W)
 
         # Entry boxes for mock QSO
-        if not P.gui:
+        if self.STAND_ALONE:
             col=5
             self.Call = Entry(self.root,font=font1,justify='center')
             self.Call.grid(row=row,column=col,sticky=E+W)
@@ -244,7 +249,7 @@ class PADDLING_GUI():
         
         # Bind callbacks for whenever a key is pressed or the mouse enters or leaves the window
         self.win.bind("<Key>", self.KeyPress )
-        if P.gui:
+        if not self.STAND_ALONE:
             self.win.bind("<Enter>", self.P.gui.Hoover )
             self.win.bind("<Leave>", self.P.gui.Leave )
             self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
@@ -260,7 +265,7 @@ class PADDLING_GUI():
         self.status_bar.setText("Howdy Ho!")
         
         # Start the ball rolling with this window not visible
-        if P.gui:
+        if not self.STAND_ALONE:
             try:
                 self.SetWpm(0)
             except:
@@ -587,8 +592,11 @@ class PADDLING_GUI():
 ################################################################################
 
     # Callback to toggle STRICT_MODE
-    def toggle_strict(self):
-        self.STRICT_MODE = not self.STRICT_MODE
+    def toggle_strict(self,onoff=None):
+        if onoff==None:
+            self.STRICT_MODE = not self.STRICT_MODE
+        else:
+            self.STRICT_MODE = onoff>0
         if self.STRICT_MODE:
             self.StrictBtn.configure(relief='sunken')
             if self.CASUAL_MODE:
@@ -597,8 +605,11 @@ class PADDLING_GUI():
             self.StrictBtn.configure(relief='raised')
         
     # Callback to toggle CASUAL_MODE
-    def toggle_casual(self):
-        self.CASUAL_MODE = not self.CASUAL_MODE
+    def toggle_casual(self,onoff=None):
+        if onoff==None:
+            self.CASUAL_MODE = not self.CASUAL_MODE
+        else:
+            self.CASUAL_MODE = onoff>0
         if self.CASUAL_MODE:
             self.CasualBtn.configure(relief='sunken')
             if self.STRICT_MODE:

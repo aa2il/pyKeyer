@@ -40,9 +40,10 @@ class SKCC_KEYING(DEFAULT_KEYING):
 
         P.CONTEST_ID='SKCC'
         self.number_key='skccnr'
+        self.my_skcc=str(P.SETTINGS['MY_SKCC'])
 
         P.gui.info.delete(0, END)
-        P.gui.info.insert(0,str(P.SETTINGS['MY_SKCC']))
+        P.gui.info.insert(0,self.my_skcc)
 
         
     # Routine to set macros for this contest
@@ -82,6 +83,7 @@ class SKCC_KEYING(DEFAULT_KEYING):
         name  = P.MASTER[call]['name']
         state = P.MASTER[call]['state']
         num   = P.MASTER[call]['skccnr']
+        cwops = P.MASTER[call]['cwops']
         if VERBOSITY>0:
             print('SKCC_KEYEING - Hint:',name+' '+state+' '+num)
         return name+' '+state+' '+num
@@ -152,7 +154,7 @@ class SKCC_KEYING(DEFAULT_KEYING):
     # Specific contest exchange for skcc
     def enable_boxes(self,gui):
 
-        gui.contest=True
+        gui.contest=False
         gui.hide_all()
 
         col=0
@@ -172,7 +174,7 @@ class SKCC_KEYING(DEFAULT_KEYING):
         gui.qth_lab.grid(column=col,columnspan=cspan)
         gui.qth.grid(column=col,columnspan=cspan)
         col+=cspan
-        cspan=1
+        cspan=2
         gui.name_lab.grid(column=col,columnspan=cspan)
         gui.name.grid(column=col,columnspan=cspan)
         col+=cspan
@@ -257,4 +259,5 @@ class SKCC_KEYING(DEFAULT_KEYING):
                 if len( h[2] )>0:
                     gui.exch.insert(0,h[2])
 
-
+        self.set_info_box(self.my_skcc+' :')
+        

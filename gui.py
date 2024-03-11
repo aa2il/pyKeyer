@@ -776,9 +776,9 @@ class GUI():
     # callback to read log fields and optionally send to fldigi
     def Read_Log_Fields(self,send2fldigi=True):
         print("Read_Log_Fields ...")
-        call=self.get_call()
-        name=self.get_name()
-        qth=self.get_qth()
+        call    = self.get_call()
+        name    = self.get_name()
+        qth     = self.get_qth()
         rst_in  = self.get_rst_in()
         rst_out = self.get_rst_out()
         cat     = self.get_cat()
@@ -1085,8 +1085,12 @@ class GUI():
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
                 self.dup_check(call)
-                self.auto_fill(call,'')
+                #self.auto_fill(call,'')
 
+                print('Restore SPOT: frqA/B=',frqA,frqB,'\tmode=',mode,
+                      '\tsplit=',split,'\tant=',ant,
+                      '\n\tFields=',spot['Fields'])
+                
                 if 'Offset' in spot:
                     foffset = spot['Offset']
                     print('Restore SPOT:',frqA,self.sock.rig_type,
@@ -1661,6 +1665,7 @@ class GUI():
         #print('GET_HINT: h=',h)
         if h:
             self.hint.insert(0,h)
+        self.P.KEYING.set_info_box()
         self.last_hint=h
 
         return h

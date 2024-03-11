@@ -413,8 +413,8 @@ class DEFAULT_KEYING():
             gui.info.insert(0,name)
             gui.qth.delete(0,END)
             gui.qth.insert(0,qth)
-        except Exception as e: 
-            error_trap('DEFAULT HINT: Unable to retrieve NAME')
+        except: 
+            error_trap('DEFAULT->HINT: Unable to retrieve NAME')
 
         print('DEFAULFT HINT: txt=',txt)
         return txt
@@ -870,3 +870,32 @@ class DEFAULT_KEYING():
                     self.scoring(qso)
         
     
+    # Put info into box on upper right - this should be template for all
+    def set_info_box(self,txt=None):
+        
+        P=self.P
+        #print('DEFAULT->SEF INFO BOX: txt=',txt,'\tcontest_name=',P.contest_name)
+        txt2=''
+
+        call = P.gui.get_call()
+        if '/' in call:
+            dx_station = Station(call)
+            call = dx_station.homecall
+
+        if call in P.calls:
+            try:
+                if 'SKCC' in P.contest_name:
+                    txt = self.my_skcc+' :'
+                elif txt==None:
+                    txt = P.MASTER[call]['name']
+            
+                cwops = P.MASTER[call]['cwops']
+                #print('DEFAULT->SEF INFO BOX: txt=',txt,'\tcwops=',cwops)
+
+                txt2=txt+' '+cwops
+            except:
+                error_trap('DEFAULT->SEF INFO BOX: Whoops!')
+                print('\ttxt=',txt,'\tcwops=',cwops)
+
+        P.gui.info.delete(0,END)
+        P.gui.info.insert(0,txt2)
