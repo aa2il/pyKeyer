@@ -109,10 +109,10 @@ class CALL_INFO_GUI():
                 e.grid(row=row,column=1,sticky=E+W)
 
                 txt2=qso[key]
-                if 'date' in key:
+                if 'Date' in txt:
                     date = datetime.strptime(txt2,'%Y%m%d')
                     txt2 = date.strftime('%m-%d-%Y')
-                elif 'time' in key:
+                elif 'Time' in txt:
                     date = datetime.strptime(txt2,'%H%M%S')
                     txt2 = date.strftime('%H:%M:%S')
                 e.insert(0,txt2)

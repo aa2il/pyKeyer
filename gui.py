@@ -415,10 +415,20 @@ class GUI():
 
         # Set up a spin box to control select macro set
         Label(self.root, text='Macros:').grid(row=row,column=col,sticky=E+W)
-        SB = OptionMenu(self.root, \
-                        self.MACRO_TXT, \
-                        *self.P.CONTEST_LIST, \
-                        command=self.set_macros)
+        if False:
+            SB = ttk.Combobox(self.root,
+                             textvariable=self.MACRO_TXT,
+                             takefocus=0 )
+            SB['values'] = self.P.CONTEST_LIST
+            SB.bind('<<ComboboxSelected>>', self.set_macros)
+        else:
+            # I prefer the way OptionMenu looks
+            # Also, there are differences between the tk and ttk versions
+            SB = ttk.OptionMenu(self.root, 
+                                self.MACRO_TXT, 
+                                self.P.CONTEST_LIST[0], 
+                                *self.P.CONTEST_LIST, 
+                                command=self.set_macros)
         SB.grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         col += 3
 
@@ -511,14 +521,23 @@ class GUI():
         
         # Force rig into a specific mode and set filters
         self.MODE = StringVar()
-        self.MODE.set('CW')
-        self.ModeBox = ttk.Combobox(self.root, textvariable=self.MODE,
-                                    takefocus=0 )
-        self.ModeBox['values'] = ['CW','USB','LSB','FM']
-        self.ModeBox.bind('<<ComboboxSelected>>', self.Set_Rig_Mode)
+        #self.MODE.set('CW')
+        if False:
+            self.ModeBox = ttk.Combobox(self.root,
+                                        textvariable=self.MODE,
+                                        takefocus=0 )
+            self.ModeBox['values'] = ['CW','USB','LSB','FM']
+            self.ModeBox.bind('<<ComboboxSelected>>', self.Set_Rig_Mode)
+        else:
+            self.ModeList=['CW','USB','LSB','FM']
+            self.ModeBox = ttk.OptionMenu(self.root,
+                                          self.MODE,
+                                          self.ModeList[0],
+                                          *self.ModeList,
+                                          command=self.Set_Rig_Mode)
         self.ModeBox.grid(row=row,column=self.ncols-2)
         tip = ToolTip(self.ModeBox, ' Set Rig Mode ' )
-        
+
         # QRZ button
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
                      takefocus=0 ) 
@@ -532,7 +551,18 @@ class GUI():
         self.sat_lab = Label(self.root, text='Satellites:')
         self.sat_lab.grid(row=row,column=col,sticky=E+W)
         sat_list=sorted( SATELLITE_LIST )
-        self.sat_SB = OptionMenu(self.root,self.SAT_TXT,*sat_list, command=self.set_satellite)
+        if False:
+            self.sat_SB = ttk.Combobox(self.root,
+                                       textvariable=self.SAT_TXT,
+                                       takefocus=0 )
+            self.sat_SB['values'] = sat_list
+            self.sat_SB.bind('<<ComboboxSelected>>', self.set_satellite)
+        else:
+            self.sat_SB = ttk.OptionMenu(self.root,
+                                        self.SAT_TXT,
+                                        sat_list[0],
+                                        *sat_list,
+                                        command=self.set_satellite)
         self.sat_SB.grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         self.set_satellite('None')
         
@@ -845,10 +875,14 @@ class GUI():
         
         # Manage button appearance
         if self.P.PTT:
-            self.PTTBtn.configure(background='red',highlightbackground= 'red',relief='sunken')
+            self.PTTBtn.configure(background='red',
+                                  highlightbackground= 'red',
+                                  relief='sunken')
             self.P.sock.ptt(True)
         else:
-            self.PTTBtn.configure(background='green',highlightbackground= 'green',relief='raised')
+            self.PTTBtn.configure(background='green',
+                                  highlightbackground= 'green',
+                                  relief='raised')
             self.P.sock.ptt(False)
         
     # Callback to toggle sending of text
@@ -869,28 +903,36 @@ class GUI():
         
     # Callback to toggle SO2V mode
     def Toggle_SO2V(self,iop=None):
+        print('TOOGLE SO2V:',self.P.SO2V,'\top=',iop)
         if iop==None:
             self.P.SO2V = not self.P.SO2V
-        print('TOOGLE SO2V:',self.P.SO2V,'\top=',iop)
-
+        if not self.P.SO2V:
+            try:
+                self.Select_VFO('A')
+            except: 
+                error_trap('GUI->TOGGLE SO2V: Unable to set VFO to A',1)
+            
         # Manage button appearance
         if self.P.SO2V:
-            self.So2vBtn.configure(background='red',highlightbackground= 'red')
+            self.So2vBtn.configure(background='red',
+                                   highlightbackground= 'red',
+                                   relief='sunken')
             self.P.udp_server.Broadcast('SO2V:ON')
-            self.So2vBtn.configure(relief='sunken')
 
             # Get antenna and tuner settings from VFO A
             time.sleep(DELAY)
-            self.sock.set_vfo('A')
+            #self.sock.set_vfo('A')
+            SetVFO('A')
             time.sleep(DELAY)
             ant=self.sock.get_ant()
             time.sleep(DELAY)
             tuner=self.sock.tuner(-1)
             time.sleep(DELAY)
-            print('TOOGLE SO2V: ant=',ant,'\ttuner=',tuner)
+            #print('TOOGLE SO2V: ant=',ant,'\ttuner=',tuner)
 
             # Copy settings to VFO B
-            self.sock.set_vfo(op='A->B')
+            #self.sock.set_vfo(op='A->B')
+            SetVFO('A->B')
             time.sleep(DELAY)
             #self.sock.set_vfo('B')
             #time.sleep(DELAY)
@@ -903,16 +945,48 @@ class GUI():
             time.sleep(DELAY)
             self.sock.tuner(tuner)
             time.sleep(DELAY)
+
+            if self.P.SPLIT_VFOs:
+                SetVFO('SPLIT')
             
         else:
-            self.So2vBtn.configure(background='Green',highlightbackground= 'Green')
+            self.So2vBtn.configure(background='Green',
+                                   highlightbackground= 'Green',
+                                   relief='raised')
             self.P.udp_server.Broadcast('SO2V:OFF')
-            self.So2vBtn.configure(relief='raised')
 
-            # Reset clarifier
-            ClarReset(self,self.P.RX_Clar_On)
 
+    # Callback to set VFO to A or B, no splits
+    def Select_VFO(self,iop):
+        print('SELECT VFO:',iop,self.P.SPLIT_VFOs,' ...................')
+        if self.P.SPLIT_VFOs:
+            self.Toggle_VFOSplit()
+        SetVFO(self,iop)
             
+    # Callback to toggle Split VFOs mode
+    def Toggle_VFOSplit(self,iop=None):
+        if iop==None:
+            self.P.SPLIT_VFOs = not self.P.SPLIT_VFOs
+        print('TOOGLE VFOSplit:',self.P.SPLIT_VFOs,iop)
+        
+        # Take appropriate action and manage button appearance
+        if self.P.SPLIT_VFOs:
+            self.VFOSplitBtn.configure(background='red',
+                                       highlightbackground= 'red',
+                                       relief='sunken')
+            #self.P.udp_server.Broadcast('SPLIT:ON')
+
+            # Set VFO splits
+            SetVFO(self,'SPLIT')            
+        else:
+            self.VFOSplitBtn.configure(background='Green',
+                                       highlightbackground= 'Green',
+                                       relief='raised')
+            #self.P.udp_server.Broadcast('SPLIT:OFF')
+
+            # Turn off VFO splits
+            self.Select_VFO('A')            
+        
     # Callback to toggle DXSplit mode
     def Toggle_DXSplit(self,iop=None):
         if iop==None:
@@ -921,16 +995,18 @@ class GUI():
         
         # Manage button appearance
         if self.P.DXSPLIT:
-            self.DXSplitBtn.configure(background='red',highlightbackground= 'red')
+            self.DXSplitBtn.configure(background='red',
+                                      highlightbackground= 'red',
+                                      relief='sunken')                          
             self.P.udp_server.Broadcast('SPLIT:ON')
-            self.DXSplitBtn.configure(relief='sunken')
 
             # Set TX clarifier (XIT split) to 1 KHz UP by default
             SetTXSplit(self.P,1,True)
         else:
-            self.DXSplitBtn.configure(background='Green',highlightbackground= 'Green')
+            self.DXSplitBtn.configure(background='Green',
+                                      highlightbackground= 'Green',
+                                      relief='raised')                   
             self.P.udp_server.Broadcast('SPLIT:OFF')
-            self.DXSplitBtn.configure(relief='raised')
 
             # Turn off TX clarifier (XIT split)
             SetTXSplit(self.P,0,False)
@@ -944,14 +1020,14 @@ class GUI():
             self.FilterWidth=50
             self.FilterWidthBtn.configure(text=str(self.FilterWidth)+' Hz',
                                           background='red',
-                                          highlightbackground= 'red')
-            self.FilterWidthBtn.configure(relief='sunken')
+                                          highlightbackground= 'red',
+                                          relief='sunken')
         else:
             self.FilterWidth=200
             self.FilterWidthBtn.configure(text=str(self.FilterWidth)+' Hz',
                                           background='Green',
-                                          highlightbackground= 'Green')
-            self.FilterWidthBtn.configure(relief='raised')
+                                          highlightbackground= 'Green',
+                                          relief='raised')
             
         print('TOGGLE FILTER - Setting filter to',self.FilterWidth)
         self.sock.set_filter(['Narrow',str(self.FilterWidth)])
@@ -2107,7 +2183,7 @@ class GUI():
         # Make sure we're on VFO A
         if self.P.SO2V:
             try:
-                SetVFO(self,'A')
+                self.Select_VFO('A')
             except: 
                 error_trap('GUI->LOG QSO: Unable to set VFO to A',1)
 
@@ -3245,16 +3321,20 @@ class GUI():
         Button(toolbar,text="Batter Up",command=self.BatterUp) \
             .pack(side=LEFT, padx=2, pady=2)
         
-        Button(toolbar,text="VFO A",command=lambda: SetVFO(self,'A')) \
+        Button(toolbar,text="VFO A",command=lambda: self.Select_VFO('A')) \
             .pack(side=LEFT, padx=2, pady=2)
-        Button(toolbar,text="VFO B",command=lambda: SetVFO(self,'B')) \
+        Button(toolbar,text="VFO B",command=lambda: self.Select_VFO('B')) \
             .pack(side=LEFT, padx=2, pady=2)
+        
+        self.VFOSplitBtn = Button(toolbar,
+                                 text="Split",
+                                 command=self.Toggle_VFOSplit)
+        self.VFOSplitBtn.pack(side=LEFT, padx=2, pady=2)
+        
         Button(toolbar,text="A->B",command=lambda: SetVFO(self,'A->B')) \
             .pack(side=LEFT, padx=2, pady=2)
         Button(toolbar,text="Swap",command=lambda: SetVFO(self,'A<->B')) \
             .pack(side=LEFT, padx=2, pady=2)
-        #Button(toolbar,text="Split",command=lambda: SetVFO(self,'SPLIT')) \
-            #    .pack(side=LEFT, padx=2, pady=2)
         #Button(toolbar,text="TXW",command=lambda: SetVFO(self,'TXW')) \
             #    .pack(side=LEFT, padx=2, pady=2)
             

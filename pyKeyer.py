@@ -139,6 +139,7 @@ if not P.PRACTICE_MODE:
     else:
         P.sock.split_mode(0)
         P.sock.set_vfo(op='A->B')
+#sys.exit(0)
  
 # Open connection to rotor
 P.gui.status_bar.setText("Opening connection to rotor ...")
@@ -244,6 +245,7 @@ print('... Info for',len(P.calls),'calls were loaded.')
 
 # Actually create the GUI
 P.gui.construct_gui()
+#sys.exit(0)
 
 # Set up a thread for code practice
 P.gui.status_bar.setText("Spawning Practice exec ...")
@@ -272,6 +274,7 @@ if P.UDP_SERVER:
 
 # WatchDog - runs in its own thread
 P.WATCHDOG = True
+#P.WATCHDOG = False
 if P.WATCHDOG:
     P.gui.status_bar.setText("Spawning Watchdog ...")
     P.Timer = threading.Timer(1.0, WatchDog, args=(P,))
@@ -294,7 +297,7 @@ if P.sock.active:
     # Set TX power
     P.sock.set_power(99)
 
-    # Set sub-dial
+    # Set sub-dial - the "little" knob
     P.sock.set_sub_dial('CLAR')
 
     # Set freq to CW band
@@ -321,6 +324,7 @@ if P.sock.active:
 
     #if P.SPECIAL:
     #    P.sock.set_mon_level(25)
+#sys.exit(0)
         
 # Read satellite grids confirmed - this will be used to alert station in new grid
 P.gui.status_bar.setText("Reading sat grids ...")

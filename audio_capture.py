@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # capture.py - Rev 1.0
-# Copyright (C) 2022 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2022-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Functions related audio capturing.
 #
@@ -35,6 +35,8 @@ class AUDIO_CAPTURE():
         self.enabled = False
         P.rec=None
         self.P = P
+        self.nout=0
+        self.nblocks=0
 
     # Main routine that starts audio capture
     def run(self):
@@ -48,8 +50,15 @@ class AUDIO_CAPTURE():
                 rb=P.rec.rb
                 nsamps=rb.nsamps
                 if nsamps>1024:
-                    data=rb.pull(nsamps-1024)
+                    n=nsamps-1024                    
+                    data=rb.pull(n)
                     P.rec.write_data(data)               # Save to disk also
+                    self.nout+=n
+                    if self.nblocks<100:
+                        self.nblocks+=1
+                    else:
+                        print('AUDIO_CAPTURE: Wrote ',self.nout,' samples so far ...')
+                        self.nblocks=0
             time.sleep(0.1)
                 
         print('CAPTURE Exec Done.')

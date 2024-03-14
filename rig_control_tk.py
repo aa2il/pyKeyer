@@ -167,6 +167,22 @@ class RIG_CONTROL():
 
         ######################################################################
 
+        # Create a frame to allow sending direct commands to rig
+        CommandFrame = Frame(tab1)
+        CommandFrame.pack(side=TOP)
+
+        self.command = Entry(CommandFrame)
+        self.command.pack(side=LEFT,anchor=W)
+        
+        Button(CommandFrame,
+               text="Send",   
+               command=self.SendCommand).pack(side=LEFT,anchor=W)
+        
+        self.response = Entry(CommandFrame)
+        self.response.pack(side=LEFT,anchor=W)
+        
+        ######################################################################
+
         # Create a frame with buttons to support other misc functions
         MiscFrame = Frame(tab1)
         MiscFrame.pack(side=TOP)
@@ -178,6 +194,9 @@ class RIG_CONTROL():
         Button(MiscFrame,
                text="CLAR Reset",
                command=lambda: ClarReset(self) ).pack(side=LEFT,anchor=W)
+        Button(MiscFrame,
+               text="Sub-Dial",
+               command=lambda: SetSubDial(self) ).pack(side=LEFT,anchor=W)
         Button(MiscFrame,
                text="<<",         
                command=lambda: SetSubBand(self,1) ).pack(side=LEFT,anchor=W)
@@ -254,6 +273,19 @@ class RIG_CONTROL():
     def CloseWindow(self):
         print('Close window')
         self.P.gui.RigCtrlCB()
+        
+    ############################################################################################
+
+    def SendCommand(self):
+        print('Send Command ...')
+        cmd = self.command.get()
+        if cmd[-1]!=';':
+            cmd+=';'
+        print('\tcmd=',cmd)
+        buf = self.sock.get_response(cmd)
+        print('\tbuf=',buf)
+        self.response.delete(0, END)
+        self.response.insert(0,buf)
         
     ############################################################################################
 

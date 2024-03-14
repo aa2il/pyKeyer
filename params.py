@@ -322,6 +322,7 @@ class PARAMS:
         self.udp_server    = None
         self.SO2V          = False
         self.DXSPLIT       = False
+        self.SPLIT_VFOs    = False
         self.GPS           = args.gps
 
         # Overrride as these are depricated

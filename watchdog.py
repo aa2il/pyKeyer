@@ -24,6 +24,7 @@ import threading
 from utilities import freq2band
 from tcp_server import open_udp_client,BANDMAP_UDP_PORT
 from udp import UDP_msg_handler
+from rig_io import SetSubDial
 
 ################################################################################
 
@@ -89,6 +90,11 @@ def WatchDog(P):
             P.keyer.set_wpm(wpm)
             P.gui.WPM_TXT.set(str(wpm))
             P.WPM = wpm
+
+        # Keep an eye on the small knob
+        if not (P.SO2V or P.SPLIT_VFOs):
+            SetSubDial(P.gui,'CLAR')
+
 
     # Save program state to disk
     #print("WatchDog - Dirty Dozen ...")

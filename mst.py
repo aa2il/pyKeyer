@@ -262,7 +262,7 @@ class MST_KEYING(DEFAULT_KEYING):
 
     # On-the-fly scoring
     def scoring(self,qso):
-        print("MST SCORING: qso=",qso)
+        #print("MST SCORING: qso=",qso)
         self.nqsos+=1
         call=qso['CALL']
         self.calls.add(call)
