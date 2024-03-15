@@ -127,8 +127,9 @@ class SIDETONE_OSC():
         self.gen_elements(WPM,0)
         
         # Use non-blocking audio player
-        self.rb     = dsp.ring_buffer2('Audio0',32*1024)
-        self.rb2    = dsp.ring_buffer2('Audio1',32*1024)
+        BUFF_SIZE=4*32*1024                 # Was 1x
+        self.rb     = dsp.ring_buffer2('Audio0',BUFF_SIZE,PREVENT_OVERFLOW=False)
+        self.rb2    = dsp.ring_buffer2('Audio1',BUFF_SIZE,PREVENT_OVERFLOW=False)
         self.player = dsp.AudioIO(None,int(self.FS),self.rb,None,'B',True)
 
     #def change_freq():

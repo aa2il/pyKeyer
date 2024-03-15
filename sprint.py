@@ -64,6 +64,7 @@ from default import DEFAULT_KEYING
 from datetime import datetime
 from utilities import cut_numbers
 from random import randint, random
+import numpy as np
 
 ############################################################################################
 

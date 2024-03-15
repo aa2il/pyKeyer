@@ -1521,7 +1521,7 @@ class GUI():
             self.P.KEYING=CWOPEN_KEYING(self.P)
         elif val=='SATELLITES':
             self.P.KEYING=SAT_KEYING(self.P)
-        elif val=='ARRL-VHF' or val=='CQ-VHF' or val=='STEW PERRY':
+        elif val in ['ARRL-VHF','CQ-VHF','STEW PERRY']:
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
