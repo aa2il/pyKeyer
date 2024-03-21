@@ -99,7 +99,7 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYCALL] [SERIAL] [MYNAME] [MYSTATE] '}
         MACROS[1+12]  = {'Label' : 'QSY -1'    , 'Text' : '[QSY-1] '}
         
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] EE [LOG]'}
         MACROS[2+12]  = {'Label' : 'QSY +1'    , 'Text' : '[QSY+1] '}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}

@@ -42,7 +42,7 @@ def master(P,call,dx_station=None,VERBOSITY=0):
         if P.KEYING:
             h=P.KEYING.hint(call)
             try:
-                print(call,'\tmaster=',P.MASTER[call],'\nhint=',h)
+                print('HINT->MASTER: call=',call,'\n\tmaster=',P.MASTER[call],'\n\thint=',h)
             except:
                 error_trap('HINT->MASTER - I dont know what I am doing here'+call,1)
             return h

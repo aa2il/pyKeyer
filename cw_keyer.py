@@ -367,7 +367,7 @@ class Keyer():
                     # Change freq
                     df = float( cmd2[3:] )
                     frq = .001*self.P.sock.freq + df
-                    print('DF=',df,self.P.sock.freq,frq)
+                    print('SEND_MSG - QSY - DF=',df,self.P.sock.freq,frq)
                     self.P.sock.freq = self.P.sock.set_freq(frq)
 
                 elif cmd2[:3]=="LOG":

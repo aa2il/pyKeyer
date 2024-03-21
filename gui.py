@@ -51,6 +51,7 @@ from threading import enumerate
 
 from cwt import *
 from cwopen import *
+from foc import *
 from sst import *
 from sprint import *
 from mst import *
@@ -1297,7 +1298,9 @@ class GUI():
                     prefix1=stn1.call_prefix+stn1.call_number
                     print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
                 except:
-                    error_trap('PATCH MACRO2 - Problem getting prefix for STN1'+call)
+                    error_trap('PATCH MACRO2 - Problem getting prefix for STN1')
+                    print('\tcall  =',call)
+                    print('\tcall2 =',call2)
                     prefix1=''
                     
                 stn2 = Station(call2)
@@ -1305,7 +1308,7 @@ class GUI():
                     prefix2=stn2.call_prefix+stn2.call_number
                     print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
                 except:
-                    error_trap('PATCH MACRO2 - Problem getting prefix for STN2'+call2)
+                    error_trap('PATCH MACRO2 - Problem getting prefix for STN2 - call2='+call2)
                     prefix2=''
 
                 # Only send back part that has changed, provided it is long enough
@@ -1507,6 +1510,8 @@ class GUI():
         # Initiate keying module for this contest
         if val=='CWT':
             self.P.KEYING=CWOPS_KEYING(self.P)
+        elif val=='FOC-BW':
+            self.P.KEYING=FOCBW_KEYING(self.P)
         elif val=='SST':
             self.P.KEYING=SST_KEYING(self.P)
         elif val=='MST':
@@ -1526,7 +1531,7 @@ class GUI():
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
-                                      'FOC-BW','JIDX','CQMM','HOLYLAND','AADX',
+                                      'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
                                       'IOTA','MARAC','SAC','OCDX','SOLAR','POTA']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
@@ -2881,8 +2886,9 @@ class GUI():
         return "break"
 
 
-    # Function to take take of SCPs and Auto Fills
+    # Function to take care of SCPs and Auto Fills
     def auto_fill(self,call,key):
+        #print('AUTO FILL: call=',call,'\tkey=',key,'\tUSE SCP=',self.P.USE_SCP)
 
         # Check against SCP database
         if self.P.USE_SCP:
@@ -2895,7 +2901,7 @@ class GUI():
                 KEY=key.upper()
                 if KEY=='@@@' or (KEY>='A' and KEY<='Z' and len(scps2)==1):
                     call2=scps[0]
-                    print('AUTO-COMPLETE: call=',call,'\tcall2=',call2,'\tkey=',key)
+                    print('AUTO FILL: call=',call,'\tcall2=',call2,'\tkey=',key)
                     self.call.delete(0, END)
                     self.call.insert(0,call2)
                     self.call.select_range( len(call), END )
@@ -2910,7 +2916,8 @@ class GUI():
         # Take care of hints
         if self.contest or True:
             self.get_hint(call)
-            if self.P.AUTOFILL:
+            if key=='@@@' or self.P.AUTOFILL:
+            #if self.P.AUTOFILL:
                 self.P.KEYING.insert_hint()
                 if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
                     self.Read_Log_Fields()

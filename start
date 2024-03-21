@@ -59,7 +59,8 @@ set AGGRESSIVE=""
 set AGGRESSIVE="-aggressive"
 
 set CONTEST="paddling"
-#set CONTEST="cwt"
+set CONTEST="cwt"
+set CONTEST="foc"
 #set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="sprint"
@@ -151,6 +152,11 @@ else if( $CONTEST == "cwt" )then
     set WPM=30
     set HINTS="-adjust"
     #set HINTS=""
+
+# Settings for FOC BW
+else if( $CONTEST == "foc" )then
+    set WPM=30
+    set HINTS="-adjust"
 
 # Settings for NCCC Sprints
 else if( $CONTEST == "sprint" )then

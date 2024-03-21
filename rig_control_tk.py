@@ -59,7 +59,7 @@ class RIG_CONTROL():
         # Add a tab for basic rig control
         tab1 = ttk.Frame(self.tabs)            # Create a tab 
         self.tabs.add(tab1, text='Rig Ctrl')   # Add the tab
-        self.tabs.pack(expand=1, fill="both")  # Pack to make visible
+        self.tabs.pack(expand=1, fill="both")  # Pack to make visibl
 
         ######################################################################
 

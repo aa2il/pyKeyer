@@ -711,9 +711,9 @@ class DEFAULT_KEYING():
             # Determine adjacent (next) widget
             if key in ['Tab','Return','KP_Enter']:
                 idx2 = (idx+1) % nn
-                if gui.boxes[idx2]==gui.hint or (gui.contest and gui.boxes[idx2]==gui.rstin):
+                if gui.boxes[idx2]==gui.hint or (gui.contest and gui.boxes[idx2] in [gui.rstin,gui.rstout]):
                     idx2 = (idx2+1) % nn
-                if gui.boxes[idx2]==gui.scp:
+                if gui.boxes[idx2] in [gui.scp,gui.rstin]:
                     idx2 = (idx2+1) % nn
             elif key=='ISO_Left_Tab':
                 idx2 = (idx-1) % nn
@@ -746,9 +746,14 @@ class DEFAULT_KEYING():
                     if DEBUG:
                         print('idx=',idx,'\tmacros=',self.macros)
 
-                    n=self.macros[idx]
-                    if n!=None:
-                        gui.Send_Macro(n,event.state)
+                    try:
+                        n=self.macros[idx]
+                        if n!=None:
+                            gui.Send_Macro(n,event.state)
+                    except:
+                        error_trap('DEFAULT->NEXT EVENT: Problem with sending macros')
+                        print('\tidx=',idx,'\tmacros=',self.macros)
+                        
 
         # Do any extra stuff that might be special to this contest
         if self.aux_cb:

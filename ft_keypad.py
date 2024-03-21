@@ -51,16 +51,17 @@ def GetKeyerMemory(self):
         while ntries<5:
             ntries+=1
             buf=s.get_response(cmd)
-            if len(buf)>0:
+            if buf and len(buf)>0:
                 break
             
-        print("GetKeyerMemory: buf=",buf)
-        if i<5:
-            j=buf.index('}')
-            self.Keyer[i]=buf[3:j]
-        else:
-            j=buf.index(';')
-            self.Keyer[i]=buf[5:j]
+        print("GetKeyerMemory: buf=",buf,len(buf))
+        if buf and len(buf)>0:
+            if i<5:
+                j=buf.index('}')
+                self.Keyer[i]=buf[3:j]
+            else:
+                j=buf.index(';')
+                self.Keyer[i]=buf[5:j]
 
         print("Done.")
 

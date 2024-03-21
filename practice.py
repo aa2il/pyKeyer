@@ -393,7 +393,7 @@ class CODE_PRACTICE():
             
             #print('PRACTICE_QSO: call=',call,'\tdone=',done,'\thist=',HIST[call])
             if ntries>100:
-                print('PRACTICE_QSO: Something is rotten in Denmark - Probably a bad history file!!!')
+                print('\n**** PRACTICE_QSO: Something is rotten in Denmark - Probably a bad history file!!! ****\n')
                 P.SHUTDOWN=True
                 sys.exit(0)
 
@@ -403,7 +403,7 @@ class CODE_PRACTICE():
     
 
 # If this file is called as main, convert history file into simple log format
-# At some point, chnage this into a function
+# At some point, change this into a function
 if __name__ == '__main__':
 
     date_off = '20180101'

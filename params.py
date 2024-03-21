@@ -146,7 +146,7 @@ class PARAMS:
                               help='IARU HF Championship')
         arg_proc.add_argument('-ten', action='store_true',
                               help='10-10 CW')
-        arg_proc.add_argument('-bw', action='store_true',
+        arg_proc.add_argument('-foc', action='store_true',
                               help='FOC BW')
         arg_proc.add_argument('-wag', action='store_true',
                               help='Work All Germany')
@@ -386,7 +386,7 @@ class PARAMS:
         elif args.ten:
             self.contest_name='TEN-TEN'
             MAX_AGE_HOURS=48
-        elif args.bw:
+        elif args.foc:
             self.contest_name='FOC-BW'
             MAX_AGE_HOURS=24
         elif args.jidx:
