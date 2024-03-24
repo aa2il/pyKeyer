@@ -254,7 +254,7 @@ class Keyer():
                     self.P.gui.WPM_TXT.set(str(wpm))
 
     def txt2morse(self,msg):
-        print('\nTXT2MORSE: msg=',msg)
+        print('\nTXT2MORSE: msg=',msg,len(msg))
         tdown=0
         times=[]
         dotlen_ms = int(1000*self.dotlen)

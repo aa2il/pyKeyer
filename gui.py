@@ -113,6 +113,7 @@ class GUI():
         self.WIN_NAME='ROOT WINDOW'
         self.OnTop=False
         self.dx_station = None
+        self.CHECK_DIAL = True
         
         # Create spash screen
         self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')

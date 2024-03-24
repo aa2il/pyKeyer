@@ -101,7 +101,7 @@ class PADDLING_GUI():
             self.status_bar2.setText("Howdy Ho!!!!! Creating GUI ...")
         
         # Read list of Panagrams
-        self.panagrams = read_text_file('Panagrams.txt')
+        self.panagrams = read_text_file('Panagrams.txt',KEEP_BLANKS=False)
         
         # Read qso template
         self.QSO_Template = read_text_file('QSO_Template.txt',KEEP_BLANKS=False)

@@ -63,7 +63,7 @@ CONTESTS['ARRL-SS-CW'] = {'Months' : [11]}
 CONTESTS['STEW PERRY'] = {'Months' : []}
 CONTESTS['SATELLITES'] = {'Months' : ALL}
 CONTESTS['DX-QSO']     = {'Months' : ALL}
-CONTESTS['FOC-BW']     = {'Months' : []}
+CONTESTS['FOC-BW']     = {'Months' : [3]}
 CONTESTS['JIDX']       = {'Months' : []}
 CONTESTS['CQMM']       = {'Months' : []}
 CONTESTS['HOLYLAND']   = {'Months' : []}
@@ -496,6 +496,9 @@ class PARAMS:
         else:
             self.contest_name='Default'
             #self.SHOW_TEXT_BOX2=True
+
+        if self.contest_name not in self.CONTEST_LIST:
+            self.CONTEST_LIST.append(self.contest_name)            
             
         self.ROTOR_CONNECTION = args.rotor
         self.PORT9            = args.port9

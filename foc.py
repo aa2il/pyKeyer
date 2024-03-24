@@ -59,10 +59,10 @@ class FOCBW_KEYING(DEFAULT_KEYING):
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ BW [MYCALL] '}
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] 5NN [MYNAME] [MYFOC] '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [RST] [MYNAME] [MYFOC] '}
         MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
 
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [NAME] 73 [MYCALL] [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [NAME] EE [LOG]'}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -70,8 +70,8 @@ class FOCBW_KEYING(DEFAULT_KEYING):
         
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYNAME] [MYFOC]'}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYFOC] [MYFOC]'}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME]  [RST] [MYNAME] [MYFOC]'}
+        MACROS[5+12]  = {'Label' : 'S&P Agn'   , 'Text' : 'TNX AGN [NAME]  [RST] [MYNAME] [MYFOC]'}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
@@ -276,13 +276,11 @@ class FOCBW_KEYING(DEFAULT_KEYING):
     def scoring(self,qso):
         print("SCORING: qso=",qso)
         self.nqsos+=1
-        call=qso['CALL']
-        self.calls.add(call)
-        mults = len(self.calls)
+        mults = 1
         score=self.nqsos * mults
         print("SCORING: score=",score)
 
-        txt='{:3d} QSOs  x {:3d} Uniques = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
+        txt='{:3d} QSOs  \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,call)
         self.P.gui.status_bar.setText(txt)
         

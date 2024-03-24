@@ -92,9 +92,14 @@ def WatchDog(P):
             P.WPM = wpm
 
         # Keep an eye on the small knob
-        if not (P.SO2V or P.SPLIT_VFOs):
+        #if not (P.SO2V or P.SPLIT_VFOs):
+        #if P.sock.rig_type=='FLRIG' and not (P.SO2V or P.SPLIT_VFOs):
+        #    SetSubDial(P.gui,'CLAR')
+        if P.SO2V or P.SPLIT_VFOs:
+            P.gui.CHECK_DIAL=True
+        elif P.gui.CHECK_DIAL:
             SetSubDial(P.gui,'CLAR')
-
+            P.gui.CHECK_DIAL=False
 
     # Save program state to disk
     #print("WatchDog - Dirty Dozen ...")
