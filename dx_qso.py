@@ -50,7 +50,7 @@ class DX_KEYING(DEFAULT_KEYING):
         
         MACROS[4]     = {'Label' : '[MYCALL]' , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call' , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'Reply'    , 'Text' : 'TU [RST] '}
+        MACROS[5]     = {'Label' : 'Reply'    , 'Text' : 'TU [RST] 73'}
         MACROS[5+12]  = {'Label' : 'Report'   , 'Text' : 'TU [NAME] [RST] [MYSTATE] 73 '}
         MACROS[6]     = {'Label' : 'QTH'      , 'Text' : '[MYSTATE] '}
         MACROS[6+12]  = {'Label' : 'AGN?'     , 'Text' : 'AGN?'}
