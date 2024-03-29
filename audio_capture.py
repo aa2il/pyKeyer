@@ -57,7 +57,7 @@ class AUDIO_CAPTURE():
                     if self.nblocks<100:
                         self.nblocks+=1
                     else:
-                        print('AUDIO_CAPTURE: Wrote ',self.nout,' samples so far ...')
+                        #print('AUDIO_CAPTURE: Wrote ',self.nout,' samples so far ...')
                         self.nblocks=0
             time.sleep(0.1)
                 

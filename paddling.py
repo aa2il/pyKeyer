@@ -290,6 +290,7 @@ class PADDLING_GUI():
 
     # Callback to either hide or quit the paddling practice
     def Quit(self):
+        P=self.P
         if not P.gui:
             sys.exit(0)
         else:
@@ -641,6 +642,7 @@ class PADDLING_GUI():
         else:
             txt3=txt2
         dx=Levenshtein.distance(txt1,txt3)
+        
         self.LevDx.delete(0, END)
         self.LevDx.insert(0,str(dx))        
         self.dxs.append(dx)

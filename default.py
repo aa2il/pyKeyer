@@ -381,7 +381,7 @@ class DEFAULT_KEYING():
         P=self.P
         gui=self.P.gui
 
-        print('DEFAULFT HINT: call=',call,self.key1,self.key2)
+        print('DEFAULT HINT: call=',call,self.key1,self.key2)
 
         txt=''
         qth=''
@@ -649,11 +649,11 @@ class DEFAULT_KEYING():
     # Hint insertion
     def insert_hint(self,h=None):
 
-        print('DEFAULT INSERT HINT B4: h=',h,'\tname=',self.NAME)
+        print('DEFAULT INSERT HINT B4: h=',h,'\tNAME=',self.NAME)
         gui=self.P.gui
 
         if h==None:
-            self.NAME=''
+            #self.NAME=''
             h = gui.hint.get()              # Read hint box
             if h=='':
                 h = gui.get_hint()          # Nothing in hint box, try getting a hint
@@ -663,7 +663,7 @@ class DEFAULT_KEYING():
 
         if type(h) == str:
             h = h.split(' ')
-        print('DEFAULT INSERT HINT AFTER: h=',h,'\tname=',self.NAME)
+        print('DEFAULT INSERT HINT AFTER: h=',h,'\tNAME=',self.NAME)
 
         if len(h)>=1:
 
@@ -711,9 +711,9 @@ class DEFAULT_KEYING():
             # Determine adjacent (next) widget
             if key in ['Tab','Return','KP_Enter']:
                 idx2 = (idx+1) % nn
-                if gui.boxes[idx2]==gui.hint or (gui.contest and gui.boxes[idx2] in [gui.rstin,gui.rstout]):
+                if gui.boxes[idx2]==gui.hint or (gui.contest and (gui.boxes[idx2] in [gui.rstin,gui.rstout])):
                     idx2 = (idx2+1) % nn
-                if gui.boxes[idx2] in [gui.scp,gui.rstin]:
+                if gui.contest and (gui.boxes[idx2] in [gui.scp,gui.rstin]):
                     idx2 = (idx2+1) % nn
             elif key=='ISO_Left_Tab':
                 idx2 = (idx-1) % nn

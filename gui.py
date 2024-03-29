@@ -1156,6 +1156,11 @@ class GUI():
                 mode  = spot['Mode']
                 split = spot['Split']
                 ant   = spot['Ant']
+
+                print('Restore SPOT: frqA/B=',frqA,frqB,'\tmode=',mode,
+                      '\tsplit=',split,'\tant=',ant,
+                      '\n\tFields=',spot['Fields'])
+                
                 self.sock.set_freq(frqA,VFO='A')
                 self.sock.set_freq(frqB,VFO='B')
                 self.sock.set_mode(mode)
@@ -1165,10 +1170,6 @@ class GUI():
                 self.dup_check(call)
                 #self.auto_fill(call,'')
 
-                print('Restore SPOT: frqA/B=',frqA,frqB,'\tmode=',mode,
-                      '\tsplit=',split,'\tant=',ant,
-                      '\n\tFields=',spot['Fields'])
-                
                 if 'Offset' in spot:
                     foffset = spot['Offset']
                     print('Restore SPOT:',frqA,self.sock.rig_type,
@@ -1176,7 +1177,7 @@ class GUI():
                     self.sock.modem_carrier(foffset)
                     
             except: 
-                error_trap('GUI->SPOTS_CB -Unable to restore spot',1)
+                error_trap('GUI->SPOTS_CB - Unable to restore spot',1)
 
     # Routine to substitute various keyer commands that are stable in macro text
     def Patch_Macro(self,txt):
@@ -1737,7 +1738,6 @@ class GUI():
             #pprint(vars(self.dx_station))
             h = hint.master(self.P,call,self.dx_station,VERBOSITY=1)
             if not h:
-                #h = hint.oh_canada(self.dx_station)
                 h,junk = Oh_Canada(self.dx_station)
         else:
             h=None
@@ -2915,13 +2915,11 @@ class GUI():
                 self.call.configure(fg='black')
 
         # Take care of hints
-        if self.contest or True:
-            self.get_hint(call)
-            if key=='@@@' or self.P.AUTOFILL:
-            #if self.P.AUTOFILL:
-                self.P.KEYING.insert_hint()
-                if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
-                    self.Read_Log_Fields()
+        self.get_hint(call)
+        if key=='@@@' or self.P.AUTOFILL:
+            self.P.KEYING.insert_hint()
+            if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
+                self.Read_Log_Fields()
     
     # Callback when something changes in an entry box
     def process_entry_boxes(self,event):
