@@ -68,7 +68,8 @@ class AUDIO_CAPTURE():
         print('CAPTURE Starting ...',self.P.RIG_AUDIO_IDX)
         if not self.P.RIG_AUDIO_IDX:
             self.CaptureAudioCB(-1)
-            self.P.RIG_AUDIO_IDX = self.P.rec.list_input_devices('USB Audio CODEC')
+            self.P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)
+            #sys.exit(0)
         self.P.rec.start_recording(self.P.RIG_AUDIO_IDX)
         self.started = True
         self.enabled = True

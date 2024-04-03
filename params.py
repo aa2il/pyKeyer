@@ -271,7 +271,12 @@ class PARAMS:
         self.TEST_MODE     = args.test
         self.RX_Clar_On    = True
         self.DESKTOP       = args.desktop
-        
+
+        self.AUDIO_DEVICE  = 'USB Audio CODEC'            # Rig sound card
+        self.AUDIO_DEVICE  = 'USB Audio Device'           # External sound card
+        self.osc           = None
+        self.q2            = None
+
         self.SENDING_PRACTICE = args.sending
         self.WINKEYER      = args.winkeyer or args.keyer=='WINKEY'
         self.K3NG_IO       = args.k3ng or args.keyer=='K3NG'
@@ -332,7 +337,8 @@ class PARAMS:
         self.USE_ADIF_HISTORY = True        
         
         self.SIDETONE      = args.sidetone or self.PORT==1 or \
-            (self.PRACTICE_MODE and not self.USE_KEYER)
+            (self.PRACTICE_MODE and not self.USE_KEYER) or \
+            (self.CAPTURE and self.AUDIO_DEVICE=='USB Audio CODEC')
 
         self.MY_CNTR       = 1
         self.PRECS         = PRECS

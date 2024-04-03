@@ -76,7 +76,8 @@ def process_chars(P):
             print('PROCESSS_CHARS: txt=',txt,'\tWPM=',keyer.WPM)
 
             # Check if we need to send this sidetone also
-            if P.q2 and not P.PRACTICE_MODE and (P.SIDETONE or P.CAPTURE):
+            #if P.q2 and not P.PRACTICE_MODE and (P.SIDETONE or P.CAPTURE):
+            if P.q2 and not P.PRACTICE_MODE and P.SIDETONE:
                 txt2=''
                 keep=True
                 for ch in txt:

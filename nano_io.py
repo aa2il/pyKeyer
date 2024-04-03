@@ -191,7 +191,7 @@ class KEYING_DEVICE():
             self.send_command('S')          # Show status
         elif self.protocol=='WINKEYER':
             self.delim=''
-            ntries = self.wait4it(0,.1,100)
+            ntries = self.wait4it(0,.1,10)
             print('Found it after',ntries,'tries')
             #self.send_command(chr(0)+chr(2))          # Open
             #time.sleep(1)

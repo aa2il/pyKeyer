@@ -1075,6 +1075,7 @@ class GUI():
 
         spot = self.spots[arg]
         if idir==0:
+            
             # Not sure what this does but probably never get here!
             txt = spot['Button']['text']
             if txt=='--':
@@ -1107,6 +1108,7 @@ class GUI():
                 self.Set_Log_Fields(spot['Fields'])
 
         elif idir==-1:
+            
             # Clear
             spot['Button']['text'] = '--'
             spot['FreqA']   = None

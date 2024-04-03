@@ -223,8 +223,8 @@ if False:
 
 # Create sidetone oscillator & start in a separate thread
 print('Creating Sidetone ...')
-#init_sidetone(P)
-P.SideTone = AUDIO_SIDETONE(P)
+if P.SIDETONE or False:
+    P.SideTone = AUDIO_SIDETONE(P)
 
 # Set up a thread for audio capture
 if P.CAPTURE or True:
@@ -344,7 +344,8 @@ if os.path.isfile(FNAME):
     #print('Grids:',P.grids)
 
 # Start sidetone and capture audio processing
-if P.SIDETONE or P.CAPTURE:
+#if P.SIDETONE or P.CAPTURE:
+if P.SIDETONE:
     print('Starting Sidetone ...')
     P.SideTone.start()
 if P.CAPTURE:
