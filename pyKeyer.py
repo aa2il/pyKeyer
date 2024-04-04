@@ -221,19 +221,22 @@ if False:
     server.start()
     P.threads.append(server)
 
-# Create sidetone oscillator & start in a separate thread
-print('Creating Sidetone ...')
-if P.SIDETONE or False:
-    P.SideTone = AUDIO_SIDETONE(P)
-
 # Set up a thread for audio capture
-if P.CAPTURE or True:
+if P.CAPTURE:
     print('Creating thread to Capture Audio ...')
     P.capture = audio_capture.AUDIO_CAPTURE(P)
     worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
     worker.daemon=True
     worker.start()
     P.threads.append(worker)
+
+# Create sidetone oscillator & start in a separate thread
+print('Creating Sidetone ...')
+if P.SIDETONE:
+    P.SideTone = AUDIO_SIDETONE(P)
+else:    
+    P.osc      = None
+    P.q2       = None
 
 # Load history from previous contests
 P.gui.status_bar.setText("Loading Master Call History file ...")
@@ -344,9 +347,11 @@ if os.path.isfile(FNAME):
     #print('Grids:',P.grids)
 
 # Start sidetone and capture audio processing
-#if P.SIDETONE or P.CAPTURE:
 if P.SIDETONE:
     print('Starting Sidetone ...')
+    if P.CAPTURE:
+        P.rec.rb2 = P.osc.rb2
+        P.rec.wavefile.setnchannels(P.rec.channels+1)
     P.SideTone.start()
 if P.CAPTURE:
     P.capture.start()

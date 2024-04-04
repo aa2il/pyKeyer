@@ -265,17 +265,11 @@ class PARAMS:
         self.SPRINT        = args.sprint
         self.SHADOW        = args.shadow
         self.CAPTURE       = args.capture
-        self.RIG_AUDIO_IDX = None
         self.FORCE         = args.force
         self.AGGRESSIVE    = args.aggressive
         self.TEST_MODE     = args.test
         self.RX_Clar_On    = True
         self.DESKTOP       = args.desktop
-
-        self.AUDIO_DEVICE  = 'USB Audio CODEC'            # Rig sound card
-        self.AUDIO_DEVICE  = 'USB Audio Device'           # External sound card
-        self.osc           = None
-        self.q2            = None
 
         self.SENDING_PRACTICE = args.sending
         self.WINKEYER      = args.winkeyer or args.keyer=='WINKEY'
@@ -337,8 +331,8 @@ class PARAMS:
         self.USE_ADIF_HISTORY = True        
         
         self.SIDETONE      = args.sidetone or self.PORT==1 or \
-            (self.PRACTICE_MODE and not self.USE_KEYER) or \
-            (self.CAPTURE and self.AUDIO_DEVICE=='USB Audio CODEC')
+            (self.PRACTICE_MODE and not self.USE_KEYER) # or \
+            #(self.CAPTURE and self.AUDIO_DEVICE=='USB Audio CODEC')
 
         self.MY_CNTR       = 1
         self.PRECS         = PRECS

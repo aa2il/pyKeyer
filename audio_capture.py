@@ -38,6 +38,54 @@ class AUDIO_CAPTURE():
         self.nout=0
         self.nblocks=0
 
+        #P.CAPTURE = True
+        print('CAPTURE AUDIO: Preparing wave recorder for rig audio capture ...')
+
+        s=time.strftime("_%Y%m%d_%H%M%S", time.gmtime())      # UTC
+        dirname=''
+        P.wave_file = dirname+'capture'+s+'.wav'
+        print('\nOpening',P.wave_file,'...')
+
+
+
+        
+
+        # Seems like gain may depend on system audio setting
+        # Need to make this adaptive???
+        if P.sock.rig_type2=='FT991a':
+            gain=[4,1]
+        elif P.sock.rig_type2=='FTdx3000':
+            gain=[1,1]
+        else:
+            gain=[1,1]
+            
+        WAVE_RATE=8000
+        nchan=1
+        P.rec = WaveRecorder(P.wave_file, 'wb',
+                             channels=nchan,
+                             wav_rate=WAVE_RATE,
+                             GAIN=gain)
+
+        # Check for sound card
+        P.AUDIO_DEVICE  = 'USB Audio Device'           # External sound card
+        P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)
+        card='External'
+        if P.RIG_AUDIO_IDX==None:
+            P.AUDIO_DEVICE  = 'USB Audio CODEC'            # Rig sound card
+            P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)
+            card='Rig'
+            P.SIDETONE=True
+        if P.RIG_AUDIO_IDX==None:
+            print('\nAUDIO CAPTURE - Cant find sound card!!!')
+            sys.exit(0)
+        print('AUDIO CAPTURE: Using ',card,' Soundcard \tRIG AUDIO IDX=',P.RIG_AUDIO_IDX)
+        
+    def start(self):
+        print('CAPTURE Starting ...',self.P.RIG_AUDIO_IDX)
+        self.P.rec.start_recording(self.P.RIG_AUDIO_IDX)
+        self.started = True
+        self.enabled = True
+        
     # Main routine that starts audio capture
     def run(self):
         print('AUDIO_CAPTURE Exec Starting ...')
@@ -63,17 +111,6 @@ class AUDIO_CAPTURE():
                 
         print('CAPTURE Exec Done.')
 
-
-    def start(self):
-        print('CAPTURE Starting ...',self.P.RIG_AUDIO_IDX)
-        if not self.P.RIG_AUDIO_IDX:
-            self.CaptureAudioCB(-1)
-            self.P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)
-            #sys.exit(0)
-        self.P.rec.start_recording(self.P.RIG_AUDIO_IDX)
-        self.started = True
-        self.enabled = True
-        
     def pause(self):
         self.P.rec.stop_recording()
         self.enabled = False
@@ -81,53 +118,4 @@ class AUDIO_CAPTURE():
     def resume(self):
         self.P.rec.resume_recording()
         self.enabled = True
-
-    # Callback to toggle audio recording on & off
-    def CaptureAudioCB(self,iopt=None):
-        P=self.P
-        print("\nCAPTURE AUDIO:  iopt=",iopt,'\tCAPTURE=',P.CAPTURE)
-        if iopt==-1:
-            iopt=None
-            P.CAPTURE = not P.CAPTURE
-            print("CAPTURE AUDIO:  Toggled P.CAPTURE",P.CAPTURE)
-        if (iopt==None and not P.CAPTURE) or iopt==1:
-            if not P.CAPTURE:
-                #self.CaptureBtn['text']='Stop Capture'
-                #self.CaptureBtn.configure(background='red',highlightbackground= 'red')
-                P.CAPTURE = True
-                print('CAPTURE AUDIO: Preparing wave recorder for rig audio capture ...')
-
-                s=time.strftime("_%Y%m%d_%H%M%S", time.gmtime())      # UTC
-                dirname=''
-                P.wave_file = dirname+'capture'+s+'.wav'
-                print('\nOpening',P.wave_file,'...')
-
-                # Seems like this may depend on system audio setting
-                # Need to make this adaptive???
-                if P.sock.rig_type2=='FT991a':
-                    gain=[4,1]
-                elif P.sock.rig_type2=='FTdx3000':
-                    gain=[1,1]
-                else:
-                    gain=[1,1]
-                if P.osc:
-                    rb22=P.osc.rb2
-                else:
-                    rb22=None
-                WAVE_RATE=8000
-                nchan=1
-                P.rec = WaveRecorder(P.wave_file, 'wb',
-                                     channels=nchan,
-                                     wav_rate=WAVE_RATE,
-                                     rb2=rb22,
-                                     GAIN=gain)
-                
-        else:
-            if P.CAPTURE:
-                if P.RIG_AUDIO_IDX:
-                    P.rec.stop_recording()
-                    P.rec.close()
-                    print('CAPTURE AUDIO : Wave recorder stopped ...')
-                P.CAPTURE = False
-                print('CAPTURE AUDIO : Capture rig audio stopped ...')
 
