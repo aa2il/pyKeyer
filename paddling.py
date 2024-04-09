@@ -316,11 +316,11 @@ class PADDLING_GUI():
     def SetWpm(self,dWPM=0):
         P=self.P
         WPM=int( self.WPM_TXT.get() ) + dWPM
-        print('SET WPM: WPM=',WPM)
+        print('\nSET WPM: WPM=',WPM)
         if WPM>5:
             if P.LOCK_SPEED:
                 print('Paddling->SetWpm: LOCKED - Setting speed to WPM=',
-                      WPM,'...')
+                      WPM,'\tresponded=',self.responded,' ...')
                 P.keyer.set_wpm(WPM)
                 if P.sock:
                     P.sock.set_speed(WPM)
@@ -632,10 +632,11 @@ class PADDLING_GUI():
             txt2=txt2.replace(' ','')
             
         n1=len(txt1)
-        print('\nitem:    ',txt1,n1)
+        print('\nitem:    ',txt1,'\t',n1)
 
         n2=len(txt2)
-        print('response:',txt2,n2)
+        print('response:',txt2,'\t',n2)
+        self.responded = n2>0
 
         if n2>n1:
             txt3=txt2[-n1:]
@@ -655,9 +656,9 @@ class PADDLING_GUI():
                 self.down=True
         
         if n2>=n1:
-            print('txt3    :',txt3,len(txt3))
+            print('txt3    :',txt3,'\t',len(txt3))
             if txt3==txt1:
-                print(self.dxs)
+                print('Distances=',self.dxs)
                 print('!!! DING DING DING !!!\t# Tries=',self.ntries)
                 if self.STRICT_MODE or self.CASUAL_MODE:
                     self.NewItem()
@@ -701,7 +702,7 @@ if __name__ == '__main__':
     def check_keyer(P):
 
         txt=P.keyer_device.nano_read()
-        #print('CHECK KEYER - txt=',txt)
+        #print('CHECK KEYER - txt=',txt,len(txt))
 
         """
         # Check if its been a while since the last char was received
@@ -723,7 +724,8 @@ if __name__ == '__main__':
             if ding:
                 P.PaddlingWin.txt2.insert(END,'\n')
             P.PaddlingWin.txt2.see(END)
-            P.PaddlingWin.responded=True
+            #print('CHECK KEYER: txt=',txt,len(txt),
+            #      '\tding=',ding,P.PaddlingWin.responded)
 
         # Do it again in 100ms
         timer = P.PaddlingWin.win.after(100, check_keyer, P)

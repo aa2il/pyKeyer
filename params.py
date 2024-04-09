@@ -65,6 +65,7 @@ CONTESTS['SATELLITES'] = {'Months' : ALL}
 CONTESTS['DX-QSO']     = {'Months' : ALL}
 CONTESTS['FOC-BW']     = {'Months' : [3]}
 CONTESTS['JIDX']       = {'Months' : []}
+CONTESTS['SPDX']       = {'Months' : [4]}
 CONTESTS['CQMM']       = {'Months' : []}
 CONTESTS['HOLYLAND']   = {'Months' : []}
 CONTESTS['AADX']       = {'Months' : []}
@@ -122,6 +123,8 @@ class PARAMS:
                               help='Stew Parry')
         arg_proc.add_argument('-jidx', action='store_true',
                               help='JIDX CW')
+        arg_proc.add_argument('-spdx', action='store_true',
+                              help='SP DX CW')
         arg_proc.add_argument('-ocdx', action='store_true',
                               help='OC DX CW')
         arg_proc.add_argument('-solar', action='store_true',
@@ -349,17 +352,6 @@ class PARAMS:
         for state in STATES:
             self.STATE_QPs.append(state+'QP')
 
-        """
-        self.CONTEST_LIST=['Default','Ragchew','CWT','SST','MST','NS','SKCC','CW Open',
-                           'ARRL-VHF','NAQP-CW', 'TEN-TEN','WAG', 'SAC', 'RAC', 'BERU',
-                           'CQP','IARU-HF','CQWW','CQ-WPX-CW','CQ-VHF','CQ-160M',
-                           'ARRL-10M','ARRL-160M','ARRL-DX', 'ARRL-FD','ARRL-SS-CW',
-                           'STEW PERRY','SATELLITES','DX-QSO','FOC-BW',
-                           'JIDX','CQMM','HOLYLAND','AADX','IOTA','MARAC',
-                           'SOLAR','OCDX','POTA']
-        """
-        #self.CONTEST_LIST = CONTESTS.keys()
-
         now = datetime.datetime.utcnow()
         self.CONTEST_LIST = []
         for contest in CONTESTS.keys():
@@ -392,6 +384,9 @@ class PARAMS:
         elif args.jidx:
             self.contest_name='JIDX'
             MAX_AGE_HOURS=30
+        elif args.spdx:
+            self.contest_name='SPDX'
+            MAX_AGE_HOURS=24
         elif args.ocdx:
             self.contest_name='OCDX'
             MAX_AGE_HOURS=24

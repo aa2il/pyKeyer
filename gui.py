@@ -924,7 +924,7 @@ class GUI():
             # Get antenna and tuner settings from VFO A
             time.sleep(DELAY)
             #self.sock.set_vfo('A')
-            SetVFO('A')
+            SetVFO(self,'A')
             time.sleep(DELAY)
             ant=self.sock.get_ant()
             time.sleep(DELAY)
@@ -934,7 +934,7 @@ class GUI():
 
             # Copy settings to VFO B
             #self.sock.set_vfo(op='A->B')
-            SetVFO('A->B')
+            SetVFO(self,'A->B')
             time.sleep(DELAY)
             #self.sock.set_vfo('B')
             #time.sleep(DELAY)
@@ -949,7 +949,7 @@ class GUI():
             time.sleep(DELAY)
 
             if self.P.SPLIT_VFOs:
-                SetVFO('SPLIT')
+                SetVFO(self,'SPLIT')
             
         else:
             self.So2vBtn.configure(background='Green',
@@ -1536,7 +1536,8 @@ class GUI():
             self.P.KEYING=CQP_KEYING(self.P)
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
                                       'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
-                                      'IOTA','MARAC','SAC','OCDX','SOLAR','POTA']:
+                                      'IOTA','MARAC','SAC','OCDX','SOLAR',
+                                      'SPDX','POTA']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)

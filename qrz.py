@@ -161,8 +161,14 @@ if __name__ == '__main__':
     arg_proc.add_argument('-cwops', action='store_true',
                               help='CWops Reverse Lookup')
     args = arg_proc.parse_args()
-    calls = list(map(str.upper,args.call))   #.upper()
+    calls1 = list(map(str.upper,args.call))
+    calls=[]
+    for c in calls1:
+        calls2=c.split(',')
+        for cc in calls2:
+            calls.append(cc)
     print('calls=',calls)
+    #sys.exit(0)
 
     # Reverse member no. lookup for CWops
     if args.cwops or calls[0].isdigit():
