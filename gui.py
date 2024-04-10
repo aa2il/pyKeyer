@@ -113,7 +113,7 @@ class GUI():
         self.WIN_NAME='ROOT WINDOW'
         self.OnTop=False
         self.dx_station = None
-        self.CHECK_DIAL = True
+        self.CHECK_DIAL = 1
         
         # Create spash screen
         self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
@@ -1537,7 +1537,7 @@ class GUI():
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
                                       'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
                                       'IOTA','MARAC','SAC','OCDX','SOLAR',
-                                      'SPDX','POTA']:
+                                      'SPDX','POTA','YURI']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)

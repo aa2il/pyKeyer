@@ -64,7 +64,8 @@ CONTESTS['STEW PERRY'] = {'Months' : []}
 CONTESTS['SATELLITES'] = {'Months' : ALL}
 CONTESTS['DX-QSO']     = {'Months' : ALL}
 CONTESTS['FOC-BW']     = {'Months' : [3]}
-CONTESTS['JIDX']       = {'Months' : []}
+CONTESTS['JIDX']       = {'Months' : [4]}
+CONTESTS['YURI']       = {'Months' : [4]}
 CONTESTS['SPDX']       = {'Months' : [4]}
 CONTESTS['CQMM']       = {'Months' : []}
 CONTESTS['HOLYLAND']   = {'Months' : []}
@@ -123,6 +124,8 @@ class PARAMS:
                               help='Stew Parry')
         arg_proc.add_argument('-jidx', action='store_true',
                               help='JIDX CW')
+        arg_proc.add_argument('-yuri', action='store_true',
+                              help='Yuri Gagarin DX')
         arg_proc.add_argument('-spdx', action='store_true',
                               help='SP DX CW')
         arg_proc.add_argument('-ocdx', action='store_true',
@@ -384,6 +387,9 @@ class PARAMS:
         elif args.jidx:
             self.contest_name='JIDX'
             MAX_AGE_HOURS=30
+        elif args.yuri:
+            self.contest_name='YURI'
+            MAX_AGE_HOURS=24
         elif args.spdx:
             self.contest_name='SPDX'
             MAX_AGE_HOURS=24

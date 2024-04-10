@@ -96,10 +96,12 @@ def WatchDog(P):
         #if P.sock.rig_type=='FLRIG' and not (P.SO2V or P.SPLIT_VFOs):
         #    SetSubDial(P.gui,'CLAR')
         if P.SO2V or P.SPLIT_VFOs:
-            P.gui.CHECK_DIAL=True
-        elif P.gui.CHECK_DIAL:
+            print('WATCHDOG: Need to check subdial ...')
+            P.gui.CHECK_DIAL = 2
+        elif P.gui.CHECK_DIAL>0:
+            print('WATCHDOG: Subdial checked ...')
             SetSubDial(P.gui,'CLAR')
-            P.gui.CHECK_DIAL=False
+            P.gui.CHECK_DIAL-=1
 
     # Save program state to disk
     #print("WatchDog - Dirty Dozen ...")

@@ -22,7 +22,7 @@
 
 import sys
 from nano_io import *
-from utilities import error_trap
+from utilities import error_trap, get_PIDs
 
 ################################################################################
 
@@ -142,7 +142,13 @@ def open_keying_port(P,sock,rig_num):
             device,dev_type=find_keyer()
             print('device=',device,'\tdev_type=',dev_type)
             if dev_type==None:
-                print('Unable to find keyer device - giving up!')
+                print('\nUnable to find keyer device - giving up!')
+                
+                pids = get_PIDs('pyKeyer.py')
+                print('pids=',pids)
+                if len(pids)>0:
+                    print("\nTry killing other instances of this program\n")
+            
                 sys.exit(0)
             else:
                 P.NANO_IO  = dev_type=='NANO IO'
@@ -178,6 +184,12 @@ def open_keying_port(P,sock,rig_num):
             print(  '*************************************')
             print(  '***          Giving up            ***')
             print('*************************************\n')
+
+            pids = get_PIDs('pyKeyer.py')
+            print('pids=',pids)
+            if len(pids)>0:
+                print("\nTry killing other instances of this program\n")
+            
             sys.exit(0)
 
             

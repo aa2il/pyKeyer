@@ -261,6 +261,15 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYCQZ]'
                 self.P.CONTEST_ID=self.contest_name[0:2]
                 
+            elif self.contest_name in ['YURI']:
+                
+                # RST + CQ Zone
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'NR'
+                EXCH2 = '[MYITUZ]'
+                self.P.CONTEST_ID=self.contest_name
+                
             elif self.contest_name in ['AADX']:
                 
                 # RST + Age
