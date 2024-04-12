@@ -161,6 +161,7 @@ def open_keying_port(P,sock,rig_num):
             device=None
             
         try:
+            FATAL_ERROR=False
             if P.NANO_IO:
                 protocol='NANO_IO'
                 BAUD_KEYER=NANO_BAUD
@@ -189,7 +190,9 @@ def open_keying_port(P,sock,rig_num):
             print('pids=',pids)
             if len(pids)>0:
                 print("\nTry killing other instances of this program\n")
-            
+            FATAL_ERROR=True
+
+        if FATAL_ERROR:
             sys.exit(0)
 
             

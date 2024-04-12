@@ -37,6 +37,7 @@ from pprint import pprint
 import Levenshtein
 from keying import *
 from widgets_tk import StatusBar,SPLASH_SCREEN
+from rig_io import show_hex
 
 ################################################################################
 
@@ -632,14 +633,15 @@ class PADDLING_GUI():
             txt2=txt2.replace(' ','')
             
         n1=len(txt1)
-        print('\nitem:    ',txt1,'\t',n1)
+        print('\nitem:    \t',txt1,'\t',n1)
 
         n2=len(txt2)
-        print('response:',txt2,'\t',n2)
+        print('response:\t',txt2,'\t',n2)
         self.responded = n2>0
 
         if n2>n1:
             txt3=txt2[-n1:]
+            print('txt2:    \t',show_hex(txt2) )
         else:
             txt3=txt2
         dx=Levenshtein.distance(txt1,txt3)
@@ -656,7 +658,7 @@ class PADDLING_GUI():
                 self.down=True
         
         if n2>=n1:
-            print('txt3    :',txt3,'\t',len(txt3))
+            print('txt3:    \t',txt3,'\t',len(txt3))
             if txt3==txt1:
                 print('Distances=',self.dxs)
                 print('!!! DING DING DING !!!\t# Tries=',self.ntries)

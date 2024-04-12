@@ -337,8 +337,7 @@ class PARAMS:
         self.USE_ADIF_HISTORY = True        
         
         self.SIDETONE      = args.sidetone or self.PORT==1 or \
-            (self.PRACTICE_MODE and not self.USE_KEYER) # or \
-            #(self.CAPTURE and self.AUDIO_DEVICE=='USB Audio CODEC')
+            (self.PRACTICE_MODE and not self.USE_KEYER)
 
         self.MY_CNTR       = 1
         self.PRECS         = PRECS
