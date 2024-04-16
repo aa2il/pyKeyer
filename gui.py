@@ -1057,6 +1057,7 @@ class GUI():
             
         else:
             print('CALL_LOOKUP: Need a valid call first! ',call)
+            self.status_bar.setText('QRZ? - Need a valid call first!')
             
     # Callback to bring up rig control menu
     def RigCtrlCB(self):
@@ -1351,6 +1352,7 @@ class GUI():
             self.exch_out = txt
 
         # Collapse whitespace
+        txt = txt.replace('  ',' ')
         #txt=" ".join(txt.split())
         return txt
 

@@ -255,15 +255,17 @@ class DEFAULT_KEYING():
             elif self.contest_name in ['JIDX']:
                 
                 # RST + CQ Zone
+                CONTEST = 'JA'
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
                 EXCH2 = '[MYCQZ]'
-                self.P.CONTEST_ID=self.contest_name[0:2]
+                self.P.CONTEST_ID=self.contest_name
                 
             elif self.contest_name in ['YURI']:
                 
                 # RST + CQ Zone
+                CONTEST = 'GC'
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'NR'
@@ -325,7 +327,12 @@ class DEFAULT_KEYING():
             self.key1 = self.LAB1.lower()
             if LAB2!=None:
                 self.LAB2=LAB2
-                self.key2 = self.LAB2.lower()
+                if 'CQZ' in EXCH2:
+                    self.key2 = 'cqz'
+                elif 'ITUZ' in EXCH2:
+                    self.key2 = 'ituz'
+                else:
+                    self.key2 = self.LAB2.lower()
             else:
                 self.LAB2=LAB1
                 LAB2=LAB1
@@ -360,7 +367,7 @@ class DEFAULT_KEYING():
             MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
             MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU '+EXCH1+' '+EXCH2+' '+EXCH3+' '}
-            MACROS[5+12]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] '+EXCH1+' '+EXCH2+' '+EXCH3+' GL '.replace('  ',' ')}
+            MACROS[5+12]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] '+EXCH1+' '+EXCH2+' '+EXCH3+' GL '}
             #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU '+EXCH1+' '+EXCH1+' '+EXCH2+' '+EXCH2+' '}
             MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
             MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
@@ -390,14 +397,14 @@ class DEFAULT_KEYING():
         P=self.P
         gui=self.P.gui
 
-        print('DEFAULT HINT: call=',call,self.key1,self.key2)
+        print('DEFAULT HINT: call=',call,'\tkey1=',self.key1,'\tkey2=',self.key2)
 
         txt=''
         qth=''
         if self.key1!=None and self.key1!='rst':
             txt+='TBD '
 
-        if self.key2!=None and self.key2 in ['sec','qth']:
+        if self.key2!=None and self.key2 in ['sec','qth','cqz','ituz']:
             if self.key2=='qth':
                 key2='state'
             else:
@@ -686,7 +693,7 @@ class DEFAULT_KEYING():
                 gui.name.insert(0,self.NAME)
 
             if self.key2!=None and len(h)>idx:
-                if (self.key2 in ['sec','qth','state']) or \
+                if (self.key2 in ['sec','qth','state','ituz','cqz']) or \
                    (self.contest_name=='RAC' and gui.dx_station and gui.dx_station.country=='Canada'):
                     gui.qth.delete(0,END)
                     gui.qth.insert(0,h[idx])
