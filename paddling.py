@@ -32,12 +32,11 @@ import time
 import random
 from nano_io import *
 from fileio import read_text_file
-from utilities import cut_numbers,error_trap
+from utilities import cut_numbers,error_trap,show_hex
 from pprint import pprint
 import Levenshtein
 from keying import *
 from widgets_tk import StatusBar,SPLASH_SCREEN
-from rig_io import show_hex
 
 ################################################################################
 
@@ -103,6 +102,18 @@ class PADDLING_GUI():
         
         # Read list of Panagrams
         self.panagrams = read_text_file('Panagrams.txt',KEEP_BLANKS=False)
+        if False:
+            for p in self.panagrams:
+                P=p.upper()
+                N=26*[0]
+                for c in P:
+                    if c>='A' and c<='Z':
+                        N[ord(c)-ord('A')]+=1
+                if not all(N):
+                    print('\n*** Not a panagram:')
+                    print(p)
+                    print(N)
+            sys.exit(0)
         
         # Read qso template
         self.QSO_Template = read_text_file('QSO_Template.txt',KEEP_BLANKS=False)
@@ -626,8 +637,8 @@ class PADDLING_GUI():
         #    return
         
         self.response+=txt0
-        txt1=self.item.replace("'","")
-        txt2=self.response.lstrip()
+        txt1=self.item.replace('"','').replace("'","").strip()
+        txt2=self.response.replace('=','-').strip()
         if self.CASUAL_MODE:
             txt1=txt1.replace(' ','')
             txt2=txt2.replace(' ','')
@@ -641,7 +652,7 @@ class PADDLING_GUI():
 
         if n2>n1:
             txt3=txt2[-n1:]
-            print('txt2:    \t',show_hex(txt2) )
+            #print('txt2:    \t',show_hex(txt2),n2 )
         else:
             txt3=txt2
         dx=Levenshtein.distance(txt1,txt3)

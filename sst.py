@@ -27,6 +27,7 @@ from rig_io import SST_SECS
 from default import DEFAULT_KEYING
 from datetime import datetime
 import numpy as np
+from utilities import error_trap
 
 ############################################################################################
 

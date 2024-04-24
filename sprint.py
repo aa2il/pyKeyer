@@ -65,6 +65,7 @@ from datetime import datetime
 from utilities import cut_numbers
 from random import randint, random
 import numpy as np
+from utilities import error_trap
 
 ############################################################################################
 

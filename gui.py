@@ -2271,7 +2271,7 @@ class GUI():
     def dup_check(self,call):
         #print('DUP_CHECK: call=',call,'\tmax age=',self.P.MAX_AGE)
         self.time_on = datetime.utcnow().replace(tzinfo=UTC)
-        print('TIME_ON C set to',self.time_on.strftime('%H%M%S'))
+        print('DUP_CHECK: TIME_ON C set to',self.time_on.strftime('%H%M%S'))
 
         # Look for dupes
         self.match1=False                # True if there is matching call
@@ -2285,12 +2285,12 @@ class GUI():
             
         if self.P.sock_log.connection=='FLLOG' and True:
             self.match1 = self.P.sock_log.Dupe_Check(call)
-            print('match1=',self.match1)
+            print('DUP_CHECK: match1=',self.match1)
             if self.match1:
                 self.match2 = self.P.sock_log.Dupe_Check(call,mode,self.P.MAX_AGE,freq)
-                print('match2=',self.match2)
+                print('DUP_CHECK: match2=',self.match2)
                 qso = self.P.sock_log.Get_Last_QSO(call)
-                print('last qso=',qso)
+                print('DUP_CHECK: last qso=',qso)
                 if 'SRX_STRING' in qso :
                     last_exch = qso['SRX_STRING']
                 if False:    # Shouldnt need to do this but there was a bug in how fllog handled local & utc times
@@ -2298,13 +2298,13 @@ class GUI():
                                        .replace(tzinfo=UTC)
                     age = (now - date_off).total_seconds() # In seconds
                     self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
-                    print('match 1 & 2:',self.match1,self.match2)
+                    print('DUP_CHECK: match 1 & 2:',self.match1,self.match2)
 
         else:
             
             for qso in self.log_book:
                 if 'CALL' not in qso:
-                    print('DUP CHECK: - File - CALL not in QSO!!!\nqso=',qso,'\tcall=',call)
+                    print('DUP_CHECK: - File - CALL not in QSO!!!\nqso=',qso,'\tcall=',call)
                 elif qso['CALL']==call:
                     self.match1 = True
                     self.last_qso=qso
@@ -2316,7 +2316,7 @@ class GUI():
                     if self.P.contest_name=='SATELLITES':
                         
                         # Need to add more logic to this going forward
-                        print(call,'- Worked before on sats')
+                        print('DUP_CHECK: Worked before on sats ',call)
                         self.match2 = True
                         
                     elif self.P.contest_name in ['ARRL-VHF','CQ-VHF']:
@@ -2346,13 +2346,15 @@ class GUI():
                         
                         # Can only work each station once regardless of band
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['MODE']==mode)
+                        
                     else:
+                        
                         # Most of the time, we can work each station on each band and mode
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
+                        if True:
+                            print('DUP_CHECK: match2=',self.match2,'\tage=',age,self.P.MAX_AGE,'\tband=',band,'\tmode=',mode)
                         
                     if self.P.contest_name=='SATELLITES':
-                        #print('HEEEEEEEEYYYYYYYYYYYYYY')
-                        #print(qso)
                         try:
                             qth=qso['QTH']
                         except:
@@ -2371,7 +2373,7 @@ class GUI():
 
         # If there was a dupe, change color of call entry box & show last exchange
         if self.match1:
-            print('Call match:',call)
+            print('DUP_CHECK: Call match:',call)
             if self.match2:
                 self.call.configure(bg="coral")
             else:
@@ -2380,7 +2382,7 @@ class GUI():
             if self.match2 and len( self.exch.get() )==0:
                 self.prefill=True
                 a=last_exch.split(',')
-                print('last_exch - a=',a)
+                print('DUPE_CHECK: last_exch - a=',a)
                 self.P.KEYING.dupe(a)
 
                 """
@@ -2413,7 +2415,7 @@ class GUI():
             # Check fldigi logger
             if self.sock.connection=='FLDIGI' and not self.P.PRACTICE_MODE and False:
                 fields  = self.sock.get_log_fields()
-                print("Log Fields =",fields)
+                print("DUP_CHECK: Log Fields =",fields)
                 if len( self.name.get() )==0 and len(fields['Name'])>0:
                     self.name.delete(0, END)
                     self.name.insert(0,fields['Name'])

@@ -285,6 +285,7 @@ class DEFAULT_KEYING():
             elif self.contest_name in ['CQMM']:
                 
                 # RST + Continent
+                # NEED TO MAKE THIS GENERIC & MAKE SURE WE LOG 'NA' AS SENT, NOT 'CA'
                 CONTEST = 'MM'
                 LAB1    = 'RST'
                 EXCH1   = '5NN'
@@ -613,6 +614,14 @@ class DEFAULT_KEYING():
             gui.counter.grid()
             gui.inc_btn.grid()
             gui.dec_btn.grid()
+            
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        gui.boxes.append(gui.scp)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
             
         print('DEFAULT ENABLE BOXES: col=',col,'\tcspan=',cspan)
         
