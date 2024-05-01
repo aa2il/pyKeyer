@@ -2158,12 +2158,13 @@ class GUI():
                     if spot['Fields']:
                         call2 = spot['Fields']['Call'].upper()
                     else:
+                        idx+=1
                         continue
                 except:
                     error_trap('LOG QSO - ????????????')
                     continue
                 if call==call2:
-                    print('@@@@@@@@@@@@@ Clobbering spot @@@@@@@@@@@@@@@@@@@@@',idx,spot)
+                    print('\n@@@ Clobbering spot @@@@ idx=',idx,'\nspot=',spot)
                     self.Spots_cb(idx,-1)
                 idx+=1
 
@@ -3133,6 +3134,10 @@ class GUI():
         if self.P.USE_SCP:
             self.scp_lab.grid()
             self.scp.grid()
+            self.hint_lab.grid_remove()
+            self.hint.grid_remove()
+            self.notes_lab.grid_remove()
+            self.notes.grid_remove()
         else:
             self.scp_lab.grid_remove()
             self.scp.grid_remove()

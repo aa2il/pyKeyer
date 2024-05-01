@@ -586,13 +586,17 @@ class DEFAULT_KEYING():
             gui.boxes.append(gui.qth)
         
         if not gui.contest:
+            col0=col
             col+=cspan
             cspan=3
             gui.notes_lab.grid(column=col,columnspan=cspan)
             gui.notes.grid(column=col,columnspan=cspan)
             gui.boxes.append(gui.notes)
 
-        col+=cspan
+        if not gui.contest:
+            col=col0
+        else:
+            col+=cspan
         cspan=max(min(2,12-col),1)
         gui.hint_lab.grid(column=col,columnspan=cspan,sticky=E+W)
         gui.hint.grid(column=col,columnspan=cspan)
@@ -600,6 +604,8 @@ class DEFAULT_KEYING():
             gui.hint_lab.grid_remove()
             gui.hint.grid_remove()
         else:
+            gui.notes_lab.grid_remove()
+            gui.notes.grid_remove()
             gui.boxes.append(gui.hint)
 
         if gui.contest and self.LAB2!='NAME' and False:
@@ -609,19 +615,25 @@ class DEFAULT_KEYING():
             gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
             gui.name.grid(column=col,columnspan=cspan)
 
+        cspan=max(min(2,12-col),1)
+        #print('DEFAULT->ENABLE BOXES: col=',col,'\tcspan=',cspan)
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+        else:
+            gui.hint_lab.grid_remove()
+            gui.hint.grid_remove()
+            gui.notes_lab.grid_remove()
+            gui.notes.grid_remove()
+            gui.boxes.append(gui.scp)
+            
         if self.Uses_Serial:
             gui.counter_lab.grid()
             gui.counter.grid()
             gui.inc_btn.grid()
             gui.dec_btn.grid()
-            
-        cspan=12-col
-        gui.scp_lab.grid(column=col,columnspan=cspan)
-        gui.scp.grid(column=col,columnspan=cspan)
-        gui.boxes.append(gui.scp)
-        if not self.P.USE_SCP:
-            gui.scp_lab.grid_remove()
-            gui.scp.grid_remove()
             
         print('DEFAULT ENABLE BOXES: col=',col,'\tcspan=',cspan)
         
