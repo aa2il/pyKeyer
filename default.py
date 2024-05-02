@@ -154,7 +154,7 @@ class DEFAULT_KEYING():
                 #self.key2 = 'qth'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['ALQP','ARQP','AZQP','COQP','DEQP',
+            elif self.contest_name in ['ALQP','ARQP','AZQP','COQP','DEQP','FLQP',
                                        'GAQP','HIQP','IAQP','ILQP','INQP',
                                        'KSQP','KYQP','LAQP','MEQP','MIQP',
                                        'MOQP','MSQP','NCQP','NDQP','NEQP',
@@ -317,6 +317,7 @@ class DEFAULT_KEYING():
             else:
 
                 # RST + State
+                print('*** WARNING *** DEFAULT: Defaulting to RST+QTH ***')
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
