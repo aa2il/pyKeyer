@@ -164,6 +164,8 @@ class DEFAULT_KEYING():
                                        'BCQP','ONQP','QCQP',
                                        'W1QP','W7QP','CPQP']:
 
+                # W1 = New England, W7=7QP, CP=CA Prairies (central provinces)
+
                 # RST + State
                 LAB1  = 'RST'
                 EXCH1 = '5NN'

@@ -23,6 +23,7 @@
 import sys
 from nano_io import *
 from utilities import error_trap, get_PIDs
+from rig_io import BAUD,SERIAL_PORT4
 
 ################################################################################
 
@@ -147,7 +148,9 @@ def open_keying_port(P,sock,rig_num):
                 pids = get_PIDs('pyKeyer.py')
                 print('pids=',pids)
                 if len(pids)>0:
-                    print("\nTry killing other instances of this program\n")
+                    print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                    print(  "@ Try killing other instances of this program! @")
+                    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
             
                 sys.exit(0)
             else:
@@ -189,7 +192,9 @@ def open_keying_port(P,sock,rig_num):
             pids = get_PIDs('pyKeyer.py')
             print('pids=',pids)
             if len(pids)>0:
-                print("\nTry killing other instances of this program\n")
+                print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                print(  "@ Try killing other instances of this program! @")
+                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
             FATAL_ERROR=True
 
         if FATAL_ERROR:

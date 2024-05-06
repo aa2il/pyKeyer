@@ -37,15 +37,9 @@ def GetKeyerMemory(self):
     for i in range(6):
         print("GetKeyerMemory: i=",i)
         if i<5:
-            if s.connection=='HAMLIB' and False:
-                cmd='w KM'+str(i+1)+'\n'
-            else:
-                cmd='KM'+str(i+1)+';'
+            cmd='KM'+str(i+1)+';'
         else:
-            if s.connection=='HAMLIB' and False:
-                cmd='w EX025\n'
-            else:
-                cmd='EX025;'
+            cmd='EX025;'
 
         ntries=0
         while ntries<5:

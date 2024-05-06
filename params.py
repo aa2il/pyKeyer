@@ -306,6 +306,7 @@ class PARAMS:
         else:
             self.rig       = None
         self.PORT          = args.port
+        self.keyer_device  = None
             
         self.connection2   = args.rig2[0]
         if len(args.rig2)>=2:

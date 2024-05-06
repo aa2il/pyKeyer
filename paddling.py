@@ -336,7 +336,7 @@ class PADDLING_GUI():
                 P.keyer.set_wpm(WPM)
                 if P.sock:
                     P.sock.set_speed(WPM)
-            else:
+            elif P.keyer_device:
                 print('Paddling->SetWpm: NANO - Setting speed to WPM=',
                       WPM,'...')
                 P.keyer_device.set_wpm(WPM,idev=2)
