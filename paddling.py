@@ -32,7 +32,7 @@ import time
 import random
 from nano_io import *
 from fileio import read_text_file
-from utilities import cut_numbers,error_trap,show_hex
+from utilities import cut_numbers,error_trap,show_hex,show_ascii
 from pprint import pprint
 import Levenshtein
 from keying import *
@@ -140,7 +140,7 @@ class PADDLING_GUI():
         row=0
         lab = Label(self.win, text="",font=font1)
         lab.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
-        self.txt = Text(self.win, height=2, width=60, bg='white', font=font2)
+        self.txt = Text(self.win, height=2, width=60, bg='white', font=font2,wrap=WORD)
         self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=NCOLS,sticky=E+W)
         self.default_object=self.txt
         self.txt.bind("<Key>", self.KeyPress )
@@ -637,7 +637,12 @@ class PADDLING_GUI():
         #    return
         
         self.response+=txt0
-        txt1=self.item.replace('"','').replace("'","").strip()
+
+        # The input text can have all kinds of weird unicode chars,
+        # e.g. 8216 and 8217 are left and right single quotes.
+        # Strip these out as well as chars we dont usually send in cw.
+        txt1=self.item.encode('ascii','ignore').decode("utf-8") \
+                        .replace('"','').replace("'","").strip()
         txt2=self.response.replace('=','-').strip()
         if self.CASUAL_MODE:
             txt1=txt1.replace(' ','')
@@ -645,6 +650,7 @@ class PADDLING_GUI():
             
         n1=len(txt1)
         print('\nitem:    \t',txt1,'\t',n1)
+        #print('\t',show_ascii(txt1) )
 
         n2=len(txt2)
         print('response:\t',txt2,'\t',n2)

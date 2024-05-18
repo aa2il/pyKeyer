@@ -224,7 +224,7 @@ def open_keying_port(P,sock,rig_num):
             # If direct connect, could use USB A ...
             #ser = P.sock.s
             # but, in general, we'll use USB B in case we are using hamlib for rig control
-            print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
+            #print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
             try:
                 port=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
