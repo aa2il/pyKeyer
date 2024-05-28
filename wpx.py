@@ -45,9 +45,10 @@ class WPX_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
+        
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [SERIAL] '}
-        MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -56,13 +57,15 @@ class WPX_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [SERIAL]'}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [SERIAL] [SERIAL]'}
+        #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [SERIAL] [SERIAL]'}
+        MACROS[5+12]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] 5NN [SERIAL]'}
         MACROS[6]     = {'Label' : '?'         , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN? '     , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
-        MACROS[8]     = {'Label' : 'Serial 2x' , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
+        MACROS[8]     = {'Label' : 'Serial 1x' , 'Text' : '[-3][SERIAL] [+3]'}
+        #MACROS[8+12]  = {'Label' : 'Serial 1x' , 'Text' : '[-3][CUT_SERIAL] [+3]'}
         MACROS[9]     = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[10]    = {'Label' : '-'         , 'Text' : ' '}
         MACROS[11]    = {'Label' : '-'         , 'Text' : ' '}
@@ -133,7 +136,7 @@ class WPX_KEYING(DEFAULT_KEYING):
     def enable_boxes(self,gui):
 
         gui.contest=True
-        gui.ndigits=2
+        gui.ndigits=1
         gui.hide_all()
         self.macros=[1,None,2]
         
@@ -154,20 +157,24 @@ class WPX_KEYING(DEFAULT_KEYING):
         gui.serial_lab.grid(columnspan=cspan,column=col,sticky=E+W)
         gui.serial_box.grid(column=col,columnspan=cspan)
         
+        col+=cspan
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+            
         gui.boxes=[gui.call]
         gui.boxes.append(gui.rstin)
         gui.boxes.append(gui.serial_box)
+        gui.boxes.append(gui.scp)
             
         gui.counter_lab.grid()
         gui.counter.grid()
+        gui.inc_btn.grid()
+        gui.dec_btn.grid()
 
-        # I dont think this makes any sense for the WPX contest?
-        if not gui.P.NO_HINTS and False:
-            col+=cspan
-            cspan=2
-            gui.hint_lab.grid(column=col,columnspan=1,sticky=E+W)
-            gui.hint.grid(column=col,columnspan=2)
-        
     # Gather together logging info for this contest
     def logging(self):
 

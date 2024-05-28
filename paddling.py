@@ -599,7 +599,7 @@ class PADDLING_GUI():
         
     # Routine to hide the main window
     def hide(self):
-        print('Hide Settings Window ...')
+        print('Hide Paddling Window ...')
         self.win.withdraw()
 
 ################################################################################
