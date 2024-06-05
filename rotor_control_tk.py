@@ -96,6 +96,7 @@ class ROTOR_CONTROL():
         self.ellcd1.set(pos[1])
         self.azlcd2.set(pos[0])
         self.ellcd2.set(pos[1])
+        self.RotorEnabled=True
 
         # Add entry box for input of a grid square
         row+=2
@@ -112,6 +113,13 @@ class ROTOR_CONTROL():
         self.btn = Button(self.tab,text='Rotor Home',command=self.rotorHome)
         #self.btn.setToolTip('Rotor to 0 az/el')
         self.btn.grid(row=row,column=col)                # ,1,4)
+        
+        # Add button to enable/disable rotor positioing
+        row+=1
+        col=0
+        self.btn2 = Button(self.tab,text='Disable Rotor',command=self.rotorOnOff)
+        #self.btn2.setToolTip('Enale/Disable rotor positioning')
+        self.btn2.grid(row=row,column=col)    
         
         
     # Function to update rotor az
@@ -155,11 +163,20 @@ class ROTOR_CONTROL():
         self.azlcd2.set(pos[0])
         self.ellcd2.set(pos[1])
 
+    # Function to enable/disable rotor positioning
+    def rotorOnOff(self):
+        self.RotorEnabled=not self.RotorEnabled
+        if self.RotorEnabled:
+            self.btn2.config(text='DisableRotor')
+        else:
+            self.btn2.config(text='EnableRotor')
+        
+
     # Function to point rotor toward a user specified grid square
     def newGridSquare(self,evt):
         txt=self.grid_sq.get()
         print('newGridSquare:',txt)
-        if len(txt)==4 and bearing_ok:
+        if len(txt) in [4,6] and bearing_ok:
             try:
                 print('Computing bearing ...')
                 bearing = calculate_heading(self.MY_GRID,txt)

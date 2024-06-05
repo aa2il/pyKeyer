@@ -33,6 +33,7 @@ import time
 from collections import OrderedDict
 from dx import Station
 from datetime import datetime
+from dx.spot_processing import ChallengeData,Station
 
 #########################################################################################
 
@@ -55,6 +56,22 @@ class CALL_INFO_GUI():
                     if call2 in P.MASTER.keys():
                         print('CALL_LOOKUP:',call2,' is in master list')
                         info=P.MASTER[call2]
+
+            if qso!=None:
+                print('CALL_LOOKUP:',call,' has been worked this year')
+            else:
+                print('CALL_LOOKUP:',call,' has been NOT worked this year')
+                        
+            if P.CWOPS!=None and call in P.CWOPS:
+                num = int( info['cwops'] )
+                print('CALL_LOOKUP:',call,' is in CWops roster - number',num)
+                if call in P.data.cwops_worked:
+                    print('CALL_LOOKUP:',call,' has NOT been credited')
+                elif num in P.data.cwops_nums:
+                    print('CALL_LOOKUP: CWops no.',num,' has been credited this year')
+                else:
+                    print('CALL_LOOKUP:',call,'/',num,' has NOT been credited year')
+            
             infos.append(info)
         #print('infos=',infos,len(infos))
 
@@ -140,6 +157,8 @@ if __name__ == '__main__':
     # Structure to contain processing params
     class QRZ_PARAMS:
         def __init__(self):
+
+            self.CWOPS=None
             
             # Read config file
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
@@ -170,9 +189,15 @@ if __name__ == '__main__':
     print('calls=',calls)
     #sys.exit(0)
 
+    # Read config file
+    P=QRZ_PARAMS()
+    #print('SETTINGS=',P.SETTINGS)
+
     # Reverse member no. lookup for CWops
     if args.cwops or calls[0].isdigit():
+        print('Reading CWops member roster ...')
         MASTER,junk = load_history('~/Python/history/data/Shareable CWops data.xlsx')
+        P.CWOPS=MASTER
         num=calls[0]
         calls=[]
         for c in MASTER.keys():
@@ -183,9 +208,14 @@ if __name__ == '__main__':
         print(calls[0])
         #sys.exit(0)
 
-    # Read config file
-    P=QRZ_PARAMS()
-    #print('SETTINGS=',P.SETTINGS)
+        print('Reading STATES.XLS ...')
+        MY_CALL3 = P.SETTINGS['MY_CALL'].split('/')[0]
+        P.DATA_DIR        = os.path.expanduser('~/'+MY_CALL3+'/')
+        P.CHALLENGE_FNAME = P.DATA_DIR+'/states.xls'
+        P.data = ChallengeData(P.CHALLENGE_FNAME)
+        #print('\nCWops members worked:\n',P.data.cwops_worked)
+        #print('\nCWops member no.s worked:\n',P.data.cwops_nums)
+        #sys.exit(0)
 
     # Read adif input file(s)
     QSOs=[]
