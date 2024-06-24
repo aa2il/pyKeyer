@@ -635,6 +635,7 @@ class PADDLING_GUI():
         txt0=txt.replace('\n',' ')
         #if txt0==' ' and self.response=='':
         #    return
+        #print('CHECK RESPONSE: txt=',txt,len(txt))
         
         self.response+=txt0
 
@@ -721,7 +722,7 @@ if __name__ == '__main__':
     def check_keyer(P):
 
         txt=P.keyer_device.nano_read()
-        #print('CHECK KEYER - txt=',txt,len(txt))
+        #print('CHECK KEYER: txt=',txt,len(txt))
 
         """
         # Check if its been a while since the last char was received

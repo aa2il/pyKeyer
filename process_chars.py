@@ -123,7 +123,7 @@ def process_chars(P):
                                     need_eol=True
                                 last_char_time=t
                             
-                            # Check is user has responded to current paddling text
+                            # Check if user has responded to current paddling text
                             if P.SENDING_PRACTICE and '\n' in txt:
                                 P.gui.PaddlingWin.responded=True
                                 print('PROCESS CHARS: repsonded=',P.gui.PaddlingWin.responded)

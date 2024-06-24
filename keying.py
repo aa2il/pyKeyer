@@ -147,10 +147,14 @@ def open_keying_port(P,sock,rig_num):
                 
                 pids = get_PIDs('pyKeyer.py')
                 print('pids=',pids)
-                if len(pids)>0:
+                if len(pids)>1:
                     print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     print(  "@ Try killing other instances of this program! @")
                     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
+                else:
+                    print("\n@@@@@@@@@@@@@@@@@@@@@@@@")
+                    print(  "@ Is it plugged in ??? @")
+                    print(  "@@@@@@@@@@@@@@@@@@@@@@@@\n")
             
                 sys.exit(0)
             else:

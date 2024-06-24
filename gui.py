@@ -3076,6 +3076,14 @@ class GUI():
     def AutoFillCB(self):
         self.P.AUTOFILL = not self.P.AUTOFILL
 
+    # Callback to toggle paddling window
+    def Toggle_Paddling_Win(self):
+        self.P.SENDING_PRACTICE = not self.P.SENDING_PRACTICE
+        if self.P.SENDING_PRACTICE:
+            self.PaddlingWin.show()
+        else:
+            self.PaddlingWin.hide()
+
     # Callback to toggle speed adjustment
     def AdjustSpeedCB(self):
         self.P.ADJUST_SPEED = not self.P.ADJUST_SPEED
@@ -3213,7 +3221,8 @@ class GUI():
         Menu1 = Menu(menubar, tearoff=0)
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Rig Control ...", command=self.RigCtrlCB)
-        Menu1.add_command(label="Paddling ...", command=self.PaddlingWin.show)
+        #Menu1.add_command(label="Paddling ...", command=self.PaddlingWin.show)
+        Menu1.add_command(label="Paddling ...", command=self.Toggle_Paddling_Win)
         Menu1.add_command(label="Clear Stores ...", command=self.ClearState)
         Menu1.add_separator()
         
