@@ -48,7 +48,7 @@ CONTESTS['NAQP-CW']    = {'Months' : [1,8]}
 CONTESTS['TEN-TEN']    = {'Months' : []}
 CONTESTS['WAG']        = {'Months' : []}
 CONTESTS['SAC']        = {'Months' : []}
-CONTESTS['RAC']        = {'Months' : [12]}
+CONTESTS['RAC']        = {'Months' : [6,12]}
 CONTESTS['BERU']       = {'Months' : []}
 CONTESTS['CQP']        = {'Months' : [10]}
 CONTESTS['IARU-HF']    = {'Months' : [7]}
@@ -161,7 +161,7 @@ class PARAMS:
         arg_proc.add_argument('-beru', action='store_true',
                               help='RSGB Commonwealth')
         arg_proc.add_argument('-rac', action='store_true',
-                              help='RAC Winter QP')
+                              help='RAC Summer or Winter QPs')
         arg_proc.add_argument('-ragchew', action='store_true',
                               help='Regular Ragchew QSO')
         arg_proc.add_argument('-dx', action='store_true',
@@ -330,6 +330,7 @@ class PARAMS:
         self.DXSPLIT       = False
         self.SPLIT_VFOs    = False
         self.GPS           = args.gps
+        self.CWOPS         = None
 
         # Overrride as these are depricated
         #self.USE_LOG_HISTORY  = args.use_log_hist

@@ -618,8 +618,7 @@ class DEFAULT_KEYING():
             gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
             gui.name.grid(column=col,columnspan=cspan)
 
-        cspan=max(min(2,12-col),1)
-        #print('DEFAULT->ENABLE BOXES: col=',col,'\tcspan=',cspan)
+        cspan=12-col
         gui.scp_lab.grid(column=col,columnspan=cspan)
         gui.scp.grid(column=col,columnspan=cspan)
         if not self.P.USE_SCP:
@@ -638,7 +637,7 @@ class DEFAULT_KEYING():
             gui.inc_btn.grid()
             gui.dec_btn.grid()
             
-        print('DEFAULT ENABLE BOXES: col=',col,'\tcspan=',cspan)
+        print('DEFAULT->ENABLE BOXES: col=',col,'\tcspan=',cspan,gui.contest)
         
     # Gather together logging info for this contest
     def logging(self):
@@ -705,24 +704,36 @@ class DEFAULT_KEYING():
             h = h.split(' ')
         print('DEFAULT INSERT HINT AFTER: h=',h,'\tNAME=',self.NAME)
 
+        # Let's see if this works????  Clear log fields touched by this routine
+        if True:
+            gui.name.delete(0, END)
+            gui.qth.delete(0,END)
+            gui.exch.delete(0,END)
+
         if len(h)>=1:
 
             idx=0
+            gui.name.delete(0, END)
             if self.key1!=None and self.key1=='name':
-                gui.name.delete(0, END)
                 gui.name.insert(0,h[idx])
                 idx+=1
             else:
-                gui.name.delete(0, END)
                 gui.name.insert(0,self.NAME)
 
+            #print('DEFAULT INSERT HINT AFTER - AAA : contest_name=',
+            #      self.contest_name,self.contest_name=='RAC',
+            # gui.dx_station,'\tkey2=',self.key2,'\tlen h=',len(h),'\tidx=',idx)
             if self.key2!=None and len(h)>idx:
-                if (self.key2 in ['sec','qth','state','ituz','cqz']) or \
-                   (self.contest_name=='RAC' and gui.dx_station and gui.dx_station.country=='Canada'):
+                #print('DEFAULT INSERT HINT AFTER - BBB :')
+                if (self.key2 in ['sec','qth','state','ituz','cqz']):
+                    #print('DEFAULT INSERT HINT AFTER - CCC : h=',h)
                     gui.qth.delete(0,END)
                     gui.qth.insert(0,h[idx])
                     idx+=1
-                elif self.key2 in ['exch']:
+                elif self.key2 in ['exch'] or \
+                   (self.contest_name=='RAC' and gui.dx_station and
+                    gui.dx_station.country=='Canada'):
+                    #print('DEFAULT INSERT HINT AFTER - DDD : contest_name=',self.contest_name)
                     gui.exch.delete(0,END)
                     gui.exch.insert(0,h[idx])
                     idx+=1
