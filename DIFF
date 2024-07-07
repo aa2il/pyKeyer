@@ -17,7 +17,14 @@ set ROOT="/media/${USER}/marconi"
 #set ROOT="../clone"
 #set ROOT="/media/${USER}/cartman"
 if( !(-e $ROOT) )then
+    echo " "
+    echo $ROOT doesnt appear to be mounted - trying alternative ...
     set ROOT="${ROOT}2"
+endif
+if( !(-e $ROOT) )then
+    echo $ROOT doesnt appear to be mounted - giving up :-\(
+    echo " "
+    exit
 endif
 #if( !(-e $ROOT) && (-e ${ROOT}2) )then
 #    set ROOT="${ROOT}2"
@@ -37,6 +44,19 @@ set old=${ROOT}${PTH}
 # Overide if necessary
 #set old="work"
 #set old="save79"
+
+# Make sure remote dir is mounted
+echo " "
+echo $old
+echo "Check mount for $old ..."
+set a=`ls $old`
+echo a=$#a
+if( $#a < 2 )then
+    echo $old doesnt appear to be mounted :-\(
+    exit
+endif
+#echo This part of the script is new so remove the exit if all is ok
+#exit
 
 rm -f DIFFS
 echo OLD=$old

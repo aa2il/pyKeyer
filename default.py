@@ -121,7 +121,7 @@ class DEFAULT_KEYING():
             LAB3=None
             EXCH3=''
             if self.contest_name in ['OCDX','WAG','RAC','BERU','HOLYLAND',
-                                     'IOTA','SAC','SPDX']:
+                                     'IOTA','SAC','SPDX','MMC']:
                 
                 # RST + Serial No.
                 LAB1  = 'RST'
@@ -130,6 +130,9 @@ class DEFAULT_KEYING():
                 EXCH2 = '[SERIAL]'
                 self.Uses_Serial=True
                 self.P.CONTEST_ID=self.contest_name+'-QSO-PARTY'
+
+                if self.contest_name in ['OCDX','MMC']:
+                    CONTEST=self.contest_name[0:2]
                 
             elif self.contest_name in ['ARRL-160M']:
 

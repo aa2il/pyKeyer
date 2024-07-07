@@ -74,6 +74,7 @@ CONTESTS['IOTA']       = {'Months' : []}
 CONTESTS['MARAC']      = {'Months' : []}
 CONTESTS['SOLAR']      = {'Months' : []}
 CONTESTS['OCDX']       = {'Months' : []}
+CONTESTS['MARCONI']    = {'Months' : [7]}
 #CONTESTS[]= {'Months' : []}
 #CONTESTS[]= {'Months' : []}
                    
@@ -130,6 +131,8 @@ class PARAMS:
                               help='SP DX CW')
         arg_proc.add_argument('-ocdx', action='store_true',
                               help='OC DX CW')
+        arg_proc.add_argument('-marconi', action='store_true',
+                              help='Marconi Memorial')
         arg_proc.add_argument('-solar', action='store_true',
                               help='Solar Eclipse')
         arg_proc.add_argument('-cqmm', action='store_true',
@@ -396,6 +399,9 @@ class PARAMS:
             MAX_AGE_HOURS=24
         elif args.ocdx:
             self.contest_name='OCDX'
+            MAX_AGE_HOURS=24
+        elif args.marconi:
+            self.contest_name='MMC'
             MAX_AGE_HOURS=24
         elif args.solar:
             self.contest_name='SE'
