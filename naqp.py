@@ -208,7 +208,7 @@ class NAQP_KEYING(DEFAULT_KEYING):
             gui.qth.insert(0,a[1])
 
     # Hint insertion
-    def insert_hint(self,h=None):
+    def insert_hint(self,h=None,VERBOSITY=0):
 
         gui=self.P.gui
 
@@ -230,21 +230,5 @@ class NAQP_KEYING(DEFAULT_KEYING):
                 gui.qth.delete(0, END)
                 gui.qth.insert(0,h[1])
 
-    def insert_hint_CWT(self,h=None):
-
-        gui=self.P.gui
-
-        if h==None:
-            h = gui.hint.get()
-        if type(h) == str:
-            h = h.split(' ')
-
-        if len(h)>=1:
-            gui.name.delete(0, END)
-            gui.name.insert(0,h[0])
-            gui.exch.delete(0, END)
-            if len(h)>2 and len( h[2] )>0:
-                gui.exch.insert(0,h[2])
-            elif len(h)>=2:
-                gui.exch.insert(0,h[1])
-
+        return h
+    

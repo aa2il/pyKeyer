@@ -890,7 +890,7 @@ class DEFAULT_KEYING():
                 m=calls2[idx]
             else:
                 m=max(set(calls), key=calls.count)
-            #print('Most likely call=',m)
+            print('REVERSE CALL LOOKUP: Most likely call=',m)
             P.gui.call.delete(0, END)
             P.gui.call.insert(0,m)
             P.gui.dup_check(m)

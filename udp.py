@@ -39,6 +39,11 @@ def insert_new_call(self,call,vfo):
             if P.AUTOFILL:
                 P.KEYING.insert_hint()
 
+                # This actually works BUT fldigi doesn't handle revisions correctly?!
+                if P.sock.rig_type=='FLDIGI' and P.sock.fldigi_active and False:
+                    print('Setting FLDIGI log fields ...')
+                    P.gui.Read_Log_Fields()
+
     elif vfo=='B':
 
         P.gui.OnDeckCircle.delete(0, END)

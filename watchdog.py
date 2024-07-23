@@ -25,6 +25,7 @@ from utilities import freq2band
 from tcp_server import open_udp_client,BANDMAP_UDP_PORT
 from udp import UDP_msg_handler
 from rig_io import SetSubDial
+from tkinter import END
 
 ################################################################################
 
@@ -54,7 +55,7 @@ def check_udp_clients(P):
 
 def WatchDog(P):
     #print('Watch Dog ....')
-
+    
     # Check if another thread shut down - this isn't complete yet
     if P.SHUTDOWN:
         if P.CAPTURE:
@@ -120,6 +121,35 @@ def WatchDog(P):
 
     # Open clients to BANDMAP and SDR
     #check_udp_clients(P)
+
+    # Check if anything is going on with FLDIGI
+    if P.sock.rig_type=='FLDIGI' and P.sock.fldigi_active and True:
+        if not hasattr(WatchDog, "last_call"):
+            last_call=''
+        #print('Getting FLDIGI log fields ...')
+        fields=P.gui.Set_Log_Fields(CALL_ONLY=True)
+        if fields!=None:
+            call=fields['Call']
+        else:
+            call=''
+        #print('\tFields=',fields)
+        if call != last_call:
+            last_call=call
+            P.gui.get_hint(call)
+            if P.AUTOFILL:
+                h=P.KEYING.insert_hint(VERBOSITY=1)
+                #print('\thint=',h)
+
+        # Get any new decoded text from RX box
+        txt=P.sock.get_rx_buff()
+
+        # Put it in the big text box 
+        if len(txt)>0:
+            print('txt=',txt,'\tlen=',len(txt))
+            P.gui.txt.insert(END, txt)
+            P.gui.txt.see(END)
+            P.gui.root.update_idletasks()
+            
     
     # Read rotor position
     if P.sock_rotor.connection!='NONE' or False:

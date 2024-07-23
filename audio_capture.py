@@ -46,14 +46,10 @@ class AUDIO_CAPTURE():
         P.wave_file = dirname+'capture'+s+'.wav'
         print('\nOpening',P.wave_file,'...')
 
-
-
-        
-
         # Seems like gain may depend on system audio setting
         # Need to make this adaptive???
         if P.sock.rig_type2=='FT991a':
-            gain=[4,1]
+            gain=[2,1]            # was 4
         elif P.sock.rig_type2=='FTdx3000':
             gain=[1,1]
         else:
@@ -67,9 +63,11 @@ class AUDIO_CAPTURE():
                              GAIN=gain)
 
         # Check for sound card
-        P.AUDIO_DEVICE  = 'USB Audio Device'           # External sound card
-        P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)
-        card='External'
+        P.RIG_AUDIO_IDX = None
+        if P.sock.rig_type2=='FTdx3000':
+            P.AUDIO_DEVICE  = 'USB Audio Device'           # External sound card
+            P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)
+            card='External'
         if P.RIG_AUDIO_IDX==None:
             P.AUDIO_DEVICE  = 'USB Audio CODEC'            # Rig sound card
             P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)

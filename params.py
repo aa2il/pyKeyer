@@ -261,6 +261,8 @@ class PARAMS:
                               help='Use history from log')
         arg_proc.add_argument('-use_adif_hist', action='store_true',
                               help='Use history from adif log')
+        arg_proc.add_argument('-digi', action='store_true',
+                              help='RTTY or other Digi Contest')
         arg_proc.add_argument('-geo',type=str,default=None,
                               help='Geometry')
         arg_proc.add_argument('-desktop',type=int,default=None,
@@ -292,6 +294,7 @@ class PARAMS:
         self.LOCK_SPEED    = args.lock
         self.SPECIAL       = args.special
         self.GEO           = args.geo
+        self.DIGI          = args.digi
         
         self.AUTOFILL      = args.autofill
         self.PRACTICE_MODE = args.practice or args.rig[0]=="NONE"

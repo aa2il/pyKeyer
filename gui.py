@@ -717,11 +717,40 @@ class GUI():
         
     # Callback to process mouse events in the big text box
     def Text_Mouse(self,evt):
-        print('TEXT MOUSE button=',evt.num)
+        print('TEXT MOUSE: button=',evt.num,'\tpos=',evt.x,evt.y)
         if evt.num==1:
+            # Left click --> select a word
+            idx3=self.txt.index("current")
+            idx4=self.txt.index("current wordstart")
+            idx5=self.txt.index("current wordend")
+            print('\tLeft click ... idx=',idx3,idx4,idx5)
+            txt = self.txt.get(idx4,idx5)
+            print("\ttxt=",txt,'\t',len(txt))
+
+            # Insert text into next entry box
+            widget=self.default_object
+            widget.delete(0, END)
+            widget.insert(0,txt)
+
+            # Take care of hints
+            if widget==self.call:
+                self.get_hint()
+                if self.P.AUTOFILL:
+                    self.P.KEYING.insert_hint()
+            
+            # Move on to the next entry box
+            evt.widget=widget
+            self.default_object=self.P.KEYING.next_event('Tab',evt)
+                    
+            return
+
+            # Keeping this around for now
             # Left click --> select
             try:
-                #print(SEL_FIRST,SEL_LAST)
+                idx1=self.txt.index(SEL_FIRST)
+                idx2=self.txt.index(SEL_FIRST)
+                idx3=self.txt.index(CURRENT)
+                print('\tLeft click ... idx=',idx1,idx2,idx3)
                 txt = self.txt.get(SEL_FIRST,SEL_LAST)
                 print("Select text:",txt)
                 # print("SEL_FIRST:",type(SEL_FIRST),"  SEL_LAST:",SEL_LAST)
@@ -771,13 +800,19 @@ class GUI():
             self.Spots_cb(idx,2)
         
     # Callback to set logs fields, optionally from fldigi
-    def Set_Log_Fields(self,fields=None):
+    def Set_Log_Fields(self,fields=None,CALL_ONLY=False):
         if fields==None:
-            fields  = self.sock.get_log_fields()
-        print("GUI: Set Log Fields ===============",fields)
+            fields  = self.sock.get_log_fields(CALL_ONLY)
+            if CALL_ONLY and len(fields['Call'])==0:
+                return
+        #print("GUI - SET_LOG_FIELDS ...",fields)
+
         self.call.delete(0, END)
         self.call.insert(0,fields['Call'])
         self.call.configure(fg='black')
+        if CALL_ONLY:
+            return fields
+        
         self.name.delete(0, END)
         self.name.insert(0,fields['Name'])
         self.qth.delete(0, END)
@@ -805,9 +840,11 @@ class GUI():
         self.check.delete(0, END)
         self.check.insert(0,fields['Check'])
 
-    # callback to read log fields and optionally send to fldigi
+        return fields
+
+    # Callback to read log fields and optionally send to fldigi
     def Read_Log_Fields(self,send2fldigi=True):
-        print("Read_Log_Fields ...")
+        print("GUI - READ_LOG_FIELDS ...",send2fldigi,'\tcontest=',self.P.contest_name)
         call    = self.get_call()
         name    = self.get_name()
         qth     = self.get_qth()
@@ -817,12 +854,16 @@ class GUI():
 
         prec    = self.get_prec()
         check   = self.get_check()
-        
-        exchange=self.get_exchange()
+
+        if self.P.contest_name=='NAQP-CW':
+            exchange=qth
+        else:
+            exchange=self.get_exchange()
         fields = {'Call':call,'Name':name,'RST_in':rst_in,'RST_out':rst_out, \
                   'QTH':qth,'Exchange':exchange, \
                   'Category':cat,'Prec':prec,'Check':check}
         if send2fldigi:
+            print('\tfields=',fields)
             self.sock.set_log_fields(fields)
         return fields
 
@@ -1358,6 +1399,14 @@ class GUI():
 
     # Function to send cw text 
     def Send_CW_Text(self,txt):
+
+        if self.P.DIGI:
+            print('SEND_CW_TXT: txt=',txt)
+            self.P.sock.put_tx_buff( chr(10)+txt+chr(10)+"^r" )        # Pad with LineFeeds and go back into rx mode after we send it
+            #if txt=='TEST':
+            self.P.sock.ptt(1)                                     # Start TX
+            return
+        
         # Send text to keyer ...
         self.q.put(txt)
 
@@ -1417,10 +1466,16 @@ class GUI():
         self.P.KEYING.highlight(self,arg)
         print("\nSend_Macro:",arg,':\ttxt=',txt,'\tstate=',state)
         if '[SERIAL]' in txt:
-            cntr = self.sock.get_serial_out()
-            if not cntr or cntr=='':
+            if False:
+                # Old - reading from rig or fldigi or somewhere else?!
+                cntr = self.sock.get_serial_out()
+                print('SEND MACRO: cntr1=',cntr,'\tndigits=',self.ndigits)
+                if not cntr or cntr=='':
+                    cntr=self.P.MY_CNTR
+            else:
+                # Use local counter!!!
                 cntr=self.P.MY_CNTR
-            #print('SEND MACRO: cntr=',cntr,'\tndigits=',self.ndigits)
+            print('SEND MACRO: cntr2=',cntr,'\tndigits=',self.ndigits)
             self.cntr = cut_numbers(cntr,ndigits=self.ndigits)
             txt = txt.replace('[SERIAL]',self.cntr)
             self.serial_out = self.cntr
@@ -1439,7 +1494,7 @@ class GUI():
             except:
                 error_trap('GUI->SEND MACRO - Unable to retrieve NAME')
 
-        # Send cw text 
+        # Send macro text 
         txt = self.Patch_Macro2(txt,state)
         print('\nSEND_MACRO: txt=',txt)
         self.Send_CW_Text(txt)
@@ -1733,7 +1788,7 @@ class GUI():
 
     # Get a clue
     def get_hint(self,call=None):
-        #print('GET_HINT: call=',call)
+        print('GUI - GET_HINT: call=',call)
         if call==None:
             call = self.call.get()
 
@@ -1749,12 +1804,12 @@ class GUI():
             self.dx_station = None
             
         self.hint.delete(0, END)
-        #print('GET_HINT: h=',h)
+        #print('\tGET_HINT: h=',h)
         if h:
             self.hint.insert(0,h)
         self.P.KEYING.set_info_box()
         self.last_hint=h
-
+        
         return h
 
 
@@ -2061,11 +2116,11 @@ class GUI():
                 self.P.udp_server.Broadcast(msg)
 
             if self.P.sock_log.connection=='FLLOG':
-                print('GUI: =============== via FLLOG ...')
+                print('GUI - LOG_QSO: via FLLOG ...')
                 self.P.sock_log.Add_QSO(qso)
 
             elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE:
-                print('GUI: =============== via FLDIGI ...')
+                print('GUI - LOG_QSO: FLDIGI ...')
                 fields = {'Call':call,'Name':name,'RST_out':rstout,'QTH':qth,'Exchange':exch}
                 self.sock.set_log_fields(fields)
                 self.sock.set_mode('CW')
@@ -2299,7 +2354,7 @@ class GUI():
                                        .replace(tzinfo=UTC)
                     age = (now - date_off).total_seconds() # In seconds
                     self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
-                    print('DUP_CHECK: match 1 & 2:',self.match1,self.match2)
+                    #print('DUP_CHECK: match 1 & 2:',self.match1,self.match2)
 
         else:
             
@@ -2352,8 +2407,10 @@ class GUI():
                         
                         # Most of the time, we can work each station on each band and mode
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
-                        if True:
-                            print('DUP_CHECK: match2=',self.match2,'\tage=',age,self.P.MAX_AGE,'\tband=',band,'\tmode=',mode)
+                        if False:
+                            print('DUP_CHECK: match2=',self.match2,
+                                  '\tage=',age,self.P.MAX_AGE,'\tband=',band,
+                                  '\tmode=',mode)
                         
                     if self.P.contest_name=='SATELLITES':
                         try:
@@ -2458,6 +2515,7 @@ class GUI():
                 self.call.event_generate("<<Paste>>")
             
             next_widget=self.call
+            self.default_object=self.call  
             self.call.focus_set()
 
             if self.P.AUTOFILL:
@@ -2794,6 +2852,7 @@ class GUI():
                 self.scp.delete(0, END)
 
                 next_widget=self.call
+                self.default_object=self.call  
                 self.call.focus_set()
 
         elif key=='Insert' or (key in ['i','I'] and (alt or control)):
@@ -2897,7 +2956,8 @@ class GUI():
 
     # Function to take care of SCPs and Auto Fills
     def auto_fill(self,call,key):
-        #print('AUTO FILL: call=',call,'\tkey=',key,'\tUSE SCP=',self.P.USE_SCP)
+        print('GUI-AUTO_FILL: call=',call,'\tkey=',key,
+              '\tUSE SCP=',self.P.USE_SCP,'\tAUTOFILL=',self.P.AUTOFILL)
 
         # Check against SCP database
         if self.P.USE_SCP:
@@ -2927,6 +2987,7 @@ class GUI():
         if key=='@@@' or self.P.AUTOFILL:
             self.P.KEYING.insert_hint()
             if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
+                print('Setting FLDIGI log fields ...')
                 self.Read_Log_Fields()
     
     # Callback when something changes in an entry box

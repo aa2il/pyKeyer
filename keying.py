@@ -23,7 +23,7 @@
 import sys
 from nano_io import *
 from utilities import error_trap, get_PIDs
-from rig_io import BAUD,SERIAL_PORT4
+from rig_io import BAUD,SERIAL_PORT2,SERIAL_PORT4
 
 ################################################################################
 

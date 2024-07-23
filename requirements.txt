@@ -12,6 +12,7 @@ unidecode
 pyhamtools
 pyautogui
 pyaudio
+pyudev
 
 pandas
 scipy
