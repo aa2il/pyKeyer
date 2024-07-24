@@ -523,20 +523,12 @@ class GUI():
         
         # Force rig into a specific mode and set filters
         self.MODE = StringVar()
-        #self.MODE.set('CW')
-        if False:
-            self.ModeBox = ttk.Combobox(self.root,
-                                        textvariable=self.MODE,
-                                        takefocus=0 )
-            self.ModeBox['values'] = ['CW','USB','LSB','FM']
-            self.ModeBox.bind('<<ComboboxSelected>>', self.Set_Rig_Mode)
-        else:
-            self.ModeList=['CW','USB','LSB','FM']
-            self.ModeBox = ttk.OptionMenu(self.root,
-                                          self.MODE,
-                                          self.ModeList[0],
-                                          *self.ModeList,
-                                          command=self.Set_Rig_Mode)
+        self.ModeList=['CW','USB','LSB','FM','RTTY','BPSK31']
+        self.ModeBox = ttk.OptionMenu(self.root,
+                                      self.MODE,
+                                      self.ModeList[0],
+                                      *self.ModeList,
+                                      command=self.Set_Rig_Mode)
         self.ModeBox.grid(row=row,column=self.ncols-2)
         tip = ToolTip(self.ModeBox, ' Set Rig Mode ' )
 
@@ -741,8 +733,8 @@ class GUI():
             # Move on to the next entry box
             evt.widget=widget
             self.default_object=self.P.KEYING.next_event('Tab',evt)
-                    
-            return
+            self.force_focus(self.default_object)
+            return('break')
 
             # Keeping this around for now
             # Left click --> select
@@ -2259,7 +2251,7 @@ class GUI():
 
     # Routine to force the focus
     def force_focus(self,next_widget):
-        #print('FORCE FOCUS: Focus young man!')
+        print('FORCE FOCUS: Focus young man!',next_widget)
         next_widget.focus_set()      
         next_widget.focus_force()
         self.root.update_idletasks()
@@ -2281,6 +2273,7 @@ class GUI():
         if widget!=self.call:
             widget.select_range(0,"end")
             widget.event_generate("<<Copy>>")
+        self.default_object=widget
             
         
     # Routine to compute QSO Rate
@@ -2854,6 +2847,7 @@ class GUI():
                 next_widget=self.call
                 self.default_object=self.call  
                 self.call.focus_set()
+                self.default_object=self.call
 
         elif key=='Insert' or (key in ['i','I'] and (alt or control)):
 
@@ -2891,6 +2885,7 @@ class GUI():
             elif event.widget==self.txt or event.widget==self.txt2:
                 print('Text box',key,len(key),key=='Tab')
                 self.call.focus_set()
+                self.default_object=self.call
             else:
                 event.widget.selection_clear() 
                 widget=self.P.KEYING.next_event(key,event)
@@ -2908,6 +2903,7 @@ class GUI():
                 self.txt.focus_set()
             elif event.widget==self.txt or event.widget==self.txt2:
                 self.call.focus_set()
+                self.default_object=self.call
             else:
                 event.widget.selection_clear() 
                 widget=self.P.KEYING.next_event(key,event)
@@ -3115,10 +3111,10 @@ class GUI():
         self.sock.set_mode(mode)
         self.P.udp_server.Broadcast('MODE:'+mode)
         if mode=='CW':
-            self.sock.set_filter(['Narrow','200 Hz'],'CW')
+            self.sock.set_filter(['Narrow','200 Hz'],mode)
+        elif mode in ['FM','RTTY','BPSK31']:
+            self.sock.set_filter(['Wide','2400 Hz'],mode)
         """
-        elif mode=='FM':
-            self.sock.set_filter(['Wide','2400 Hz'],'CW')
         else:
             self.sock.set_filter(['Narrow','1800 Hz'],'CW')
         """

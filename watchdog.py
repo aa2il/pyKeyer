@@ -123,22 +123,25 @@ def WatchDog(P):
     #check_udp_clients(P)
 
     # Check if anything is going on with FLDIGI
-    if P.sock.rig_type=='FLDIGI' and P.sock.fldigi_active and True:
-        if not hasattr(WatchDog, "last_call"):
-            last_call=''
-        #print('Getting FLDIGI log fields ...')
-        fields=P.gui.Set_Log_Fields(CALL_ONLY=True)
-        if fields!=None:
-            call=fields['Call']
-        else:
-            call=''
-        #print('\tFields=',fields)
-        if call != last_call:
-            last_call=call
-            P.gui.get_hint(call)
-            if P.AUTOFILL:
-                h=P.KEYING.insert_hint(VERBOSITY=1)
-                #print('\thint=',h)
+    if P.sock.rig_type=='FLDIGI' and P.sock.fldigi_active:
+
+        # Check log fields - this works but now disabled since pyKeyer logger is much better
+        if False:
+            if not hasattr(WatchDog, "last_call"):
+                last_call=''
+            #print('Getting FLDIGI log fields ...')
+            fields=P.gui.Set_Log_Fields(CALL_ONLY=True)
+            if fields!=None:
+                call=fields['Call']
+            else:
+                call=''
+            #print('\tFields=',fields)
+            if call != last_call:
+                last_call=call
+                P.gui.get_hint(call)
+                if P.AUTOFILL:
+                    h=P.KEYING.insert_hint(VERBOSITY=1)
+                    #print('\thint=',h)
 
         # Get any new decoded text from RX box
         txt=P.sock.get_rx_buff()
