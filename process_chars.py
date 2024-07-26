@@ -91,9 +91,14 @@ def process_chars(P):
                 P.q2.put(txt2)
                 
             # Timing is critical so we make sure we have control
-            lock.acquire()
-            keyer.send_msg(txt)
-            lock.release()
+            if P.DIGI:
+                print('PROCESS_CHARS: sending txt=',txt,'to fldigi ...')
+                P.sock.put_tx_buff( chr(10)+txt+chr(10)+"^r" )        # Pad with LineFeeds and go back into rx mode after we send it
+                P.sock.ptt(1)                                     # Start TX
+            else:
+                lock.acquire()
+                keyer.send_msg(txt)
+                lock.release()
 
         else:
 

@@ -72,7 +72,7 @@ from paddling import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
-from utilities import cut_numbers, freq2band, Oh_Canada, error_trap
+from utilities import cut_numbers,freq2band,Oh_Canada,error_trap,show_ascii
 import pyautogui
 from widgets_tk import StatusBar,SPLASH_SCREEN
 
@@ -675,6 +675,10 @@ class GUI():
             #stk=root.tk.eval('wm stackorder '+str(window))
             #print('stk=',stk)
 
+            # Make this box the default
+            if event.widget in self.boxes:
+                self.default_object=event.widget
+
         return
         if evt.num==1:
             # Left click --> select
@@ -710,14 +714,28 @@ class GUI():
     # Callback to process mouse events in the big text box
     def Text_Mouse(self,evt):
         print('TEXT MOUSE: button=',evt.num,'\tpos=',evt.x,evt.y)
+
+        shift     = ((evt.state & 0x0001) != 0)
+        control   = (evt.state & 0x0004) != 0
+        #print('\tshift=',shift,'\tctrl=',control)
+        
         if evt.num==1:
+
+            # Right click --> Mske the text box the default widget so we can type things in to xmit
+            if shift or control:
+                self.force_focus(evt.widget)
+                return('break')
+
             # Left click --> select a word
             idx3=self.txt.index("current")
             idx4=self.txt.index("current wordstart")
             idx5=self.txt.index("current wordend")
             print('\tLeft click ... idx=',idx3,idx4,idx5)
-            txt = self.txt.get(idx4,idx5)
-            print("\ttxt=",txt,'\t',len(txt))
+            txt = self.txt.get(idx4,idx5).replace(chr(10),'')
+            print("\ttxt=",txt,'\tlen=',len(txt),'\t',show_ascii(txt))
+            if len(txt)==0:
+                print('\tOoops - nothing selected')
+                return('break')
 
             # Insert text into next entry box
             widget=self.default_object
@@ -767,8 +785,10 @@ class GUI():
                 self.q.put(txt+' ')
                 self.text_buff=''
         elif evt.num==3:
-            # Right click --> ???
-            pass
+            # Right click --> Mske the text box the default widget so we can type things in to xmit
+            self.force_focus(evt.widget)
+            return('break')
+
         
     # Callback to process mouse events on the spot buttons
     def Spots_Mouse(self,evt):
@@ -1395,7 +1415,6 @@ class GUI():
         if self.P.DIGI:
             print('SEND_CW_TXT: txt=',txt)
             self.P.sock.put_tx_buff( chr(10)+txt+chr(10)+"^r" )        # Pad with LineFeeds and go back into rx mode after we send it
-            #if txt=='TEST':
             self.P.sock.ptt(1)                                     # Start TX
             return
         
@@ -2799,7 +2818,7 @@ class GUI():
             #if key=='Home' or (key=='r' and (alt or control)):
             self.P.KEYING.reverse_call_lookup()
 
-        elif key=='space' and (alt or control or True):
+        elif key=='space' and (shift or alt or control):
 
             # Toggle PTT
             self.Toggle_PTT()

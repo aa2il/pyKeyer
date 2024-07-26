@@ -110,6 +110,8 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : '[CALL] [SERIAL] [MYNAME] [MYSTATE] [MYCALL]'}
+        #if self.P.DIGI:
+        #    MACROS[5+12]     = {'Label' : 'TEST' , 'Text' : 'TEST'}
 
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
@@ -266,7 +268,7 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         gui.counter.grid()
         gui.inc_btn.grid()
         gui.dec_btn.grid()
-        
+
         
     # Gather together logging info for this contest
     def logging(self):
@@ -300,7 +302,7 @@ class SPRINT_KEYING(DEFAULT_KEYING):
             gui.qth.insert(0,a[1])
 
     # Hint insertion
-    def insert_hint(self,h=None):
+    def insert_hint(self,h=None,VERBOSITY=0):
 
         gui=self.P.gui
 
