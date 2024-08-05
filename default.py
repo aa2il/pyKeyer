@@ -910,7 +910,7 @@ class DEFAULT_KEYING():
         
     # On-the-fly scoring
     def scoring(self,qso):
-        print("DEFAULTS SCORING: qso=",qso)
+        print("DEFAULT SCORING: qso=",qso)
 
     # Routine to restore scoring if exited during a contest
     def init_scoring(self):

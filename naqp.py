@@ -22,8 +22,10 @@
 import os
 from tkinter import END,E,W
 from collections import OrderedDict
-from rig_io import SST_SECS
+from rig_io import NAQP_SECS
 from default import DEFAULT_KEYING
+import numpy as np
+from utilities import error_trap
 
 ############################################################################################
 
@@ -39,7 +41,13 @@ class NAQP_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID='NAQP-CW'
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/NAQPCW.txt')
 
-    # Routient to set macros for this contest
+        # On-the-fly scoring - NEW!
+        self.nqsos=0
+        self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
+        self.sec_cnt = np.zeros((len(NAQP_SECS),len(self.BANDS)),dtype=np.int32)
+        self.init_scoring()
+        
+    # Routine to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
@@ -48,7 +56,7 @@ class NAQP_KEYING(DEFAULT_KEYING):
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
         MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [NAME] 73EE [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
@@ -64,6 +72,7 @@ class NAQP_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
         MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[-2][MYSTATE] [MYSTATE] [+2]'}
         MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
+        MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
@@ -231,4 +240,32 @@ class NAQP_KEYING(DEFAULT_KEYING):
                 gui.qth.insert(0,h[1])
 
         return h
+    
+
+
+    # On-the-fly scoring
+    def scoring(self,qso):
+        print("\nSCORING: qso=",qso)
+        self.nqsos+=1        
+        call=qso['CALL']
+
+        band = qso["BAND"]
+        idx = self.BANDS.index(band)
+
+        try:
+            qth  = qso["QTH"].upper()
+            idx1 = NAQP_SECS.index(qth)
+        except:
+            self.P.gui.status_bar.setText('Unrecognized/invalid section!')
+            error_trap('NAQP->SCORING - Unrecognized/invalid section!')
+            return
+        self.sec_cnt[idx1,idx] = 1
+        
+        mults = np.sum( np.sum(self.sec_cnt,axis=0) )
+        score=self.nqsos * mults
+        print("SCORING: score=",score,self.nqsos,mults)
+
+        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,call)
+        self.P.gui.status_bar.setText(txt)
     
