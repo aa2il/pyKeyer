@@ -139,6 +139,7 @@ if not P.PRACTICE_MODE:
     else:
         P.sock.split_mode(0)
         P.sock.set_vfo(op='A->B')
+
 #sys.exit(0)
  
 # Open connection to rotor

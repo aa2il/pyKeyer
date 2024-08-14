@@ -145,8 +145,8 @@ def open_keying_port(P,sock,rig_num):
             if dev_type==None:
                 print('\nUnable to find keyer device - giving up!')
                 
-                pids = get_PIDs('pyKeyer.py')
-                print('pids=',pids)
+                pids = get_PIDs('pyKeyer.py') + get_PIDs('paddling.py')
+                print('\npids=',pids)
                 if len(pids)>1:
                     print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                     print(  "@ Try killing other instances of this program! @")
@@ -193,8 +193,8 @@ def open_keying_port(P,sock,rig_num):
             print(  '***          Giving up            ***')
             print('*************************************\n')
 
-            pids = get_PIDs('pyKeyer.py')
-            print('pids=',pids)
+            pids = get_PIDs('pyKeyer.py') + get_PIDs('paddling.py')
+            print('\npids=',pids)
             if len(pids)>0:
                 print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                 print(  "@ Try killing other instances of this program! @")

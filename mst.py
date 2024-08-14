@@ -63,21 +63,15 @@ class MST_KEYING(DEFAULT_KEYING):
         # Check date for any special greetings
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
-            GREET3='MC'
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
-        elif now.month==12 and now.day>=28:
-            GREET3='HNY'
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73EE [LOG]'}
-        elif now.month==1 and now.day<=14:
-            GREET3='HNY'
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] 73EE [LOG]'}
-        else:
-            GREET3='TU'
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] ESE [LOG]'}
+            GREETING="MC"
+        elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
+            GREETING="HNY"
+        elif now.month==7 and now.day<=7:
+            GREETING="GBA"
+        else:            
+            GREETING="[GDAY]"
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] 73EE [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+'[NAME] ESE [LOG]'}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
@@ -86,7 +80,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
 
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [SERIAL] '}
-        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : GREET3+' [NAME] [MYNAME] [SERIAL] '}
+        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : GREETING+' [NAME] [MYNAME] [SERIAL] '}
             
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}

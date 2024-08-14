@@ -3,7 +3,7 @@
 # sprint.py - Rev 1.0
 # Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
 #
-# Keying routines for Sprints
+# Keying routines for Sprints - RTTY is not qute right yet - need to test!!!
 #
 ############################################################################################
 """
@@ -95,12 +95,18 @@ class SPRINT_KEYING(DEFAULT_KEYING):
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'NS [MYCALL] '}
+        if not self.P.DIGI:
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'NS [MYCALL] '}
+        else:
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'NA [MYCALL] [MYCALL] CQ '}
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYCALL] [SERIAL] [MYNAME] [MYSTATE] '}
         MACROS[1+12]  = {'Label' : 'QSY -1'    , 'Text' : '[QSY-1] '}
         
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] EE [LOG]'}
+        if not self.P.DIGI:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] EE [LOG]'}
+        else:
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [LOG]'}
         MACROS[2+12]  = {'Label' : 'QSY +1'    , 'Text' : '[QSY+1] '}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -110,8 +116,6 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : '[CALL] [SERIAL] [MYNAME] [MYSTATE] [MYCALL]'}
-        #if self.P.DIGI:
-        #    MACROS[5+12]     = {'Label' : 'TEST' , 'Text' : 'TEST'}
 
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
@@ -122,6 +126,7 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         MACROS[8+12]  = {'Label' : '[MYCALL] 2x' , 'Text' : '[MYCALL] [MYCALL] '}
         MACROS[9]     = {'Label' : 'NR?'      , 'Text' : 'NR? '}
         MACROS[9+12]  = {'Label' : 'Serial 2x', 'Text' : '[SERIAL] [SERIAL] '}
+            
         MACROS[10]    = {'Label' : 'NAME?'    , 'Text' : 'NAME? '}
         MACROS[10+12] = {'Label' : 'Name 2x'  , 'Text' : '[MYNAME] [MYNAME] '}
         MACROS[11]    = {'Label' : 'QTH?'     , 'Text' : 'QTH? '}
@@ -276,11 +281,12 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         gui=self.P.gui
         
         call   = gui.get_call().upper()
-        serial = gui.get_serial().upper()
         name   = gui.get_name().upper()
         qth    = gui.get_qth().upper()
-        exch   = serial+' '+name+','+qth
-        valid  = len(call)>=3 and len(serial)>0 and len(name)>0 and len(qth)>0
+        valid  = len(call)>=3 and len(name)>0 and len(qth)>0
+        serial = gui.get_serial().upper()
+        valid  = valid and len(serial)>0 
+        exch   = serial+','+name+','+qth
 
         MY_NAME     = self.P.SETTINGS['MY_NAME']
         MY_STATE    = self.P.SETTINGS['MY_STATE']

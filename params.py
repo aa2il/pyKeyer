@@ -40,6 +40,7 @@ CONTESTS['CWT']        = {'Months' : ALL}
 CONTESTS['MST']        = {'Months' : ALL}
 CONTESTS['SST']        = {'Months' : ALL}
 CONTESTS['NS']         = {'Months' : ALL}
+CONTESTS['WRT']        = {'Months' : ALL}
 CONTESTS['SKCC']       = {'Months' : ALL}
 CONTESTS['POTA']       = {'Months' : ALL}
 CONTESTS['CW Open']    = {'Months' : [10]}
@@ -147,6 +148,8 @@ class PARAMS:
                               help='Satellites')
         arg_proc.add_argument('-sprint', action='store_true',
                               help='NCCC CW Sprint')
+        arg_proc.add_argument('-wrt', action='store_true',
+                              help='Weekly RTTY Test')
         arg_proc.add_argument('-cqww', action='store_true',
                               help='CQ Worldwide')
         arg_proc.add_argument('-cqvhf', action='store_true',
@@ -304,6 +307,8 @@ class PARAMS:
         self.WPM           = args.wpm
         self.PADDLE_WPM    = args.paddles
         self.INIT_MODE     = args.mode
+        if self.INIT_MODE==None and self.DIGI:
+            self.INIT_MODE     = 'RTTY'
         self.LOG_FILE      = args.log
         
         self.connection    = args.rig[0]
@@ -383,6 +388,8 @@ class PARAMS:
             self.contest_name='CWT'
         elif args.sst:
             self.contest_name='SST'
+        elif args.wrt:
+            self.contest_name='WRT'
         elif args.mst:
             self.contest_name='MST'
         elif args.ten:

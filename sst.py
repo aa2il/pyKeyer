@@ -52,7 +52,7 @@ class SST_KEYING(DEFAULT_KEYING):
         self.sec_cnt = np.zeros((len(SST_SECS),len(self.BANDS)),dtype=np.int32)
         self.init_scoring()
         
-    # Routient to set macros for this contest
+    # Routine to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
@@ -65,17 +65,14 @@ class SST_KEYING(DEFAULT_KEYING):
         # Check date for any special greetings
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
-            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] 73EE [LOG]'}
-            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'MC [NAME] [MYNAME] [MYSTATE]'}
-        elif now.month==12 and now.day>=28:
-            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'HNY [NAME] [MYNAME] [MYSTATE]'}
-        elif now.month==1 and now.day<=14:
-            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'HNY [NAME] [MYNAME] [MYSTATE]'}
-        else:
-            MACROS[2] = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [GDAY] [NAME] 73EE [LOG]'}
-            MACROS[5] = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYNAME] [MYSTATE]'}
+            GREETING="MC"
+        elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
+            GREETING="HNY"
+        elif now.month==7 and now.day<=7:
+            GREETING="GBA"
+        else:            
+            GREETING="[GDAY]"
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] 73EE [LOG]'}
 
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] ESE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -84,6 +81,7 @@ class SST_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : GREETING+' [NAME] [MYNAME] [MYSTATE]'}
         MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
@@ -286,3 +284,70 @@ class SST_KEYING(DEFAULT_KEYING):
         txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
             .format(self.nqsos,mults,score,call)
         self.P.gui.status_bar.setText(txt)
+
+
+############################################################################################
+
+# Keying class for Weekly RTTY  mini test  - inherits SST class since the exchange is the same
+class WRT_KEYING(SST_KEYING):
+
+    def __init__(self,P):
+        DEFAULT_KEYING.__init__(self,P,'WRT')
+
+        P.HISTORY2 = os.path.expanduser('~/Python/history/data/NAQPRTTY.txt')
+        P.CONTEST_ID='WRT'
+        self.contest_duration = 1
+        P.MAX_AGE = self.contest_duration *60
+
+        # On-the-fly scoring - NEW!
+        self.nqsos=0
+        self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
+        self.sec_cnt = np.zeros((len(SST_SECS),len(self.BANDS)),dtype=np.int32)
+        self.init_scoring()
+
+    # Routine to set macros for this contest
+    def macros(self):
+
+        MACROS = OrderedDict()
+        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ WRT [MYCALL] [MYCALL] '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
+        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [MYSTATE] [CALL] '}
+        MACROS[1+12]  = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYNAME] [MYSTATE]  [MYSTATE] [CALL] '}
+        #MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
+        
+        # Check date for any special greetings
+        now = datetime.utcnow()
+        if now.month==12 and now.day>=11 and now.day<28:
+            GREETING="MC"
+        elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
+            GREETING="HNY"
+        elif now.month==7 and now.day<=7:
+            GREETING="GBA"
+        else:            
+            GREETING="73"
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] 73 [MY_CALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [NAME] 73 [MY_CALL] QRZ? [LOG]'}
+        
+        MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
+        MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
+        
+        MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : ' [MYCALL] '}
+        MACROS[4+12]  = {'Label' : '[MYCALL] 2x'  , 'Text' : ' [MYCALL] [MYCALL] '}
+        
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE] '}
+        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYNAME] [MYSTATE] [MYSTATE] '}
+        MACROS[6]     = {'Label' : '? '        , 'Text' : 'AGN? '}
+        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? AGN? '}
+        MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
+        #MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
+        
+        MACROS[8]     = {'Label' : 'My Name 2x', 'Text' : '[MYNAME] [MYNAME] '}
+        MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
+        MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
+        MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
+        MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
+
+        return MACROS
+
+        

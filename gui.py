@@ -531,7 +531,11 @@ class GUI():
                                       command=self.Set_Rig_Mode)
         self.ModeBox.grid(row=row,column=self.ncols-2)
         tip = ToolTip(self.ModeBox, ' Set Rig Mode ' )
-
+        #if P.INIT_MODE=='RTTY':
+        if P.INIT_MODE!=None:
+            self.MODE.set(P.INIT_MODE)
+            self.Set_Rig_Mode(None)
+        
         # QRZ button
         btn = Button(self.root, text='QRZ ?',command=self.Call_LookUp,\
                      takefocus=0 ) 
@@ -1588,6 +1592,8 @@ class GUI():
             self.P.KEYING=SST_KEYING(self.P)
         elif val=='MST':
             self.P.KEYING=MST_KEYING(self.P)
+        elif val=='WRT':
+            self.P.KEYING=WRT_KEYING(self.P)
         elif val=='NS':
             self.P.KEYING=SPRINT_KEYING(self.P)
         elif val=='SKCC':
@@ -2109,7 +2115,7 @@ class GUI():
                                   'CALL','FREQ','BAND','MODE', 
                                   'SRX_STRING','STX_STRING','NAME','QTH','SRX',
                                   'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES',
-                                  'RUNNING','CONTEST_ID'],
+                                  'RUNNING','MY_RIG','CONTEST_ID'],
                                  [date_on,time_on,date_off,time_off,
                                   call,
                                   str( round(1e-3*freq_kHz,4) ),band,mode, 
@@ -2117,6 +2123,7 @@ class GUI():
                                   str(self.cntr),satellite,
                                   str( round(1e-3*freq_kHz_rx,4)),
                                   band_rx,notes,str(int(self.RUNNING)),
+                                  self.P.sock.rig_type2,
                                   self.P.CONTEST_ID] )))
             qso.update(qso2)
 
@@ -3127,16 +3134,23 @@ class GUI():
     # Callback to force rig into CW mode
     def Set_Rig_Mode(self,evt):
         mode = self.MODE.get()
+        print('SET RIG MODE: mode=',mode)
         self.sock.set_mode(mode)
-        self.P.udp_server.Broadcast('MODE:'+mode)
+        if self.P.udp_server:
+            self.P.udp_server.Broadcast('MODE:'+mode)
         if mode=='CW':
             self.sock.set_filter(['Narrow','200 Hz'],mode)
         elif mode in ['FM','RTTY','BPSK31']:
             self.sock.set_filter(['Wide','2400 Hz'],mode)
+            if mode=='RTTY':
+                self.sock.squelch_mode(0)
+                
         """
         else:
             self.sock.set_filter(['Narrow','1800 Hz'],'CW')
         """
+
+        
 
     # Callback for practice with computer text
     def PracticeCB(self):
