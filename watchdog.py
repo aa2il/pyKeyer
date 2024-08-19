@@ -70,11 +70,16 @@ def WatchDog(P):
         print('WatchDog - Shut down.')
 
     # Read radio status
-    if P.sock.connection!='NONE':
+    if P.sock.tx_evt.is_set():
+        print('Watch Dog - PTT on ...', P.sock.connection)
+        state=P.sock.ptt(-1)
+        print('state=',state)
+    if P.sock.connection!='NONE' and not P.sock.tx_evt.is_set():
         print('Watch Dog - reading radio status ...', P.sock.connection)
         freq = P.sock.get_freq()
         mode = P.sock.get_mode()
         band = freq2band(1e-6*freq)
+        #print('mode=',mode)
 
         P.gui.rig.band.set(band)
         x=str(int(freq*1e-3))+' KHz  '+str(mode)
@@ -83,14 +88,15 @@ def WatchDog(P):
         P.gui.rig.mode.set(mode)
 
         # Let user adjust WPM from radio knob
-        if VERBOSITY>0:
-            print("WatchDog - Checking WPM ...")
-        wpm = P.sock.read_speed()
-        if wpm!=P.WPM and wpm>0:
-            print("WatchDog - Changing WPM to",wpm)
-            P.keyer.set_wpm(wpm)
-            P.gui.WPM_TXT.set(str(wpm))
-            P.WPM = wpm
+        if mode in ['CW']:
+            if VERBOSITY>0:
+                print("WatchDog - Checking WPM ...")
+            wpm = P.sock.read_speed()
+            if wpm!=P.WPM and wpm>0:
+                print("WatchDog - Changing WPM to",wpm)
+                P.keyer.set_wpm(wpm)
+                P.gui.WPM_TXT.set(str(wpm))
+                P.WPM = wpm
 
         # Keep an eye on the small knob
         #if not (P.SO2V or P.SPLIT_VFOs):
@@ -143,15 +149,14 @@ def WatchDog(P):
                     h=P.KEYING.insert_hint(VERBOSITY=1)
                     #print('\thint=',h)
 
-        # Get any new decoded text from RX box
-        txt=P.sock.get_rx_buff()
-
-        # Put it in the big text box 
-        if len(txt)>0:
-            print('txt=',txt,'\tlen=',len(txt))
-            P.gui.txt.insert(END, txt)
-            P.gui.txt.see(END)
-            P.gui.root.update_idletasks()
+        # Get any new decoded text from RX box and put it in the big text box 
+        if P.DIGI and not P.sock.tx_evt.is_set():
+            txt=P.sock.get_rx_buff()
+            if len(txt)>0:
+                print('txt=',txt,'\tlen=',len(txt))
+                P.gui.txt.insert(END, txt)
+                P.gui.txt.see(END)
+                P.gui.root.update_idletasks()
             
     
     # Read rotor position

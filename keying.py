@@ -136,7 +136,9 @@ def open_keying_port(P,sock,rig_num):
     if not sock:
         return None
     
-    print('Opening keying port ...')   # ,sock.rig_type,sock.rig_type2)
+    print('Opening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
+    #print(sock)
+    #print('\tRig Types=',sock.rig_type,sock.rig_type1,sock.rig_type2)
     if P.USE_KEYER and rig_num==1:
         if P.FIND_KEYER:
             
@@ -304,11 +306,11 @@ def open_keying_port(P,sock,rig_num):
                 ser.PORT = SERIAL_PORT2
                 ser.BAUD = BAUD
 
-            elif sock.rig_type2 in ['None','TYT9000d']:
+            elif sock.rig_type2 in ['None','TYT9000d','Hamlib']:
                 ser=serial_dummy()
 
             else:
-                print('KEYING - OPEN KEYING PORT: Unknown rig type:',sock.rig_type,sock.rig_type2)
+                print('KEYING - OPEN KEYING PORT: Unknown rig type:',sock.rig_type,sock.rig_type1,sock.rig_type2)
                 sys.exit(0)
         
         else:

@@ -508,19 +508,19 @@ class RIG_CONTROL():
         elif vfo=='B':
             val=self.SB_B_TXT.get()
         else:
-            print('SET_VFO_MODE: Unknwon VFO',vfo)
+            print('\tSET_VFO_MODE: Unknwon VFO',vfo)
             return
 
-        print('SET_VFO_MODE: vfo/val=',vfo,val)
+        print('\tSET_VFO_MODE: vfo/val=',vfo,val)
         
         # Set/Get mode
         if len(val)==0:
 
             # Read radio and set spin box accordingly
-            print('SET_VFO_MODE: Reading radio vfo ...')
+            print('\tSET_VFO_MODE: Reading radio vfo ...')
             mode = self.sock.get_mode(VFO=vfo)
             #####idx  = self.MODE_LIST.index(mode)
-            print('Current mode=',mode)
+            print('\tCurrent mode=',mode)
             if vfo=='A':
                 self.SB_A_TXT.set(mode)
             else:
@@ -532,7 +532,7 @@ class RIG_CONTROL():
             split = self.sock.split_mode(-1)
             sat = self.sock.sat_mode(-1)
             dual = self.sock.dual_watch(-1)
-            print('SET_VFO_MODE: Setting radio vfo ...',vfo,val,'\tsplit=',split,\
+            print('\tSET_VFO_MODE: Setting radio vfo ...',vfo,val,'\tsplit=',split,\
                   '\tsat=',sat,'\tdual=',dual)
             if vfo in 'AM' or split or sat or dual:
                 self.sock.set_mode(val,VFO=vfo)
