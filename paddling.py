@@ -760,8 +760,7 @@ if __name__ == '__main__':
     # Load master call list
     print('Reading master history file ...')
     P.PaddlingWin.status_bar2.setText('Reading master history file ...')
-    MY_CALL2 = P.SETTINGS['MY_CALL'].split('/')[0]
-    P.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+    P.HIST_DIR=os.path.expanduser('~/Python/data/')
     P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
     P.calls = list(P.MASTER.keys())
     P.Ncalls = len(P.calls)

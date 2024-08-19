@@ -541,14 +541,13 @@ class PARAMS:
 
         # Where to find/put data files
         self.PLATFORM=platform.system()
-        #MY_CALL = self.SETTINGS['MY_CALL'].replace('/','_')
-        MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
-        self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+        self.HIST_DIR=os.path.expanduser('~/Python/data/')
         if not os.path.isdir(self.HIST_DIR):
             fname=find_resource_file('master.csv')
             self.HIST_DIR=os.path.dirname(fname)+'/'
         self.HISTORY = self.HIST_DIR+'master.csv'
             
+        MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
         self.WORK_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
         if not os.path.isdir(self.WORK_DIR):
             HOME=os.path.expanduser('~/')

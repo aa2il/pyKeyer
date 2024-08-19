@@ -167,7 +167,7 @@ if __name__ == '__main__':
             t0=time.time()
             print('Reading master history file ...')
             MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
-            self.HIST_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
+            self.HIST_DIR=os.path.expanduser('~/Python/data/')
             self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')
             self.calls = list(self.MASTER.keys())
             print('Read time=',time.time()-t0)
