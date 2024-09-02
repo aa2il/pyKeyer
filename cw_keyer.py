@@ -159,6 +159,9 @@ class Keyer():
     #    5. The space between words is 7 time units.
     def send_cw(self,msg):
 
+        if self.P.DIGI:
+            return
+
         # Init
         ser = self.P.ser
         WPM = self.WPM
@@ -526,6 +529,11 @@ class Keyer():
         # Signal to other processes that we've went the message
         #print('SEND_MSG: Setting evt...')
         self.evt.set()
+        if self.P.DIGI and len(txt2.strip())>0:
+            print('SEND_MSG: sending txt2=',txt2,'to fldigi ... len=',len(txt2.strip()))
+            self.P.sock_xml.put_tx_buff( chr(10)+txt2+chr(10)+"^r" )        # Pad with LineFeeds and go back into rx mode after we send it
+            self.P.sock_xml.ptt(1)                                     # Start TX
+        
         return txt2
 
 

@@ -21,7 +21,7 @@
 ################################################################################
 
 import threading
-from utilities import freq2band
+from utilities import freq2band,error_trap
 from tcp_server import open_udp_client,BANDMAP_UDP_PORT
 from udp import UDP_msg_handler
 from rig_io import SetSubDial
@@ -69,11 +69,16 @@ def WatchDog(P):
         P.Timer=None
         print('WatchDog - Shut down.')
 
+    # Check if we are transmitting
+    if P.DIGI and P.sock_xml.tx_evt.is_set():
+        print('Watch Dog - PTT is on ...', P.sock.connection)
+        try:
+            state=P.sock_xml.ptt(-1)
+            print('state=',state)
+        except:
+            error_trap('WATCHDOG: Unable to retrieve PTT state',1)
+            
     # Read radio status
-    if P.sock.tx_evt.is_set():
-        print('Watch Dog - PTT on ...', P.sock.connection)
-        state=P.sock.ptt(-1)
-        print('state=',state)
     if P.sock.connection!='NONE' and not P.sock.tx_evt.is_set():
         print('Watch Dog - reading radio status ...', P.sock.connection)
         freq = P.sock.get_freq()
@@ -129,36 +134,17 @@ def WatchDog(P):
     #check_udp_clients(P)
 
     # Check if anything is going on with FLDIGI
-    if P.sock.rig_type=='FLDIGI' and P.sock.fldigi_active:
-
-        # Check log fields - this works but now disabled since pyKeyer logger is much better
-        if False:
-            if not hasattr(WatchDog, "last_call"):
-                last_call=''
-            #print('Getting FLDIGI log fields ...')
-            fields=P.gui.Set_Log_Fields(CALL_ONLY=True)
-            if fields!=None:
-                call=fields['Call']
-            else:
-                call=''
-            #print('\tFields=',fields)
-            if call != last_call:
-                last_call=call
-                P.gui.get_hint(call)
-                if P.AUTOFILL:
-                    h=P.KEYING.insert_hint(VERBOSITY=1)
-                    #print('\thint=',h)
+    if P.DIGI: # and not P.sock_xml.tx_evt.is_set():
+        print('WATCHDOG - Checking RX buff ...')
 
         # Get any new decoded text from RX box and put it in the big text box 
-        if P.DIGI and not P.sock.tx_evt.is_set():
-            txt=P.sock.get_rx_buff()
-            if len(txt)>0:
-                print('txt=',txt,'\tlen=',len(txt))
-                P.gui.txt.insert(END, txt)
-                P.gui.txt.see(END)
-                P.gui.root.update_idletasks()
+        txt=P.sock_xml.get_rx_buff()
+        if len(txt)>0:
+            #print('txt=',txt,'\tlen=',len(txt))
+            P.gui.txt.insert(END, txt)
+            P.gui.txt.see(END)
+            P.gui.root.update_idletasks()
             
-    
     # Read rotor position
     if P.sock_rotor.connection!='NONE' or False:
         gui2=P.gui.rotor_ctrl

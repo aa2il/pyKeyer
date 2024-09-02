@@ -157,7 +157,7 @@ class DEFAULT_KEYING():
                 #self.key2 = 'qth'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['ALQP','ARQP','AZQP','COQP','DEQP','FLQP',
+            elif self.contest_name in ['ALQP','ARQP','AZQP','DEQP','FLQP',
                                        'GAQP','HIQP','IAQP','ILQP','INQP',
                                        'KSQP','KYQP','LAQP','MEQP','MIQP',
                                        'MOQP','MSQP','NCQP','NDQP','NEQP',
@@ -225,7 +225,7 @@ class DEFAULT_KEYING():
                 self.Uses_Serial=True
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
-            elif self.contest_name in ['MNQP']:
+            elif self.contest_name in ['COQP','MNQP']:
                 
                 # Name + State
                 LAB1  = 'NAME'
@@ -329,6 +329,7 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name
 
+            print('LAB1=',LAB1,'\tEXCH1=',EXCH1)
             print('LAB2=',LAB2,'\tEXCH2=',EXCH2)
             self.LAB1=LAB1
             self.key1 = self.LAB1.lower()
@@ -403,12 +404,13 @@ class DEFAULT_KEYING():
     def hint(self,call):
         P=self.P
         gui=self.P.gui
-
         print('DEFAULT HINT: call=',call,'\tkey1=',self.key1,'\tkey2=',self.key2)
 
         txt=''
         qth=''
-        if self.key1!=None and self.key1!='rst':
+        if self.key1=='name':
+            txt+=self.NAME+' '
+        elif self.key1!=None and self.key1 not in ['rst']:
             txt+='TBD '
 
         if self.key2!=None and self.key2 in ['sec','qth','cqz','ituz']:
@@ -557,11 +559,12 @@ class DEFAULT_KEYING():
             gui.rstin.grid(column=col,columnspan=cspan)
             gui.boxes.append(gui.rstin)
 
-        if self.LAB2=='NAME':
+        if self.LAB1=='NAME' or self.LAB2=='NAME':
             col+=cspan
             cspan=2
             gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
             gui.name.grid(column=col,columnspan=cspan)
+            gui.boxes.append(gui.name)
             
         if self.LAB1=='NR' or self.LAB2=='NR' or self.LAB3=='NR':
             col+=cspan
@@ -613,13 +616,6 @@ class DEFAULT_KEYING():
             gui.notes_lab.grid_remove()
             gui.notes.grid_remove()
             gui.boxes.append(gui.hint)
-
-        if gui.contest and self.LAB2!='NAME' and False:
-            # Debug name insertion
-            col+=cspan
-            cspan=2
-            gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
-            gui.name.grid(column=col,columnspan=cspan)
 
         cspan=12-col
         gui.scp_lab.grid(column=col,columnspan=cspan)

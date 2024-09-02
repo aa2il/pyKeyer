@@ -1,4 +1,7 @@
-#! /usr/bin/python3 -u
+#! /usr/bin/python3 -u 
+#
+# NEW: /home/joea/.venv/bin/python -u
+# OLD: /usr/bin/python3 -u 
 ################################################################################
 #
 # pyKeyer.py - Rev 1.0
@@ -76,7 +79,6 @@ print('\nPYKEYER: Opening connection to primary rig - connection=',
 P.gui.status_bar.setText("Opening connection to primary rig ...")
 P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',
                                         rig=P.rig,force=P.FORCE)
-#sys.exit(0)
 if not P.sock1.active and not P.PRACTICE_MODE:
     print('*** No connection available to rig ***')
     print('Perhaps you want practice mode?\n')
@@ -159,7 +161,15 @@ if False:
     time.sleep(5)
     sys.exit(0)
 
-    
+# Open connection to FLDIGI, if needed
+if P.DIGI:
+    if P.connection=='FLDIGI':
+        P.sock_xml = P.sock
+    else:
+        P.sock_xml = socket_io.open_rig_connection('FLDIGI',0,0,0,'KEYER')
+else:
+    P.sock_xml = None
+
 # Open connection to FLLOG, if available
 P.sock_log = socket_io.open_rig_connection('FLLOG',0,0,0,'KEYER')
 #print(P.sock_log.active)

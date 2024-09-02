@@ -930,19 +930,25 @@ class GUI():
     def Toggle_PTT(self,iop=None):
         if iop==None:
             self.P.PTT = not self.P.PTT
-        print('TOOGLE PTT:',self.P.PTT,iop)
+        print('TOOGLE PTT: ptt=',self.P.PTT,'\tiop=',iop)
         
         # Manage button appearance
         if self.P.PTT:
             self.PTTBtn.configure(background='red',
                                   highlightbackground= 'red',
                                   relief='sunken')
-            self.P.sock.ptt(True)
+            onoff=True
         else:
             self.PTTBtn.configure(background='green',
                                   highlightbackground= 'green',
                                   relief='raised')
-            self.P.sock.ptt(False)
+            onoff=False
+
+        # key/unkey
+        if self.P.sock_xml!=None:
+            self.P.sock_xml.ptt(onoff)
+        else:
+            self.P.sock.ptt(onoff)
         
     # Callback to toggle sending of text
     def Toggle_Immediate_TX(self,iop=None):
@@ -1416,21 +1422,16 @@ class GUI():
     # Function to send cw text 
     def Send_CW_Text(self,txt):
 
-        if self.P.DIGI:
-            print('SEND_CW_TXT: txt=',txt)
-            self.P.sock.put_tx_buff( chr(10)+txt+chr(10)+"^r" )        # Pad with LineFeeds and go back into rx mode after we send it
-            self.P.sock.ptt(1)                                     # Start TX
-            return
-        
         # Send text to keyer ...
         self.q.put(txt)
 
         # ... and to big text box ...
         if '[LOG]' not in txt:
             txt+='\n'
-        self.txt.insert(END, txt)
-        self.txt.see(END)
-        self.root.update_idletasks()
+        if not self.P.DIGI or '[LOG]' in txt:
+            self.txt.insert(END, txt)
+            self.txt.see(END)
+            self.root.update_idletasks()
 
         # ... and to disk
         self.fp_txt.write('%s\n' % (txt) )
@@ -2133,11 +2134,13 @@ class GUI():
                 print('LOG QSO: Broadcasting spot:',msg)
                 self.P.udp_server.Broadcast(msg)
 
+            # Log contact using FLLOG
             if self.P.sock_log.connection=='FLLOG':
                 print('GUI - LOG_QSO: via FLLOG ...')
                 self.P.sock_log.Add_QSO(qso)
 
-            elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE:
+            # Log contact using FLDIGI - dont use if in RTTY mode - This path needs work!!!
+            elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE and False:
                 print('GUI - LOG_QSO: FLDIGI ...')
                 fields = {'Call':call,'Name':name,'RST_out':rstout,'QTH':qth,'Exchange':exch}
                 self.sock.set_log_fields(fields)
@@ -3008,8 +3011,8 @@ class GUI():
         self.get_hint(call)
         if key=='@@@' or self.P.AUTOFILL:
             self.P.KEYING.insert_hint()
-            if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active:
-                print('Setting FLDIGI log fields ...')
+            if self.sock.rig_type=='FLDIGI' and self.sock.fldigi_active and not self.P.DIGI:
+                print('AUTOFILL: Setting FLDIGI log fields ...')
                 self.Read_Log_Fields()
     
     # Callback when something changes in an entry box
@@ -3143,7 +3146,7 @@ class GUI():
         elif mode in ['FM','RTTY','BPSK31']:
             self.sock.set_filter(['Wide','2400 Hz'],mode)
             if mode=='RTTY':
-                self.sock.squelch_mode(0)
+                self.P.sock_xml.squelch_mode(0)
                 
         """
         else:

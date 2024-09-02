@@ -306,7 +306,7 @@ def open_keying_port(P,sock,rig_num):
                 ser.PORT = SERIAL_PORT2
                 ser.BAUD = BAUD
 
-            elif sock.rig_type2 in ['None','TYT9000d','Hamlib']:
+            elif sock.rig_type2 in ['None','TYT9000d','Hamlib','FLDIGI']:
                 ser=serial_dummy()
 
             else:
