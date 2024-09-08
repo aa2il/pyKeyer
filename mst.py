@@ -71,7 +71,7 @@ class MST_KEYING(DEFAULT_KEYING):
         else:            
             GREETING="[GDAY]"
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] 73EE [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+'[NAME] ESE [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] ESE [LOG]'}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}

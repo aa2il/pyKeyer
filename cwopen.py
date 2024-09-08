@@ -42,6 +42,12 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID='CWOPS-CWOPEN'
         self.number_key='cwops'
 
+        # On-the-fly scoring - NEW!
+        self.nqsos=0
+        self.calls=set([])
+        self.init_scoring()
+
+        
     # Routient to set macros for this contest
     def macros(self):
 
@@ -175,6 +181,8 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         
         gui.counter_lab.grid()
         gui.counter.grid()
+        gui.inc_btn.grid()
+        gui.dec_btn.grid()
         
         if not gui.P.NO_HINTS:
             col+=cspan
@@ -224,3 +232,16 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         gui.name.insert(0,h[0])
 
 
+    # On-the-fly scoring
+    def scoring(self,qso):
+        print("SCORING: qso=",qso)
+        self.nqsos+=1
+        call=qso['CALL']
+        self.calls.add(call)
+        mults = len(self.calls)
+        score=self.nqsos * mults
+        print("SCORING: score=",score)
+
+        txt='{:3d} QSOs  x {:3d} Uniques = {:6,d} \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,call)
+        self.P.gui.status_bar.setText(txt)
