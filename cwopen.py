@@ -77,6 +77,7 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
         MACROS[9]     = {'Label' : 'My Name 2x', 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
         MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+        MACROS[10+12] = {'Label' : 'His #?'    , 'Text' : '[SERIAL_IN]? '}
         MACROS[11]    = {'Label' : 'NAME? '    , 'Text' : 'NAME? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 

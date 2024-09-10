@@ -179,6 +179,7 @@ class GUI():
         self.exch_out=''
         self.ndigits=3
         self.prev_call=''
+        self.prev_qso={}
         self.prefill=False
         self.cntr=0
 
@@ -212,6 +213,17 @@ class GUI():
 
         # Also save all sent text to a file
         self.fp_txt = open(P.WORK_DIR+MY_CALL.replace('/','_')+".TXT","a+")
+
+        # Add a check file
+        fname77='snippets.txt'
+        if os.path.exists(fname77):
+            self.fp_snip = open(fname77,"a+")
+        else:
+            self.fp_snip = open(fname77,"w")
+            self.fp_snip.write('%s\n' % ('#/bin/tcsh -f') )
+            self.fp_snip.write('%s\n' % (' ') )
+            self.fp_snip.write('%s\n' % ('set fname="capture_*.wav"') )
+            self.fp_snip.write('%s\n' % (' ') )
 
         # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
         self.status_bar.setText("Constructing GUI ...")
@@ -541,6 +553,12 @@ class GUI():
                      takefocus=0 ) 
         btn.grid(row=row,column=self.ncols-1)
         tip = ToolTip(btn, ' Query QRZ.com ' )
+        
+        # Flag it button
+        btn = Button(self.root, text='Flag It',command=self.Flag_It,\
+                     takefocus=0 ) 
+        btn.grid(row=row+1,column=self.ncols-1)
+        tip = ToolTip(btn, ' Flag Last QSO ' )
         
         # Set up a spin box to allow satellite logging
         row += 1
@@ -1122,6 +1140,20 @@ class GUI():
             print('CALL_LOOKUP: Need a valid call first! ',call)
             self.status_bar.setText('QRZ? - Need a valid call first!')
             
+    # Callback to flag last QSO
+    def Flag_It(self):
+        note=self.prev_qso['CALL']+'  '+self.prev_qso['TIME_OFF']
+        cmd='split_wave $fname -snip ' + self.prev_qso['TIME_OFF'] + \
+            ' ; audacity SNIPPIT.wav > & /dev/null'
+        print('\n#',note)
+        print(cmd,'\n')
+        self.fp_snip.write('\n# %s\n' % (note) )
+        self.fp_snip.write('%s\n' % (cmd) )
+        self.fp_snip.flush()
+
+        self.fp_adif.write('# FLAG IT!\n\n')
+        self.fp_adif.flush()
+        
     # Callback to bring up rig control menu
     def RigCtrlCB(self):
         print("^^^^^^^^^^^^^^Rig Control...")
@@ -1132,6 +1164,12 @@ class GUI():
         print("Tuning...")
         txt='[TUNE]'
         self.q.put(txt)
+
+    # Callback to clear all spots
+    def Clear_All_Spots(self):
+        print('CLEAR ALL SPOTS ...')
+        for idx in range(len(self.spots)):
+            self.Spots_cb(idx,-1)
 
     # Callback to store & retrieve spotted freqs
     def Spots_cb(self,arg,idir):
@@ -1968,6 +2006,7 @@ class GUI():
         self.SaveState()
         self.fp_adif.close()
         self.fp_txt.close()
+        self.fp_snip.close()
         self.P.SHUTDOWN=True
 
         # Immediately stop sending
@@ -2210,6 +2249,7 @@ class GUI():
                 print("GUI: ADIF writing QSO=",qso2)
                 write_adif_record(self.fp_adif,qso2,self.P)
                 print(' ')
+                self.prev_qso=qso2
 
                 try:
                     #txt=qso2['CALL']+' '+qso2['FREQ']+' '+qso2['SRX_STRING']
@@ -3427,6 +3467,12 @@ class GUI():
             underline=0,
             variable=self.ImmediateTX,
             command=self.Toggle_Immediate_TX
+        )
+        
+        Menu1.add_checkbutton(
+            label="Clear All Spots ...",
+            underline=0,
+            command=self.Clear_All_Spots
         )
         
         Menu1.add_separator()

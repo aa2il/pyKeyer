@@ -34,50 +34,50 @@ import datetime
 # Structure to contain basic info about various contests
 CONTESTS = OrderedDict()
 ALL=list(range(1,13))
-CONTESTS['Default']    = {'Months' : ALL}
-CONTESTS['Ragchew']    = {'Months' : ALL}
-CONTESTS['CWT']        = {'Months' : ALL}
-CONTESTS['MST']        = {'Months' : ALL}
-CONTESTS['SST']        = {'Months' : ALL}
-CONTESTS['NS']         = {'Months' : ALL}
-CONTESTS['WRT']        = {'Months' : ALL}
-CONTESTS['SKCC']       = {'Months' : ALL}
-CONTESTS['POTA']       = {'Months' : ALL}
-CONTESTS['CW Open']    = {'Months' : [10]}
-CONTESTS['ARRL-VHF']   = {'Months' : [1,6,9]}
-CONTESTS['NAQP-CW']    = {'Months' : [1,8]}
-CONTESTS['TEN-TEN']    = {'Months' : []}
-CONTESTS['WAG']        = {'Months' : []}
-CONTESTS['SAC']        = {'Months' : []}
-CONTESTS['RAC']        = {'Months' : [6,12]}
-CONTESTS['BERU']       = {'Months' : []}
-CONTESTS['CQP']        = {'Months' : [10]}
-CONTESTS['IARU-HF']    = {'Months' : [7]}
-CONTESTS['CQWW']       = {'Months' : [11]}
-CONTESTS['CQ-WPX-CW']  = {'Months' : [5]}
-CONTESTS['CQ-160M']    = {'Months' : []}
-CONTESTS['ARRL-10M']   = {'Months' : [12]}
-CONTESTS['ARRL-160M']  = {'Months' : []}
-CONTESTS['ARRL-DX']    = {'Months' : [2]}
-CONTESTS['ARRL-FD']    = {'Months' : [6]}
-CONTESTS['ARRL-SS-CW'] = {'Months' : [11]}
-CONTESTS['STEW PERRY'] = {'Months' : []}
-CONTESTS['SATELLITES'] = {'Months' : ALL}
-CONTESTS['DX-QSO']     = {'Months' : ALL}
-CONTESTS['FOC-BW']     = {'Months' : [3]}
-CONTESTS['JIDX']       = {'Months' : [4]}
-CONTESTS['YURI']       = {'Months' : [4]}
-CONTESTS['SPDX']       = {'Months' : [4]}
-CONTESTS['CQMM']       = {'Months' : [4]}
-CONTESTS['HOLYLAND']   = {'Months' : [4]}
-CONTESTS['AADX']       = {'Months' : [6]}
-CONTESTS['IOTA']       = {'Months' : [7]}
-CONTESTS['MARAC']      = {'Months' : [7]}
-CONTESTS['SOLAR']      = {'Months' : []}
-CONTESTS['OCDX']       = {'Months' : []}
-CONTESTS['MARCONI']    = {'Months' : [7]}
-#CONTESTS[]= {'Months' : []}
-#CONTESTS[]= {'Months' : []}
+CONTESTS['Default']      = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['Ragchew']      = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['CWT']          = {'Months' : ALL,     'Duration' : 1}
+CONTESTS['MST']          = {'Months' : ALL,     'Duration' : 1}
+CONTESTS['SST']          = {'Months' : ALL,     'Duration' : 1}
+CONTESTS['NS']           = {'Months' : ALL,     'Duration' : 1}
+CONTESTS['WRT']          = {'Months' : ALL,     'Duration' : 1}
+CONTESTS['SKCC']         = {'Months' : ALL,     'Duration' : 2}
+CONTESTS['RANDOM CALLS'] = {'Months' : ALL,     'Duration' : 2}
+CONTESTS['POTA']         = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['CW Open']      = {'Months' : [9],     'Duration' : 4}
+CONTESTS['ARRL-VHF']     = {'Months' : [1,6,9], 'Duration' : 33}
+CONTESTS['CQ-VHF']       = {'Months' : [1,6,9], 'Duration' : 33}
+CONTESTS['NAQP-CW']      = {'Months' : [1,8],   'Duration' : 12}
+CONTESTS['TEN-TEN']      = {'Months' : [],      'Duration' : 48}
+CONTESTS['WAG']          = {'Months' : [],      'Duration' : 48}
+CONTESTS['SAC']          = {'Months' : [],      'Duration' : 48}
+CONTESTS['RAC']          = {'Months' : [6,12],  'Duration' : 24}
+CONTESTS['BERU']         = {'Months' : [],      'Duration' : 48}
+CONTESTS['CQP']          = {'Months' : [10],    'Duration' : 30}
+CONTESTS['IARU-HF']      = {'Months' : [7],     'Duration' : 48}
+CONTESTS['CQWW']         = {'Months' : [11],    'Duration' : 48}
+CONTESTS['CQ-WPX-CW']    = {'Months' : [5],     'Duration' : 48}
+CONTESTS['CQ-160M']      = {'Months' : [],      'Duration' : 48}
+CONTESTS['ARRL-10M']     = {'Months' : [12],    'Duration' : 48}
+CONTESTS['ARRL-160M']    = {'Months' : [],      'Duration' : 48}
+CONTESTS['ARRL-DX']      = {'Months' : [2],     'Duration' : 30}
+CONTESTS['ARRL-FD']      = {'Months' : [6],     'Duration' : 30}
+CONTESTS['ARRL-SS-CW']   = {'Months' : [11],    'Duration' : 30}
+CONTESTS['STEW PERRY']   = {'Months' : [],      'Duration' : 24}
+CONTESTS['SATELLITES']   = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['DX-QSO']       = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['FOC-BW']       = {'Months' : [3],     'Duration' : 24}
+CONTESTS['JIDX']         = {'Months' : [4],     'Duration' : 30}
+CONTESTS['YURI']         = {'Months' : [4],     'Duration' : 24}
+CONTESTS['SPDX']         = {'Months' : [4],     'Duration' : 24}
+CONTESTS['CQMM']         = {'Months' : [4],     'Duration' : 48-9}
+CONTESTS['HOLYLAND']     = {'Months' : [4],     'Duration' : 24}
+CONTESTS['AADX']         = {'Months' : [6],     'Duration' : 48}
+CONTESTS['IOTA']         = {'Months' : [7],     'Duration' : 24}
+CONTESTS['MARAC']        = {'Months' : [7],     'Duration' : 48}
+CONTESTS['SOLAR']        = {'Months' : [],      'Duration' : 10}
+CONTESTS['OCDX']         = {'Months' : [],      'Duration' : 24}
+CONTESTS['MARCONI']      = {'Months' : [7],     'Duration' : 24}
                    
 # Structure to contain processing params
 class PARAMS:
@@ -224,7 +224,7 @@ class PARAMS:
         arg_proc.add_argument("-port3", help="Connection Port - 2nd rig",
                               type=int,default=0)
         arg_proc.add_argument("-max_age", help="Max age in hours",
-                              type=int,default=9999)
+                              type=int,default=None)
         arg_proc.add_argument("-nrows", help="No. STO/RCL rows",
                               type=int,default=1)
         arg_proc.add_argument("-keyer", help="Keyer type",
@@ -378,10 +378,9 @@ class PARAMS:
                 self.CONTEST_LIST.append(state+'QP')
 
         self.SHOW_TEXT_BOX2=args.split
-        MAX_AGE_HOURS = args.max_age
+
         if self.SPRINT:
             self.contest_name='NS'
-            MAX_AGE_HOURS=1
         elif args.pota:
             self.contest_name='POTA'
         elif args.cwt:
@@ -394,130 +393,94 @@ class PARAMS:
             self.contest_name='MST'
         elif args.ten:
             self.contest_name='TEN-TEN'
-            MAX_AGE_HOURS=48
         elif args.foc:
             self.contest_name='FOC-BW'
-            MAX_AGE_HOURS=24
         elif args.jidx:
             self.contest_name='JIDX'
-            MAX_AGE_HOURS=30
         elif args.yuri:
             self.contest_name='YURI'
-            MAX_AGE_HOURS=24
         elif args.spdx:
             self.contest_name='SPDX'
-            MAX_AGE_HOURS=24
         elif args.ocdx:
             self.contest_name='OCDX'
-            MAX_AGE_HOURS=24
         elif args.marconi:
             self.contest_name='MMC'
-            MAX_AGE_HOURS=24
         elif args.solar:
             self.contest_name='SE'
-            MAX_AGE_HOURS=10
         elif args.cqmm:
             self.contest_name='CQMM'
-            MAX_AGE_HOURS=48-9
         elif args.holy:
             self.contest_name='HOLYLAND'
-            MAX_AGE_HOURS=24
         elif args.marac:
             self.contest_name='MARAC'
-            MAX_AGE_HOURS=48
         elif args.iota:
             self.contest_name='IOTA'
-            MAX_AGE_HOURS=24
         elif args.aa:
             self.contest_name='AADX'
-            MAX_AGE_HOURS=48
         elif args.wag:
             self.contest_name='WAG'
-            MAX_AGE_HOURS=48
         elif args.sac:
             self.contest_name='SAC'
-            MAX_AGE_HOURS=48
         elif args.beru:
             self.contest_name='BERU'
-            MAX_AGE_HOURS=48
         elif args.rac:
             self.contest_name='RAC'
-            MAX_AGE_HOURS=24
         elif args.skcc:
             self.contest_name='SKCC'
-            MAX_AGE_HOURS=2
-            #self.SHOW_TEXT_BOX2=True
         elif args.calls:
             self.contest_name='RANDOM CALLS'
-            MAX_AGE_HOURS=2
         elif args.vhf:
             self.contest_name='ARRL-VHF'
-            MAX_AGE_HOURS=33
         elif args.cqvhf:
             self.contest_name='CQ-VHF'
-            MAX_AGE_HOURS=33
         elif args.naqp:
             self.contest_name='NAQP-CW'
-            MAX_AGE_HOURS=12
         elif args.ss:
             self.contest_name='ARRL-SS-CW'
-            if MAX_AGE_HOURS==9999:
-                MAX_AGE_HOURS=30
         elif args.cqp:
             self.contest_name='CQP'
-            MAX_AGE_HOURS=30
         elif args.state!=None:
             self.contest_name=args.state[0].upper()+'QP'
-            MAX_AGE_HOURS=48
         elif args.cwopen:
             self.contest_name='CW Open'
-            MAX_AGE_HOURS=4
         elif args.fd:
             self.contest_name='ARRL-FD'
-            MAX_AGE_HOURS=48  #??
         elif args.stew:
             self.contest_name='STEW PERRY'
-            MAX_AGE_HOURS=24  #??
         elif args.iaru:
             self.contest_name='IARU-HF'
-            MAX_AGE_HOURS=48  #??
         elif args.cqww:
             self.contest_name='CQWW'
-            MAX_AGE_HOURS=48
         elif args.wpx:
             self.contest_name = 'CQ-WPX-CW'
-            MAX_AGE_HOURS=48
         elif args.arrl_10m:
             self.contest_name = 'ARRL-10M'
-            MAX_AGE_HOURS=48    #??
         elif args.arrl_160m:
             self.contest_name = 'ARRL-160M'
-            MAX_AGE_HOURS=42
         elif args.cq160m:
             self.contest_name = 'CQ-160M'
-            MAX_AGE_HOURS=48    #??
         elif args.arrl_dx:
             self.contest_name = 'ARRL-DX'
-            MAX_AGE_HOURS=48    #??
         elif args.sat:
             self.contest_name='SATELLITES'
-            MAX_AGE_HOURS=9999
-            #self.SHOW_TEXT_BOX2=True
         elif args.ragchew:
             self.contest_name='Ragchew'
-            MAX_AGE_HOURS=9999
-            #self.SHOW_TEXT_BOX2=True
         elif args.dx:
             self.contest_name='DX-QSO'
-            #self.SHOW_TEXT_BOX2=True
-            MAX_AGE_HOURS=9999
         else:
             self.contest_name='Default'
-            #self.SHOW_TEXT_BOX2=True
 
         if self.contest_name not in self.CONTEST_LIST:
             self.CONTEST_LIST.append(self.contest_name)            
             
+        if args.max_age!=None:
+            MAX_AGE_HOURS = args.max_age
+        elif self.contest_name in CONTESTS.keys():
+            MAX_AGE_HOURS = CONTESTS[self.contest_name]['Duration']
+        else:
+            MAX_AGE_HOURS=48
+        print('MAX_AGE_HOURS=',MAX_AGE_HOURS)
+
         self.ROTOR_CONNECTION = args.rotor
         self.PORT9            = args.port9
         self.Immediate_TX     = args.immediate

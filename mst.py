@@ -89,6 +89,7 @@ class MST_KEYING(DEFAULT_KEYING):
         
         MACROS[8]     = {'Label' : 'My Name 2x', 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
         MACROS[9]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL] [SERIAL] [+2]'}
+        MACROS[9+12]  = {'Label' : 'His #?'    , 'Text' : '[SERIAL_IN]? '}
         MACROS[10]    = {'Label' : 'NAME? '    , 'Text' : 'NAME? '}
         MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
