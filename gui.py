@@ -1125,7 +1125,7 @@ class GUI():
                 link = 'https://www.qrz.com/db/' + call
                 webbrowser.open(link, new=2)
 
-            self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],self.last_qso)
+            self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],[self.last_qso],0)
             #self.qrzWin.hide()
 
         if self.match1:

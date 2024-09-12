@@ -38,7 +38,7 @@ from dx.spot_processing import ChallengeData,Station
 #########################################################################################
 
 class CALL_INFO_GUI():
-    def __init__(self,root,P,calls,qso):
+    def __init__(self,root,P,calls,qso,nqsos):
         self.P = P
 
         infos=[]
@@ -58,7 +58,13 @@ class CALL_INFO_GUI():
                         info=P.MASTER[call2]
 
             if qso!=None:
-                print('CALL_LOOKUP:',call,' has been worked this year')
+                idx=calls.index(call)
+                n=nqsos[idx]
+                if n>0:
+                    print('CALL_LOOKUP:',call,' has been worked',n,
+                          'times this year')
+                else:
+                    print('CALL_LOOKUP:',call,' has been worked this year')
             else:
                 print('CALL_LOOKUP:',call,' has been NOT worked this year')
                         
@@ -112,34 +118,35 @@ class CALL_INFO_GUI():
             button = Button(tab, text="Dismiss",command=self.Dismiss)
             button.grid(row=row,column=0,columnspan=2,sticky=E+W)
 
-        # Info from last qso
-        if qso:
-            tab = Frame(self.book)
-            self.book.add(tab, text='Last QSO')
+            # Info from last qso
+            idx=calls.index(call)
+            if qso[idx]:
+                tab = Frame(self.book)
+                self.book.add(tab, text='Last QSO')
             
-            row=0
-            for key in qso.keys():
-                txt=key.replace('_',' ').title()
-                lb=Label(tab, text=txt,justify=LEFT)
-                lb.grid(row=row, column=0,sticky=W)
-                e = Entry(tab,justify=CENTER)
-                e.grid(row=row,column=1,sticky=E+W)
+                row=0
+                for key in qso[idx].keys():
+                    txt=key.replace('_',' ').title()
+                    lb=Label(tab, text=txt,justify=LEFT)
+                    lb.grid(row=row, column=0,sticky=W)
+                    e = Entry(tab,justify=CENTER)
+                    e.grid(row=row,column=1,sticky=E+W)
 
-                txt2=qso[key]
-                if 'Date' in txt:
-                    date = datetime.strptime(txt2,'%Y%m%d')
-                    txt2 = date.strftime('%m-%d-%Y')
-                elif 'Time' in txt:
-                    date = datetime.strptime(txt2,'%H%M%S')
-                    txt2 = date.strftime('%H:%M:%S')
-                e.insert(0,txt2)
-                row+=1
+                    txt2=qso[idx][key]
+                    if 'Date' in txt:
+                        date = datetime.strptime(txt2,'%Y%m%d')
+                        txt2 = date.strftime('%m-%d-%Y')
+                    elif 'Time' in txt:
+                        date = datetime.strptime(txt2,'%H%M%S')
+                        txt2 = date.strftime('%H:%M:%S')
+                    e.insert(0,txt2)
+                    row+=1
                 
-            button = Button(tab, text="Dismiss",command=self.Dismiss)
-            button.grid(row=row,column=0,columnspan=2,sticky=E+W)
+                button = Button(tab, text="Dismiss",command=self.Dismiss)
+                button.grid(row=row,column=0,columnspan=2,sticky=E+W)
         
-        self.book.pack(expand=1, fill="both")
-        self.win.protocol("WM_DELETE_WINDOW", self.Dismiss)        
+            self.book.pack(expand=1, fill="both")
+            self.win.protocol("WM_DELETE_WINDOW", self.Dismiss)        
 
         
     def Dismiss(self):
@@ -220,7 +227,9 @@ if __name__ == '__main__':
     # Read adif input file(s)
     QSOs=[]
     fnames=['~/Python/pyKeyer/'+P.SETTINGS['MY_CALL']+'.adif']
-    last_qso=None
+    last_qso=[None]*len(calls)
+    nqsos=[0]*len(calls)
+    print(nqsos)
     for f in fnames:
         fname=os.path.expanduser( f )
         print('Reading log file:',fname)
@@ -233,13 +242,16 @@ if __name__ == '__main__':
             qsos1 = parse_adif(fname)
 
         for qso in qsos1:
-            if qso['call'] in calls:
-                last_qso=qso
+            call=qso['call']
+            if call in calls:
+                idx=calls.index(call)
+                last_qso[idx]=qso
+                nqsos[idx]+=1
             
         QSOs = QSOs + qsos1
     
     print("\nThere are ",len(QSOs)," input QSOs ...")
     
-    qrzWin = CALL_INFO_GUI(None,P,calls,last_qso)
+    qrzWin = CALL_INFO_GUI(None,P,calls,last_qso,nqsos)
     mainloop()
 

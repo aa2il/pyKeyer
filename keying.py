@@ -83,18 +83,20 @@ def find_keyer():
         ser = serial.Serial(device,baud,timeout=1,
                             xonxoff=False,dsrdtr=False,rtscts=False)
         print('FIND KEYER: ser=',ser)
+        time.sleep(.1)
+        ser.reset_input_buffer()
 
         #time.sleep(.1)
         #ser.reset_input_buffer
         #ser.reset_output_buffer
         #time.sleep(.1)
-        
+
         cnt=ser.write(bytes(CMDS[i],'utf-8'))
-        #print('cnt=',cnt)
         time.sleep(.1)
         txt2 = ser.read(256).decode("utf-8",'ignore')
-        print('FIND KEYER: txt2=',txt2,'\ntxt2=',show_hex(txt2),
-              '\tlen=',len(txt2),'\tCMD=',show_hex(CMDS[i]))
+        print('FIND KEYER: \tCMD=',show_hex(CMDS[i]),
+              '\ntxt2=',txt2,'\ntxt2=',show_hex(txt2),
+              '\tlen=',len(txt2))
 
         """
         if i==0 and len(txt2)==0 and False:
