@@ -277,9 +277,11 @@ class FOCBW_KEYING(DEFAULT_KEYING):
         print("SCORING: qso=",qso)
         self.nqsos+=1
         mults = 1
-        score=self.nqsos * mults
-        print("SCORING: score=",score)
+        self.score=self.nqsos * mults
+        print("SCORING: score=",self.score)
 
+        #print(qso)
+        call = qso['CALL']
         txt='{:3d} QSOs  \t\t\t Last Worked: {:s}' \
             .format(self.nqsos,call)
         self.P.gui.status_bar.setText(txt)

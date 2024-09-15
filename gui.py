@@ -1130,7 +1130,7 @@ class GUI():
                 link = 'https://www.qrz.com/db/' + call
                 webbrowser.open(link, new=2)
 
-            self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],[self.last_qso],0)
+            self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],[self.last_qso])
             #self.qrzWin.hide()
 
         if self.match1:
@@ -2324,6 +2324,11 @@ class GUI():
         # Save the current state
         self.SaveState()        
 
+        # Get ready for next QSO
+        next_widget=self.call
+        self.default_object=self.call  
+        self.call.focus_set()
+        
     # Routine to force the focus
     def force_focus(self,next_widget):
         print('FORCE FOCUS: Focus young man!',next_widget)

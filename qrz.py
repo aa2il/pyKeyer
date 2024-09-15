@@ -38,7 +38,7 @@ from dx.spot_processing import ChallengeData,Station
 #########################################################################################
 
 class CALL_INFO_GUI():
-    def __init__(self,root,P,calls,qso,nqsos):
+    def __init__(self,root,P,calls,qso,nqsos=None):
         self.P = P
 
         infos=[]
@@ -58,8 +58,11 @@ class CALL_INFO_GUI():
                         info=P.MASTER[call2]
 
             if qso!=None:
-                idx=calls.index(call)
-                n=nqsos[idx]
+                if nqsos!=None:
+                    idx=calls.index(call)
+                    n=nqsos[idx]
+                else:
+                    n=0
                 if n>0:
                     print('CALL_LOOKUP:',call,' has been worked',n,
                           'times this year')

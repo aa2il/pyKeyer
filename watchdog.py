@@ -21,7 +21,7 @@
 ################################################################################
 
 import threading
-from utilities import freq2band,error_trap
+from utilities import freq2band,error_trap,show_hex,show_ascii
 from tcp_server import open_udp_client,BANDMAP_UDP_PORT
 from udp import UDP_msg_handler
 from rig_io import SetSubDial
@@ -144,7 +144,9 @@ def WatchDog(P):
             error_trap('WATCHDOG: Unable to get rx buffer',1)
             txt=''
         if len(txt)>0:
-            #print('txt=',txt,'\tlen=',len(txt))
+            print('txt=',txt,'\tlen=',len(txt))
+            #print('\t',show_hex(txt))
+            print('\t',show_ascii(txt))
             P.gui.txt.insert(END, txt)
             P.gui.txt.see(END)
             P.gui.root.update_idletasks()

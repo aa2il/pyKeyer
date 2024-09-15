@@ -12,7 +12,7 @@
 set ROOT="/media/${USER}/marconi"
 #set ROOT="/media/${USER}/hertz"
 #set ROOT="/media/${USER}/sproul"
-set ROOT="/mnt/sproul"
+#set ROOT="/mnt/sproul"
 #set ROOT="/media/${USER}/3D76-ECB1"
 #set ROOT="/media/${USER}/acer"
 #set ROOT="../clone"

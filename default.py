@@ -58,6 +58,7 @@ class DEFAULT_KEYING():
         self.key2=None
         self.NAME=''
         self.Uses_Serial=False
+        self.score=0
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
