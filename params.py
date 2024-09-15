@@ -266,6 +266,8 @@ class PARAMS:
                               help='Use history from adif log')
         arg_proc.add_argument('-digi', action='store_true',
                               help='RTTY or other Digi Contest')
+        arg_proc.add_argument('-wfonly', action='store_true',
+                              help='FLDIGI is in Waterfall Only mode')
         arg_proc.add_argument('-geo',type=str,default=None,
                               help='Geometry')
         arg_proc.add_argument('-desktop',type=int,default=None,
@@ -298,6 +300,7 @@ class PARAMS:
         self.SPECIAL       = args.special
         self.GEO           = args.geo
         self.DIGI          = args.digi
+        self.WF_ONLY       = args.wfonly
         
         self.AUTOFILL      = args.autofill
         self.PRACTICE_MODE = args.practice or args.rig[0]=="NONE"

@@ -137,8 +137,12 @@ def WatchDog(P):
     if P.DIGI: # and not P.sock_xml.tx_evt.is_set():
         print('WATCHDOG - Checking RX buff ...')
 
-        # Get any new decoded text from RX box and put it in the big text box 
-        txt=P.sock_xml.get_rx_buff()
+        # Get any new decoded text from RX box and put it in the big text box
+        try:
+            txt=P.sock_xml.get_rx_buff()
+        except:
+            error_trap('WATCHDOG: Unable to get rx buffer',1)
+            txt=''
         if len(txt)>0:
             #print('txt=',txt,'\tlen=',len(txt))
             P.gui.txt.insert(END, txt)

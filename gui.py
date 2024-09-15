@@ -737,14 +737,15 @@ class GUI():
     def Text_Mouse(self,evt):
         print('TEXT MOUSE: button=',evt.num,'\tpos=',evt.x,evt.y)
 
-        shift     = ((evt.state & 0x0001) != 0)
-        control   = (evt.state & 0x0004) != 0
+        shift   = ((evt.state & 0x0001) != 0)
+        control = (evt.state & 0x0004) != 0
+        mode    = self.MODE.get()
         #print('\tshift=',shift,'\tctrl=',control)
         
         if evt.num==1:
 
-            # Right click --> Mske the text box the default widget so we can type things in to xmit
-            if shift or control:
+            # Right click --> Make the text box the default widget so we can type things in to xmit
+            if mode=='CW' or shift or control:
                 self.force_focus(evt.widget)
                 return('break')
 
@@ -835,6 +836,10 @@ class GUI():
         
     # Callback to set logs fields, optionally from fldigi
     def Set_Log_Fields(self,fields=None,CALL_ONLY=False):
+        if self.P.WF_ONLY:
+            print('GUI - SET_LOG_FIELDS skipped - can crash fldigi if in waterfall-only mode')
+            return
+        
         if fields==None:
             fields  = self.sock.get_log_fields(CALL_ONLY)
             if CALL_ONLY and len(fields['Call'])==0:
@@ -896,7 +901,7 @@ class GUI():
         fields = {'Call':call,'Name':name,'RST_in':rst_in,'RST_out':rst_out, \
                   'QTH':qth,'Exchange':exchange, \
                   'Category':cat,'Prec':prec,'Check':check}
-        if send2fldigi:
+        if send2fldigi and not self.P.WF_ONLY:
             print('\tfields=',fields)
             self.sock.set_log_fields(fields)
         return fields
@@ -2182,7 +2187,8 @@ class GUI():
             elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE and False:
                 print('GUI - LOG_QSO: FLDIGI ...')
                 fields = {'Call':call,'Name':name,'RST_out':rstout,'QTH':qth,'Exchange':exch}
-                self.sock.set_log_fields(fields)
+                if not self.P.WF_ONLY:
+                    self.sock.set_log_fields(fields)
                 self.sock.set_mode('CW')
                 self.sock.run_macro(47)
 
@@ -3094,6 +3100,7 @@ class GUI():
             print('Updated Call=',call,'\tTIME_ON D=',self.time_on.strftime('%H%M%S'))
 
             # Update fldigi and check for dupes
+            #if not self.P.WF_ONLY:
             #self.sock.set_log_fields({'Call':call}) 
             self.dup_check(call)
             self.auto_fill(call,key)
@@ -3104,12 +3111,14 @@ class GUI():
         elif event.widget==self.name:
 
             name=self.get_name().upper()
-            self.sock.set_log_fields({'Name':name})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'Name':name})
 
         elif event.widget==self.qth:
             
             qth=self.get_qth().upper()
-            self.sock.set_log_fields({'QTH':qth})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'QTH':qth})
 
             if len(qth)>0 and self.P.contest_name=='CQP':
                 self.P.KEYING.qth_hints()
@@ -3123,22 +3132,26 @@ class GUI():
 
             print('PROCESS ENTRY BOXES - CAT ...')
             cat=self.get_cat().upper()
-            self.sock.set_log_fields({'Cat':cat})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'Cat':cat})
 
         elif event.widget==self.rstin:
 
             rst=self.get_rst_in().upper()
-            self.sock.set_log_fields({'RST_in':rst})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'RST_in':rst})
 
         elif event.widget==self.rstout:
 
             rst=self.get_rst_out().upper()
-            self.sock.set_log_fields({'RST_out':rst})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'RST_out':rst})
 
         elif event.widget==self.exch:
 
             exch=self.get_exchange().upper()
-            self.sock.set_log_fields({'Exchange':exch})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'Exchange':exch})
 
             if self.P.contest_name=='SATELLITES':
                 if len(exch)==4 and not exch in self.P.grids:
@@ -3154,22 +3167,26 @@ class GUI():
         elif event.widget==self.serial_box:
 
             serial=self.get_serial().upper()
-            self.sock.set_log_fields({'Serial_out':serial})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'Serial_out':serial})
                 
         elif event.widget==self.prec:
 
             prec=self.get_prec().upper()
-            self.sock.set_log_fields({'Prec':prec})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'Prec':prec})
 
         elif event.widget==self.call2:
 
             call2=self.get_call2().upper()
-            self.sock.set_log_fields({'Call2':call2})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'Call2':call2})
 
         elif event.widget==self.check:
 
             check=self.get_check().upper()
-            self.sock.set_log_fields({'Check':check})
+            if not self.P.WF_ONLY:
+                self.sock.set_log_fields({'Check':check})
             
     
 ############################################################################################
