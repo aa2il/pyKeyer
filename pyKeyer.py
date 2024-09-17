@@ -96,6 +96,8 @@ print('P.sock1=',P.sock1,P.sock1.rig_type,P.sock1.rig_type1,P.sock1.rig_type2)
 if P.connection2 != "NONE":
     print('\nPYKEYER: Opening connection to secondary rig - connection=',P.connection2,'\trig=',P.rig2,'...')
     P.sock2 = socket_io.open_rig_connection(P.connection2,0,P.PORT2,0,'KEYER',rig=P.rig2,force=P.FORCE)
+    if P.sock2.connection=='NONE':
+        P.sock2=None
 else:
     P.sock2=None
 #print('P.sock2=',P.sock2,P.sock2.rig_type,P.sock2.rig_type1,P.sock2.rig_type2)
@@ -105,6 +107,8 @@ else:
 if P.connection3 != "NONE":
     print('\nPYKEYER: Opening connection to terciary rig - connection=',P.connection3,'\trig=',P.rig3,'...')
     P.sock3 = socket_io.open_rig_connection(P.connection3,0,P.PORT3,3,'KEYER',rig=P.rig3,force=P.FORCE)
+    if P.sock3.connection=='NONE':
+        P.sock3=None
 else:
     P.sock3=None
 #print('P.sock3=',P.sock3,P.sock3.rig_type,P.sock3.rig_type1,P.sock3.rig_type2)
