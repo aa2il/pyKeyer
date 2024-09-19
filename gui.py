@@ -3205,10 +3205,13 @@ class GUI():
             self.P.udp_server.Broadcast('MODE:'+mode)
         if mode=='CW':
             self.sock.set_filter(['Narrow','200 Hz'],mode)
+            self.sock.set_breakin(1)
+            self.sock.set_monitor_gain(10)
         elif mode in ['FM','RTTY','BPSK31']:
             self.sock.set_filter(['Wide','2400 Hz'],mode)
             if mode=='RTTY':
                 self.P.sock_xml.squelch_mode(0)
+                self.sock.set_monitor_gain(10)
                 
         """
         else:

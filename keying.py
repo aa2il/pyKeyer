@@ -61,7 +61,7 @@ def find_keyer():
     CMDS      = ['~?','\\?',chr(0)+chr(2)]
     RESPONSES = ['nanoIO ver','K3NG Keyer',chr(0x17)]
 
-    print('\nFIND KEYER: Looking for nanoIO keyer device ...')
+    print('\nFIND KEYER: Looking for keyer device ...')
     device=find_serial_device('nanoIO',0,2)
     print('FIND KEYER: device=',device)
     if not device:
@@ -77,12 +77,12 @@ def find_keyer():
         return None,None
     
     for i in range(len(DEVICES)):
-        print('Looking for',DEVICES[i],'device ...')
+        print('FIND KEYER: Looking for',DEVICES[i],'device ...')
         
         baud=BAUDS[i]
         ser = serial.Serial(device,baud,timeout=1,
                             xonxoff=False,dsrdtr=False,rtscts=False)
-        print('FIND KEYER: ser=',ser)
+        print('\tser=',ser)
         time.sleep(.1)
         ser.reset_input_buffer()
 
@@ -106,22 +106,22 @@ def find_keyer():
             time.sleep(.1)
             txt2 = ser.read(256).decode("utf-8",'ignore')
             print('txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2))
+        """
 
         ntries=1
         while len(txt2)==256 and ntries<10:
             ntries+=1
-            print('Try again ...')
+            print('Try again - ',ntries,'of 10 ...')
             ser.close()
             time.sleep(.1)
             ser.open()
             time.sleep(.1)
-            ser.reset_input_buffer
-            ser.reset_output_buffer
+            ser.reset_input_buffer()
+            ser.reset_output_buffer()
             time.sleep(.1)
         
             txt2 = ser.read(256).decode("utf-8",'ignore')
             print('txt2=',txt2,'\n',show_hex(txt2),'\tlen=',len(txt2))
-        """
         
         if RESPONSES[i] in txt2:
             print('Found',DEVICES[i],'Device')

@@ -233,6 +233,7 @@ class KEYING_DEVICE():
         ntries=0
         while self.ser.in_waiting==0 and ntries<n:
             ntries += 1
+            print('\tWAIT4IT: attempt',ntries,' of',n,' ...')
             if self.protocol=='NANO_IO':
 
                 # Check for proper device by issuing status query and looking for proper response:
