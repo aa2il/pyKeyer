@@ -45,6 +45,7 @@ from rig_io import ClarReset,SetTXSplit
 from rig_io import DELAY
 from rig_control_tk import *
 from rotor_control_tk import *
+from keyer_control_tk import *
 from ToolTip import *
 from fileio import *
 from threading import enumerate
@@ -600,6 +601,10 @@ class GUI():
         # appear to be a tk equivalent to QLCDnumber
         self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
 
+        # Add a tab to manage keyer
+        if self.P.keyer_device:
+            self.keyer_ctrl = KEYER_CONTROL(P)
+        
         # Buttons to allow quick store & return to spotted freqs
         self.spots=[]
         for j in range(self.P.NUM_ROWS):
@@ -1163,6 +1168,11 @@ class GUI():
     def RigCtrlCB(self):
         print("^^^^^^^^^^^^^^Rig Control...")
         self.rig.show()
+
+    # Callback to bring up keyercontrol menu
+    def KeyerCtrlCB(self):
+        print("^^^^^^^^^^^^^^Keyer Control...")
+        self.keyer_ctrl.show()
 
     # Callback to key/unkey TX for tuning
     def Tune(self):
@@ -3379,6 +3389,7 @@ class GUI():
         Menu1 = Menu(menubar, tearoff=0)
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Rig Control ...", command=self.RigCtrlCB)
+        Menu1.add_command(label="Keyer Control ...", command=self.KeyerCtrlCB)
         #Menu1.add_command(label="Paddling ...", command=self.PaddlingWin.show)
         Menu1.add_command(label="Paddling ...", command=self.Toggle_Paddling_Win)
         Menu1.add_command(label="Clear Stores ...", command=self.ClearState)
