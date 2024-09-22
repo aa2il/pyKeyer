@@ -115,6 +115,7 @@ class GUI():
         self.OnTop=False
         self.dx_station = None
         self.CHECK_DIAL = 1
+        self.last_qso=None
         
         # Create spash screen
         self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
@@ -1481,7 +1482,7 @@ class GUI():
         # ... and to big text box ...
         if '[LOG]' not in txt:
             txt+='\n'
-        if not self.P.DIGI or '[LOG]' in txt:
+        if not self.P.DIGI or '[LOG]' in txt or True:
             self.txt.insert(END, txt)
             self.txt.see(END)
             self.root.update_idletasks()

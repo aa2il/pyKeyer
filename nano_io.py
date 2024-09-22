@@ -146,7 +146,9 @@ class KEYING_DEVICE():
     def __init__(self,P,device,protocol,baud=NANO_BAUD):
 
         # Init
-        self.winkey_mode=0x55                        # Iambic A + paddle echo + serial echo + contest spacing
+        #self.winkey_mode=0x15                        # Iambic A + no paddle echo + serial echo + contest spacing
+        #self.winkey_mode=0x55                        # Iambic A + paddle echo + serial echo + contest spacing
+        self.winkey_mode=0x51                        # Iambic A + paddle echo + contest spacing
 
         # Find serial port to the device
         print("\nNANO_IO INIT: Opening keyer ... device=",device)
@@ -210,7 +212,6 @@ class KEYING_DEVICE():
             #self.send_command('TEST')                   # Test Msg
 
             self.send_command(chr(0x0E)+chr(self.winkey_mode))       
-            #self.send_command(chr(0x0E)+chr(0x15))       # Iambic A + no paddle echo + serial echo + contest spacing
             time.sleep(1)
             
         else:

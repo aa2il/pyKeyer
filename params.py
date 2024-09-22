@@ -50,7 +50,7 @@ CONTESTS['CQ-VHF']       = {'Months' : [1,6,9], 'Duration' : 33}
 CONTESTS['NAQP-CW']      = {'Months' : [1,8],   'Duration' : 12}
 CONTESTS['TEN-TEN']      = {'Months' : [],      'Duration' : 48}
 CONTESTS['WAG']          = {'Months' : [],      'Duration' : 48}
-CONTESTS['SAC']          = {'Months' : [],      'Duration' : 48}
+CONTESTS['SAC']          = {'Months' : [9],     'Duration' : 24}
 CONTESTS['RAC']          = {'Months' : [6,12],  'Duration' : 24}
 CONTESTS['BERU']         = {'Months' : [],      'Duration' : 48}
 CONTESTS['CQP']          = {'Months' : [10],    'Duration' : 30}
@@ -202,8 +202,8 @@ class PARAMS:
                               help='Force rig connection (debugging)')
         arg_proc.add_argument('-ca_only', action='store_true',
                               help='Only use California Stations for Practice')
-        arg_proc.add_argument("-wpm", help="Keyer speed",type=int,default=25)
-        arg_proc.add_argument("-paddles", help="Paddle speed",type=int,default=22)
+        arg_proc.add_argument("-wpm", help="Keyer Speed",type=int,default=25)
+        arg_proc.add_argument("-paddles", help="Paddle Speed",type=int,default=22)
         arg_proc.add_argument('-adjust', action='store_true',
                               help='Adjust speed based on correct copy')
         arg_proc.add_argument('-scp', action='store_true',
@@ -227,7 +227,7 @@ class PARAMS:
                               type=int,default=None)
         arg_proc.add_argument("-nrows", help="No. STO/RCL rows",
                               type=int,default=1)
-        arg_proc.add_argument("-keyer", help="Keyer type",
+        arg_proc.add_argument("-keyer", help="Keyer Type",
                               type=str,default=None,
                               choices=['NONE','NANO','K3NG','WINKEY','ANY'])
         arg_proc.add_argument('-nano', action='store_true',
@@ -236,8 +236,8 @@ class PARAMS:
                               help="Use K3NG IO Interface")
         arg_proc.add_argument('-winkeyer', action='store_true',
                               help="Use Winkeyer IO Interface")
-        arg_proc.add_argument('-echo', action='store_true',
-                              help="Echo response from Nano IO to text box")
+        arg_proc.add_argument('-noecho', action='store_true',
+                              help="Don't Echo response from Nano IO to text box")
         arg_proc.add_argument('-cwio', action='store_true',
                               help="Use FLRIG or HAMLIB for CW IO")
         arg_proc.add_argument('-lock', action='store_true',
@@ -294,7 +294,7 @@ class PARAMS:
         self.FIND_KEYER    = args.keyer=='ANY'
         self.USE_KEYER     = self.NANO_IO or self.K3NG_IO or \
             self.WINKEYER or self.FIND_KEYER
-        self.NANO_ECHO     = self.USE_KEYER and args.echo
+        self.NANO_ECHO     = self.USE_KEYER and not args.noecho
         self.CW_IO         = args.cwio
         self.LOCK_SPEED    = args.lock
         self.SPECIAL       = args.special

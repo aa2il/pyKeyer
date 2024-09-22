@@ -329,6 +329,9 @@ if P.sock.active:
         if frq>f1+50:
             print('PYKEYER - Setting freq to',f1+30)
             P.sock.set_freq(f1+30)
+    elif P.DIGI:
+        print('PYKEYER - Setting freq to',f1+80)
+        P.sock.set_freq(f1+80)
     elif P.SPECIAL:
         print('PYKEYER - Leaving rig freq alone!')
     elif band=='6m':

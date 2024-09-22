@@ -134,7 +134,7 @@ def WatchDog(P):
     #check_udp_clients(P)
 
     # Check if anything is going on with FLDIGI
-    if P.DIGI: # and not P.sock_xml.tx_evt.is_set():
+    if P.DIGI and not P.sock_xml.tx_evt.is_set():
         print('WATCHDOG - Checking RX buff ...')
 
         # Get any new decoded text from RX box and put it in the big text box
