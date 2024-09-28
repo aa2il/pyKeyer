@@ -376,6 +376,7 @@ if P.CAPTURE:
     P.capture.start()
 
 # Spin
-P.gui.status_bar.setText("And away we go !!!")
+if P.KEYING.nqsos==0:
+    P.gui.status_bar.setText("And away we go !!!")
 mainloop()
 

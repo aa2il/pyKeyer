@@ -48,7 +48,7 @@ class RIG_CONTROL():
         self.win.withdraw()
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
 
-        if self.sock.connection == 'NONE':
+        if not self.sock or self.sock.connection == 'NONE':
             return None
         
         # Legacy compatibility

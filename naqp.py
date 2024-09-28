@@ -41,7 +41,7 @@ class NAQP_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID='NAQP-CW'
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/NAQPCW.txt')
 
-        # On-the-fly scoring - NEW!
+        # On-the-fly scoring
         self.nqsos=0
         self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
         self.sec_cnt = np.zeros((len(NAQP_SECS),len(self.BANDS)),dtype=np.int32)
@@ -72,7 +72,7 @@ class NAQP_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'Name 2x'   , 'Text' : '[-2][MYNAME] [MYNAME] [+2]'}
         MACROS[9]     = {'Label' : 'State 2x'  , 'Text' : '[-2][MYSTATE] [MYSTATE] [+2]'}
         MACROS[10]    = {'Label' : 'NAME?  '   , 'Text' : 'NAME? '}
-        MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
+        #MACROS[10+12] = {'Label' : 'TEST'      , 'Text' : 'TEST '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 

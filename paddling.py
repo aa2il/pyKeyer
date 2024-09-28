@@ -37,6 +37,7 @@ from pprint import pprint
 import Levenshtein
 from keying import *
 from widgets_tk import StatusBar,SPLASH_SCREEN
+from keyer_control_tk import *
 
 ################################################################################
 
@@ -223,6 +224,18 @@ class PADDLING_GUI():
         self.CasualBtn=Button(self.win, text="Casual",command=self.toggle_casual)
         self.CasualBtn.grid(row=row,column=col,sticky=E+W)
         self.toggle_casual(0)
+
+        # Button to bring up rig/keyer control
+        col+=1
+        if self.STAND_ALONE:
+            P.root=self.root
+            self.sock=None
+            self.keyer_ctrl = KEYER_CONTROL(P)
+            self.RigBtn=Button(self.win, text="Keyer Ctrl",command=self.keyer_ctrl.show)
+            self.RigBtn.grid(row=row,column=col,sticky=E+W)
+        else:
+            self.rig = P.gui.rig        
+            #self.keyer_ctrl = P.gui.keyer_ctrl
 
         # ... and to Quit
         col=NCOLS-1
@@ -524,7 +537,7 @@ class PADDLING_GUI():
             
         elif Selection==9:
 
-            # Sprint contest - mimicing IambicMaster
+            # Sprint contest - mimicking IambicMaster
             call1,name1,state1 = self.get_sprint_call()
             call1=call1.replace('/SK','/P')
             call2,name2,state2 = self.get_sprint_call()
@@ -579,7 +592,7 @@ class PADDLING_GUI():
             name  = P.MASTER[c]['name'].replace('.','')
             state = P.MASTER[c]['state']
             #print('GET SPRINT CALL:',name,state)
-            if len(name)>1 and len(state)>=2:
+            if len(name)>1 and len(state)>=2 and name!=c:
                 call=c
 
         return call,name,state
@@ -750,12 +763,17 @@ if __name__ == '__main__':
         # Do it again in 100ms
         timer = P.PaddlingWin.win.after(100, check_keyer, P)
 
-
     # Set basic run-time params
     P=PADDLING_PARAMS()
 
+    # We need the keyer
+    #P.PaddlingWin.status_bar2.setText('Opening keyer ...')
+    P.keyer=cw_keyer.Keyer(P,P.WPM)
+    P.ser=open_keying_port(P,True,1)
+
     # Create GUI
     P.PaddlingWin = PADDLING_GUI(None,P)
+    P.PaddlingWin.SetWpm(0)
 
     # Load master call list
     print('Reading master history file ...')
@@ -765,12 +783,6 @@ if __name__ == '__main__':
     P.calls = list(P.MASTER.keys())
     P.Ncalls = len(P.calls)
     
-    # We need the keyer
-    P.PaddlingWin.status_bar2.setText('Opening keyer ...')
-    P.keyer=cw_keyer.Keyer(P,P.WPM)
-    P.ser=open_keying_port(P,True,1)
-    P.PaddlingWin.SetWpm(0)
-
     # And away we go!
     P.PaddlingWin.status_bar2.setText('Ready to rock ...')
     P.PaddlingWin.show_gui()

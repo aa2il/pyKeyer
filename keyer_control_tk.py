@@ -60,7 +60,7 @@ class KEYER_CONTROL():
         
         self.status = StringVar(parent)
         Label(IambicFrame, textvariable=self.status ).pack(side=TOP)
-        self.status.set( hex(self.winkey_mode) )
+        self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 
         self.iambic = IntVar(parent)
         self.keyer_modes = {'Iambic A':1 , 'Iambic B':0 , 'Ultimatic':2,'Bug':3}
@@ -113,7 +113,7 @@ class KEYER_CONTROL():
         self.P.gui.KeyerCtrlCB()
 
     def SelectIambic(self,iopt=None):
-        print('\nSELECT IAMBIC: opt=',iopt,'\twk mode=',self.winkey_mode)
+        print('\nSELECT IAMBIC: opt=',iopt,'\twk mode=',hex(self.winkey_mode))
         if iopt==1:
             m = (self.winkey_mode & 0x30) >> 4
             print('\tm=',hex(m))
@@ -121,10 +121,11 @@ class KEYER_CONTROL():
         else:
             m = self.iambic.get()
             print('\tm=',m)
-            self.winkey_mode = (self.winkey_mode & 0x30) | (m<<4)
+            self.winkey_mode = (self.winkey_mode & ~0x30) | (m<<4)
             
         print('\twk mode=',hex(self.winkey_mode))
         self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
+        self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 
     def ToggleButton(self,iopt,i,mask):
         print('\nTOGGLE BUTTON: opt=',iopt,'\ti=',i,'\tmask=',mask)
@@ -141,6 +142,7 @@ class KEYER_CONTROL():
                 
         print('\t',self.Flags[i],'\twk mode=',hex(self.winkey_mode))
         self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
+        self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 
         if not self.Flags[i]:
             self.Buttons[i].configure(relief='raised')

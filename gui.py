@@ -116,6 +116,10 @@ class GUI():
         self.dx_station = None
         self.CHECK_DIAL = 1
         self.last_qso=None
+        self.rig=None
+        self.pounced=False
+        self.searching=False
+        self.MY_CALL = P.SETTINGS['MY_CALL']
         
         # Create spash screen
         self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
@@ -186,10 +190,9 @@ class GUI():
         self.cntr=0
 
         # Read adif log
-        MY_CALL = P.SETTINGS['MY_CALL']
         self.log_book = []
         if P.LOG_FILE==None:
-            P.LOG_FILE = P.WORK_DIR+MY_CALL.replace('/','_')+".adif"
+            P.LOG_FILE = P.WORK_DIR+self.MY_CALL.replace('/','_')+".adif"
         print('Opening log file',P.LOG_FILE,'...')
         self.status_bar.setText("Reading log book "+P.LOG_FILE+" ...")
         print('GUI: Reading ADIF log file',P.LOG_FILE)
@@ -214,7 +217,7 @@ class GUI():
         print("GUI: ADIF file name=",P.LOG_FILE) 
 
         # Also save all sent text to a file
-        self.fp_txt = open(P.WORK_DIR+MY_CALL.replace('/','_')+".TXT","a+")
+        self.fp_txt = open(P.WORK_DIR+self.MY_CALL.replace('/','_')+".TXT","a+")
 
         # Add a check file
         fname77='snippets.txt'
@@ -227,6 +230,20 @@ class GUI():
             self.fp_snip.write('%s\n' % ('set fname="capture_*.wav"') )
             self.fp_snip.write('%s\n' % (' ') )
 
+        # Add a tab to manage Rig
+        self.rig = RIG_CONTROL(P)
+        
+        # Add a tab to manage Rotor
+        # This is actually rather difficult since there doesn't
+        # appear to be a tk equivalent to QLCDnumber
+        self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
+
+        # Add a tab to manage keyer
+        if self.P.keyer_device:
+            self.keyer_ctrl = KEYER_CONTROL(P)
+        else:
+            self.keyer_ctrl = None
+                    
         # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
         self.status_bar.setText("Constructing GUI ...")
         self.SettingsWin = SETTINGS_GUI(self.root,self.P)
@@ -594,18 +611,6 @@ class GUI():
         self.rate_lab = Label(self.root, text="QSO Rate:",font=self.font1)
         self.rate_lab.grid(row=row,columnspan=4,column=col,sticky=W)
 
-        # Other capabilities accessed via menu
-        self.rig = RIG_CONTROL(P)
-        
-        # Add a tab to manage Rotor
-        # This is actually rather difficult since there doesn't
-        # appear to be a tk equivalent to QLCDnumber
-        self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
-
-        # Add a tab to manage keyer
-        if self.P.keyer_device:
-            self.keyer_ctrl = KEYER_CONTROL(P)
-        
         # Buttons to allow quick store & return to spotted freqs
         self.spots=[]
         for j in range(self.P.NUM_ROWS):
@@ -1301,7 +1306,7 @@ class GUI():
 
     # Routine to substitute various keyer commands that are stable in macro text
     def Patch_Macro(self,txt):
-        txt = txt.replace('[MYCALL]',self.P.SETTINGS['MY_CALL'] )
+        txt = txt.replace('[MYCALL]',self.MY_CALL )
         if '[MYSTATE]' in txt:
             self.qth_out = self.P.SETTINGS['MY_STATE']
             txt = txt.replace('[MYSTATE]',self.qth_out)
@@ -1330,8 +1335,10 @@ class GUI():
             self.check_out = self.P.SETTINGS['MY_CHECK']
             txt = txt.replace('[MYCHECK]', self.check_out)
         if '[MYCQZ]' in txt:
-            self.qth_out = self.P.SETTINGS['MY_CQ_ZONE']
-            txt = txt.replace('[MYCQZ]', self.qth_out )
+            zone=self.P.SETTINGS['MY_CQ_ZONE']
+            if self.P.DIGI and len(zone)==1:
+                zone='0'+zone
+            txt = txt.replace('[MYCQZ]', zone )
         if '[MYCAT]' in txt:
             self.check_out = self.P.SETTINGS['MY_CAT'] 
             txt = txt.replace('[MYCAT]', self.check_out)
@@ -1387,9 +1394,8 @@ class GUI():
 
             # Yes - shorten response by eliminating my call
             if alt or control or shift:
-                MY_CALL = P.SETTINGS['MY_CALL']
-                if MY_CALL in txt:
-                    txt = txt.replace(MY_CALL,'')
+                if self.MY_CALL in txt:
+                    txt = txt.replace(self.MY_CALL,'')
 
         # Greeting might depend on local time of day
         if '[GDAY]' in txt:
@@ -1475,14 +1481,32 @@ class GUI():
 
     # Function to send cw text 
     def Send_CW_Text(self,txt):
+        print('SEND CW TEXT: txt=',txt,'\tpounced=',self.pounced,
+              '\trunning=',self.RUNNING,'\tsearching=',self.searching)
 
         # Send text to keyer ...
         self.q.put(txt)
 
         # ... and to big text box ...
+        if self.pounced:
+            call = self.get_call().upper()
+            print('\tcall=',call)
+            if self.RUNNING or self.searching:
+                txt2='************* Whoooops! Unlogged pounced??? **********'
+                txt2+='   call= '+call+'\n'
+                print(txt2)
+                txt = txt2+txt
+                self.pounced=False
+                self.searching=False
+            else:
+                txt  = '['+call+'] '+txt
         if '[LOG]' not in txt:
-            txt+='\n'
+            if self.P.DIGI:
+                txt='\n'+txt+'\n'
+            else:
+                txt+='\n'
         if not self.P.DIGI or '[LOG]' in txt or True:
+            print('\ttxt=',txt)
             self.txt.insert(END, txt)
             self.txt.see(END)
             self.root.update_idletasks()
@@ -1499,13 +1523,16 @@ class GUI():
             return
 
         P=self.P
+        label = self.macros[arg]["Label"]
         if arg<=2 or (arg>=0+12 and arg<=2+12):
             self.RUNNING = True
-            #P.gui.status_bar.setText("Running ...")
-        elif arg in [5,5+12]:
+            #elif arg in [5,5+12]:
+        elif 'S&P' in label:
             self.RUNNING = False
-            #P.gui.status_bar.setText("S&P ...")
-
+            self.pounced=True
+        elif self.MY_CALL in label:
+           self.searching==True
+ 
         if arg in [1,4,5]:
             self.time_on = datetime.utcnow().replace(tzinfo=UTC)
             print('TIME_ON A set to',self.time_on.strftime('%H%M%S'))
@@ -1516,7 +1543,6 @@ class GUI():
 
         # Set register to tell practice exec what op has done
         P.OP_STATE=0
-        label = self.macros[arg]["Label"]
         if 'CQ' in label or 'QRZ' in label:
             P.OP_STATE |= 1
         if 'Reply' in label:
@@ -1699,9 +1725,8 @@ class GUI():
         self.P.contest_name  = self.P.KEYING.contest_name
         self.macros = self.P.KEYING.macros()
         
-        MY_CALL = self.P.SETTINGS['MY_CALL']
         for i in range(12):
-            lab = self.macros[i]["Label"].replace('[MYCALL]',MY_CALL )
+            lab = self.macros[i]["Label"].replace('[MYCALL]',self.MY_CALL )
             self.btns1[i].configure( text=lab )
 
             txt = self.Patch_Macro( self.macros[i]["Text"] )
@@ -1709,7 +1734,7 @@ class GUI():
             tip = ToolTip(self.btns1[i], ' '+txt+' ' )
 
             if i+12 in self.macros:
-                lab = self.macros[i+12]["Label"].replace('[MYCALL]',MY_CALL )
+                lab = self.macros[i+12]["Label"].replace('[MYCALL]',self.MY_CALL )
                 self.btns2[i].configure( text=lab )
                 txt = self.Patch_Macro( self.macros[i+12]["Text"] )
                 self.macros[i+12]["Text"] = txt
@@ -2181,6 +2206,8 @@ class GUI():
                                   band_rx,notes,str(int(self.RUNNING)),
                                   self.P.sock.rig_type2,
                                   self.P.CONTEST_ID] )))
+            if self.MY_CALL != self.P.SETTINGS['MY_OPERATOR']:
+                qso['OPERATOR'] = self.P.SETTINGS['MY_OPERATOR']
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P
@@ -2336,6 +2363,8 @@ class GUI():
         self.SaveState()        
 
         # Get ready for next QSO
+        self.pounced=False
+        self.searching=False
         next_widget=self.call
         self.default_object=self.call  
         self.call.focus_set()
