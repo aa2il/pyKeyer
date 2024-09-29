@@ -80,27 +80,32 @@ class CQWW_KEYING(DEFAULT_KEYING):
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]     = {'Label' : 'CQ'       , 'Text' : 'CQ WW [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '     , 'Text' : 'QRS PSE QRS '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '    , 'Text' : 'QRZ? '}
         if not self.P.DIGI:
             # CQ WW CW - RST & ZONE
+            MACROS[0]     = {'Label' : 'CQ'       , 'Text' : 'CQ WW [MYCALL] '}
             MACROS[1] = {'Label' : 'Reply'    , 'Text' : '[CALL] TU 5NN [MYCQZ] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] 73 WW [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         else:
             # CQ WW RTTY - RST & ZONE & STATE
-            MACROS[1]    = {'Label' : 'Reply'    , 'Text' : '[CALL] TU 599 [MYCQZ] [MYSTATE] '}
-        MACROS[1+12]  = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] 73 WW [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+            MACROS[0]     = {'Label' : 'CQ'       , 'Text' : 'CQ WW [MYCALL] [MYCALL] '}
+            MACROS[1]     = {'Label' : 'Reply'    , 'Text' : '[CALL] TU 599 [MYCQZ] [MYSTATE] [MYSTATE] [CALL] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL] TNX AGN [NAME] 73 [MYCALL] CQ [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL] 73 [MYCALL] CQ [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'  , 'Text' : '[CALL] GL [NAME] DIT DIT [MYCALL] CQ [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'    , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'    , 'Text' : 'CALL? '}
 
-        MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         if not self.P.DIGI:
+            MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call' , 'Text' : '[CALL] '}
             MACROS[5]    = {'Label' : 'S&P Reply', 'Text' : 'TU 5NN [MYCQZ] '}
             MACROS[5+12] = {'Label' : 'S&P 2x'   , 'Text' : '5NN [MYCQZ] [MYCQZ] '}
         else:
-            MACROS[4+12] = {'Label' : '[MYCALL] 2x', 'Text' : '[MYCALL] [MYCALL] '}
+            MACROS[4]    = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] [MYCALL] '}
+            MACROS[4+12] = {'Label' : '[MYCALL] 1x', 'Text' : '[MYCALL] '}
             MACROS[5]    = {'Label' : 'S&P Reply', 'Text' : 'TU 599 [MYCQZ] [MYSTATE] [MYSTATE] '}
             MACROS[5+12] = {'Label' : 'S&P 2x'   , 'Text' : '599 [MYCQZ] [MYCQZ] [MYSTATE] [MYSTATE] '}
         MACROS[6]     = {'Label' : '? '       , 'Text' : '? '}
@@ -116,8 +121,9 @@ class CQWW_KEYING(DEFAULT_KEYING):
             MACROS[8+12] = {'Label' : 'State 4x'  , 'Text' : '[MYSTATE] [MYSTATE] [MYSTATE] [MYSTATE] '}
             MACROS[10]   = {'Label' : 'State ?'   , 'Text' : 'STATE ? '}
         MACROS[9]     = {'Label' : 'NR?'      , 'Text' : 'NR? '}
+        MACROS[9+12]  = {'Label' : 'QSL?'      , 'Text' : 'QSL? '}
         
-        MACROS[11]    = {'Label' : '[MYCALL] 3x'      , 'Text' : '[MYCALL] [MYCALL] [MYCALL]'}
+        MACROS[11]    = {'Label' : '[MYCALL] 4x'      , 'Text' : '[MYCALL] [MYCALL] [MYCALL] [MYCALL] '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS

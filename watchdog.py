@@ -171,7 +171,11 @@ def WatchDog(P):
     if VERBOSITY>0:
         print("WatchDog - Timer ...")
     if not P.gui.Done and not P.SHUTDOWN and not P.Stopper.isSet():
-        P.Timer = threading.Timer(1.0, WatchDog, args=(P,))
+        if P.DIGI:
+            dt=0.2
+        else:
+            dt=1.0
+        P.Timer = threading.Timer(dt, WatchDog, args=(P,))
         P.Timer.setDaemon(True)                       # This prevents timer thread from blocking shutdown
         P.Timer.start()
     else:

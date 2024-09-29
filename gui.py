@@ -408,6 +408,7 @@ class GUI():
         self.S.grid(row=row,column=self.ncols,sticky=N+S)
         self.S.config(command=self.txt.yview)
         self.txt.config(yscrollcommand=self.S.set)
+        self.txt.tag_configure('highlight', foreground='red', relief='raised')
 
         self.txt.bind("<Key>", self.key_press )
         self.txt.bind('<Button-1>', self.Text_Mouse )      
@@ -776,8 +777,9 @@ class GUI():
             widget.delete(0, END)
             widget.insert(0,txt)
 
-            # Take care of hints
+            # Take care of dupes & hints
             if widget==self.call:
+                self.dup_check(txt)
                 self.get_hint()
                 if self.P.AUTOFILL:
                     self.P.KEYING.insert_hint()
@@ -847,11 +849,11 @@ class GUI():
         
     # Callback to set logs fields, optionally from fldigi
     def Set_Log_Fields(self,fields=None,CALL_ONLY=False):
-        if self.P.WF_ONLY:
+        if self.P.WF_ONLY and False:
             print('GUI - SET_LOG_FIELDS skipped - can crash fldigi if in waterfall-only mode')
             return
         
-        if fields==None:
+        if not self.P.WF_ONLY and fields==None:
             fields  = self.sock.get_log_fields(CALL_ONLY)
             if CALL_ONLY and len(fields['Call'])==0:
                 return
@@ -1245,7 +1247,7 @@ class GUI():
         elif idir==1:
             
             # Save
-            call=self.get_call().upper()
+            call  = self.get_call().upper()
             frqA  = 1e-3*self.sock.get_freq(VFO='A') 
             frqB  = 1e-3*self.sock.get_freq(VFO='B') 
             mode  = self.sock.get_mode()
@@ -1275,6 +1277,7 @@ class GUI():
         elif idir==2:
             
             # Restore
+            print('\tspot=',spot)
             try:
                 frqA  = spot['FreqA']
                 frqB  = spot['FreqB']
@@ -1282,9 +1285,9 @@ class GUI():
                 split = spot['Split']
                 ant   = spot['Ant']
 
-                print('Restore SPOT: frqA/B=',frqA,frqB,'\tmode=',mode,
-                      '\tsplit=',split,'\tant=',ant,
-                      '\n\tFields=',spot['Fields'])
+                print('\tRestore SPOT: frqA/B=',frqA,frqB,'\tmode=',mode,
+                      '\n\t\tsplit=',split,'\tant=',ant,
+                      '\n\t\tFields=',spot['Fields'])
                 
                 self.sock.set_freq(frqA,VFO='A')
                 self.sock.set_freq(frqB,VFO='B')
@@ -1297,12 +1300,16 @@ class GUI():
 
                 if 'Offset' in spot:
                     foffset = spot['Offset']
-                    print('Restore SPOT:',frqA,self.sock.rig_type,
-                          self.sock.fldigi_active,foffset)
+                    print('\tRestore SPOT: frqA=',frqA,'\trig_type=',self.sock.rig_type,
+                          '\n\t\tfldigi active=',self.sock.fldigi_active,'\toffset=',foffset)
                     self.sock.modem_carrier(foffset)
                     
             except: 
                 error_trap('GUI->SPOTS_CB - Unable to restore spot',1)
+
+        else:
+            print('\nSPOTS_CB - NOT SURE HOW WE GOT HERE????!!!')
+            
 
     # Routine to substitute various keyer commands that are stable in macro text
     def Patch_Macro(self,txt):
@@ -1500,14 +1507,16 @@ class GUI():
                 self.searching=False
             else:
                 txt  = '['+call+'] '+txt
-        if '[LOG]' not in txt:
+        if '[LOG]' not in txt or True:
             if self.P.DIGI:
                 txt='\n'+txt+'\n'
             else:
                 txt+='\n'
         if not self.P.DIGI or '[LOG]' in txt or True:
             print('\ttxt=',txt)
-            self.txt.insert(END, txt)
+
+            #self.txt.insert(END, txt)
+            self.txt.insert(END, txt, ('highlight'))
             self.txt.see(END)
             self.root.update_idletasks()
 
@@ -2153,13 +2162,18 @@ class GUI():
             # Read the radio 
             freq_kHz = 1e-3*self.sock.get_freq()
             freq     = int( freq_kHz )
-            mode     = self.sock.get_mode()
+            if self.P.DIGI:
+                mode     = self.P.sock_xml.get_mode()
+            else:
+                mode     = self.P.sock.get_mode()
             if mode in ['CW-U']:
                 mode='CW'
             elif mode=='FMN':
                 mode='FM'
             elif mode=='AMN':
                 mode='AM'
+            elif mode in ['PKTUSB','PSK-U','DATA-U']:
+                mode='RTTY'
             band     = freq2band(1e-3*freq_kHz)
             if band=='None':
                 print("*** WARNING - Can't determine band - no rig connection?")
@@ -2298,7 +2312,8 @@ class GUI():
                 try:
                     #txt=qso2['CALL']+' '+qso2['FREQ']+' '+qso2['SRX_STRING']
                     txt=' '+call+' '+str(freq)+' '+exch+'\n'
-                    self.txt.insert(END,txt)
+                    #self.txt.insert(END,txt)
+                    self.txt.insert(END, txt, ('highlight'))
                 except: 
                     error_trap('GUI->LOG QSO: ERROR writing logged info to big text box')
                     
@@ -2438,9 +2453,11 @@ class GUI():
 
     # Routine to check & flag dupes
     def dup_check(self,call):
+        VERBOSITY=1
+        
         #print('DUP_CHECK: call=',call,'\tmax age=',self.P.MAX_AGE)
         self.time_on = datetime.utcnow().replace(tzinfo=UTC)
-        print('DUP_CHECK: TIME_ON C set to',self.time_on.strftime('%H%M%S'))
+        print('DUP_CHECK: call=',call,'\tTIME_ON set to',self.time_on.strftime('%H%M%S'))
 
         # Look for dupes
         self.match1=False                # True if there is matching call
@@ -2449,7 +2466,10 @@ class GUI():
         self.last_qso=None
         now = datetime.utcnow().replace(tzinfo=UTC)
         freq = self.sock.get_freq()
-        mode = self.sock.get_mode()
+        if self.P.DIGI:
+            mode = self.P.sock_xml.get_mode()
+        else:
+            mode = self.sock.get_mode()
         band = freq2band(1e-6*freq)
             
         if self.P.sock_log.connection=='FLLOG' and True:
@@ -2520,7 +2540,7 @@ class GUI():
                         
                         # Most of the time, we can work each station on each band and mode
                         self.match2 = self.match2 or (age<self.P.MAX_AGE*60 and qso['BAND']==band and qso['MODE']==mode)
-                        if False:
+                        if VERBOSITY>0:
                             print('DUP_CHECK: match2=',self.match2,
                                   '\tage=',age,self.P.MAX_AGE,'\tband=',band,
                                   '\tmode=',mode)
