@@ -51,7 +51,6 @@ class CQWW_KEYING(DEFAULT_KEYING):
         P.MAX_AGE = self.contest_duration *60
 
         # On-the-fly scoring
-        self.nqsos=0
         self.total_points = 0
         self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
         mults  = []
@@ -74,6 +73,8 @@ class CQWW_KEYING(DEFAULT_KEYING):
         self.zones = OrderedDict(zones)
         self.dxccs = OrderedDict(dxccs)
         self.MY_CQ_ZONE = int( P.SETTINGS['MY_CQ_ZONE'] )
+        self.all_zones=set([])
+        self.all_dxccs=set([])
         self.init_scoring()
         
     # Routient to set macros for this contest
@@ -351,17 +352,22 @@ class CQWW_KEYING(DEFAULT_KEYING):
         self.mults[band].add(dx_station.country)
         if state!='DX':
             self.mults[band].add(state)
-
+            
         mults=0
         for b in self.BANDS:
             m = list( self.mults[b] )
             mults+=len(m)
 
-        score=self.nqsos * mults
+        self.all_zones.add(str(zone))
+        self.all_dxccs.add(dx_station.country)
+        nzones=len(list(self.all_zones))
+        ndxccs=len(list(self.all_dxccs))
+
+        score=self.total_points * mults
         print("SCORING: score=",score,self.nqsos,mults)
 
-        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
+        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t{:3d} DXCCs\t\t{:3d} Zones\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,ndxccs,nzones,call)
         self.P.gui.status_bar.setText(txt)
     
-            
+        

@@ -28,6 +28,8 @@ import platform
 from utilities import find_resource_file
 from collections import OrderedDict
 import datetime
+from dx.spot_processing import Station
+from pprint import pprint
 
 ################################################################################
 
@@ -55,7 +57,7 @@ CONTESTS['RAC']          = {'Months' : [6,12],  'Duration' : 24}
 CONTESTS['BERU']         = {'Months' : [],      'Duration' : 48}
 CONTESTS['CQP']          = {'Months' : [10],    'Duration' : 30}
 CONTESTS['IARU-HF']      = {'Months' : [7],     'Duration' : 48}
-CONTESTS['CQWW']         = {'Months' : [11],    'Duration' : 48}
+CONTESTS['CQWW']         = {'Months' : [9,10,11], 'Duration' : 48}
 CONTESTS['CQ-WPX-CW']    = {'Months' : [5],     'Duration' : 48}
 CONTESTS['CQ-160M']      = {'Months' : [],      'Duration' : 48}
 CONTESTS['ARRL-10M']     = {'Months' : [12],    'Duration' : 48}
@@ -490,7 +492,37 @@ class PARAMS:
         self.MAX_AGE          = MAX_AGE_HOURS*60       # In minutes
 
         # Read config file
+        self.read_config_file()
+
+        # Where to find/put data files
+        self.PLATFORM=platform.system()
+        self.HIST_DIR=os.path.expanduser('~/Python/data/')
+        if not os.path.isdir(self.HIST_DIR):
+            fname=find_resource_file('master.csv')
+            self.HIST_DIR=os.path.dirname(fname)+'/'
+        self.HISTORY = self.HIST_DIR+'master.csv'
+
+    # Function to read config file and adjust various params accordingly
+    def read_config_file(self):
+        
+        # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
+
+        # Automajically include /6 if we're in the CQP
+        call = self.SETTINGS['MY_CALL']
+        if self.contest_name=='CQP' and '/' not in call:
+            print('Checking call for CQP ... call=',call)
+            station = Station(call)
+            #pprint(vars(station))
+            n = station.call_number
+            #print('n=',n)
+            if n!='6':
+                self.SETTINGS['MY_CALL'] = call+'/6'
+            print('call2=',self.SETTINGS['MY_CALL'])
+            print('op=',self.SETTINGS['MY_OPERATOR'])
+            #sys.exit(0)
+
+        # Update location info
         self.SETTINGS['MY_QTH']=self.SETTINGS['MY_CITY']+', '+self.SETTINGS['MY_STATE']
         print('grid=',self.SETTINGS['MY_GRID'])
         if self.GPS:
@@ -505,14 +537,7 @@ class PARAMS:
             self.SETTINGS['MY_GRID'] = self.MY_GRID        
             print('grid=',self.SETTINGS['MY_GRID'])
 
-        # Where to find/put data files
-        self.PLATFORM=platform.system()
-        self.HIST_DIR=os.path.expanduser('~/Python/data/')
-        if not os.path.isdir(self.HIST_DIR):
-            fname=find_resource_file('master.csv')
-            self.HIST_DIR=os.path.dirname(fname)+'/'
-        self.HISTORY = self.HIST_DIR+'master.csv'
-            
+        # Select working directory
         MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
         self.WORK_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
         if not os.path.isdir(self.WORK_DIR):

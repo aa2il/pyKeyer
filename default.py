@@ -58,7 +58,6 @@ class DEFAULT_KEYING():
         self.key2=None
         self.NAME=''
         self.Uses_Serial=False
-        self.score=0
 
         P.CONTEST_ID=''
         P.HISTORY = P.HIST_DIR+'master.csv'
@@ -73,7 +72,10 @@ class DEFAULT_KEYING():
         
         # Init super check partial
         self.SCP=SUPER_CHECK_PARTIAL(SCP_FNAME)
-        
+
+        # On the fly scoring
+        self.nqsos=0
+        self.score=0
 
     # Routient to set macros for this contest
     def macros(self):

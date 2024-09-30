@@ -408,7 +408,11 @@ class GUI():
         self.S.grid(row=row,column=self.ncols,sticky=N+S)
         self.S.config(command=self.txt.yview)
         self.txt.config(yscrollcommand=self.S.set)
-        self.txt.tag_configure('highlight', foreground='red', relief='raised')
+        if self.P.DIGI:
+            c='red'
+        else:
+            c='black'
+        self.txt.tag_configure('highlight', foreground=c, relief='raised')
 
         self.txt.bind("<Key>", self.key_press )
         self.txt.bind('<Button-1>', self.Text_Mouse )      
@@ -1509,7 +1513,7 @@ class GUI():
                 txt  = '['+call+'] '+txt
         if '[LOG]' not in txt or True:
             if self.P.DIGI:
-                txt='\n'+txt+'\n'
+                txt='\n'+txt
             else:
                 txt+='\n'
         if not self.P.DIGI or '[LOG]' in txt or True:
