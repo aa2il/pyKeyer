@@ -538,7 +538,8 @@ class PARAMS:
             print('grid=',self.SETTINGS['MY_GRID'])
 
         # Select working directory
-        MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
+        #MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
+        MY_CALL2 = self.SETTINGS['MY_OPERATOR'].split('/')[0]
         self.WORK_DIR=os.path.expanduser('~/'+MY_CALL2+'/')
         if not os.path.isdir(self.WORK_DIR):
             HOME=os.path.expanduser('~/')

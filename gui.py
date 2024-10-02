@@ -141,9 +141,11 @@ class GUI():
         if sys.version_info[0]==3:
             self.font1 = tkinter.font.Font(family=FAMILY,size=12,weight="bold")
             self.font2 = tkinter.font.Font(family=FAMILY,size=28,weight="bold")
+            self.font3 = tkinter.font.Font(family=FAMILY,size=14) # ,weight="bold")
         else:
             self.font1 = tkFont.Font(family=FAMILY,size=12,weight="bold")
             self.font2 = tkFont.Font(family=FAMILY,size=28,weight="bold")
+            self.font3 = tkFont.Font(family=FAMILY,size=14)   # ,weight="bold")
 
         if False:
             print('\nfamilies=',tkinter.font.families())
@@ -246,7 +248,7 @@ class GUI():
                     
         # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
         self.status_bar.setText("Constructing GUI ...")
-        self.SettingsWin = SETTINGS_GUI(self.root,self.P)
+        self.SettingsWin = SETTINGS_GUI(self.root,self.P,refreshCB=self.RefreshSettings)
         self.SettingsWin.hide()
         self.PaddlingWin = PADDLING_GUI(self.root,self.P)
         if P.SENDING_PRACTICE:
@@ -410,6 +412,7 @@ class GUI():
         self.txt.config(yscrollcommand=self.S.set)
         if self.P.DIGI:
             c='red'
+            self.txt.configure(font=self.font3)
         else:
             c='black'
         self.txt.tag_configure('highlight', foreground=c, relief='raised')
@@ -1117,25 +1120,25 @@ class GUI():
             SetTXSplit(self.P,0,False)
         
     # Callback to toggle filter width
-    def Toggle_FilterWidth(self):
-        print('TOGGLE FILTER ...',self.FilterWidth)
+    def Toggle_FilterWidth(self,iopt=None):
+        if iopt==None:
+            self.FilterSelect=1-self.FilterSelect
+        else:
+            self.FilterSelect=iopt
+        
+        w=self.FilterWidths[self.FilterSelect]
+        c=self.FilterColors[self.FilterSelect]
+        r=self.FilterReliefs[self.FilterSelect]
+        print('TOGGLE FILTER ...',self.FilterSelect,w,c,r)
         
         # Manage button appearance
-        if self.FilterWidth==200:
-            self.FilterWidth=50
-            self.FilterWidthBtn.configure(text=str(self.FilterWidth)+' Hz',
-                                          background='red',
-                                          highlightbackground= 'red',
-                                          relief='sunken')
-        else:
-            self.FilterWidth=200
-            self.FilterWidthBtn.configure(text=str(self.FilterWidth)+' Hz',
-                                          background='Green',
-                                          highlightbackground= 'Green',
-                                          relief='raised')
+        self.FilterWidthBtn.configure(text=str(w)+' Hz',
+                                      background=c,
+                                      highlightbackground=c,
+                                      relief=r)
             
-        print('TOGGLE FILTER - Setting filter to',self.FilterWidth)
-        self.sock.set_filter(['Narrow',str(self.FilterWidth)])
+        print('TOGGLE FILTER - Setting filter to',w)
+        self.sock.set_filter(w)
 
             
     # Callback to look up a call on qrz.com
@@ -3428,6 +3431,14 @@ class GUI():
         screenshot.save(fname)
         print('Done.')
             
+    # Callback to update settings changes
+    def RefreshSettings(self):
+
+        print('Refreshing Settings ...')
+        self.MY_CALL = self.P.SETTINGS['MY_CALL']
+        self.set_macros()
+        print('... Done.')
+            
 ############################################################################################
     
     # Function to create menu bar
@@ -3602,12 +3613,17 @@ class GUI():
                                  command=self.Toggle_DXSplit)
         self.DXSplitBtn.pack(side=LEFT, padx=2, pady=2)
         
-        self.FilterWidth=200
+        if self.P.DIGI:
+            self.FilterWidths=[500,2000]
+        else:
+            self.FilterWidths=[50,200]
+        self.FilterColors=['red','green']
+        self.FilterReliefs=['sunken','raised']
         self.FilterWidthBtn = Button(toolbar,
-                                     text=str(self.FilterWidth)+' Hz',
                                      command=self.Toggle_FilterWidth)
         self.FilterWidthBtn.pack(side=LEFT, padx=2, pady=2)
-        
+        self.Toggle_FilterWidth(1)
+
         # Spin box to control paddle keying speed (WPM)
         SB2=Spinbox(toolbar,
                     from_=cw_keyer.MIN_WPM, 

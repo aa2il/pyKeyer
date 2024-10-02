@@ -146,7 +146,11 @@ class Keyer():
         print('CW_KEYER - ABORT!')
         self.evt.clear()
         self.stop=True
-        if self.P.USE_KEYER:
+        if self.P.DIGI:
+            self.P.sock_xml.put_tx_buff( '',HALT=True )  
+            time.sleep(.1)
+            self.P.sock_xml.ptt(0)                       
+        elif self.P.USE_KEYER:
             #self.P.keyer_device.nano_write('\\')
             self.P.keyer_device.abort()
             return

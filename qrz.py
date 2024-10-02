@@ -57,7 +57,7 @@ class CALL_INFO_GUI():
                         print('CALL_LOOKUP:',call2,' is in master list')
                         info=P.MASTER[call2]
 
-            if qso!=None:
+            if qso!=None and qso[0]!=None:
                 if nqsos!=None:
                     idx=calls.index(call)
                     n=nqsos[idx]
@@ -68,6 +68,7 @@ class CALL_INFO_GUI():
                           'times this year')
                 else:
                     print('CALL_LOOKUP:',call,' has been worked this year')
+                    print(qso)
             else:
                 print('CALL_LOOKUP:',call,' has been NOT worked this year')
                         
@@ -176,7 +177,8 @@ if __name__ == '__main__':
             # Load master call list
             t0=time.time()
             print('Reading master history file ...')
-            MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
+            #MY_CALL2 = self.SETTINGS['MY_CALL'].split('/')[0]
+            MY_CALL2 = self.SETTINGS['MY_OPERATOR'].split('/')[0]
             self.HIST_DIR=os.path.expanduser('~/Python/data/')
             self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')
             self.calls = list(self.MASTER.keys())
@@ -216,10 +218,10 @@ if __name__ == '__main__':
                 calls.append(c)
         print('calls=',calls,calls[0],len(calls))
         print(calls[0])
-        #sys.exit(0)
 
         print('Reading STATES.XLS ...')
-        MY_CALL3 = P.SETTINGS['MY_CALL'].split('/')[0]
+        #MY_CALL3 = P.SETTINGS['MY_CALL'].split('/')[0]
+        MY_CALL3 = P.SETTINGS['MY_OPERATOR'].split('/')[0]
         P.DATA_DIR        = os.path.expanduser('~/'+MY_CALL3+'/')
         P.CHALLENGE_FNAME = P.DATA_DIR+'/states.xls'
         P.data = ChallengeData(P.CHALLENGE_FNAME)
