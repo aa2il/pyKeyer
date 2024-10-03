@@ -248,6 +248,15 @@ class DEFAULT_KEYING():
                 EXCH3 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name
                 
+            elif self.contest_name in ['AWT']:
+
+                # RST + 10-10 No. + State
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'NAME'
+                EXCH2 = '[MYNAME]'
+                self.P.CONTEST_ID=self.contest_name
+                
             elif self.contest_name in ['FOC-BW']:
 
                 # RST + Name + Member No.

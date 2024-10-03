@@ -1708,7 +1708,7 @@ class GUI():
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
                                       'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
                                       'IOTA','MARAC','SAC','OCDX','SOLAR',
-                                      'SPDX','POTA','YURI','MMC']:
+                                      'SPDX','POTA','YURI','MMC','AWT']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P)

@@ -41,6 +41,7 @@ CONTESTS['Ragchew']      = {'Months' : ALL,     'Duration' : 9999}
 CONTESTS['CWT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['MST']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['SST']          = {'Months' : ALL,     'Duration' : 1}
+CONTESTS['AWT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['NS']           = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['WRT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['SKCC']         = {'Months' : ALL,     'Duration' : 2}
@@ -98,6 +99,8 @@ class PARAMS:
                               help='K1USN SST')
         arg_proc.add_argument('-mst', action='store_true',
                               help='ICWC MST')
+        arg_proc.add_argument('-awt', action='store_true',
+                              help='Japan AW Test')
         arg_proc.add_argument('-skcc', action='store_true',
                               help='SKCC')
         arg_proc.add_argument('-cwt', action='store_true',
@@ -396,6 +399,8 @@ class PARAMS:
             self.contest_name='WRT'
         elif args.mst:
             self.contest_name='MST'
+        elif args.awt:
+            self.contest_name='AWT'
         elif args.ten:
             self.contest_name='TEN-TEN'
         elif args.foc:
