@@ -78,11 +78,11 @@ class CQP_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'NR 2x'     , 'Text' : '[-2][SERIAL]  [SERIAL] [+2]'}
         MACROS[8+12]  = {'Label' : 'His #?'    , 'Text' : '[SERIAL_IN]? '}
         MACROS[9]     = {'Label' : 'My QTH 2x' , 'Text' : '[-2][MYCOUNTY]  [MYCOUNTY] [+2]'}
-        MACROS[9+12]  = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
+        MACROS[9+12]  = {'Label' : 'STATE?'    , 'Text' : 'STATE? '}
         MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[10+12] = {'Label' : 'COUNTY? '  , 'Text' : 'COUNTY? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
-        MACROS[11+12] = {'Label' : 'STATE?'    , 'Text' : 'STATE? '}
+        MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
 
         return MACROS
 
@@ -91,7 +91,8 @@ class CQP_KEYING(DEFAULT_KEYING):
         P=self.P
 
         self.NAME = P.MASTER[call]['name']
-        state=P.MASTER[call]['state']
+        state     = P.MASTER[call]['state']
+        self.NUM  = P.MASTER[call]['cwops']
         if state=='CA':
             county=P.MASTER[call]['county']
             return county
@@ -251,7 +252,7 @@ class CQP_KEYING(DEFAULT_KEYING):
             gui.name.insert(0,self.NAME)
         if True:
             gui.info.delete(0, END)
-            gui.info.insert(0,self.NAME)
+            gui.info.insert(0,self.NAME+' '+self.NUM)
 
         
     # Hints if we're in the qth window
