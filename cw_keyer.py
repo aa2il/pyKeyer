@@ -258,7 +258,8 @@ class Keyer():
                 else:
                     self.P.keyer_device.set_wpm(wpm)
                 if self.P.gui:
-                    self.P.gui.WPM_TXT.set(str(wpm))
+                    #self.P.gui.WPM_TXT.set(str(wpm))
+                    self.P.WPM2=wpm
 
     def txt2morse(self,msg):
         print('\nTXT2MORSE: msg=',msg,len(msg))

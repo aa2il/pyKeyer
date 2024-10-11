@@ -52,7 +52,7 @@ def process_chars(P):
             txt=q.get()
             q.task_done()
 
-            # Check keyer speed on radio - can't do this since we're not in the main gui loop!
+            # Check keyer speed on radio - can't do this here since we're not in the main gui loop!
             if VERBOSITY>0:
                 print('PROCESSS_CHARS: txt=',txt)
             this_time = time.time();

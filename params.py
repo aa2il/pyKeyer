@@ -50,6 +50,7 @@ CONTESTS['POTA']         = {'Months' : ALL,     'Duration' : 9999}
 CONTESTS['CW Open']      = {'Months' : [9],     'Duration' : 4}
 CONTESTS['ARRL-VHF']     = {'Months' : [1,6,9], 'Duration' : 33}
 CONTESTS['CQ-VHF']       = {'Months' : [1,6,9], 'Duration' : 33}
+CONTESTS['MAKROTHEN']    = {'Months' : [10],    'Duration' : 33}
 CONTESTS['NAQP-CW']      = {'Months' : [1,8],   'Duration' : 12}
 CONTESTS['TEN-TEN']      = {'Months' : [],      'Duration' : 48}
 CONTESTS['WAG']          = {'Months' : [],      'Duration' : 48}
@@ -127,6 +128,8 @@ class PARAMS:
                               help='ARRL Field Day')
         arg_proc.add_argument('-vhf', action='store_true',
                               help='ARRL VHF')
+        arg_proc.add_argument('-mak', action='store_true',
+                              help='Makrothen RTTY')
         arg_proc.add_argument('-stew', action='store_true',
                               help='Stew Parry')
         arg_proc.add_argument('-jidx', action='store_true',
@@ -313,6 +316,7 @@ class PARAMS:
         self.NO_HINTS      = not args.hints
         self.CA_ONLY       = args.ca_only
         self.WPM           = args.wpm
+        self.WPM2          = args.wpm
         self.PADDLE_WPM    = args.paddles
         self.INIT_MODE     = args.mode
         if self.INIT_MODE==None and self.DIGI:
@@ -443,6 +447,8 @@ class PARAMS:
             self.contest_name='ARRL-VHF'
         elif args.cqvhf:
             self.contest_name='CQ-VHF'
+        elif args.mak:
+            self.contest_name='MAKROTHEN'
         elif args.naqp:
             self.contest_name='NAQP-CW'
         elif args.ss:

@@ -384,10 +384,24 @@ class KEYING_DEVICE():
     def tune(self,tune):
         if tune:
             # Key down
-            txt='~T'
+            if self.protocol=='NANO_IO':
+                txt='~T'
+            elif self.protocol=='K3NG_IO':
+                txt='\T'
+            elif self.protocol=='WINKEYER':
+                txt=chr(0x0B)+chr(0x01)
+            else:
+                txt=None
         else:
-            # Cancel - see nanoIO.ino for this little gem
-            txt=']'
+            # Cancel 
+            if self.protocol=='NANO_IO':
+                txt=']'     # See nanoIO.ino for this little gem
+            elif self.protocol=='K3NG_IO':
+                txt='\T'    # Havent tested this
+            elif self.protocol=='WINKEYER':
+                txt=chr(0x0B)+chr(0x00)
+            else:
+                txt=None
         print('NANO_TUNE:',txt)
         #if ser:
         self.ser.write(bytes(txt,'utf-8'))

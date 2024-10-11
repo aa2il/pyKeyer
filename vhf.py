@@ -36,31 +36,72 @@ class VHF_KEYING(DEFAULT_KEYING):
     def __init__(self,P,contest_name):
         DEFAULT_KEYING.__init__(self,P,contest_name,'ARRLVHF*.txt')
         P.CONTEST_ID=contest_name
+        #self.contest_duration = 48
+        #P.MAX_AGE = self.contest_duration *60
+        print('VHF KEYING: ID=',P.CONTEST_ID)
 
+        # On-the-fly scoring
+        self.total_points = 0
+        self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
+        grids  = []
+        self.NQSOS = OrderedDict()
+        self.POINTS = OrderedDict()
+        self.NSTATES = OrderedDict()
+        for b in self.BANDS:
+            grids.append((b,set([])))
+            self.NQSOS[b]=0
+            self.POINTS[b]=0
+            self.NSTATES[b]=0
+        self.grids = OrderedDict(grids)
+        self.MY_GRID = P.SETTINGS['MY_GRID'][:4]
+        self.all_grids=set([])
+        self.init_scoring()
+
+        self.max_km = 0
+        self.total_km = 0
+        self.total_score = 0
+        
     # Routine to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-        #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R 73 [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+        if not self.P.DIGI:
+            # VHF
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+        else:
+            # Makrothen
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ MAK [MYCALL] [MYCALL] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] [MYGRID] [CALL] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] 73 [MYCALL] CQ [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] CQ [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] DIT DIT [MYCALL] CQ [LOG]'}
+            
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
-        #MACROS[3+12]  = {'Label' : '?'         , 'Text' : '? '}
-        MACROS[3+12] = {'Label' : 'CALL? '     , 'Text' : 'CALL? '}
+        MACROS[3+12]  = {'Label' : 'CALL?'     , 'Text' : 'CALL? '}
         
-        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID]'}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYGRID] [MYGRID] '}
+        if not self.P.DIGI:
+            MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID]'}
+            MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYGRID] [MYGRID] '}
+        else:
+            MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] [MYCALL] '}
+            MACROS[4+12]  = {'Label' : '[MYCALL] 1x', 'Text' : '[MYCALL] '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID] [MYGRID] '}
+            MACROS[5+12]  = {'Label' : 'S&P 4x'    , 'Text' : '[MYGRID] [MYGRID] [MYGRID] [MYGRID] '}
+            
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         
-        MACROS[8]     = {'Label' : 'Grid 1x'   , 'Text' : '[-2][MYGRID] [+2]'}
-        MACROS[8+12]  = {'Label' : 'EE'        , 'Text' : 'EE '}
+        MACROS[8]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
+        if not self.P.DIGI:
+            MACROS[8+12]  = {'Label' : 'EE'        , 'Text' : 'EE '}
         MACROS[9]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
         MACROS[10]    = {'Label' : 'GRID?  '   , 'Text' : 'GRID? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
@@ -208,3 +249,53 @@ class VHF_KEYING(DEFAULT_KEYING):
         if True:
             gui.info.delete(0, END)
             gui.info.insert(0,self.NAME)
+
+
+    # On-the-fly scoring
+    def scoring(self,qso):
+        print("\nSCORING: qso=",qso)
+        self.nqsos+=1        
+
+        call = qso['CALL']
+        band = qso["BAND"]
+        idx  = self.BANDS.index(band)
+
+        srx = qso['SRX_STRING'].split(',')
+        try:
+            grid  = srx[1]
+        except:
+            self.P.gui.status_bar.setText('Unrecognized/invalid section!')
+            error_trap('VHF->SCORING - Unrecognized/invalid section!')
+            return
+
+        dx_km = int( calculate_distance(grid,self.MY_GRID) +0.5 )
+        if dx_km > self.max_km:
+            self.max_km=dx_km
+            self.longest=rec
+        if not dupe:
+            self.nqsos2 += 1;
+
+        if dupe:
+            mult=0
+        elif dx_km==0:
+            dx_km=100
+            mult=1
+        elif band=='80m':
+            mult=2
+        elif band=='40m':
+            mult=1.5
+        else:
+            mult=1
+            
+        self.total_km += dx_km
+        self.total_score += mult*dx_km
+
+        self.total_score=self.total_points * mults
+        print("SCORING: score=",self.total_score,self.nqsos,dx_km)
+
+        txt='{:3d} QSOs, {:6d} km total = {:6d} \t\t{:6d} km\t\t Last Worked: {:s}' \
+            .format(self.nqsos,int(total_km),self.total_score,dx_km,call)
+        self.P.gui.status_bar.setText(txt)
+    
+        
+            

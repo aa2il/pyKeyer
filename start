@@ -50,7 +50,7 @@ set HINTS=""
 #set HINTS="-hints"
 
 set CA_ONLY=""
-#set CA_ONLY="-ca_only"
+set CA_ONLY="-ca_only"
 
 set SCP=""
 set SCP="-scp"
@@ -59,10 +59,10 @@ set AGGRESSIVE=""
 set AGGRESSIVE="-aggressive"
 
 set CONTEST="paddling"
-set CONTEST="cwt"
-set CONTEST="foc"
+#set CONTEST="cwt"
+#set CONTEST="foc"
 #set CONTEST="sst"
-set CONTEST="mst"
+#set CONTEST="mst"
 #set CONTEST="sprint"
 
 #set CONTEST="naqp"

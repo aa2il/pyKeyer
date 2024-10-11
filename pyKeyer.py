@@ -51,6 +51,7 @@ from settings import *
 import xlrd
 from latlon2maiden import *
 from watchdog import *
+from utilities import Memory_Monitor
 from keying import *
 from process_chars import *
 from tcp_server import *
@@ -70,12 +71,17 @@ if True:
     pprint(vars(P))
     #sys.exit(0)
     
+# Memory Monitor
+if True:
+    P.MEM = Memory_Monitor('/tmp/KEYER_MEMORY.TXT')
+
 # Initialize GUI
 P.gui = GUI(P)
     
 # Open connection to 1st rig
 print('\nPYKEYER: Opening connection to primary rig - connection=',
       P.connection,'\trig=',P.rig,'...')
+P.MEM.take_snapshot()
 P.gui.status_bar.setText("Opening connection to primary rig ...")
 P.sock1 = socket_io.open_rig_connection(P.connection,0,P.PORT,0,'KEYER',
                                         rig=P.rig,force=P.FORCE)
@@ -125,6 +131,7 @@ if P.SENDING_PRACTICE and not P.USE_KEYER and False:
 
 # Open keying port(s)
 print('\nPYKEYER: Opening connection to keyer ...',P.FIND_KEYER,P.USE_KEYER)
+P.MEM.take_snapshot()
 P.gui.status_bar.setText("Opening connection to keyer ...")
 P.ser1=open_keying_port(P,P.sock1,1)
 P.ser2=open_keying_port(P,P.sock2,2)
@@ -194,6 +201,8 @@ if not P.PRACTICE_MODE and P.sock.connection!='HAMLIB' and P.HAMLIB_SERVER:
 
 # Instaniate the keyer
 P.gui.status_bar.setText("Init keyer ...")
+print("Init keyer ...")
+P.MEM.take_snapshot()
 if P.WPM==0:
     #wpm = socket_io.read_speed(sock)
     wpm = P.sock.read_speed()
@@ -222,6 +231,7 @@ P.keyer.evt.clear()
 # Start a thread that controls keying of TX
 P.gui.status_bar.setText("Spawning worker-bee threads ...")
 print('Creating thread to Process Chars ...')
+P.MEM.take_snapshot()
 worker = threading.Thread(target=process_chars, args=(P,),name='Process Chars')
 worker.daemon=True
 worker.start()
@@ -239,6 +249,7 @@ if False:
 # Set up a thread for audio capture
 if P.CAPTURE:
     print('Creating thread to Capture Audio ...')
+    P.MEM.take_snapshot()
     P.capture = audio_capture.AUDIO_CAPTURE(P)
     worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
     worker.daemon=True
@@ -247,6 +258,7 @@ if P.CAPTURE:
 
 # Create sidetone oscillator & start in a separate thread
 print('Creating Sidetone ...')
+P.MEM.take_snapshot()
 if P.SIDETONE:
     P.SideTone = AUDIO_SIDETONE(P)
 else:    
@@ -256,6 +268,7 @@ else:
 # Load history from previous contests
 P.gui.status_bar.setText("Loading Master Call History file ...")
 print('Loading Master History file ...')
+P.MEM.take_snapshot()
 P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
 P.calls = list(P.MASTER.keys())
 P.Ncalls = len(P.calls)
@@ -266,17 +279,19 @@ P.gui.construct_gui()
 #sys.exit(0)
 
 # Set up a thread for code practice
-P.gui.status_bar.setText("Spawning Practice exec ...")
-print('Creating Practice Exec thread ...')
-P.practice = practice.CODE_PRACTICE(P)
-worker = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
-worker.daemon=True
-worker.start()
-P.threads.append(worker)
+if P.PRACTICE_MODE or True:
+    P.gui.status_bar.setText("Spawning Practice exec ...")
+    print('Creating Practice Exec thread ...')
+    P.practice = practice.CODE_PRACTICE(P)
+    worker = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
+    worker.daemon=True
+    worker.start()
+    P.threads.append(worker)
 
 # Start thread with UDP server
 if P.UDP_SERVER:
     P.gui.status_bar.setText("Spawning UDP Server ...")
+    P.MEM.take_snapshot()
     P.udp_server = TCP_Server(P,None,KEYER_UDP_PORT,Server=True,
                               Handler=UDP_msg_handler)
     worker = Thread(target=P.udp_server.Listener, args=(), name='UDP Server' )
@@ -290,21 +305,21 @@ if P.UDP_SERVER:
     #P.udp_ntries2 = 0
     #P.Last_BM_Check = 0
 
-# WatchDog - runs in its own thread
+# WatchDog - runs in its own thread so it doesnt clog up the gui
 P.WATCHDOG = True
 #P.WATCHDOG = False
 if P.WATCHDOG:
     P.gui.status_bar.setText("Spawning Watchdog ...")
-    P.Timer = threading.Timer(1.0, WatchDog, args=(P,))
-    P.Timer.daemon=True                       # This prevents timer thread from blocking shutdown
-    P.Timer.start()
+    P.gui.status_bar.setText("Spawning Watchdog ...")
+    P.monitor = WatchDog(P,1000)
 else:
-    P.Timer = None
+    P.monitor = None
 
 # Init rig to useful settings    
 if P.sock.active:
     P.gui.status_bar.setText("Init Rig ...")
     print('PYKEYER - Init rig ...')
+    P.MEM.take_snapshot()
 
     # Take care of VFOs
     P.sock.set_vfo('A')
@@ -378,5 +393,7 @@ if P.CAPTURE:
 # Spin
 if P.KEYING.nqsos==0:
     P.gui.status_bar.setText("And away we go !!!")
+print("PYKEYER - And away we go !!!")
+P.MEM.take_snapshot()
 mainloop()
 

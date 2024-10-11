@@ -158,6 +158,7 @@ class GUI():
     def construct_gui(self):
         P=self.P
         self.status_bar.setText("Constructing GUI ...")
+        P.MEM.take_snapshot()
 
         # More inits
         self.keyer=P.keyer;
@@ -191,11 +192,12 @@ class GUI():
         self.prefill=False
         self.cntr=0
 
-        # Read adif log
+        # Read adif log - why is this stuff in here???? Its not gui, move it elsewhere!!!!
         self.log_book = []
         if P.LOG_FILE==None:
             P.LOG_FILE = P.WORK_DIR+self.MY_CALL.replace('/','_')+".adif"
         print('Opening log file',P.LOG_FILE,'...')
+        P.MEM.take_snapshot()
         self.status_bar.setText("Reading log book "+P.LOG_FILE+" ...")
         print('GUI: Reading ADIF log file',P.LOG_FILE)
         qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
@@ -217,6 +219,7 @@ class GUI():
             self.fp_adif.write('<eoh>\n')
             self.fp_adif.flush()
         print("GUI: ADIF file name=",P.LOG_FILE) 
+        P.MEM.take_snapshot()
 
         # Also save all sent text to a file
         self.fp_txt = open(P.WORK_DIR+self.MY_CALL.replace('/','_')+".TXT","a+")
@@ -454,7 +457,7 @@ class GUI():
         row += 3
         col=0
 
-        # Set up a spin box to control select macro set
+        # Set up a spin box to control select contest macro set 
         Label(self.root, text='Macros:').grid(row=row,column=col,sticky=E+W)
         if False:
             SB = ttk.Combobox(self.root,
@@ -613,10 +616,9 @@ class GUI():
         ClarReset(self,self.P.RX_Clar_On)
 
         # Some other info
-        #row += 1
-        #col=0
         col=8
-        self.rate_lab = Label(self.root, text="QSO Rate:",font=self.font1)
+        P.RATE_TXT="QSO Rate:"
+        self.rate_lab = Label(self.root, text=P.RATE_TXT,font=self.font1)
         self.rate_lab.grid(row=row,columnspan=4,column=col,sticky=W)
 
         # Buttons to allow quick store & return to spotted freqs
@@ -661,6 +663,9 @@ class GUI():
         self.PaddlingWin.final_inits()
         self.set_macros()
         self.RestoreState()
+
+        # Kick-off gui updater
+        self.root.after(2000,self.Updater)
         
         # And away we go!
         self.root.deiconify()
@@ -671,6 +676,8 @@ class GUI():
             os.system(cmd)
             cmd='wmctrl -r "'+self.PaddlingWin.win.title()+'" -t '+str(P.DESKTOP)
             os.system(cmd)
+        print('CONSTRUCT GUI - And away we go!!!')
+        P.MEM.take_snapshot()
 
 
     # Callback to show or hide the upper text box
@@ -1176,8 +1183,10 @@ class GUI():
         self.fp_snip.write('%s\n' % (cmd) )
         self.fp_snip.flush()
 
-        self.fp_adif.write('# FLAG IT!\n\n')
+        txt='# FLAG IT!\n'
+        self.fp_adif.write(txt+'\n')
         self.fp_adif.flush()
+        self.txt.insert(END, txt)            
         
     # Callback to bring up rig control menu
     def RigCtrlCB(self):
@@ -1606,7 +1615,7 @@ class GUI():
             except:
                 error_trap('GUI->SEND MACRO - Unable to retrieve NAME')
 
-        # Send macro text 
+        # Send macro text
         txt = self.Patch_Macro2(txt,state)
         print('\nSEND_MACRO: txt=',txt)
         self.Send_CW_Text(txt)
@@ -1701,7 +1710,7 @@ class GUI():
             self.P.KEYING=CWOPEN_KEYING(self.P)
         elif val=='SATELLITES':
             self.P.KEYING=SAT_KEYING(self.P)
-        elif val in ['ARRL-VHF','CQ-VHF','STEW PERRY']:
+        elif val in ['ARRL-VHF','CQ-VHF','STEW PERRY','MAKROTHEN']:
             self.P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
             self.P.KEYING=CQP_KEYING(self.P)
@@ -2146,13 +2155,14 @@ class GUI():
             print('LOG IT! contest=',self.contest,self.P.contest_name,\
                   '\nP.sock=',self.P.sock,self.P.sock.rig_type2)
             #print(self.sock.run_macro(-1))
-
+        
             # Get time stamp, freq, mode, etc.
             now       = datetime.utcnow().replace(tzinfo=UTC)
             if not self.start_time:
                 self.start_time = now
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
+
             if self.P.contest_name=='Ragchew' or True:
                 print('LOG IT! TIME_ON B=',self.time_on.strftime('%H%M%S'))
                 if self.time_on:
@@ -2416,9 +2426,21 @@ class GUI():
             widget.select_range(0,"end")
             widget.event_generate("<<Copy>>")
         self.default_object=widget
-            
+
+    # Watchdog-like routine to update gui
+    # Things changing the gui MUST be called from the gui thread to avoid memory leaks!!!!
+    def Updater(self):
+        P=self.P
+        if P.WPM2!=P.WPM:
+            self.WPM_TXT.set(str(P.WPM2))
+            P.WPM=P.WPM2
+        self.rate_lab.config(text=P.RATE_TXT)
+        self.rig.UpdateRigGui()
+        self.root.after(1000,self.Updater)
         
     # Routine to compute QSO Rate
+    # We should NOT have long calcs like this in the gui thread!
+    # Perhaps this is why it is sometimes sluggish.
     def qso_rate(self):
         if self.start_time:
             now = datetime.utcnow().replace(tzinfo=UTC)
@@ -2453,11 +2475,9 @@ class GUI():
             rate = float(nqsos) / dt * 3600.
             nqsos2 = len(self.log_book)-self.nqsos_start
             rate2 = float(nqsos2) / dt0 * 3600.
-            #print nqsos,' in',dt,' secs --->',rate,' QSOs/Hour'
-            #txt = 'QSO Rate: {:d} per Hour'.format(int(rate+0.5))
-            #self.rate_lab.config(text=txt)
-            self.rate_lab.config(text='QSOs: {:3d} /hr : {:3d} /hr : {:d}'.format( int(rate+0.5),int(rate2+0.5),nqsos2 ))
+            self.P.RATE_TXT='QSOs: {:3d} /hr : {:3d} /hr : {:d}'.format( int(rate+0.5),int(rate2+0.5),nqsos2 )
 
+            
     # Routine to check & flag dupes
     def dup_check(self,call):
         VERBOSITY=1
@@ -3167,6 +3187,7 @@ class GUI():
         # Update callsign info 
         elif event.widget==self.call:
 
+            # Call has changed ...
             call=self.get_call().upper()
             self.time_on = datetime.utcnow().replace(tzinfo=UTC)
             print('Updated Call=',call,'\tTIME_ON D=',self.time_on.strftime('%H%M%S'))
@@ -3175,6 +3196,7 @@ class GUI():
             #if not self.P.WF_ONLY:
             #self.sock.set_log_fields({'Call':call}) 
             self.dup_check(call)
+            self.info.delete(0,END)
             self.auto_fill(call,key)
 
             # Save call so we can keep track of changes

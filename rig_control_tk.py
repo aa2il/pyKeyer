@@ -47,13 +47,16 @@ class RIG_CONTROL():
         self.tabs = ttk.Notebook(self.win)          # Create Tab Control
         self.win.withdraw()
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
+        self.Visible=False
 
         if not self.sock or self.sock.connection == 'NONE':
             return None
         
         # Legacy compatibility
-        self.station   = IntVar(parent)
-        self.status    = StringVar(parent)
+        self.station   = IntVar(self.win)
+        self.band      = StringVar(self.win)
+        self.status    = StringVar(self.win)
+        self.mode      = StringVar(self.win)
         self.frequency = 0  
 
         # Add a tab for basic rig control
@@ -64,7 +67,6 @@ class RIG_CONTROL():
         ######################################################################
 
         # Create a frame with buttons to select operating band
-        self.band = StringVar(parent)
         BandFrame = Frame(tab1)
         BandFrame.pack(side=TOP)
         Label(BandFrame, textvariable=self.status ).pack(side=TOP)
@@ -94,7 +96,6 @@ class RIG_CONTROL():
         ######################################################################
 
         # Create a frame with buttons to select operating mode
-        self.mode    = StringVar(parent)
         ModeFrame = Frame(tab1)
         ModeFrame.pack(side=TOP)
         for m in modes:
@@ -260,13 +261,15 @@ class RIG_CONTROL():
 
     def show(self):
         print('Show Rig Control Window ...')
+        self.Visible=True 
+        self.UpdateRigGui()
         self.win.update()
         self.win.deiconify()
         
     def hide(self):
         print('Hide Rig Control Window ...')
         self.win.withdraw()
-        
+        self.Visible=False        
         
     ############################################################################################
 
@@ -592,8 +595,17 @@ class RIG_CONTROL():
         self.sock=open_socket(self.port,self.port)
         get_status(self)
 
-    #def Update(self):
-    #    get_status(self)
+    def UpdateRigGui(self):
+        # Only do the updates if the window is visible
+        if self.Visible:
+            #print('===================== Updating Rig Gui ================')
+            P=self.P
+            mode=P.MODE
+            self.band.set(P.BAND)
+            x=str(int(P.FREQ*1e-3))+' KHz  '+str(mode)
+            self.status.set(x)
+            self.frequency=P.FREQ
+            self.mode.set(mode)
 
     def Slider0CB(self,arg):
         print('\nSlider 0 CallBack: ...')

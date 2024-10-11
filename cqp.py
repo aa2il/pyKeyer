@@ -30,6 +30,7 @@ import hint
 from rig_io import CQP_MULTS
 import numpy as np
 from utilities import error_trap
+from dx import Station
 
 ############################################################################################
 
@@ -51,6 +52,8 @@ class CQP_KEYING(DEFAULT_KEYING):
         self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
         self.sec_cnt = np.zeros(len(CQP_MULTS),dtype=np.int32)
         self.init_scoring()
+        self.NAME = ''
+        self.NUM  = ''
                 
     # Routient to set macros for this contest
     def macros(self):
@@ -90,14 +93,23 @@ class CQP_KEYING(DEFAULT_KEYING):
     def hint(self,call):
         P=self.P
 
+        #print('------------------------ CQP HINT ...')
         self.NAME = P.MASTER[call]['name']
         state     = P.MASTER[call]['state']
         self.NUM  = P.MASTER[call]['cwops']
+        #print('------------------------ CQP HINT: state=',state)
+
+        dx_station = Station(call)
+        #print('------------------------ CQP HINT: country=',dx_station.country )
+        if not dx_station.country in ['United States','Canada']:
+            state='DX'
+            
         if state=='CA':
             county=P.MASTER[call]['county']
-            return county
+            #print('------------------------ CQP HINT: county=',county)
+            return county+' '+self.NAME+' '+self.NUM
         else:
-            return state
+            return state+' '+self.NAME+' '+self.NUM
 
         
     # Routine to get practice qso info
@@ -238,21 +250,23 @@ class CQP_KEYING(DEFAULT_KEYING):
     def insert_hint(self,h=None):
 
         gui=self.P.gui
-        
+
+        #print('CQP INSERT HINT: h1=',h)
         if h==None:
             h = gui.hint.get()
+        #print('CQP INSERT HINT: h2=',h)
         if type(h) == str:
             h = h.split(' ')
+        #print('CQP INSERT HINT: h3=',h)
 
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
-        if False:
-            gui.name.delete(0, END)
-            gui.name.insert(0,self.NAME)
-        if True:
-            gui.info.delete(0, END)
-            gui.info.insert(0,self.NAME+' '+self.NUM)
+        gui.info.delete(0, END)
+        #gui.info.insert(0,self.NAME+' '+self.NUM)
+        if len(h)>1:
+            print('CQP INSERT HINT: h4=',h[1:])
+            gui.info.insert(0,''.join(h[1:]))
 
         
     # Hints if we're in the qth window
@@ -279,15 +293,22 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         try:
             qth  = qso["QTH"].upper()
-            idx1 = CQP_MULTS.index(qth)
+            if '/' in qth:
+                qth=qth.split('/')[0]
+            if qth in CA_COUNTIES:
+                qth='CA'
+            if qth!='DX':
+                idx1 = CQP_MULTS.index(qth)
         except:
             self.P.gui.status_bar.setText('Unrecognized/invalid QTH!')
             error_trap('CQP->SCORING - Unrecognized/invalid QTH!')
             return
-        self.sec_cnt[idx1] = 1
+        
+        if qth!='DX':
+            self.sec_cnt[idx1] = 1
         
         mults = np.sum(self.sec_cnt)
-        score=self.nqsos * mults
+        score = 3*self.nqsos * mults
         print("SCORING: score=",score,self.nqsos,mults)
 
         txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
