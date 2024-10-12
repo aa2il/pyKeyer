@@ -145,8 +145,6 @@ class DEFAULT_KEYING():
                 EXCH1   = '5NN'
                 LAB2    = 'QTH'
                 EXCH2   = '[MYSEC]'
-                #self.key1 = 'rst'
-                #self.key2 = 'sec'
                 self.P.CONTEST_ID=self.contest_name
                 
             elif self.contest_name in ['NVQP']:
@@ -156,8 +154,6 @@ class DEFAULT_KEYING():
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
                 EXCH2 = '[MYSEC]'
-                #self.key1 = 'rst'
-                #self.key2 = 'qth'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
             elif self.contest_name in ['ALQP','ARQP','AZQP','DEQP','FLQP',
@@ -347,7 +343,11 @@ class DEFAULT_KEYING():
             self.key1 = self.LAB1.lower()
             if LAB2!=None:
                 self.LAB2=LAB2
-                if 'CQZ' in EXCH2:
+                if 'STATE' in EXCH2:
+                    self.key2 = 'state'
+                elif 'SEC' in EXCH2:
+                    self.key2 = 'sec'
+                elif 'CQZ' in EXCH2:
                     self.key2 = 'cqz'
                 elif 'ITUZ' in EXCH2:
                     self.key2 = 'ituz'
@@ -357,6 +357,9 @@ class DEFAULT_KEYING():
                 self.LAB2=LAB1
                 LAB2=LAB1
             self.LAB3=LAB3
+            self.EXCH1=EXCH1
+            self.EXCH2=EXCH2
+            self.EXCH3=EXCH3
             print('self.LAB2=',self.LAB2,'\tEXCH2=',EXCH2)
 
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] '}
@@ -422,14 +425,19 @@ class DEFAULT_KEYING():
         if self.key1=='name':
             txt+=self.NAME+' '
         elif self.key1!=None and self.key1 not in ['rst']:
-            txt+='TBD '
+            #txt+='TBD '
+            pass
 
-        if self.key2!=None and self.key2 in ['sec','qth','cqz','ituz']:
+        if self.key2!=None and self.key2 in ['state','sec','qth','cqz','ituz']:
             if self.key2=='qth':
                 key2='state'
             else:
                 key2=self.key2
-            qth = P.MASTER[call][key2]
+            state = P.MASTER[call]['state']
+            if self.contest_name==state+'QP':
+                qth = P.MASTER[call]['county']
+            else:
+                qth = P.MASTER[call][key2]    
             print('DEFAULFT HINT: key2=',key2,'\tqth=',qth)
             txt += qth
             
@@ -679,7 +687,14 @@ class DEFAULT_KEYING():
             exch_out += self.P.SETTINGS['MY_NAME'] + ','
         if gui.qth in gui.boxes:
             exch_in  += gui.get_qth().upper()     + ','
-            exch_out += self.P.SETTINGS['MY_STATE'] + ','
+            print('DEFAULT->LOGGING: key2=',self.key2)
+            if self.key2!=None:
+                key='MY_'+self.key2.upper()
+                print('DEFAULT->LOGGING: key=',key)
+                exch_out += self.P.SETTINGS[key] + ','
+            else:
+                exch_out += self.P.SETTINGS['MY_STATE'] + ','
+            print('DEFAULT->LOGGING: exch_out=',exch_out)
 
         # Any special fields for this particular contest
         qso2={}

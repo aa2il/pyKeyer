@@ -31,6 +31,7 @@ from rig_io import CQP_MULTS
 import numpy as np
 from utilities import error_trap
 from dx import Station
+from counties import COUNTIES
 
 ############################################################################################
 
@@ -295,7 +296,7 @@ class CQP_KEYING(DEFAULT_KEYING):
             qth  = qso["QTH"].upper()
             if '/' in qth:
                 qth=qth.split('/')[0]
-            if qth in CA_COUNTIES:
+            if qth in COUNTIES['CA']:
                 qth='CA'
             if qth!='DX':
                 idx1 = CQP_MULTS.index(qth)

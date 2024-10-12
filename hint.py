@@ -20,7 +20,7 @@
 ############################################################################################
 
 from utilities import error_trap
-from rig_io import CA_COUNTIES   
+from counties import COUNTIES   
 
 ############################################################################################
 
@@ -64,11 +64,9 @@ def commie_fornia(dx_station,qth):
     if dx_station.country=='United States' and dx_station.cqz==3:
         if VERBOSITY>0:
             print('Commie-fornia')
-        #print CA_COUNTIES
-        #hints= [s for s in CA_COUNTIES if qth in s]
         hints=[]
         n=len(qth)
-        for s in CA_COUNTIES:
+        for s in COUNTIES['CA']:
             if qth==s[0:n]:
                 hints.append(s)
         return ' '.join(hints)

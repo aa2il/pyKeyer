@@ -26,7 +26,7 @@ import sys
 from tkinter import END,E,W
 from collections import OrderedDict
 from default import DEFAULT_KEYING
-from rig_io import CA_COUNTIES,arrl_sec2state
+from rig_io import arrl_sec2state
 from dx import Station
 from datetime import datetime
 

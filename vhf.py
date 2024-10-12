@@ -23,6 +23,8 @@ from tkinter import END,E,W
 from collections import OrderedDict
 import sys
 from default import DEFAULT_KEYING
+from utilities import error_trap
+from latlon2maiden import distance_maidenhead
 
 ############################################################################################
 
@@ -36,12 +38,16 @@ class VHF_KEYING(DEFAULT_KEYING):
     def __init__(self,P,contest_name):
         DEFAULT_KEYING.__init__(self,P,contest_name,'ARRLVHF*.txt')
         P.CONTEST_ID=contest_name
-        #self.contest_duration = 48
-        #P.MAX_AGE = self.contest_duration *60
+        self.contest_duration = 5*8
+        P.MAX_AGE = self.contest_duration *60
         print('VHF KEYING: ID=',P.CONTEST_ID)
 
         # On-the-fly scoring
         self.total_points = 0
+        self.max_km = 0
+        self.total_km = 0
+        self.total_score = 0
+        
         self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
         grids  = []
         self.NQSOS = OrderedDict()
@@ -57,9 +63,8 @@ class VHF_KEYING(DEFAULT_KEYING):
         self.all_grids=set([])
         self.init_scoring()
 
-        self.max_km = 0
-        self.total_km = 0
-        self.total_score = 0
+        self.NAME = ''
+        self.NUM  = ''
         
     # Routine to set macros for this contest
     def macros(self):
@@ -76,9 +81,9 @@ class VHF_KEYING(DEFAULT_KEYING):
             # Makrothen
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ MAK [MYCALL] [MYCALL] '}
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] [MYGRID] [CALL] '}
-            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] 73 [MYCALL] CQ [LOG]'}
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] CQ [LOG]'}
-            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] DIT DIT [MYCALL] CQ [LOG]'}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL] TNX AGN [NAME] 73 [MYCALL] CQ [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL] 73 [MYCALL] CQ [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL] GL [NAME] DIT DIT [MYCALL] CQ [LOG]'}
             
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'CALL?'     , 'Text' : 'CALL? '}
@@ -90,7 +95,7 @@ class VHF_KEYING(DEFAULT_KEYING):
             MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYGRID] [MYGRID] '}
         else:
             MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] [MYCALL] '}
-            MACROS[4+12]  = {'Label' : '[MYCALL] 1x', 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : '[MYCALL] 4x', 'Text' : '[MYCALL] [MYCALL] \n[MYCALL] [MYCALL] '}
             MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID] [MYGRID] '}
             MACROS[5+12]  = {'Label' : 'S&P 4x'    , 'Text' : '[MYGRID] [MYGRID] [MYGRID] [MYGRID] '}
             
@@ -102,7 +107,7 @@ class VHF_KEYING(DEFAULT_KEYING):
         MACROS[8]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
         if not self.P.DIGI:
             MACROS[8+12]  = {'Label' : 'EE'        , 'Text' : 'EE '}
-        MACROS[9]     = {'Label' : 'Grid 2x'   , 'Text' : '[-2][MYGRID] [MYGRID] [+2]'}
+        MACROS[9]     = {'Label' : 'Grid 4x'   , 'Text' : '[-2][MYGRID] [MYGRID] [MYGRID] [MYGRID] [+2]'}
         MACROS[10]    = {'Label' : 'GRID?  '   , 'Text' : 'GRID? '}
         MACROS[11]    = {'Label' : 'QTH? '     , 'Text' : 'QTH? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
@@ -116,11 +121,13 @@ class VHF_KEYING(DEFAULT_KEYING):
         try:
             gridsq    = P.MASTER[call]['grid']
             self.NAME = P.MASTER[call]['name']
+            self.NUM  = P.MASTER[call]['cwops']
         except:
             gridsq    = ''
             self.NAME = ''
+            self.NUM  = ''
         
-        return gridsq
+        return gridsq+' '+self.NAME+' '+self.NUM
 
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
@@ -243,12 +250,11 @@ class VHF_KEYING(DEFAULT_KEYING):
         gui.qth.delete(0, END)
         gui.qth.insert(0,h[0])
 
-        if False:
-            gui.name.delete(0, END)
-            gui.name.insert(0,self.NAME)
-        if True:
-            gui.info.delete(0, END)
-            gui.info.insert(0,self.NAME)
+        gui.info.delete(0, END)
+        #gui.info.insert(0,self.NAME)
+        if len(h)>1:
+            print('VHF INSERT HINT: h4=',h[1:])
+            gui.info.insert(0,' '.join(h[1:]))
 
 
     # On-the-fly scoring
@@ -262,22 +268,19 @@ class VHF_KEYING(DEFAULT_KEYING):
 
         srx = qso['SRX_STRING'].split(',')
         try:
-            grid  = srx[1]
+            grid  = srx[0]
         except:
             self.P.gui.status_bar.setText('Unrecognized/invalid section!')
-            error_trap('VHF->SCORING - Unrecognized/invalid section!')
+            error_trap('VHF->SCORING - Unrecognized/invalid section!\t'+
+                       call+'\t'+band+'\t',srx)
             return
 
-        dx_km = int( calculate_distance(grid,self.MY_GRID) +0.5 )
+        dx_km  = int( distance_maidenhead(self.MY_GRID,grid,False) +0.5 ) 
         if dx_km > self.max_km:
             self.max_km=dx_km
-            self.longest=rec
-        if not dupe:
-            self.nqsos2 += 1;
+            #self.longest=qso
 
-        if dupe:
-            mult=0
-        elif dx_km==0:
+        if dx_km==0:
             dx_km=100
             mult=1
         elif band=='80m':
@@ -289,12 +292,11 @@ class VHF_KEYING(DEFAULT_KEYING):
             
         self.total_km += dx_km
         self.total_score += mult*dx_km
-
-        self.total_score=self.total_points * mults
         print("SCORING: score=",self.total_score,self.nqsos,dx_km)
 
         txt='{:3d} QSOs, {:6d} km total = {:6d} \t\t{:6d} km\t\t Last Worked: {:s}' \
-            .format(self.nqsos,int(total_km),self.total_score,dx_km,call)
+            .format(self.nqsos,int(self.total_km),int(self.total_score),
+                    int(dx_km),call)
         self.P.gui.status_bar.setText(txt)
     
         
