@@ -17,6 +17,7 @@ dirname='/tmp'
 fname1=dirname+'/BANDMAP_MEMORY.TXT'
 fname2=dirname+'/SDR_MEMORY.TXT'
 fname3=dirname+'/KEYER_MEMORY.TXT'
+fname4=dirname+'/BANDMAP_MEMORY_WSJT.TXT'
 
 ###############################################################################
 
@@ -41,10 +42,23 @@ print('\n',fname3,'\thdr=',hdr)
 t3=data[:,0]/60.
 keyer=data[:,1]
 
+try:
+    data,hdr=read_csv_file(fname4,FLAT_DATA=True,VERBOSITY=0)
+    print('\n',fname4,'\thdr=',hdr)
+    #print('data=',data)
+
+    t4=data[:,0]/60.
+    bm2=data[:,1]
+except:
+    t4=[]
+    bm2=[]
+
 fig, ax = plt.subplots()
 ax.plot(t1,bm,color='red',label='Bandmap')
 ax.plot(t2,sdr,color='blue',label='SDR')
 ax.plot(t3,keyer,color='green',label='Keyer')
+if len(t4)>0:
+    ax.plot(t1,bm,color='magenta',label='Bandmap')
     
 ax.grid(True)
 ax.set_title('Memory Usage')

@@ -206,6 +206,7 @@ class GUI():
 
         self.nqsos_start = len(self.log_book)
         print('There are',len(self.log_book),'QSOs in the log book')
+        P.MEM.take_snapshot()
         #sys.exit(0)
 
         # Keep an ADIF copy of the log as well
