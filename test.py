@@ -1,5 +1,9 @@
 #! /usr/bin/python3
 
+# Trying to figure out how to reduce memory consumption of objects
+# like logbook and call history.  The csv files these data are stored in
+# are nt very big but they baloon in size when put into a list of dicts.
+
 # importing libraries
 import sys
 from utilities import *

@@ -109,6 +109,21 @@ class GUI():
             geo=P.GEO
         self.root.geometry(geo)
 
+        # Over-ride default-font with custom settings
+        # Not necesary but I'm leaving this code here fore later reference
+        if False:
+            print('Default font:',tkinter.font.nametofont('TkTextFont').actual())
+            print('Families:',tkinter.font.families())
+            self.defaultFont = tkinter.font.nametofont("TkDefaultFont") 
+            self.defaultFont.configure(family='DejaVu Sans Mono', 
+                                      size=20, 
+                                      weight=tkinter.font.NORMAL)
+            self.root.option_add("*Font", "ariel")
+            print('New Default font:',tkinter.font.nametofont('TkTextFont').actual())
+            self.root.option_add("*Label*Font", "Helvetica 20")
+            self.root.option_add("*Button*Font", "Arial 15 bold")
+            sys.exit(0)
+        
         # Init
         self.last_focus=None
         self.WIN_NAME='ROOT WINDOW'
@@ -135,7 +150,7 @@ class GUI():
         self.macro_label=''
         self.last_text=None
 
-        # Select font
+        # Special fonts for various widgets
         FAMILY='monospace'
         #FAMILY='DejaVu Sans Mono'
         if sys.version_info[0]==3:
