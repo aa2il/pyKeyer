@@ -23,8 +23,10 @@ import os
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
-from utilities import cut_numbers
+from utilities import cut_numbers,error_trap
 from default import DEFAULT_KEYING
+import numpy as np
+from rig_io import ARRL_SECS
 
 ############################################################################################
 
