@@ -21,26 +21,39 @@ fname4=dirname+'/BANDMAP_MEMORY_WSJT.TXT'
 
 ###############################################################################
 
-data,hdr=read_csv_file(fname1,FLAT_DATA=True,VERBOSITY=0)
-print('\n',fname1,'\thdr=',hdr)
-#print('data=',data)
+try:
+    data,hdr=read_csv_file(fname1,FLAT_DATA=True,VERBOSITY=0)
+    print('\n',fname1,'\thdr=',hdr)
+    #print('data=',data)
+    
+    t1=data[:,0]/60.
+    bm=data[:,1]
+except:
+    t1=[]
+    bm=[]
 
-t1=data[:,0]/60.
-bm=data[:,1]
+try:
+    data,hdr=read_csv_file(fname2,FLAT_DATA=True,VERBOSITY=0)
+    print('\n',fname2,'\thdr=',hdr)
+    #print('data=',data)
 
-data,hdr=read_csv_file(fname2,FLAT_DATA=True,VERBOSITY=0)
-print('\n',fname2,'\thdr=',hdr)
-#print('data=',data)
+    t2=data[:,0]/60.
+    sdr=data[:,1]
+except:
+    t2=[]
+    sdr=[]
 
-t2=data[:,0]/60.
-sdr=data[:,1]
+try:
+    data,hdr=read_csv_file(fname3,FLAT_DATA=True,VERBOSITY=0)
+    print('\n',fname3,'\thdr=',hdr)
+    #print('data=',data)
 
-data,hdr=read_csv_file(fname3,FLAT_DATA=True,VERBOSITY=0)
-print('\n',fname3,'\thdr=',hdr)
-#print('data=',data)
+    t3=data[:,0]/60.
+    keyer=data[:,1]
+except:
+    t3=[]
+    keyer=[]
 
-t3=data[:,0]/60.
-keyer=data[:,1]
 
 try:
     data,hdr=read_csv_file(fname4,FLAT_DATA=True,VERBOSITY=0)
@@ -54,11 +67,14 @@ except:
     bm2=[]
 
 fig, ax = plt.subplots()
-ax.plot(t1,bm,color='red',label='Bandmap')
-ax.plot(t2,sdr,color='blue',label='SDR')
-ax.plot(t3,keyer,color='green',label='Keyer')
+if len(t1)>0:
+    ax.plot(t1,bm,color='red',label='Bandmap')
+if len(t2)>0:
+    ax.plot(t2,sdr,color='blue',label='SDR')
+if len(t3)>0:
+    ax.plot(t3,keyer,color='green',label='Keyer')
 if len(t4)>0:
-    ax.plot(t1,bm,color='magenta',label='Bandmap')
+    ax.plot(t1,bm,color='magenta',label='Bandmap 2')
     
 ax.grid(True)
 ax.set_title('Memory Usage')

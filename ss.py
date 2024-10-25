@@ -42,7 +42,12 @@ class SS_KEYING(DEFAULT_KEYING):
         self.aux_cb = self.copy_call
         P.CONTEST_ID='ARRL-SS-CW'
 
-    # Routient to set macros for this contest
+        # On-the-fly scoring
+        self.nqsos=0
+        self.sec_cnt = np.zeros(len(ARRL_SECS),dtype=np.int32)
+        self.init_scoring()
+        
+    # Routine to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
@@ -290,4 +295,29 @@ class SS_KEYING(DEFAULT_KEYING):
             call = gui.get_call().upper()
             gui.call2.delete(0, END)
             gui.call2.insert(0,call)
+            
+
+    # On-the-fly scoring
+    def scoring(self,qso):
+        print("\nSCORING: qso=",qso)
+        self.nqsos+=1        
+        call=qso['CALL']
+
+        try:
+            qth  = qso["QTH"].upper()
+            idx1 = ARRL_SECS.index(qth)
+        except:
+            self.P.gui.status_bar.setText('Unrecognized/invalid section!')
+            error_trap('SS->SCORING - Unrecognized/invalid section!')
+            return
+        self.sec_cnt[idx1] = 1
+        
+        mults = np.sum(self.sec_cnt)
+        score=self.nqsos * mults
+        print("SCORING: score=",score,self.nqsos,mults)
+
+        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,call)
+        self.P.gui.status_bar.setText(txt)
+    
             

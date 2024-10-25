@@ -434,6 +434,7 @@ class GUI():
             self.txt.configure(font=self.font3)
         else:
             c='black'
+            c='red'
         self.txt.tag_configure('highlight', foreground=c, relief='raised')
 
         self.txt.bind("<Key>", self.key_press )
@@ -1547,8 +1548,10 @@ class GUI():
         if not self.P.DIGI or '[LOG]' in txt or True:
             print('\ttxt=',txt)
 
-            #self.txt.insert(END, txt)
-            self.txt.insert(END, txt, ('highlight'))
+            if self.P.DIGI:
+                self.txt.insert(END, txt, ('highlight'))
+            else:
+                self.txt.insert(END, txt)
             self.txt.see(END)
             self.root.update_idletasks()
 
@@ -2345,7 +2348,6 @@ class GUI():
                 try:
                     #txt=qso2['CALL']+' '+qso2['FREQ']+' '+qso2['SRX_STRING']
                     txt=' '+call+' '+str(freq)+' '+exch+'\n'
-                    #self.txt.insert(END,txt)
                     self.txt.insert(END, txt, ('highlight'))
                 except: 
                     error_trap('GUI->LOG QSO: ERROR writing logged info to big text box')

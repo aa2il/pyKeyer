@@ -191,6 +191,8 @@ if __name__ == '__main__':
                           type=str,default=None,nargs='*')
     arg_proc.add_argument('-cwops', action='store_true',
                               help='CWops Reverse Lookup')
+    arg_proc.add_argument('-cw', action='store_true',
+                              help='Look only for CW QSOs')
     args = arg_proc.parse_args()
     calls1 = list(map(str.upper,args.call))
     calls=[]
@@ -248,7 +250,8 @@ if __name__ == '__main__':
 
         for qso in qsos1:
             call=qso['call']
-            if call in calls:
+            mode=qso['mode']
+            if call in calls and (not args.cw or mode=='CW'):
                 idx=calls.index(call)
                 last_qso[idx]=qso
                 nqsos[idx]+=1
