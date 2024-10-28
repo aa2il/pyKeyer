@@ -96,7 +96,8 @@ import sys
 import serial
 import time
 from utilities import find_serial_device,list_all_serial_devices,show_hex,error_trap
-import termios
+if sys.platform == "linux" or sys.platform == "linux2":
+    import termios
 
 ############################################################################################
 
@@ -127,17 +128,18 @@ ser = serial.Serial(path, 9600)
 def set_DTR_hangup(device,ENABLE=False):
 
     # Disable reset after hangup - should be done at system level already
-    with open(device) as f:
-        attrs = termios.tcgetattr(f)
-        if ENABLE:
-            # If the keyer needs a full reset, enable the DTR hangup
-            print('Turning on DTR hangup ...')
-            attrs[2] = attrs[2] | termios.HUPCL
-        else:
-            # Normally, everything is fine so disable DTR Hangup
-            print('Turning off DTR hangup ...')
-            attrs[2] = attrs[2] & ~termios.HUPCL
-        termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
+    if sys.platform == "linux" or sys.platform == "linux2":
+        with open(device) as f:
+            attrs = termios.tcgetattr(f)
+            if ENABLE:
+                # If the keyer needs a full reset, enable the DTR hangup
+                print('Turning on DTR hangup ...')
+                attrs[2] = attrs[2] | termios.HUPCL
+            else:
+                # Normally, everything is fine so disable DTR Hangup
+                print('Turning off DTR hangup ...')
+                attrs[2] = attrs[2] & ~termios.HUPCL
+            termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
 
 
 
@@ -149,6 +151,7 @@ class KEYING_DEVICE():
         #self.winkey_mode=0x15                        # Iambic A + no paddle echo + serial echo + contest spacing
         #self.winkey_mode=0x55                        # Iambic A + paddle echo + serial echo + contest spacing
         self.winkey_mode=0x51                        # Iambic A + paddle echo + contest spacing
+        self.ser = None
 
         # Find serial port to the device
         print("\nNANO_IO INIT: Opening keyer ... device=",device)
@@ -169,6 +172,7 @@ class KEYING_DEVICE():
 
         # Open serial port to the device
         print('Opening serial port ...')
+        print('\tdevice=',self.device,'\tbaud=',baud)
         self.ser = serial.Serial(self.device,baud,timeout=0.1,
                                  dsrdtr=True,rtscts=0)
         #                                 dsrdtr=False,rtscts=0)
@@ -417,4 +421,8 @@ class KEYING_DEVICE():
         elif self.protocol=='WINKEYER':
             self.send_command(chr(0x0A))             # Clear buffer should do the trick
                               
-            
+    #
+    def close(self):
+        if self.ser:
+            print('KEYING DEVICE CLOSED.')
+            self.ser.close()

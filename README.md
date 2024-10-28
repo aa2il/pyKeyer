@@ -123,7 +123,32 @@ Over the years, a number of very good logging programs have been developed.  The
 
 # Installation for Windoz:
 
-1) Best bet is to use mini-conda and follow the instructions above.
-2) There is an older compiled binary/installer listed on the right panel
-   of this screen.  If you want/need a more recent binary, email me
-   or follow the steps in windoz.bat to build it from the source.
+0) One option is to use miniconda and follow the directions above.
+      
+1) I had success installing Python (v3.12 as of Oct 2024) the Microslop Store
+   (or directly from python.org).
+
+2) Install dependancies:
+
+        pip install -r requirements.txt
+
+3a) There are two main codes here - the complete keyer, e.g.:
+           
+        pyKeyer.py -prac -cwt -adjust -wpm 30 -keyer WINKEY
+
+3b) ... and a paddle sending practice tool:
+            
+        paddling.py
+
+4) Under linux, both programs can discover the type of keying device available.
+   This doesn't yet work under winblows so only the most popular device,
+   Winkeyer, is available.
+                               
+5) There is an older compiled binary/installer listed on the right panel
+   of this screen.  If you want/need a more recent binary, follow the steps
+   in windoz.bat to build it from the source.  
+
+6) A note about drivers.  Compared to linux where almost everything works right out of the box, Windoz is awful when dealing with device drivers.  To get the keyer to work, you will probably have to install device drivers for both the keying deivce (e.g. winkeyer via a serial COM port) AND for your rig (e.g. CAT control and rx audio via a pair of USB ports).
+                                                                                Most likely, the rig manufacturer has the proper drivers for the rig available on their website.  This may or may not be the case for your keying device.  I do not own a genuine Winkeyer as I "roled my own."
+
+To add further complictions, the Winblows device drivers are often buggy and unstable.  My main keying device is a modified version of the K3NG keyer hosted on an Arduino Nano knock-off.  This device emulates the popular Winkeyer.  The Nano-knockoff uses a CH340 chip for USB I/O and not the venerable FTDI chipset.  The latest driver (v3.8 as of Oct 2024) for the CH340 initially works but then hangs upon program exit.  To get the keyer to work properly, I found I needed to use an older version of the driver (v3.7 from 2022).  A zip file with this driver is included in this repository.

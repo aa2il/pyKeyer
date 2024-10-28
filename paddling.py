@@ -316,6 +316,8 @@ class PADDLING_GUI():
     # Callback to either hide or quit the paddling practice
     def Quit(self):
         P=self.P
+        if P.keyer_device:
+            P.keyer_device.close()
         if not P.gui:
             sys.exit(0)
         else:
@@ -722,7 +724,19 @@ if __name__ == '__main__':
             self.WPM=22
             self.PADDLE_WPM=22
             self.USE_KEYER=True
-            self.FIND_KEYER=True
+            if sys.platform == "linux" or sys.platform == "linux2":
+                # Linux - keyer discovery works fine
+                self.FIND_KEYER=True
+            elif sys.platform == "win32":
+                # Windows - keyer discovery doesn't work - use only winkeyer
+                self.FIND_KEYER=False
+                self.WINKEYER=True
+                self.K3NG_IO = False
+                self.NANO_IO = False
+            elif sys.platform == "darwin":
+                # OS X
+                print('No support for Mac OS')
+                sys.exit(0)
             self.NANO_ECHO=True
             self.last_char_time=time.time()
             self.need_eol=False
@@ -791,6 +805,7 @@ if __name__ == '__main__':
     timer = P.PaddlingWin.win.after(1000, check_keyer, P)
     mainloop()
 
+    P.keyer_device.close()
     print("Y'all come on back now ya hear!")
 
     

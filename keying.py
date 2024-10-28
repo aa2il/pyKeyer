@@ -77,7 +77,7 @@ def find_keyer():
         return None,None
     
     for i in range(len(DEVICES)):
-        print('FIND KEYER: Looking for',DEVICES[i],'device ...')
+        print('\nFIND KEYER: Looking for',DEVICES[i],'device ...')
         
         baud=BAUDS[i]
         ser = serial.Serial(device,baud,timeout=1,
@@ -139,6 +139,7 @@ def open_keying_port(P,sock,rig_num):
         return None
     
     print('Opening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
+    print('\tFIND_KEYER=',P.FIND_KEYER)
     #print(sock)
     #print('\tRig Types=',sock.rig_type,sock.rig_type1,sock.rig_type2)
     if P.USE_KEYER and rig_num==1:
@@ -185,6 +186,7 @@ def open_keying_port(P,sock,rig_num):
             else:
                 print('OPEN KEYING PORT - Unknown protocol')
                 sys.exit(0)
+            print('OPEN KEYING PORT: device=',device,'\tprotocol=',protocol)
             P.keyer_device = KEYING_DEVICE(P,device,protocol,baud=BAUD_KEYER)
             ser = P.keyer_device.ser
         except: 

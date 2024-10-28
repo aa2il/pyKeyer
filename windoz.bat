@@ -4,13 +4,24 @@ goto BUILD
 echo.
 echo Notes about how to run pyKeyer on Windoze 10
 echo.
-echo Need the following standard Python libraries - these should already have been installed:
-echo    scipy       - referenced in sig_proc library
-echo    levenshtein - For computing string distance metrics
+echo Should already installed most of what we need:
+echo.
         pip install -r requirements.txt
 echo.
 echo Run the script under python (an exmaple):
-         pyKeyer.py -prac -sidetone -cwt -adjust -wpm 30
+echo The automatic determination of the keying device does not work (yet)
+echo under windows so we have to specify the keying device, e.g.
+echo.
+         pyKeyer.py -prac -cwt -adjust -wpm 30 -keyer WINKEY
+echo.
+echo. Paddling practice also works but the keyer is currently hardwired to WINKEY
+echo.
+         paddling.py
+echo.
+echo There are two modules that are used, pyudev and termios, that
+echo appear to be linux-only.  They have been disabled but it remains to be
+echo if some substitute is needed...
+echo.
 :BUILD
 echo.
 echo To compile - this takes a while and spews a bunch of errors but works anyways:
