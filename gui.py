@@ -590,7 +590,6 @@ class GUI():
                                       command=self.Set_Rig_Mode)
         self.ModeBox.grid(row=row,column=self.ncols-2)
         tip = ToolTip(self.ModeBox, ' Set Rig Mode ' )
-        #if P.INIT_MODE=='RTTY':
         if P.INIT_MODE!=None:
             self.MODE.set(P.INIT_MODE)
             self.Set_Rig_Mode(None)
@@ -3653,7 +3652,9 @@ class GUI():
                                  command=self.Toggle_DXSplit)
         self.DXSplitBtn.pack(side=LEFT, padx=2, pady=2)
         
-        if self.P.DIGI:
+        if self.P.SPECIAL:
+            self.FilterWidths=[2500,3000]
+        elif self.P.DIGI:
             self.FilterWidths=[500,2000]
         else:
             self.FilterWidths=[50,200]

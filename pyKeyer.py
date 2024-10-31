@@ -140,7 +140,7 @@ P.ser=P.ser1
 #sys.exit(0)
     
 # Put rig and FLDIGI into initial mode
-if not P.PRACTICE_MODE:
+if not P.PRACTICE_MODE and not P.SPECIAL:
     print('Initial mode=',P.INIT_MODE)
     P.sock.set_mode(P.INIT_MODE,VFO='A')
     if False:
