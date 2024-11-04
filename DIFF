@@ -12,6 +12,7 @@
 set ROOT="/media/${USER}/marconi"
 #set ROOT="/media/${USER}/hertz"
 #set ROOT="/media/${USER}/sproul"
+set ROOT="/media/${USER}/sproul-win"
 #set ROOT="/mnt/sproul"
 #set ROOT="/media/${USER}/3D76-ECB1"
 #set ROOT="/media/${USER}/acer"
@@ -44,7 +45,7 @@ set old=${ROOT}${PTH}
 
 # Overide if necessary
 #set old="work"
-#set old="save86"
+#set old="save89"
 
 # Make sure remote dir is mounted
 echo " "

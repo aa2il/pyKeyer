@@ -724,7 +724,7 @@ if __name__ == '__main__':
             self.WPM=22
             self.PADDLE_WPM=22
             self.USE_KEYER=True
-            if sys.platform == "linux" or sys.platform == "linux2":
+            if sys.platform in ["linux","linux2"]:
                 # Linux - keyer discovery works fine
                 self.FIND_KEYER=True
             elif sys.platform == "win32":

@@ -54,8 +54,9 @@ class SS_KEYING(DEFAULT_KEYING):
 
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ SS [MYCALL] '}
-        MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
+        MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [SERIAL] [MYPREC] [MYCALL] [MYCHECK] [MYSEC] '}
+        MACROS[1+12]  = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -218,8 +219,11 @@ class SS_KEYING(DEFAULT_KEYING):
         gui.boxes.append(gui.call2)
         gui.boxes.append(gui.check)
         gui.boxes.append(gui.qth)
+
         gui.counter_lab.grid()
         gui.counter.grid()
+        gui.inc_btn.grid()
+        gui.dec_btn.grid()
 
         if not gui.P.NO_HINTS:
             col+=cspan
@@ -313,13 +317,21 @@ class SS_KEYING(DEFAULT_KEYING):
             error_trap('SS->SCORING - Unrecognized/invalid section!')
             return
         self.sec_cnt[idx1] = 1
-        
+
         mults = np.sum(self.sec_cnt)
         score=self.nqsos * mults
         print("SCORING: score=",score,self.nqsos,mults)
 
-        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
+        if all(self.sec_cnt)>0:
+            txt1='!!! CLEAN SWEEP !!!'
+        else:
+            txt1='Missing: '
+            for i in range(len(ARRL_SECS)):
+                if self.sec_cnt[i]==0:
+                    txt1 = txt1 + ARRL_SECS[i]+' '
+
+        txt='{:3d} QSOs x {:3d} Mults = {:6,d}\t\tLast Worked: {:s}\t{:.150}' \
+            .format(self.nqsos,mults,score,call,txt1)
         self.P.gui.status_bar.setText(txt)
     
             
