@@ -6,18 +6,21 @@ import time
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
 
 ###############################################################################
 
-dirname='/tmp'
-#dirname='CWT0300'
-#dirname='CWT0700'
-#dirname='NOUDP'
+dirname='/tmp/'
+#dirname='junk3/'
+#dirname=''
 
-fname1=dirname+'/BANDMAP_MEMORY.TXT'
-fname2=dirname+'/SDR_MEMORY.TXT'
-fname3=dirname+'/KEYER_MEMORY.TXT'
-fname4=dirname+'/BANDMAP_MEMORY_WSJT.TXT'
+fname1=dirname+'BANDMAP_MEMORY.TXT'
+fname2=dirname+'SDR_MEMORY.TXT'
+fname3=dirname+'KEYER_MEMORY.TXT'
+fname4=dirname+'BANDMAP_MEMORY_WSJT.TXT'
+
+fname5=dirname+'LOG2.TXT'
+tag='AF'
 
 ###############################################################################
 
@@ -54,7 +57,6 @@ except:
     t3=[]
     keyer=[]
 
-
 try:
     data,hdr=read_csv_file(fname4,FLAT_DATA=True,VERBOSITY=0)
     print('\n',fname4,'\thdr=',hdr)
@@ -82,5 +84,26 @@ ax.set_xlabel('Time (Min.)')
 ax.set_ylabel('RSS Memory (Mb)')
 ax.legend(loc='lower right')
 
-
 plt.show()
+
+
+t0=None
+t5=[]
+nsamps=[]
+with open(fname5, mode ='r') as f:
+    csvFile = csv.reader(f)
+    for line in csvFile:
+        #print(line)
+        if line[0]==tag:
+            if t0==None:
+                t0=float(line[1])
+            t5.append(float(line[1])-t0)
+            nsamps.append(int(line[2]))
+
+if len(t5)>0:
+    fig, ax = plt.subplots()
+    ax.plot(t5,nsamps,color='red',label=tag)
+plt.show()
+
+sys.exit(0)
+

@@ -1,6 +1,6 @@
-#! /usr/bin/python3 -u 
+#! /home/joea/miniconda3/envs/aa2il/bin/python -u
 #
-# NEW: /home/joea/.venv/bin/python -u
+# NEW: /home/joea/miniconda3/envs/aa2il/bin/python -u
 # OLD: /usr/bin/python3 -u 
 ################################################################################
 #

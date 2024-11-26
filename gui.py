@@ -77,6 +77,8 @@ from utilities import cut_numbers,freq2band,Oh_Canada,error_trap,show_ascii
 import pyautogui
 from widgets_tk import StatusBar,SPLASH_SCREEN
 
+#from bm_gui import *
+
 ############################################################################################
 
 UTC = pytz.utc
@@ -1769,12 +1771,13 @@ class GUI():
         self.macros = self.P.KEYING.macros()
         
         for i in range(12):
-            lab = self.macros[i]["Label"].replace('[MYCALL]',self.MY_CALL )
-            self.btns1[i].configure( text=lab )
+            if i in self.macros:
+                lab = self.macros[i]["Label"].replace('[MYCALL]',self.MY_CALL )
+                self.btns1[i].configure( text=lab )
 
-            txt = self.Patch_Macro( self.macros[i]["Text"] )
-            self.macros[i]["Text"] = txt
-            tip = ToolTip(self.btns1[i], ' '+txt+' ' )
+                txt = self.Patch_Macro( self.macros[i]["Text"] )
+                self.macros[i]["Text"] = txt
+                tip = ToolTip(self.btns1[i], ' '+txt+' ' )
 
             if i+12 in self.macros:
                 lab = self.macros[i+12]["Label"].replace('[MYCALL]',self.MY_CALL )
@@ -2260,6 +2263,10 @@ class GUI():
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P
+            if False:
+                msg  = 'LOG:'+call+':'+band+':'+mode+':'+date_off+':'+time_off
+                print('LOG QSO: Broadcasting spot:',msg)
+                self.P.udp_server.Broadcast(msg)
             if self.P.udp_server and not self.RUNNING:
                 msg  = 'SPOT:'+call+':'+str(freq_kHz)+':'+mode
                 print('LOG QSO: Broadcasting spot:',msg)
@@ -3442,7 +3449,10 @@ class GUI():
     # Callback to request updated list of spots on the bandmap
     def UpdateBandmap(self):
         print('UPDATE BANDMAP - Requesting updated spot list ...')
-        self.P.udp_server.Broadcast('SpotList:Refresh')
+        if True:
+            self.P.udp_server.Broadcast('SpotList:Refresh')
+        else:
+            spot_list_query(self.P,None)
 
     # Callback to request a suggested run freq from the bandmap
     def SuggestRunFreq(self,opt):

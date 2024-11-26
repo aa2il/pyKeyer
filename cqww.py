@@ -117,6 +117,7 @@ class CQWW_KEYING(DEFAULT_KEYING):
         if not self.P.DIGI:
             MACROS[8]    = {'Label' : 'Zone 2x'  , 'Text' : '[MYCQZ] [MYCQZ] '}
             MACROS[8+12] = {'Label' : 'Zone 4x'  , 'Text' : '[MYCQZ] [MYCQZ] [MYCQZ] [MYCQZ] '}
+            MACROS[10]   = {'Label' : ''   , 'Text' : ' '}
         else:
             MACROS[8]    = {'Label' : 'State 2x'  , 'Text' : '[MYSTATE] [MYSTATE] '}
             MACROS[8+12] = {'Label' : 'State 4x'  , 'Text' : '[MYSTATE] [MYSTATE] [MYSTATE] [MYSTATE] '}

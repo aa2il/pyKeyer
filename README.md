@@ -78,8 +78,21 @@ Over the years, a number of very good logging programs have been developed.  The
            
 3) Create a working enviroment for ham radio stuff:
    - Check which python version we have:
-       - conda list   
-   - conda create --name aa2il python=3.11
+   - conda list
+
+   - !!! By default, conda does not include very many fonts for tk and therefore the
+           Tk GUIs look like crap.  Do this when creating the sandbox to avoid this problem:
+
+      bash
+      cd ~/miniconda3/envs/
+      conda create -y --prefix "aa2il" -c conda-forge "python==3.12.*" "tk[build=xft_*]"
+      exit
+
+    - The fonts on an existing sandbox can be upgraded via:
+
+       bash
+       conda install --prefix "aa2il" -c conda-forge "tk=*=xft_* "
+       exit
 
    - To activate this environment, use:
        - conda activate aa2il
@@ -111,12 +124,7 @@ Over the years, a number of very good logging programs have been developed.  The
    - conda activate aa2il
    - python pyKeyer.py
 
-8) Fonts look awful - this seems to be a long-known issue with conda.
-   - The ugly fix is replace the offending library in conda:
-      - cd ~/miniconda3/envs/aa2il/lib/
-      - mv libtk8.6.so libtk8.6.sav
-      - ln -s usr/lib/x86_64-linux-gnu/libtk8.6.so .
-   - This is not a good solution but the best I've found so far
+8) Fonts look awful - see step 3 above
    
 9) Known issues using this (as of July 2023):
    - Fonts look awful - need a better fix than step 8 above

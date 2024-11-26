@@ -319,7 +319,7 @@ class SS_KEYING(DEFAULT_KEYING):
         self.sec_cnt[idx1] = 1
 
         mults = np.sum(self.sec_cnt)
-        score=self.nqsos * mults
+        score = 2*self.nqsos * mults
         print("SCORING: score=",score,self.nqsos,mults)
 
         if all(self.sec_cnt)>0:
