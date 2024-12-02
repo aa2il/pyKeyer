@@ -47,6 +47,7 @@ class CALL_INFO_GUI():
         infos=[]
         for call in calls:
             call=call.replace(',','')
+            dx_station = Station(call)
             if call in P.MASTER.keys():
                 print('CALL_LOOKUP:',call,' is in master list')
                 info=P.MASTER[call]
@@ -54,11 +55,11 @@ class CALL_INFO_GUI():
                 print('CALL_LOOKUP:',call,' is not in master list')
                 info = OrderedDict()
                 if '/' in call:
-                    dx_station = Station(call)
                     call2=dx_station.homecall
                     if call2 in P.MASTER.keys():
                         print('CALL_LOOKUP:',call2,' is in master list')
                         info=P.MASTER[call2]
+            info['Country']=dx_station.country
 
             if qso!=None and qso[0]!=None:
                 if nqsos!=None:
