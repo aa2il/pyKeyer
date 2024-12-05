@@ -305,7 +305,7 @@ class SS_KEYING(DEFAULT_KEYING):
 
     # On-the-fly scoring
     def scoring(self,qso):
-        print("\nSCORING: qso=",qso)
+        #print("\nSCORING: qso=",qso)
         self.nqsos+=1        
         call=qso['CALL']
 

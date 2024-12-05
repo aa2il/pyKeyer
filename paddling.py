@@ -425,7 +425,7 @@ class PADDLING_GUI():
             
             # Panagrams
             n=len(self.panagrams)
-            #print('There are',n,'panagrams loaded')
+            print('There are',n,'panagrams loaded')
             i = random.randint(0,n-1)
             if len(self.stack)==0 and False:
                 i=132                        # The quick brown fox ...

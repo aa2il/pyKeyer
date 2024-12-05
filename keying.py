@@ -25,6 +25,8 @@ from nano_io import *
 from utilities import error_trap, get_PIDs
 from rig_io import BAUD,SERIAL_PORT2,SERIAL_PORT4
 
+from tkinter import messagebox
+
 ################################################################################
 
 class serial_dummy():
@@ -140,6 +142,7 @@ def open_keying_port(P,sock,rig_num):
     
     print('Opening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
     print('\tFIND_KEYER=',P.FIND_KEYER)
+    P.gui.status_bar.setText("Opening Keying Port ...")
     #print(sock)
     #print('\tRig Types=',sock.rig_type,sock.rig_type1,sock.rig_type2)
     if P.USE_KEYER and rig_num==1:
@@ -147,8 +150,9 @@ def open_keying_port(P,sock,rig_num):
             
             device,dev_type=find_keyer()
             print('device=',device,'\tdev_type=',dev_type)
-            if dev_type==None:
-                print('\nUnable to find keyer device - giving up!')
+            Done = dev_type!=None
+            while not Done:
+                print('\nUnable to find keyer device!')
                 
                 pids = get_PIDs('pyKeyer.py') + get_PIDs('paddling.py')
                 print('\npids=',pids)
@@ -160,8 +164,21 @@ def open_keying_port(P,sock,rig_num):
                     print("\n@@@@@@@@@@@@@@@@@@@@@@@@")
                     print(  "@ Is it plugged in ??? @")
                     print(  "@@@@@@@@@@@@@@@@@@@@@@@@\n")
-            
-                sys.exit(0)
+
+                msg='Try Again?'
+                lab="pyKeyer"
+                P.gui.splash.hide()
+                result=messagebox.askyesno(lab,msg)
+                if result:
+                    device,dev_type=find_keyer()
+                    print('device=',device,'\tdev_type=',dev_type)
+                    Done = dev_type!=None
+                    P.gui.splash.show()
+                else:
+                    print('Giving up!')
+                    Done = True
+                    sys.exit(0)
+                    
             else:
                 P.NANO_IO  = dev_type=='NANO IO'
                 P.K3NG_IO  = dev_type=='K3NG'

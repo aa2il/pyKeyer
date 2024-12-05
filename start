@@ -292,6 +292,7 @@ endif
 # Clean-up
 if( $KILL_OLD )then
     pkill pyKeyer
+    pkill pyLogger
     pkill flrig
     pkill rigctl
     pkill rigctld
