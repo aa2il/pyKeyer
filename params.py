@@ -353,7 +353,7 @@ class PARAMS:
         self.DXSPLIT       = False
         self.SPLIT_VFOs    = False
         self.GPS           = args.gps
-        self.CWOPS         = None
+        self.CWOPS_MEMBERS = None
 
         # Overrride as these are depricated
         #self.USE_LOG_HISTORY  = args.use_log_hist

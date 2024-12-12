@@ -76,7 +76,7 @@ class CALL_INFO_GUI():
             else:
                 print('CALL_LOOKUP:',call,' has been NOT worked this year')
                         
-            if P.CWOPS!=None and call in P.CWOPS:
+            if P.CWOPS_MEMBERS!=None and call in P.CWOPS_MEMBERS:
                 num = int( info['cwops'] )
                 print('CALL_LOOKUP:',call,' is in CWops roster - number',num)
                 if call in P.data.cwops_worked:
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     class QRZ_PARAMS:
         def __init__(self):
 
-            self.CWOPS=None
+            self.CWOPS_MEMBERS=None
             
             # Read config file
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
@@ -215,7 +215,7 @@ if __name__ == '__main__':
     if args.cwops or calls[0].isdigit():
         print('Reading CWops member roster ...')
         MASTER,junk = load_history('~/Python/history/data/Shareable CWops data.xlsx')
-        P.CWOPS=MASTER
+        P.CWOPS_MEMBERS=MASTER
         num=calls[0]
         calls=[]
         for c in MASTER.keys():
