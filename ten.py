@@ -29,6 +29,8 @@ from default import DEFAULT_KEYING
 from rig_io import arrl_sec2state
 from dx import Station
 from datetime import datetime
+from rig_io.ft_tables import TEN_METER_SECS
+import numpy as np
 
 ############################################################################################
 
@@ -62,11 +64,19 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
 
         # On-the-fly scoring - NEW!
         self.nqsos=0
-        self.BANDS = ['160m','80m','40m','20m','15m','10m']
         dxccs  = []
-        for b in self.BANDS:
-            dxccs.append((b,set([])))
-        self.dxccs = OrderedDict(dxccs)
+        if self.P.contest_name=='ARRL-10M':
+            #self.BANDS = ['10m']
+            self.secs = TEN_METER_SECS
+            self.sec_cnt  = np.zeros(len(self.secs),dtype=int)
+            self.dxccs = set(dxccs)
+            self.scoring = self.scoring_10              # Override
+        elif self.P.contest_name=='ARRL-DX':
+            self.BANDS = ['160m','80m','40m','20m','15m','10m']
+            for b in self.BANDS:
+                dxccs.append((b,set([])))
+            self.dxccs = OrderedDict(dxccs)
+            self.scoring = self.scoring_dx              # Override
         self.init_scoring()
         
     # Routine to set macros for this contest
@@ -266,11 +276,11 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
             elif country and len(country)>0:
                 gui.info.insert(0,dx_station.country)
         
-    # On-the-fly scoring
-    def scoring(self,qso):
-        print("\nTEN SCORING: qso=",qso)
+    # On-the-fly scoring for intl dx contest
+    def scoring_dx(self,qso):
+        print("\nTEN SCORING DX: qso=",qso)
         if self.P.contest_name!='ARRL-DX':
-            print('TEN SCORING: Whoops - need to update scoring routine for this contest!')
+            print('TEN SCORING: Whoops - need to update scoring routine for this contest!',self.P.contest_name)
             return
 
         call=qso['CALL']
@@ -284,6 +294,38 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         mults = 0
         for b in self.BANDS:
             mults+=len( self.dxccs[b] )
+
+        score=self.nqsos * mults
+        print("SCORING: score=",score,self.nqsos,mults)
+
+        txt='{:5,d} QSOs  x {:5,d} Mults = {:8,d} \t\t\t Last Worked: {:s}' \
+            .format(self.nqsos,mults,score,call)
+        self.P.gui.status_bar.setText(txt)
+
+        
+    # On-the-fly scoring for 10m contest
+    def scoring_10(self,qso):
+        print("\nTEN SCORING: qso=",qso)
+        if self.P.contest_name!='ARRL-10M':
+            print('TEN SCORING: Whoops - need to update scoring routine for this contest!',self.P.contest_name)
+            return
+
+        call=qso['CALL']
+        qth = qso['QTH']
+        dx_station = Station(call)
+        if dx_station.country in ['United States','Canada','Mexico']:
+            try:
+                idx1 = self.secs.index(qth)
+                self.sec_cnt[idx1] = 1
+            except:
+                print('\tInvalid section:',qth)
+            dx=False
+        else:
+            self.dxccs.add(dx_station.country)
+            dx=True
+        self.nqsos+=1        
+
+        mults =len( self.dxccs ) + int( np.sum(self.sec_cnt) )
 
         score=self.nqsos * mults
         print("SCORING: score=",score,self.nqsos,mults)
