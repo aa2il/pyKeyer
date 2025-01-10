@@ -1,7 +1,7 @@
 #! /usr/bin/tcsh
 ############################################################################################
 
-# Start - J.B.Attili - 2018
+# Start - J.B.Attili - 2018-2025
 
 # Script showing how to start the keyer for various contests and practice.
 
@@ -11,8 +11,8 @@ cls
 
 # Primary rig
 set RIG="NONE"
-#set RIG="HAMLIB"
-#set RIG="DIRECT"
+set RIG="HAMLIB"
+set RIG="DIRECT"
 #set RIG="ANY"
 
 set RIG_TYPE=""
@@ -76,7 +76,7 @@ set CONTEST="paddling"
 #set CONTEST="sat"
 #set CONTEST="cqp"
 #set CONTEST="wpx"
-set CONTEST="ss"
+#set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="cwopen"
 #set CONTEST="ten"
@@ -109,13 +109,18 @@ echo " "
 
 # Settings for sending practice
 if( ($CONTEST == "paddling") && ($RIG != "NONE") )then
+    echo rig=$RIG
+    echo $FIND_RIG
     pkill flrig
     set RIG9=`$FIND_RIG`
     echo $RIG9
+    echo rig9=$RIG9 rig=$RIG
     if( $RIG9 == "None" )then
-        set RIG="NONE"
+        #set RIG="NONE"
+        echo "---- ERROR - Cant find rig ----"
+        echo Make sure serial ports arent hosed up - reset if needed
+        exit
     endif
-    echo $RIG9 $RIG
     #exit
 else if( ($CONTEST == "paddling") && ($RIG == "NONE9") )then
     #pkill flrig

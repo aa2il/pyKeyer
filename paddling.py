@@ -1,8 +1,11 @@
-#! /usr/bin/python3 -u
+#! /home/joea/miniconda3/envs/aa2il/bin/python -u
+#
+# NEW: /home/joea/miniconda3/envs/aa2il/bin/python -u
+# OLD: /usr/bin/python3 -u 
 ################################################################################
 #
 # paddling.py - Rev. 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Gui for sending practice (i.e. fun with paddles)
 #
@@ -38,6 +41,7 @@ import Levenshtein
 from keying import *
 from widgets_tk import StatusBar,SPLASH_SCREEN
 from keyer_control_tk import *
+import string
 
 ################################################################################
 
@@ -326,6 +330,7 @@ class PADDLING_GUI():
     # Callback for monitor level setter
     def SetMonitorLevel(self,level=None):
         if not self.P.sock:
+            print('SET MONITOR LEVEL - No connection to rig - nothing to see here')
             return
 
         print('\nSet Monitor Level ...',level)
@@ -413,6 +418,22 @@ class PADDLING_GUI():
         else:
             print('End of stack --> new item')
             self.NewItem()
+
+    # Function to test if text is a true panagram
+    def test_panagraph(self,txt):
+
+        for letter in string.ascii_uppercase:
+            if txt.upper().count(letter) == 0:
+                return False
+                break
+        else:
+            return True
+    
+        #from collections import Counter 
+        #count = Counter( txt.upper() )
+        #print(count)
+        #return False
+    
             
     # Callback to push a new item into entry box
     def NewItem(self):
@@ -426,13 +447,21 @@ class PADDLING_GUI():
             # Panagrams
             n=len(self.panagrams)
             print('There are',n,'panagrams loaded')
-            i = random.randint(0,n-1)
-            if len(self.stack)==0 and False:
-                i=132                        # The quick brown fox ...
-            txt = self.panagrams[i]
-            if TEST_MODE:
-                txt=str(i)+'. '+txt
-            #print('Panagram=',txt)
+            Done=False
+            while not Done:
+                i = random.randint(0,n-1)
+                if len(self.stack)==0 and False:
+                    i=132                        # The quick brown fox ...
+                txt = self.panagrams[i]
+                if TEST_MODE:
+                    txt=str(i)+'. '+txt
+                #print('Panagram=',txt)
+
+                if self.STRICT_MODE:
+                    Done=self.test_panagraph(txt)
+                    print('valid=',Done)
+                else:
+                    Done=True
 
         elif Selection==1:
             
@@ -710,6 +739,10 @@ if __name__ == '__main__':
     import cw_keyer
     from settings import read_settings
     from load_history import load_history
+    import argparse
+    from rig_io import CONNECTIONS,RIGS
+    #from rig_io import socket_io 
+    from rig_io.socket_io import open_rig_connection
 
     print('Howdy Ho!')
     
@@ -717,12 +750,29 @@ if __name__ == '__main__':
     class PADDLING_PARAMS:
         def __init__(self):
 
+            # Process command line args
+            arg_proc = argparse.ArgumentParser()
+            arg_proc.add_argument("-wpm", help="Keyer Speed",type=int,default=25)
+            arg_proc.add_argument("-paddles", help="Paddle Speed",type=int,default=22)
+            arg_proc.add_argument("-rig", help="Connection Type",
+                                  type=str,default=["NONE"],nargs='+',
+                                  choices=CONNECTIONS+['NONE']+RIGS)
+            args = arg_proc.parse_args()
+            
+            self.WPM           = args.wpm
+            self.PADDLE_WPM    = args.paddles
+            self.connection    = args.rig[0]
+            if len(args.rig)>=2:
+                self.rig       = args.rig[1]
+            else:
+                self.rig       = None
+
             # Init
             self.sock=None
             self.gui=None
             self.LOCK_SPEED=True
-            self.WPM=22
-            self.PADDLE_WPM=22
+            #self.WPM=22
+            #self.PADDLE_WPM=22
             self.USE_KEYER=True
             if sys.platform in ["linux","linux2"]:
                 # Linux - keyer discovery works fine
@@ -744,7 +794,6 @@ if __name__ == '__main__':
             # Read config file
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
 
-            
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):
 
@@ -779,7 +828,17 @@ if __name__ == '__main__':
 
     # Set basic run-time params
     P=PADDLING_PARAMS()
+    print("P=")
+    pprint(vars(P))
 
+    # Open connection to rig if necessary
+    print('\nConnection=',P.connection,'\trig=',P.rig,'...')
+    if P.rig!=None:
+        P.sock = open_rig_connection(P.connection,0,0,0,'KEYER',rig=P.rig)
+        if not P.sock:
+            print('Unable to open connection to rig - giving up')
+            sys.exit(0)
+    
     # We need the keyer
     #P.PaddlingWin.status_bar2.setText('Opening keyer ...')
     P.keyer=cw_keyer.Keyer(P,P.WPM)

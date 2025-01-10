@@ -1,8 +1,7 @@
-#! /usr/bin/python3 -u
 ################################################################################
 #
 # Keying.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Routines relating to keying the rig.
 #
@@ -65,11 +64,11 @@ def find_keyer():
 
     print('\nFIND KEYER: Looking for keyer device ...')
     device=find_serial_device('nanoIO',0,2)
-    print('FIND KEYER: device=',device)
+    print('\tdevice=',device)
     if not device:
         print('... Not found - Looking for ESP32 keyer device ...')
         device=find_serial_device('nanoIO32',0,2)
-        print('device=',device)
+        print('\tdevice=',device)
     if device:
         print(' ... There it is on port',device,' ...\n')
         set_DTR_hangup(device,False)
@@ -142,7 +141,8 @@ def open_keying_port(P,sock,rig_num):
     
     print('Opening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
     print('\tFIND_KEYER=',P.FIND_KEYER)
-    P.gui.status_bar.setText("Opening Keying Port ...")
+    if P.gui:
+        P.gui.status_bar.setText("Opening Keying Port ...")
     #print(sock)
     #print('\tRig Types=',sock.rig_type,sock.rig_type1,sock.rig_type2)
     if P.USE_KEYER and rig_num==1:
@@ -167,13 +167,15 @@ def open_keying_port(P,sock,rig_num):
 
                 msg='Try Again?'
                 lab="pyKeyer"
-                P.gui.splash.hide()
+                if P.gui:
+                    P.gui.splash.hide()
                 result=messagebox.askyesno(lab,msg)
                 if result:
                     device,dev_type=find_keyer()
                     print('device=',device,'\tdev_type=',dev_type)
                     Done = dev_type!=None
-                    P.gui.splash.show()
+                    if P.gui:
+                        P.gui.splash.show()
                 else:
                     print('Giving up!')
                     Done = True

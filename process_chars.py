@@ -2,7 +2,7 @@
 ################################################################################
 #
 # ProcessChars.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Executive thread to process individual characters.
 #
@@ -105,7 +105,7 @@ def process_chars(P):
 
                 # This has thrown an error in the past
                 try:
-                    if P.ser and P.ser.in_waiting>0:
+                    if P.ser and P.ser.in_waiting>0:              # The error is with "in_waiting"
                         if VERBOSITY>0:
                             print('PROCESSS_CHARS: Getting data from keyer ... echo=',P.NANO_ECHO,P.ser,P.ser.in_waiting)
                         txt=P.keyer_device.nano_read()
@@ -154,7 +154,8 @@ def process_chars(P):
                         time.sleep(0.1)
                         
                 except: 
-                    error_trap('PROCESS CHARS - ?????',1)
+                    error_trap('PROCESS CHARS - Unknown error?????',1)
+                    print('P.ser=',P.ser)
                     time.sleep(0.1)
 
                     

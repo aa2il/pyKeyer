@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # default.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for default qsos, most state QSO parties and some other contests.
 #
@@ -372,25 +372,26 @@ class DEFAULT_KEYING():
             # Consider "GBA" for week around July 4?
             now = datetime.utcnow()
             if now.month==12 and now.day>=11 and now.day<28:
-                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [MYCALL] [LOG]'}
-                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
-            elif now.month==12 and now.day>=28:
-                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [MYCALL] [LOG]'}
-                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
-            elif now.month==1 and now.day<=14:
-                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [MYCALL] [LOG]'}
-                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] HNY [NAME] EE [LOG]'}
+                GREETING1="MC"
+                GREETING2="MC"
+                GREETING3="MC"
+            elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
+                GREETING1="HNY"
+                GREETING2="HNY"
+                GREETING3="HNY"
             else:            
-                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
-                MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
-            
+                GREETING1="73"
+                GREETING2="GL"
+                GREETING3="TU"
+                
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING1+' [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING2+' [NAME] EE [LOG]'}
             MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
             MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
-        
             MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU '+EXCH1+' '+EXCH2+' '+EXCH3+' '}
-            MACROS[5+12]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] '+EXCH1+' '+EXCH2+' '+EXCH3+' '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : GREETING3+' '+EXCH1+' '+EXCH2+' '+EXCH3+' '}
+            MACROS[5+12]     = {'Label' : 'S&P Reply' , 'Text' : GREETING3+' [NAME] '+EXCH1+' '+EXCH2+' '+EXCH3+' '}
             MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
             MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
             MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}

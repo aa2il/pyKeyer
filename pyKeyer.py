@@ -5,7 +5,7 @@
 ################################################################################
 #
 # pyKeyer.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 #    Main program for CW Keyer and server.
 #
@@ -64,7 +64,7 @@ VERSION='1.01'
 ################################################################################
 
 print("\n\n***********************************************************************************")
-print("\nStarting pyKeyer v'+VERSION+' ...")
+print("\nStarting pyKeyer v"+VERSION+" ...")
 P=PARAMS()
 if True:
     print("P=")

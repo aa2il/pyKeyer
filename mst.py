@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # mst.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for ICWC Medium Speed mini-tests
 #
@@ -64,13 +64,18 @@ class MST_KEYING(DEFAULT_KEYING):
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
             GREETING="MC"
+            GREETING2="EE"
         elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
             GREETING="HNY"
+            GREETING2="EE"
         elif now.month==7 and now.day<=7:
             GREETING="GBA"
+            GREETING2="73EE"
         else:            
-            GREETING="[GDAY]"
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] 73EE [LOG]'}
+            GREETING ="[GDAY]"
+            GREETING2="73EE"
+            
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] '+GREETING2+' [LOG]'}
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] ESE [LOG]'}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
