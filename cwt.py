@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cwt.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for CWops mini tests.
 #
@@ -83,15 +83,19 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         # Check date for any special greetings
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
-            GREETING="MC"
+            GREETING  = "MC"
+            GREETING2 = "MC"
         elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
-            GREETING="HNY"
+            GREETING  = "HNY"
+            GREETING2 = "HNY"
         elif now.month==7 and now.day<=7:
-            GREETING="GBA"
+            GREETING  = "GBA"
+            GREETING2 = "[HOWDY]"
         else:            
-            GREETING="TU"
+            GREETING  = "TU"
+            GREETING2 ="[HOWDY]"
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING2+' [NAME] [MYCALL] [LOG]'}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
@@ -99,7 +103,7 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYCWOPS]'}
-        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'HI [NAME] [MYNAME] [MYCWOPS]'}
+        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : GREETING2+' [NAME] [MYNAME] [MYCWOPS]'}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}

@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # ragchew.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for a regular CW ragchew.
 #
@@ -95,3 +95,43 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
         return name+' '+state+' '+num
 
 
+    # Specific contest exchange for Ragchewing
+    def enable_boxes(self,gui):
+
+        gui.contest=False
+        gui.hide_all()
+        self.macros=[1,None,2]
+
+        col=0
+        cspan=3
+        gui.call_lab.grid(column=col,columnspan=cspan)
+        gui.call.grid(column=col,columnspan=cspan)
+
+        col+=cspan
+        cspan=1
+        gui.rstout_lab.grid(column=col,columnspan=cspan)
+        gui.rstout.grid(column=col,columnspan=cspan)
+        gui.boxes.append(gui.rstout)
+
+        col+=cspan
+        cspan=1
+        gui.rstin_lab.grid(column=col,columnspan=cspan)
+        gui.rstin.grid(column=col,columnspan=cspan)
+        gui.boxes.append(gui.rstin)
+        
+        col+=cspan
+        cspan=2
+        gui.name_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.name.grid(column=col,columnspan=cspan)
+        
+        col+=cspan
+        cspan=1
+        gui.qth_lab.grid(columnspan=cspan,column=col,sticky=E+W)
+        gui.qth.grid(column=col,columnspan=cspan)
+
+        gui.boxes=[gui.call]
+        gui.boxes.append(gui.rstout)
+        gui.boxes.append(gui.rstin)
+        gui.boxes.append(gui.name)
+        gui.boxes.append(gui.qth)
+        

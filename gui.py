@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # gui.py - Rev 1.1
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # GUI for CW keyer.
 #
@@ -2263,8 +2263,10 @@ class GUI():
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P
-            if False:
-                msg  = 'LOG:'+call+':'+band+':'+mode+':'+date_off+':'+time_off
+            #if False:
+            if True:
+                # LOG:CALL:BAND:FREQ:MODE:DATE_OFF:TIME_OFF
+                msg  = 'LOG:'+call+':'+band+':'+str(freq_kHz)+':'+mode+':'+date_off+':'+time_off
                 print('LOG QSO: Broadcasting spot:',msg)
                 self.P.udp_server.Broadcast(msg)
             if self.P.udp_server and not self.RUNNING:
