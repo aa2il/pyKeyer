@@ -111,13 +111,11 @@ class RAGCHEW_KEYING(DEFAULT_KEYING):
         cspan=1
         gui.rstout_lab.grid(column=col,columnspan=cspan)
         gui.rstout.grid(column=col,columnspan=cspan)
-        gui.boxes.append(gui.rstout)
 
         col+=cspan
         cspan=1
         gui.rstin_lab.grid(column=col,columnspan=cspan)
         gui.rstin.grid(column=col,columnspan=cspan)
-        gui.boxes.append(gui.rstin)
         
         col+=cspan
         cspan=2
