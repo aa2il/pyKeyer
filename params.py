@@ -2,7 +2,7 @@
 ################################################################################
 #
 # Params.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Command line param parser for pyKeyer.
 #
@@ -45,7 +45,7 @@ CONTESTS['AWT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['NS']           = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['WRT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['SKCC']         = {'Months' : ALL,     'Duration' : 2}
-CONTESTS['RANDOM CALLS'] = {'Months' : ALL,     'Duration' : 2}
+#CONTESTS['RANDOM CALLS'] = {'Months' : ALL,     'Duration' : 2}
 CONTESTS['POTA']         = {'Months' : ALL,     'Duration' : 9999}
 CONTESTS['CW Open']      = {'Months' : [9],     'Duration' : 4}
 CONTESTS['ARRL-VHF']     = {'Months' : [1,6,9], 'Duration' : 33}
@@ -53,6 +53,7 @@ CONTESTS['CQ-VHF']       = {'Months' : [1,6,9], 'Duration' : 33}
 CONTESTS['MAKROTHEN']    = {'Months' : [10],    'Duration' : 33}
 CONTESTS['NAQP-CW']      = {'Months' : [1,8],   'Duration' : 12}
 CONTESTS['TEN-TEN']      = {'Months' : [],      'Duration' : 48}
+CONTESTS['WINTER-FD']    = {'Months' : [1],     'Duration' : 30}
 CONTESTS['WAG']          = {'Months' : [],      'Duration' : 48}
 CONTESTS['SAC']          = {'Months' : [9],     'Duration' : 24}
 CONTESTS['RAC']          = {'Months' : [6,12],  'Duration' : 24}
@@ -124,6 +125,8 @@ class PARAMS:
                               type=str,default=None,nargs='*')
         arg_proc.add_argument('-aa', action='store_true',
                               help='All Asia DX')
+        arg_proc.add_argument('-wfd', action='store_true',
+                              help='Winter Field Day')
         arg_proc.add_argument('-fd', action='store_true',
                               help='ARRL Field Day')
         arg_proc.add_argument('-vhf', action='store_true',
@@ -459,6 +462,8 @@ class PARAMS:
             self.contest_name=args.state[0].upper()+'QP'
         elif args.cwopen:
             self.contest_name='CW Open'
+        elif args.wfd:
+            self.contest_name='WINTER-FD'
         elif args.fd:
             self.contest_name='ARRL-FD'
         elif args.stew:

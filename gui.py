@@ -1747,7 +1747,7 @@ class GUI():
             self.P.KEYING=CQWW_KEYING(self.P)
         elif val=='ARRL-SS-CW':
             self.P.KEYING=SS_KEYING(self.P)
-        elif val=='ARRL-FD':
+        elif val=='ARRL-FD' or val=='WINTER-FD':
             self.P.KEYING=FD_KEYING(self.P)
         elif val.find('CQ-WPX')>=0:
             self.P.KEYING=WPX_KEYING(self.P)
