@@ -33,7 +33,7 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Keyin class for ARRL Field Day
+# Keying class for Winter and ARRL Field Day
 class FD_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):

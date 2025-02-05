@@ -425,6 +425,7 @@ class DEFAULT_KEYING():
         qth=''
         if self.key1=='name':
             txt+=self.NAME+' '
+            print('DEFAULFT HINT: key1=',key1,'\ttxt=',txt)
         elif self.key1!=None and self.key1 not in ['rst']:
             #txt+='TBD '
             pass
@@ -439,8 +440,8 @@ class DEFAULT_KEYING():
                 qth = P.MASTER[call]['county']
             else:
                 qth = P.MASTER[call][key2]    
-            print('DEFAULFT HINT: key2=',key2,'\tqth=',qth)
             txt += qth
+            print('DEFAULFT HINT: key2=',key2,'\tqth=',qth,'\ttxt=',txt)
             
         gui.name.delete(0,END)
         gui.info.delete(0,END)

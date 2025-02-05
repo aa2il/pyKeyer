@@ -1,4 +1,3 @@
-#! /usr/bin/python3 -u
 ################################################################################
 #
 # Params.py - Rev 1.0
@@ -52,6 +51,7 @@ CONTESTS['ARRL-VHF']     = {'Months' : [1,6,9], 'Duration' : 33}
 CONTESTS['CQ-VHF']       = {'Months' : [1,6,9], 'Duration' : 33}
 CONTESTS['MAKROTHEN']    = {'Months' : [10],    'Duration' : 33}
 CONTESTS['NAQP-CW']      = {'Months' : [1,8],   'Duration' : 12}
+CONTESTS['NAQP-RTTY']    = {'Months' : [2,7],   'Duration' : 12}
 CONTESTS['TEN-TEN']      = {'Months' : [],      'Duration' : 48}
 CONTESTS['WINTER-FD']    = {'Months' : [1],     'Duration' : 30}
 CONTESTS['WAG']          = {'Months' : [],      'Duration' : 48}
@@ -62,6 +62,7 @@ CONTESTS['CQP']          = {'Months' : [10],    'Duration' : 30}
 CONTESTS['IARU-HF']      = {'Months' : [7],     'Duration' : 48}
 CONTESTS['CQWW']         = {'Months' : [9,10,11], 'Duration' : 48}
 CONTESTS['CQ-WPX-CW']    = {'Months' : [5],     'Duration' : 48}
+CONTESTS['CQ-WPX-RTTY']  = {'Months' : [2],     'Duration' : 48}
 CONTESTS['CQ-160M']      = {'Months' : [],      'Duration' : 48}
 CONTESTS['ARRL-10M']     = {'Months' : [12],    'Duration' : 48}
 CONTESTS['ARRL-160M']    = {'Months' : [],      'Duration' : 48}
@@ -112,7 +113,7 @@ class PARAMS:
         arg_proc.add_argument('-pota', action='store_true',
                               help='POTA')
         arg_proc.add_argument('-wpx', action='store_true',
-                              help='CQ WPX')
+                              help='CQ WPX (CW or RTTY)')
         arg_proc.add_argument('-arrl_dx', action='store_true',
                               help='ARRL Intl DX')
         arg_proc.add_argument('-arrl_10m', action='store_true',
@@ -453,7 +454,10 @@ class PARAMS:
         elif args.mak:
             self.contest_name='MAKROTHEN'
         elif args.naqp:
-            self.contest_name='NAQP-CW'
+            if self.DIGI:
+                self.contest_name='NAQP-RTTY'
+            else:
+                self.contest_name='NAQP-CW'
         elif args.ss:
             self.contest_name='ARRL-SS-CW'
         elif args.cqp:
@@ -473,7 +477,10 @@ class PARAMS:
         elif args.cqww:
             self.contest_name='CQWW'
         elif args.wpx:
-            self.contest_name = 'CQ-WPX-CW'
+            if self.DIGI:
+                self.contest_name = 'CQ-WPX-RTTY'
+            else:
+                self.contest_name = 'CQ-WPX-CW'
         elif args.arrl_10m:
             self.contest_name = 'ARRL-10M'
         elif args.arrl_160m:
