@@ -160,6 +160,11 @@ class WatchDog:
                 print('\t',show_ascii(txt))
                 P.gui.txt.insert(END, txt)
                 P.gui.txt.see(END)
+
+                # Save to disk also
+                P.gui.fp_txt.write('%s' % (txt) )
+                P.gui.fp_txt.flush()
+                
                 P.gui.root.update_idletasks()
             
         # Read rotor position

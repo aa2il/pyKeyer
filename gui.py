@@ -1750,7 +1750,7 @@ class GUI():
         elif val=='ARRL-FD' or val=='WINTER-FD':
             self.P.KEYING=FD_KEYING(self.P)
         elif val.find('CQ-WPX')>=0:
-            self.P.KEYING=WPX_KEYING(self.P)
+            self.P.KEYING=WPX_KEYING(self.P,val)
         elif val=='ARRL-10M' or val=='ARRL-DX' or val=='CQ-160M':
             self.P.KEYING=TEN_METER_KEYING(self.P,val)
         elif val=='Ragchew':

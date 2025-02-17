@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # naqp.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for North American QSO Party contests
 #
@@ -36,9 +36,11 @@ VERBOSITY=0
 # Keyin class for North American QSO party
 class NAQP_KEYING(DEFAULT_KEYING):
 
-    def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'NAQP-CW')
-        P.CONTEST_ID='NAQP-CW'
+    def __init__(self,P,contest_name):
+        DEFAULT_KEYING.__init__(self,P,contest_name)
+        
+        P.CONTEST_ID=contest_name
+        self.contest_duration = 12
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/NAQPCW.txt')
 
         # On-the-fly scoring
@@ -51,21 +53,43 @@ class NAQP_KEYING(DEFAULT_KEYING):
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NA [MYCALL]'}
+        
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
-        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+        if self.P.DIGI:
+            # RTTY
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NA [MYCALL] [MYCALL] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] [CALL] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] DIT DIT [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL 73 [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] DIT DIT [MYCALL] [LOG]'}
+        else:
+            # CW
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NA [MYCALL]'}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+            
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
-        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
         MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
-        MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
-        MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+        
+        if self.P.DIGI:
+            # RTTY
+            MACROS[4]     = {'Label' : '[MYCALL] 2x'  , 'Text' : '[MYCALL] [MYCALL] '}
+            MACROS[4+12]  = {'Label' : '[MYCALL] 1x'  , 'Text' : '[MYCALL] '}
+            MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
+            MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+            MACROS[9+12]  = {'Label' : 'DIT DIT'   , 'Text' : 'GL [NAME] DIT DIT'}
+        else:
+            # CW
+            MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+            MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
+            MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
+            
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
         

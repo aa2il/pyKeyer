@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # wpx.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
 #
 # Keying routines for CQ World Prefix contest
 #
@@ -34,38 +34,62 @@ VERBOSITY=0
 # Keyin class for CQ WPX championship
 class WPX_KEYING(DEFAULT_KEYING):
 
-    def __init__(self,P):
-        DEFAULT_KEYING.__init__(self,P,'CQWW')
+    def __init__(self,P,contest_name):
+        DEFAULT_KEYING.__init__(self,P,contest_name)
 
-        P.CONTEST_ID='CQ-WPX-CW'
+        P.CONTEST_ID=contest_name
         self.contest_duration = 48
         
     # Routient to set macros for this contest
     def macros(self):
 
         MACROS = OrderedDict()
-        MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
+
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
-        
-        MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [SERIAL] '}
-        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+        if self.P.DIGI:
+            # RTTY
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ WPX [MYCALL] [MYCALL] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 599 [SERIAL] [SERIAL] [CALL] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] DIT DIT [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL 73 [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] DIT DIT [MYCALL] [LOG]'}
+        else:
+            # CW
+            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [SERIAL] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL 73 [MYCALL] [LOG]'}
+            MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+            
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
-        MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [SERIAL]'}
-        #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [SERIAL] [SERIAL]'}
-        MACROS[5+12]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] 5NN [SERIAL]'}
-        MACROS[6]     = {'Label' : '?'         , 'Text' : '? '}
-        MACROS[6+12]  = {'Label' : 'AGN? '     , 'Text' : 'AGN? '}
+        if self.P.DIGI:
+            # RTTY
+            MACROS[4]     = {'Label' : '[MYCALL] 2x'  , 'Text' : '[MYCALL] [MYCALL] '}
+            MACROS[4+12]  = {'Label' : '[MYCALL] 1x'  , 'Text' : '[MYCALL] '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 599 [SERIAL] [SERIAL] '}
+            MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] 599 [SERIAL] [SERIAL] '}
+            MACROS[6]     = {'Label' : 'AGN? '     , 'Text' : 'AGN? '}
+            MACROS[6+12]  = {'Label' : '?'         , 'Text' : '? '}
+            MACROS[8]     = {'Label' : 'Serial 3x' , 'Text' : '[SERIAL] [SERIAL] [SERIAL] '}
+            MACROS[8+12]  = {'Label' : 'Serial 3x' , 'Text' : '[CUT_SERIAL] [CUT_SERIAL] [CUT_SERIAL] '}
+            MACROS[9+12]  = {'Label' : 'DIT DIT'   , 'Text' : 'GL [NAME] DIT DIT'}
+        else:
+            # CW
+            MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [SERIAL]'}
+            #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [SERIAL] [SERIAL]'}
+            MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] 5NN [SERIAL]'}
+            MACROS[6]     = {'Label' : '?'         , 'Text' : '? '}
+            MACROS[6+12]  = {'Label' : 'AGN? '     , 'Text' : 'AGN? '}
+            MACROS[8]     = {'Label' : 'Serial 1x' , 'Text' : '[-3][SERIAL] [+3]'}
+            #MACROS[8+12]  = {'Label' : 'Serial 1x' , 'Text' : '[-3][CUT_SERIAL] [+3]'}
+
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
-        MACROS[8]     = {'Label' : 'Serial 1x' , 'Text' : '[-3][SERIAL] [+3]'}
-        #MACROS[8+12]  = {'Label' : 'Serial 1x' , 'Text' : '[-3][CUT_SERIAL] [+3]'}
         MACROS[9]     = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[10]    = {'Label' : '-'         , 'Text' : ' '}
         MACROS[11]    = {'Label' : '-'         , 'Text' : ' '}
