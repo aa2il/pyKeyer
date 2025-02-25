@@ -933,8 +933,9 @@ class DEFAULT_KEYING():
         
         
     # On-the-fly scoring
-    def scoring(self,qso):
+    def otf_scoring(self,qso):
         print("DEFAULT SCORING: qso=",qso)
+        print('*** DUMMY ***')
 
     # Routine to restore scoring if exited during a contest
     def init_scoring(self):
@@ -950,7 +951,7 @@ class DEFAULT_KEYING():
                 #print('qso=',qso)
                 #print('age=',age)
                 if age<MAX_AGE:
-                    self.scoring(qso)
+                    P.SCORING.otf_scoring(qso)
         
     
     # Put info into box on upper right - this should be template for all

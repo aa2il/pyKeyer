@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # naqp.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for North American QSO Party contests
 #
@@ -26,6 +26,7 @@ from rig_io import NAQP_SECS
 from default import DEFAULT_KEYING
 import numpy as np
 from utilities import error_trap
+from scoring import NAQP_SCORING
 
 ############################################################################################
 
@@ -33,7 +34,7 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Keyin class for North American QSO party
+# Keying class for North American QSO party
 class NAQP_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P,contest_name):
@@ -44,10 +45,7 @@ class NAQP_KEYING(DEFAULT_KEYING):
         P.HISTORY2 = os.path.expanduser('~/Python/history/data/NAQPCW.txt')
 
         # On-the-fly scoring
-        self.nqsos=0
-        self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
-        self.sec_cnt = np.zeros((len(NAQP_SECS),len(self.BANDS)),dtype=np.int32)
-        self.init_scoring()
+        P.SCORING    = NAQP_SCORING(P,contest_name)
         
     # Routine to set macros for this contest
     def macros(self):
@@ -58,9 +56,9 @@ class NAQP_KEYING(DEFAULT_KEYING):
         if self.P.DIGI:
             # RTTY
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ NA [MYCALL] [MYCALL] '}
-            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] [CALL] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [MYNAME] [MYSTATE] [MYNAME] [MYSTATE] [CALL] '}
             MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] DIT DIT [MYCALL] [LOG]'}
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL 73 [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] [MYCALL] [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] DIT DIT [MYCALL] [LOG]'}
         else:
             # CW
@@ -73,13 +71,12 @@ class NAQP_KEYING(DEFAULT_KEYING):
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
-        
         if self.P.DIGI:
             # RTTY
             MACROS[4]     = {'Label' : '[MYCALL] 2x'  , 'Text' : '[MYCALL] [MYCALL] '}
-            MACROS[4+12]  = {'Label' : '[MYCALL] 1x'  , 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : '[MYCALL] 3x'  , 'Text' : '[MYCALL] [MYCALL] [MYCALL] '}
+            MACROS[5+12]  = {'Label' : 'S&P 1x'    , 'Text' : 'TU [MYNAME] [MYSTATE]'}
+            MACROS[5]     = {'Label' : 'S&P 2x'    , 'Text' : 'TU [MYNAME] [MYSTATE] [MYNAME] [MYSTATE]'}
             MACROS[6+12]  = {'Label' : '? '        , 'Text' : '? '}
             MACROS[6]     = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
             MACROS[9+12]  = {'Label' : 'DIT DIT'   , 'Text' : 'GL [NAME] DIT DIT'}
@@ -87,6 +84,8 @@ class NAQP_KEYING(DEFAULT_KEYING):
             # CW
             MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
+            MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '[MYNAME] [MYNAME] [MYSTATE] [MYSTATE]'}
             MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
             MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
             
@@ -264,32 +263,4 @@ class NAQP_KEYING(DEFAULT_KEYING):
                 gui.qth.insert(0,h[1])
 
         return h
-    
 
-
-    # On-the-fly scoring
-    def scoring(self,qso):
-        print("\nSCORING: qso=",qso)
-        self.nqsos+=1        
-        call=qso['CALL']
-
-        band = qso["BAND"]
-        idx = self.BANDS.index(band)
-
-        try:
-            qth  = qso["QTH"].upper()
-            idx1 = NAQP_SECS.index(qth)
-        except:
-            self.P.gui.status_bar.setText('Unrecognized/invalid section!')
-            error_trap('NAQP->SCORING - Unrecognized/invalid section!')
-            return
-        self.sec_cnt[idx1,idx] = 1
-        
-        mults = np.sum( np.sum(self.sec_cnt,axis=0) )
-        score=self.nqsos * mults
-        print("SCORING: score=",score,self.nqsos,mults)
-
-        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
-        self.P.gui.status_bar.setText(txt)
-    

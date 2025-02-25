@@ -373,6 +373,7 @@ class PARAMS:
         self.SHUTDOWN      = False
         self.DIRTY         = False
         self.KEYING        = None
+        self.SCORING       = None
         self.USE_SCP       = args.scp
         self.AUTO_COMPLETE = args.autocomplete # or self.USE_SCP
         self.HIST          = {}

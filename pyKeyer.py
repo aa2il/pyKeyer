@@ -275,13 +275,14 @@ P.Ncalls = len(P.calls)
 print('... Info for',len(P.calls),'calls were loaded.')
 
 # Actually create the GUI
+print('Constructing GUI ...')
 P.gui.construct_gui()
 #sys.exit(0)
 
 # Set up a thread for code practice
 if P.PRACTICE_MODE or True:
-    P.gui.status_bar.setText("Spawning Practice exec ...")
     print('Creating Practice Exec thread ...')
+    P.gui.status_bar.setText("Spawning Practice exec ...")
     P.practice = practice.CODE_PRACTICE(P)
     worker = threading.Thread(target=P.practice.run, args=(), name='Practice Exec' )
     worker.daemon=True
@@ -290,6 +291,7 @@ if P.PRACTICE_MODE or True:
 
 # Start thread with UDP server
 if P.UDP_SERVER:
+    print('Starting UDP Server ...')
     P.gui.status_bar.setText("Spawning UDP Server ...")
     P.MEM.take_snapshot()
     P.udp_server = TCP_Server(P,None,KEYER_UDP_PORT,Server=True,
@@ -309,7 +311,7 @@ if P.UDP_SERVER:
 P.WATCHDOG = True
 #P.WATCHDOG = False
 if P.WATCHDOG:
-    P.gui.status_bar.setText("Spawning Watchdog ...")
+    print("Starting Watchdog ...")
     P.gui.status_bar.setText("Spawning Watchdog ...")
     P.monitor = WatchDog(P,1000)
 else:
@@ -391,9 +393,11 @@ if P.CAPTURE:
     P.capture.start()
 
 # Spin
-if P.KEYING.nqsos==0:
+if P.SCORING!=None and P.SCORING.nqsos>0:
+    P.gui.status_bar.setText(P.SCORING.txt)
+else:
     P.gui.status_bar.setText("And away we go !!!")
-print("PYKEYER - And away we go !!!")
+print("PYKEYER - And away we go !!! \t nqsos=",P.KEYING.nqsos)
 P.MEM.take_snapshot()
 mainloop()
 

@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # gui.py - Rev 1.1
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # GUI for CW keyer.
 #
@@ -678,11 +678,13 @@ class GUI():
         self.status_bar.grid(row=row+1,rowspan=1,column=0,columnspan=self.ncols,sticky=E+W)
 
         # Set macros & restore the state from the last time in
+        print('CONSTRUCT GUI - Final inits ...')
         self.PaddlingWin.final_inits()
         self.set_macros()
         self.RestoreState()
 
         # Kick-off gui updater
+        print('CONSTRUCT GUI - Starting Updater ...')
         self.root.after(2000,self.Updater)
         
         # And away we go!
@@ -1740,7 +1742,7 @@ class GUI():
                                       'SPDX','POTA','YURI','MMC','AWT']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
-            self.P.KEYING=NAQP_KEYING(self.P)
+            self.P.KEYING=NAQP_KEYING(self.P,val)
         elif val=='IARU-HF':
             self.P.KEYING=IARU_KEYING(self.P)
         elif val=='CQWW':
@@ -2263,16 +2265,16 @@ class GUI():
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P
-            #if False:
-            if True:
-                # LOG:CALL:BAND:FREQ:MODE:DATE_OFF:TIME_OFF
-                msg  = 'LOG:'+call+':'+band+':'+str(freq_kHz)+':'+mode+':'+date_off+':'+time_off
+            if self.P.udp_server:
+                # LOG:CALL:BAND:FREQ:MODE:DATE_OFF:TIME_OFF:QTH
+                msg  = 'LOG:'+call+':'+band+':'+str(freq_kHz)+':'+mode+':'+date_off+':'+time_off+':'+qth
                 print('LOG QSO: Broadcasting spot:',msg)
                 self.P.udp_server.Broadcast(msg)
-            if self.P.udp_server and not self.RUNNING:
-                msg  = 'SPOT:'+call+':'+str(freq_kHz)+':'+mode
-                print('LOG QSO: Broadcasting spot:',msg)
-                self.P.udp_server.Broadcast(msg)
+                
+                if not self.RUNNING:
+                    msg  = 'SPOT:'+call+':'+str(freq_kHz)+':'+mode
+                    print('LOG QSO: Broadcasting spot:',msg)
+                    self.P.udp_server.Broadcast(msg)
 
             # Log contact using FLLOG
             if self.P.sock_log.connection=='FLLOG':
@@ -2364,7 +2366,7 @@ class GUI():
                     
             # On the fly scoring
             try:
-                self.P.KEYING.scoring(qso)
+                self.P.SCORING.otf_scoring(qso)
             except: 
                 error_trap('GUI->LOG QSO: Failed to update score :-(',1)
 
@@ -3326,7 +3328,7 @@ class GUI():
             self.sock.set_filter(['Wide','2400 Hz'],mode)
             if mode=='RTTY':
                 self.P.sock_xml.squelch_mode(0)
-                self.sock.set_monitor_gain(10)
+                self.sock.set_monitor_gain(35)
                 
         """
         else:

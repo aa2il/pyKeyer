@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # mst.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for ICWC Medium Speed mini-tests
 #
@@ -26,6 +26,7 @@ from random import randint, random
 from utilities import cut_numbers
 from default import DEFAULT_KEYING
 from datetime import datetime
+from scoring import MST_SCORING
 
 ############################################################################################
 
@@ -45,10 +46,8 @@ class MST_KEYING(DEFAULT_KEYING):
         self.contest_duration = 1                # Hours
         P.MAX_AGE = 60*self.contest_duration     # Minutes
 
-        # On-the-fly scoring - NEW!
-        self.nqsos=0
-        self.calls=set([])
-        self.init_scoring()
+        # On-the-fly scoring
+        P.SCORING    = MST_SCORING(P)
 
     # Routient to set macros for this contest
     def macros(self):
@@ -260,16 +259,3 @@ class MST_KEYING(DEFAULT_KEYING):
         gui.name.delete(0, END)
         gui.name.insert(0,h[0])
 
-    # On-the-fly scoring
-    def scoring(self,qso):
-        #print("MST SCORING: qso=",qso)
-        self.nqsos+=1
-        call=qso['CALL']
-        self.calls.add(call)
-        mults = len(self.calls)
-        score=self.nqsos * mults
-        #print("SCORING: score=",score)
-
-        txt='{:3d} QSOs  x {:3d} Uniques = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
-        self.P.gui.status_bar.setText(txt)

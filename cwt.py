@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cwt.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for CWops mini tests.
 #
@@ -27,6 +27,7 @@ from rig_io import SST_SECS
 from default import DEFAULT_KEYING
 from utilities import cut_numbers,reverse_cut_numbers
 from datetime import datetime
+from scoring import CWT_SCORING
 
 ############################################################################################
 
@@ -47,16 +48,13 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         self.contest_duration = 1
         P.MAX_AGE = self.contest_duration *60
 
-        # On-the-fly scoring - NEW!
-        self.nqsos=0
-        self.calls=set([])
-        self.init_scoring()
-
+        # On-the-fly scoring
+        P.SCORING    = CWT_SCORING(P)
 
         """
         This code fragment gets the proper history list from the master file
         Eventually, we might go to this model where we only import the master.csv
-        and each keying objct extracts what it wants but I have to thnk this through.
+        and each keying objct extracts what it wants but I have to think this through.
         One advantage of using CWT call history files is that include ops who participate
         but are not members
 
@@ -303,17 +301,3 @@ class CWOPS_KEYING(DEFAULT_KEYING):
             elif len(h)>=2:
                 gui.exch.insert(0,h[1])
 
-    # On-the-fly scoring
-    def scoring(self,qso):
-        print("SCORING: qso=",qso)
-        self.nqsos+=1
-        call=qso['CALL']
-        self.calls.add(call)
-        mults = len(self.calls)
-        score=self.nqsos * mults
-        print("SCORING: score=",score)
-
-        txt='{:3d} QSOs  x {:3d} Uniques = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
-        self.P.gui.status_bar.setText(txt)
-        
