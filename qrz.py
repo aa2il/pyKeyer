@@ -5,7 +5,7 @@
 #########################################################################################
 #
 # qrz.py - Rev. 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Gui to display what we know about a call.
 #
@@ -35,8 +35,10 @@ else:
 import time
 from collections import OrderedDict
 from dx import Station
-from datetime import datetime
+#from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from dx.spot_processing import ChallengeData,Station
+from pprint import pprint
 
 #########################################################################################
 
@@ -48,6 +50,17 @@ class CALL_INFO_GUI():
         for call in calls:
             call=call.replace(',','')
             dx_station = Station(call)
+
+            print('\nInfo for',call,':')
+            pprint(vars(dx_station))
+            print(' ')
+
+            utc = datetime.now(timezone.utc)
+            print('utc=',utc)
+            local = utc.astimezone(timezone(timedelta(hours=-dx_station.offset)))
+            print('local=',local,'\thour=',local.hour)
+            print(' ')
+            
             if call in P.MASTER.keys():
                 print('CALL_LOOKUP:',call,' is in master list')
                 info=P.MASTER[call]
