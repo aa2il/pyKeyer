@@ -1447,6 +1447,7 @@ class GUI():
                 hour = datetime.now().hour
             else:
                 # NEW - Use his local time
+                call=self.get_call()
                 stn = Station(call)
                 utc = datetime.now(timezone.utc)
                 #print('utc=',utc)
