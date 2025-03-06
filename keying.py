@@ -20,6 +20,7 @@
 ################################################################################
 
 import sys
+import os
 from nano_io import *
 from utilities import error_trap, get_PIDs
 from rig_io import BAUD,SERIAL_PORT2,SERIAL_PORT4
@@ -164,6 +165,13 @@ def open_keying_port(P,sock,rig_num):
                     print("\n@@@@@@@@@@@@@@@@@@@@@@@@")
                     print(  "@ Is it plugged in ??? @")
                     print(  "@@@@@@@@@@@@@@@@@@@@@@@@\n")
+
+                # Let's see if another process is using the keyer
+                if True:
+                    print('\nChecking device usage ...')
+                    cmd="lsof "+device
+                    print('\tcmd=',cmd)
+                    os.system(cmd)                    
 
                 msg='Try Again?'
                 lab="pyKeyer"

@@ -82,18 +82,22 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
             GREETING  = "MC"
+            GREETING1 = "MC"
             GREETING2 = "MC"
         elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
             GREETING  = "HNY"
+            GREETING1 = "HNY"
             GREETING2 = "HNY"
         elif now.month==7 and now.day<=7:
             GREETING  = "GBA"
-            GREETING2 = "[HOWDY]"
+            GREETING1 = "[HOWDY]"
+            GREETING2 = "[GDAY]"
         else:            
             GREETING  = "TU"
-            GREETING2 ="[HOWDY]"
+            GREETING1 = "[HOWDY]"
+            GREETING2 ="[GDAY]"
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING2+' [NAME] [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING1+' [NAME] [MYCALL] [LOG]'}
 
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}

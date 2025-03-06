@@ -1442,18 +1442,18 @@ class GUI():
 
         # Greeting might depend on local time of day
         if '[GDAY]' in txt:
-            if False:
-                # OLD - used my local time
-                hour = datetime.now().hour
-            else:
-                # NEW - Use his local time
+            try:
+                # Use his local time
                 call=self.get_call()
                 stn = Station(call)
                 utc = datetime.now(timezone.utc)
                 #print('utc=',utc)
                 local = utc.astimezone(timezone(timedelta(hours=-stn.offset)))
                 #print('local=',local,'\thour=',local.hour)
-                hour = local.hour  
+                hour = local.hour
+            except:
+                # Well that didnt work - use my local time instead
+                hour = datetime.now().hour
             
             if hour<12:
                 txt = txt.replace('[GDAY]','GM' )
