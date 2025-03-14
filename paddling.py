@@ -5,9 +5,27 @@
 ################################################################################
 #
 # paddling.py - Rev. 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Gui for sending practice (i.e. fun with paddles)
+#
+# Note - we need to specify a descriptor in ~/.keyerrc so that we can find the
+#        keyer device.  On linux:
+#
+#                python3 -m serial.tools.list_ports -v
+#
+#        On Winbloz:
+#
+#                py -3 -m serial.tools.list_ports --verbose
+#
+#        e.g., on my system:
+#
+#           ... blah blah blah ...
+#           /dev/ttyUSB3        
+#              desc: USB2.0-Ser!
+#              hwid: USB VID:PID=1A86:7523 LOCATION=3-4.3
+#
+#         so I use "USB2.0-Ser" to disnguish the keyer port from the rig ports.
 #
 ################################################################################
 #
@@ -605,7 +623,10 @@ class PADDLING_GUI():
         self.ntries=1
         self.down=True
         #print("NEW ITEM - txt=",txt)
-        
+
+        # Make sure we don't TX!
+        P.sock.set_breakin(False)
+    
         if P.NANO_ECHO:
             self.P.keyer.txt2morse(txt)
         if not P.gui:
@@ -855,6 +876,9 @@ if __name__ == '__main__':
     P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
     P.calls = list(P.MASTER.keys())
     P.Ncalls = len(P.calls)
+
+    # Make sure we don't TX!
+    P.sock.set_breakin(False)
     
     # And away we go!
     P.PaddlingWin.status_bar2.setText('Ready to rock ...')

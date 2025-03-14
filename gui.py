@@ -1448,7 +1448,12 @@ class GUI():
                 stn = Station(call)
                 utc = datetime.now(timezone.utc)
                 #print('utc=',utc)
-                local = utc.astimezone(timezone(timedelta(hours=-stn.offset)))
+                if time.daylight:
+                    # My station is under daylight savings time - ugh!
+                    offset = -stn.offset+1
+                else:
+                    offset = -stn.offset
+                local = utc.astimezone(timezone(timedelta(hours=offset)))
                 #print('local=',local,'\thour=',local.hour)
                 hour = local.hour
             except:

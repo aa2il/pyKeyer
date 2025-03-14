@@ -1,7 +1,7 @@
 ################################################################################
 #
 # Keying.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Routines relating to keying the rig.
 #
@@ -22,7 +22,7 @@
 import sys
 import os
 from nano_io import *
-from utilities import error_trap, get_PIDs
+from utilities import error_trap, get_PIDs,find_serial_device,find_serial_device_by_serial_id
 from rig_io import BAUD,SERIAL_PORT2,SERIAL_PORT4
 
 from tkinter import messagebox
@@ -56,27 +56,38 @@ def toggle_dtr(n=1):
 
 ################################################################################
 
-def find_keyer():
+def find_keyer(P):
 
-    DEVICES   = ['NANO IO','K3NG','WINKEYER']
-    BAUDS     = [NANO_BAUD,NANO_BAUD,1200]
-    CMDS      = ['~?','\\?',chr(0)+chr(2)]
-    RESPONSES = ['nanoIO ver','K3NG Keyer',chr(0x17)]
+    DEVICES   = ['WINKEYER','NANO IO','K3NG']
+    BAUDS     = [1200,NANO_BAUD,NANO_BAUD]
+    CMDS      = [chr(0)+chr(2),'~?','\\?']
+    RESPONSES = [chr(0x17),'nanoIO ver','K3NG Keyer']
+
+    KEYER_DEVICE    = P.SETTINGS["MY_KEYER_DEVICE"]
+    KEYER_DEVICE_ID = P.SETTINGS["MY_KEYER_DEVICE_ID"]
 
     print('\nFIND KEYER: Looking for keyer device ...')
-    device=find_serial_device('nanoIO',0,2)
-    print('\tdevice=',device)
+
+    # There are a couple of ways to find the device - need to figure out what will work with winbloz
+    list_all_serial_devices(USB_ONLY=True)
+    #device,vid_pid=find_serial_device(KEYER_DEVICE,0,2)
+    device,vid_pid=find_serial_device(KEYER_DEVICE_ID,0,2)
+    #device,vid_pid=find_serial_device_by_serial_id(KEYER_DEVICE_ID,0,2)
+    print('\tkeyer device=',device,'\tvid_pid=',vid_pid)
+    #sys.exit(0)
+    
     if not device:
         print('... Not found - Looking for ESP32 keyer device ...')
-        device=find_serial_device('nanoIO32',0,2)
+        device,vid_pid=find_serial_device('nanoIO32',0,2)
         print('\tdevice=',device)
     if device:
         print(' ... There it is on port',device,' ...\n')
         set_DTR_hangup(device,False)
         #set_DTR_hangup(device,True)
+        #sys.exit(0)
     else:
         print('\nNo serial keyer device found\n')
-        return None,None
+        return None,None,None
     
     for i in range(len(DEVICES)):
         print('\nFIND KEYER: Looking for',DEVICES[i],'device ...')
@@ -127,11 +138,11 @@ def find_keyer():
         
         if RESPONSES[i] in txt2:
             print('Found',DEVICES[i],'Device')
-            return device,DEVICES[i]
+            return device,DEVICES[i],vid_pid
 
         ser.close()
         
-    return device,None
+    return device,None,vid_pid
 
 ################################################################################
 
@@ -149,7 +160,7 @@ def open_keying_port(P,sock,rig_num):
     if P.USE_KEYER and rig_num==1:
         if P.FIND_KEYER:
             
-            device,dev_type=find_keyer()
+            device,dev_type,vid_pid=find_keyer(P)
             print('device=',device,'\tdev_type=',dev_type)
             Done = dev_type!=None
             while not Done:
@@ -173,22 +184,8 @@ def open_keying_port(P,sock,rig_num):
                     print('\tcmd=',cmd)
                     os.system(cmd)                    
 
-                msg='Try Again?'
-                lab="pyKeyer"
-                if P.gui:
-                    P.gui.splash.hide()
-                result=messagebox.askyesno(lab,msg)
-                if result:
-                    device,dev_type=find_keyer()
-                    print('device=',device,'\tdev_type=',dev_type)
-                    Done = dev_type!=None
-                    if P.gui:
-                        P.gui.splash.show()
-                else:
-                    print('Giving up!')
-                    Done = True
-                    sys.exit(0)
-                    
+                result = try_usb_reset(P,vid_pid)
+                
             else:
                 P.NANO_IO  = dev_type=='NANO IO'
                 P.K3NG_IO  = dev_type=='K3NG'
@@ -232,7 +229,14 @@ def open_keying_port(P,sock,rig_num):
                 print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                 print(  "@ Try killing other instances of this program! @")
                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
-            FATAL_ERROR=True
+
+            result=try_usb_reset(P,vid_pid)
+            if result:
+                print('keyer_device=',P.keyer_device)
+                ser = P.keyer_device.ser
+                print('ser=',ser)
+            else:
+                FATAL_ERROR=True
 
         if FATAL_ERROR:
             sys.exit(0)
@@ -263,7 +267,7 @@ def open_keying_port(P,sock,rig_num):
             # but, in general, we'll use USB B in case we are using hamlib for rig control
             #print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
             try:
-                port=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
+                port,vid_pid=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
                 print('OPEN KEYING PORT: Sock Init...')
                 sock.init_keyer()
@@ -300,7 +304,7 @@ def open_keying_port(P,sock,rig_num):
 
             if sock.rig_type2=='FT991a':
                 
-                port=find_serial_device('FT991a',1,VERBOSITY=1)
+                port,vid_pid=find_serial_device('FT991a',1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
                 ser.setDTR(True)
                 time.sleep(.02)
@@ -331,7 +335,7 @@ def open_keying_port(P,sock,rig_num):
                     
             elif sock.rig_type2=='FTdx3000':
 
-                port=find_serial_device('FTdx3000',1,VERBOSITY=1)
+                port,vid_pid=find_serial_device('FTdx3000',1,VERBOSITY=1)
                 ser = serial.Serial(port,BAUD,timeout=0.1)
                 ser.setDTR(False)
                 ser.PORT = SERIAL_PORT2
@@ -351,3 +355,32 @@ def open_keying_port(P,sock,rig_num):
     return ser
 
         
+
+def try_usb_reset(P,vid_pid):
+    
+    print('\nTRY USB RESET: vid_pid=',vid_pid)
+    
+    msg='Try Resetting USB Bus?'
+    lab="pyKeyer"
+    if P.gui:
+        P.gui.splash.hide()
+    #result=messagebox.askyesno(lab,msg)
+    result=messagebox.askyesnocancel(lab,msg)
+    if result==True:
+        cmd="sudo usbreset "+vid_pid
+        print('\tcmd=',cmd)
+        os.system(cmd)                    
+        Done = False
+        #sys.exit(0)
+    elif result==False:
+        device,dev_type,vid_pid=find_keyer(P)
+        print('device=',device,'\tdev_type=',dev_type)
+        Done = dev_type!=None
+        if P.gui:
+            P.gui.splash.show()
+    else:
+        print('Giving up!')
+        Done = True
+        sys.exit(0)
+                    
+    return Done        # ,device,dev_type,vid_pid

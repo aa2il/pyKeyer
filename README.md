@@ -29,23 +29,33 @@ Over the years, a number of very good logging programs have been developed.  The
 
 1) Uses python3 and tkinter
 2) Clone gitub pyKeyer, libs and data repositories
-    - cd
-    - mkdir Python
-    - cd Python
-    - git clone https://github.com/aa2il/pyKeyer
-    - git clone https://github.com/aa2il/libs
-    - git clone https://github.com/aa2il/data
+
+      cd
+      mkdir Python
+      cd Python
+      git clone https://github.com/aa2il/pyKeyer
+      git clone https://github.com/aa2il/libs
+      git clone https://github.com/aa2il/data
+      
 3) Install packages needed for pyKeyer:
-   - cd ~/Python/pyKeyer
-   - pip3 install -r requirements.txt
+
+     cd ~/Python/pyKeyer
+     pip3 install -r requirements.txt
+     
 4) Make sure its executable:
-   - chmod +x pyKeyer.py start start_cw
+
+     chmod +x pyKeyer.py start start_cw
+     
 5) Set PYTHON PATH so os can find libraries:
+
    - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
    - Under bash:      export PYTHONPATH="$HOME/Python/libs"
+   
 6) Bombs away:
-   - ./pyKeyer.py
-   - See also start and start_cw for examples how to run this thing         
+
+     ./pyKeyer.py
+     
+   See also start and start_cw for examples how to run this thing         
 
 # Installation under Mini-conda:
 
@@ -103,31 +113,35 @@ Over the years, a number of very good logging programs have been developed.  The
    - conda activate aa2il
 
 4) Clone gitub pyKeyer, libs and data repositories:
-    - cd
-    - mkdir Python
-    - cd Python
-    - git clone https://github.com/aa2il/pyKeyer
-    - git clone https://github.com/aa2il/libs
-    - git clone https://github.com/aa2il/data
+
+      cd
+      mkdir Python
+      cd Python
+      git clone https://github.com/aa2il/pyKeyer
+      git clone https://github.com/aa2il/libs
+      git clone https://github.com/aa2il/data
 
 5) Install packages needed by pyKeyer:
-   - cd ~/Python/pyKeyer
-   - pip3 install -r requirements.txt
+
+     cd ~/Python/pyKeyer
+     pip3 install -r requirements.txt
 
 6) Set PYTHON PATH so os can find libraries:
+
    - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
    - Under bash:      export PYTHONPATH="$HOME/Python/libs"
 
 7) To run pyKeyer, we need to specify python interpreter so it doesn't run in
    the default system environment:
-   - cd ~/Python/pyKeyer
-   - conda activate aa2il
-   - python pyKeyer.py
-
-8) Fonts look awful - see step 3 above
    
-9) Known issues using this (as of July 2023):
-   - Fonts look awful - need a better fix than step 8 above
+     cd ~/Python/pyKeyer
+     conda activate aa2il
+     python pyKeyer.py
+
+8) If the fonts look awful, see step 3 above
+   
+9) Known issues using this (as of March 2025):
+   - None
 
 # Installation for Windoz:
 
@@ -137,29 +151,36 @@ Over the years, a number of very good logging programs have been developed.  The
    (or directly from python.org).
 
 2) Clone gitub repositories.  There are several tools available for windows
-   to for fetching git repositories.  Find one you like, open a command prompt
-   and effect the following:
+   for fetching git repositories.  I use the command line version from
    
-    - cd YOUR_HOME_DIRECTORY
-    - mkdir Python
-    - cd Python
-    - git clone https://github.com/aa2il/pyKeyer
-    - git clone https://github.com/aa2il/libs
-    - git clone https://github.com/aa2il/data
+       https://git-scm.com/downloads/win
+       
+   Find one you like, open a command prompt and effect the following:
+   
+      cd %userprofile%       (Goto YOUR_HOME_DIRECTORY, very clumsy!)
+      mkdir Python
+      cd Python
+      git clone https://github.com/aa2il/pyKeyer
+      git clone https://github.com/aa2il/libs
+      git clone https://github.com/aa2il/data
 
 3) Install dependancies:
 
         pip install -r requirements.txt
 
-4a) There are two main codes here - the complete keyer, e.g.:
+4a) There are three main codes here - the complete keyer, e.g.:
            
         pyKeyer.py -prac -cwt -adjust -wpm 30 -keyer WINKEY
 
-4b) ... and a paddle sending practice tool:
+4b) ... a paddle sending practice tool:
             
         paddling.py
 
-5) Under linux, both programs can discover the type of keying device available.
+4c) ... and a callsign lookup tool:
+
+        qrz.py
+
+5) Under linux, these programs can discover the type of keying device available.
    This doesn't yet work under winblows so only the most popular device,
    Winkeyer, is available.
                                

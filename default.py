@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # default.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for default qsos, most state QSO parties and some other contests.
 #
@@ -641,7 +641,7 @@ class DEFAULT_KEYING():
         cspan=12-col
         gui.scp_lab.grid(column=col,columnspan=cspan)
         gui.scp.grid(column=col,columnspan=cspan)
-        if not self.P.USE_SCP:
+        if not self.P.USE_SCP or self.contest_name in ['POTA']:
             gui.scp_lab.grid_remove()
             gui.scp.grid_remove()
         else:
