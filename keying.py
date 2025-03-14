@@ -67,6 +67,12 @@ def find_keyer(P):
     KEYER_DEVICE_ID = P.SETTINGS["MY_KEYER_DEVICE_ID"]
 
     print('\nFIND KEYER: Looking for keyer device ...')
+    print('\tKEYER_DEVICE    =',KEYER_DEVICE)
+    print('\tKEYER_DEVICE_ID =',KEYER_DEVICE_ID)
+    if KEYER_DEVICE_ID=='':
+        print('\n*** Fatal Error *** Need to set MY_KEYER_DEVICE_ID ',
+              'in ~/.keyerrc so we can find the keyer port :-(\n')
+        sys.exit(0)
 
     # There are a couple of ways to find the device - need to figure out what will work with winbloz
     list_all_serial_devices(USB_ONLY=True)

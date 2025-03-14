@@ -13,9 +13,11 @@ pyhamtools
 pyautogui
 pyaudio
 pyudev
-termios
 
 pandas
 scipy
 levenshtein
+chardet
 
+# Only available under linux, not winbloz
+termios
