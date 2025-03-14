@@ -10,13 +10,9 @@
 # Gui for sending practice (i.e. fun with paddles)
 #
 # Note - we need to specify a descriptor in ~/.keyerrc so that we can find the
-#        keyer device.  On linux:
+#        keyer device.  On linux or Winbloz:
 #
 #                python3 -m serial.tools.list_ports -v
-#
-#        On Winbloz:
-#
-#                py -3 -m serial.tools.list_ports --verbose
 #
 #        e.g., on my system:
 #

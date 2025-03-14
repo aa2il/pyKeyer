@@ -164,6 +164,9 @@ Over the years, a number of very good logging programs have been developed.  The
       git clone https://github.com/aa2il/libs
       git clone https://github.com/aa2il/data
 
+   Note - to simply grab the latest changes, use "pull" instead of "clone"
+   in these commands.
+
 3) Install dependancies:
 
         pip install -r requirements.txt

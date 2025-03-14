@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # nano_io.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Functions related to the nano IO interface
 #
@@ -158,8 +158,12 @@ class KEYING_DEVICE():
         if device:
             self.device=device
         else:
+            KEYER_DEVICE_ID = P.SETTINGS["MY_KEYER_DEVICE_ID"]
+            print('\tKEYER_DEVICE_ID =',KEYER_DEVICE_ID)
+            
             print("NANO_IO INIT: Searching for nanoIO device ...")
-            self.device=find_serial_device('nanoIO',0,1)
+            #self.device=find_serial_device('nanoIO',0,1)
+            self.device,self.vid_pid=find_serial_device(KEYER_DEVICE_ID,0,1)
             if not self.device:
                 print("NANO_IO INIT: Couldn't find nanoIO device - trying nanIO32 ...")
                 self.device=find_serial_device('nanoIO32',0,1)
