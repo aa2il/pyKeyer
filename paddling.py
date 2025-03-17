@@ -621,7 +621,8 @@ class PADDLING_GUI():
         #print("NEW ITEM - txt=",txt)
 
         # Make sure we don't TX!
-        P.sock.set_breakin(False)
+        if P.sock:
+            P.sock.set_breakin(False)
     
         if P.NANO_ECHO:
             self.P.keyer.txt2morse(txt)
@@ -760,6 +761,7 @@ if __name__ == '__main__':
     from rig_io import CONNECTIONS,RIGS
     #from rig_io import socket_io 
     from rig_io.socket_io import open_rig_connection
+    import platform
 
     print('Howdy Ho!')
     
@@ -791,6 +793,7 @@ if __name__ == '__main__':
             #self.WPM=22
             #self.PADDLE_WPM=22
             self.USE_KEYER=True
+            self.PLATFORM=platform.system()
             if sys.platform in ["linux","linux2"]:
                 # Linux - keyer discovery works fine
                 self.FIND_KEYER=True
@@ -874,7 +877,8 @@ if __name__ == '__main__':
     P.Ncalls = len(P.calls)
 
     # Make sure we don't TX!
-    P.sock.set_breakin(False)
+    if P.sock:
+        P.sock.set_breakin(False)
     
     # And away we go!
     P.PaddlingWin.status_bar2.setText('Ready to rock ...')

@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # Rig Control GUI - Tk version - Rev 1.0
-# Copyright (C) 2024 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Portion of GUI related to keyer controls - Tk version
 #
@@ -128,10 +128,10 @@ class KEYER_CONTROL():
         self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 
     def ToggleButton(self,iopt,i,mask):
-        print('\nTOGGLE BUTTON: opt=',iopt,'\ti=',i,'\tmask=',mask)
+        #print('\nTOGGLE BUTTON: opt=',iopt,'\ti=',i,'\tmask=',mask)
         if iopt==1:
             m = self.winkey_mode & mask
-            print('\tm=',hex(m))
+            #print('\tm=',hex(m))
             self.Flags[i] = m>0
         else:
             self.Flags[i]  = not self.Flags[i]
@@ -140,7 +140,7 @@ class KEYER_CONTROL():
             else:
                 self.winkey_mode = self.winkey_mode & ~mask
                 
-        print('\t',self.Flags[i],'\twk mode=',hex(self.winkey_mode))
+        #print('\t',self.Flags[i],'\twk mode=',hex(self.winkey_mode))
         self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
         self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 

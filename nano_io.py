@@ -5,6 +5,17 @@
 #
 # Functions related to the nano IO interface
 #
+# To Do:
+#     The Farnsworth and paddle switch point option aren't working
+#            - pawing throw .ino file, it looks like switch point (0x12) is NOT supported
+#     keyer_features_and_options.h to try out in k3ng keyer:
+#             Enable  FEATURE_FARNSWORTH - Fixed Farnsworth
+#             Enable  FEATURE_AUTOSPACE
+#             Enable  OPTION_WINKEY_DISCARD_BYTES_AT_STARTUP 
+#             Disable OPTION_WINKEY_2_HOST_CLOSE_NO_SERIAL_PORT_RESET
+#     Also see if esp32 version works better with winbloz (Avoids ASR
+#     problem on arduinos)
+#
 ############################################################################################
 #
 # This program is free software: you can redistribute it and/or modify
@@ -141,20 +152,21 @@ def set_DTR_hangup(device,ENABLE=False):
                 attrs[2] = attrs[2] & ~termios.HUPCL
             termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
 
-
-
 # Interface to keying device
 class KEYING_DEVICE():
     def __init__(self,P,device,protocol,baud=NANO_BAUD):
 
         # Init
+        self.P = P
         #self.winkey_mode=0x15                        # Iambic A + no paddle echo + serial echo + contest spacing
         #self.winkey_mode=0x55                        # Iambic A + paddle echo + serial echo + contest spacing
-        self.winkey_mode=0x51                        # Iambic A + paddle echo + contest spacing
+        self.winkey_mode=0x51                         # Iambic A + paddle echo + contest spacing
+        self.winkey_switch_point=0x40                 # Paddle switch point - deafult is 50=one dit time
+        self.winkey_farnsworth_wpm=18                 # Farnsworth wpm
         self.ser = None
 
         # Find serial port to the device
-        print("\nNANO_IO INIT: Opening keyer ... device=",device)
+        print("\nNANO_IO: KEYING DEVICE INIT: Opening keyer ... device=",device)
         if device:
             self.device=device
         else:
@@ -175,12 +187,44 @@ class KEYING_DEVICE():
         set_DTR_hangup(self.device,False)
 
         # Open serial port to the device
-        print('Opening serial port ...')
+        print('NANO_IO: KEYING DEVICE INIT: Opening serial port ...')
         print('\tdevice=',self.device,'\tbaud=',baud)
+
+        # On windows for some reason, need to open at 9600 baud to reset the device and then
+        # open at the 1200 baud used by winkeyer - go figure?!
+        print('BURP!',sys.platform,P.PLATFORM)
+        if P.PLATFORM == "Windows" and True:
+            self.ser = serial.Serial(self.device,9600,timeout=0.1,
+                                     dsrdtr=True,rtscts=0)
+            time.sleep(2)
+            txt=self.nano_read()
+            print('txt=',txt)
+            self.ser.close()
+            time.sleep(2)
+        
         self.ser = serial.Serial(self.device,baud,timeout=0.1,
-                                 dsrdtr=True,rtscts=0)
-        #                                 dsrdtr=False,rtscts=0)
-            
+                                dsrdtr=True,rtscts=0)
+        
+        #sys.exit(0)
+        if P.PLATFORM == "Windows" and True:
+            self.ser.setDTR(False)
+            time.sleep(1)
+            self.ser.setDTR(True)
+            time.sleep(1)
+            self.ser.setDTR(False)
+            time.sleep(1)
+
+            self.ser.reset_input_buffer()
+            time.sleep(1)
+            self.ser.reset_output_buffer()
+            time.sleep(1)
+            #sys.exit(0)
+
+            #self.ser.close()
+            #self.ser = serial.Serial(self.device,baud,timeout=0.1,
+            #                         dsrdtr=True,rtscts=0)
+
+        
         self.protocol=protocol
         #time.sleep(.1)
         #self.ser.reset_input_buffer
@@ -189,6 +233,10 @@ class KEYING_DEVICE():
  
         # Make sure its in CW & Iambic-A mode & show current settings
         print('Initial setup ...')
+        if P.PLATFORM == "Windows":
+            delay=1.
+        else:
+            delay=0.1
         if self.protocol=='NANO_IO':
             self.delim='~'
             self.wait4it(.1,.1,10)
@@ -204,22 +252,30 @@ class KEYING_DEVICE():
             self.send_command('S')          # Show status
         elif self.protocol=='WINKEYER':
             self.delim=''
-            ntries = self.wait4it(0,.1,10)
+            ntries = self.wait4it(0,delay,10)
             print('Found it after',ntries,'tries')
-            #self.send_command(chr(0)+chr(2))          # Open
+            #self.send_command(chr(0)+chr(2))            # Open
             #time.sleep(1)
-            #self.send_command(chr(2)+chr(20))          # 20 wpm
+            #self.send_command(chr(2)+chr(20))           # 20 wpm
             #time.sleep(1)
-            #self.send_command(chr(16+5))               # Get status byte - Doesn't seem to work
+            #self.send_command(chr(12)+chr(25))          # 25 wpm Farnsworth
             #time.sleep(1)
-            #self.send_command(chr(0)+chr(9))          # Get FW major version - not in WK2
+            #self.send_command(chr(16+2)+chr(40))        # 40% switch point
             #time.sleep(1)
-            #self.send_command(chr(0)+chr(12))          # Dump eprom
+            #self.send_command(chr(16+5))                # Get status byte - Doesn't seem to work
+            #time.sleep(1)
+            #self.send_command(chr(0)+chr(9))            # Get FW major version - not in WK2
+            #time.sleep(1)
+            #self.send_command(chr(0)+chr(12))           # Dump eprom
             #time.sleep(1)
             #self.send_command('test')                   # Test Msg - make sure we can send lower case text!
             #self.send_command('TEST')                   # Test Msg
 
-            self.send_command(chr(0x0E)+chr(self.winkey_mode))       
+            # Make sure we're in proper mode
+            self.send_command(chr(0x0E)+chr(self.winkey_mode))
+
+            # Set paddle switch point - 50 is default (one dit time), faster ops like it shorter  - Not support by K3NG version
+            #self.send_command(chr(0x12)+chr(self.winkey_switch_point))
             time.sleep(1)
             
         else:
@@ -240,7 +296,7 @@ class KEYING_DEVICE():
     def wait4it(self,t1,t2,n):
 
         # Wait for nano to wake up
-        print('Waiting for Nano IO to start-up ...')
+        print('Waiting for Nano IO to start-up - PROTOCOL=', self.protocol,' ...')
         time.sleep(t1)
         ntries=0
         while self.ser.in_waiting==0 and ntries<n:
@@ -303,6 +359,9 @@ class KEYING_DEVICE():
     def send_command(self,txt):
         try:
             self.nano_write(self.delim+txt)
+        except KeyboardInterrupt:
+            print('Keyboard Interrupt - giving up!')
+            sys.exit(0)
         except: 
             error_trap('SEND NANO COMMAND: Problem with write - giving up')
 
@@ -342,10 +401,12 @@ class KEYING_DEVICE():
                 while self.ser.out_waiting>0:
                     time.sleep(1)
             cnt=self.ser.write(bytes(txt,'utf-8'))
-            #print('NANO WRITE: txt=',txt,'\n',show_hex(txt),'\tcnt=',cnt)
+            if False:
+                #self.ser.flush()
+                print('NANO WRITE: txt=',txt,'\n',show_hex(txt),'\tcnt=',cnt)
 
-            #time.sleep(1)
-            #txt2=self.nano_read(echo=True)
+                time.sleep(1)
+                txt2=self.nano_read(echo=True)
 
     # Change WPM
     def set_wpm(self,wpm,idev=1):
@@ -384,6 +445,11 @@ class KEYING_DEVICE():
                 print('NANO SET WPM2: txt=',txt,'\n',show_hex(txt))
             if txt:
                 self.send_command(txt)
+
+        # Playpen
+        if self.protocol=='WINKEYER' and True:
+            #sself.send_command(chr(0x12)+chr(self.winkey_switch_point))
+            self.send_command(chr(0x0d)+chr(self.winkey_farnsworth_wpm))
                 
         #sys.exit(0)
 

@@ -16,7 +16,7 @@ set RIG="NONE"
 #set RIG="ANY"
 
 set RIG_TYPE=""
-set RIG_TYPE="FTdx3000"
+#set RIG_TYPE="FTdx3000"
 #set RIG_TYPE="FT991a"
 #set RIG_TYPE="IC9700"
 
@@ -59,9 +59,9 @@ set AGGRESSIVE=""
 set AGGRESSIVE="-aggressive"
 
 set CONTEST="paddling"
-#set CONTEST="cwt"
+set CONTEST="cwt"
 #set CONTEST="foc"
-set CONTEST="sst"
+#set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="sprint"
 
