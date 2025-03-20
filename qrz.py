@@ -55,11 +55,14 @@ class CALL_INFO_GUI():
             pprint(vars(dx_station))
             print(' ')
 
+            """
+            # Playpen
             utc = datetime.now(timezone.utc)
             print('utc=',utc)
             local = utc.astimezone(timezone(timedelta(hours=-dx_station.offset)))
             print('local=',local,'\thour=',local.hour)
             print(' ')
+            """
             
             if call in P.MASTER.keys():
                 print('CALL_LOOKUP:',call,' is in master list')

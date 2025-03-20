@@ -162,7 +162,7 @@ class KEYING_DEVICE():
         #self.winkey_mode=0x55                        # Iambic A + paddle echo + serial echo + contest spacing
         self.winkey_mode=0x51                         # Iambic A + paddle echo + contest spacing
         self.winkey_switch_point=0x40                 # Paddle switch point - deafult is 50=one dit time
-        self.winkey_farnsworth_wpm=18                 # Farnsworth wpm
+        self.farnsworth_wpm=5                         # Farnsworth wpm - set low to effectively disable on start-up
         self.ser = None
 
         # Find serial port to the device
@@ -258,8 +258,6 @@ class KEYING_DEVICE():
             #time.sleep(1)
             #self.send_command(chr(2)+chr(20))           # 20 wpm
             #time.sleep(1)
-            #self.send_command(chr(12)+chr(25))          # 25 wpm Farnsworth
-            #time.sleep(1)
             #self.send_command(chr(16+2)+chr(40))        # 40% switch point
             #time.sleep(1)
             #self.send_command(chr(16+5))                # Get status byte - Doesn't seem to work
@@ -273,6 +271,9 @@ class KEYING_DEVICE():
 
             # Make sure we're in proper mode
             self.send_command(chr(0x0E)+chr(self.winkey_mode))
+            #time.sleep(.1)
+            #self.send_command(chr(12)+chr(self.farnsworth))         # 5 wpm Farnsworth - effectively disabled
+            #time.sleep(.1)
 
             # Set paddle switch point - 50 is default (one dit time), faster ops like it shorter  - Not support by K3NG version
             #self.send_command(chr(0x12)+chr(self.winkey_switch_point))
@@ -409,12 +410,13 @@ class KEYING_DEVICE():
                 txt2=self.nano_read(echo=True)
 
     # Change WPM
-    def set_wpm(self,wpm,idev=1):
+    def set_wpm(self,wpm,idev=1,farnsworth=None):
 
         DEBUG=False
+        DEBUG=True
 
         if DEBUG:
-            print('NANO_IO: SET WPM: wpm=',wpm,'\tidev=',idev,'\tprot=',self.protocol)
+            print('NANO_IO: SET WPM: wpm=',wpm,'\tidev=',idev,'\tprot=',self.protocol,'\tfarnsworth=',farnsworth)
         
         if idev==1 or idev==3:
             # Set wpm of chars sent from the keyboard
@@ -446,10 +448,15 @@ class KEYING_DEVICE():
             if txt:
                 self.send_command(txt)
 
-        # Playpen
-        if self.protocol=='WINKEYER' and True:
-            #sself.send_command(chr(0x12)+chr(self.winkey_switch_point))
-            self.send_command(chr(0x0d)+chr(self.winkey_farnsworth_wpm))
+        # Set Farnsworth speed also
+        if farnsworth!=None:
+            self.farnsworth_wpm=farnsworth
+            if self.protocol=='WINKEYER' and True:
+                self.send_command(chr(0x12)+chr(self.winkey_switch_point))      # Not supported in k3ng version of keyer
+                txt=chr(0x0d)+chr(self.farnsworth_wpm)
+                self.send_command(txt)
+                if DEBUG:
+                    print('NANO SET FARNS WPM: txt=',txt,'\n',show_hex(txt))
                 
         #sys.exit(0)
 

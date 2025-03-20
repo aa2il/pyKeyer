@@ -1,7 +1,7 @@
 ################################################################################
 #
 # Params.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Command line param parser for pyKeyer.
 #
@@ -215,6 +215,7 @@ class PARAMS:
         arg_proc.add_argument('-ca_only', action='store_true',
                               help='Only use California Stations for Practice')
         arg_proc.add_argument("-wpm", help="Keyer Speed",type=int,default=25)
+        arg_proc.add_argument("-farnsworth", help="Farnsworth Speed",type=int,default=None)
         arg_proc.add_argument("-paddles", help="Paddle Speed",type=int,default=22)
         arg_proc.add_argument('-adjust', action='store_true',
                               help='Adjust speed based on correct copy')
@@ -319,9 +320,16 @@ class PARAMS:
         self.ADJUST_SPEED  = args.adjust and args.practice
         self.NO_HINTS      = not args.hints
         self.CA_ONLY       = args.ca_only
+        
         self.WPM           = args.wpm
         self.WPM2          = args.wpm
+        self.FARNSWORTH    = args.farnsworth!=None
+        if self.FARNSWORTH:
+            self.FARNS_WPM   = args.farnsworth
+        else:
+            self.FARNS_WPM   = 18
         self.PADDLE_WPM    = args.paddles
+        
         self.INIT_MODE     = args.mode
         if self.INIT_MODE==None and self.DIGI:
             self.INIT_MODE     = 'RTTY'

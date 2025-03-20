@@ -111,6 +111,14 @@ class GUI():
             geo=P.GEO
         self.root.geometry(geo)
 
+        # Init
+        self.MODE = StringVar()
+        self.MACRO_TXT = StringVar()
+        self.WPM_TXT = StringVar()
+        self.FARNS_WPM_TXT = StringVar()
+        self.SAT_TXT = StringVar()
+        self.qsl_rcvd=tk.IntVar()
+
         # Over-ride default-font with custom settings
         # Not necesary but I'm leaving this code here fore later reference
         if False:
@@ -194,8 +202,6 @@ class GUI():
         self.root.title("pyKeyer by AA2IL"+rig)
         self.tuning = False
         self.root.protocol("WM_DELETE_WINDOW", self.Quit)
-
-        self.MACRO_TXT = StringVar()
 
         self.last_call=''
         self.last_shift_key=''
@@ -381,7 +387,6 @@ class GUI():
         self.scp.bind("<Key>", self.key_press )
 
         # Checkbox to indicate if we've received QSL
-        self.qsl_rcvd=tk.IntVar()
         self.qsl_rcvd.set(0)
         self.qsl=tk.Checkbutton(self.root,text='QSL Rcvd', \
                                 variable=self.qsl_rcvd)
@@ -493,10 +498,9 @@ class GUI():
                                 *self.P.CONTEST_LIST, 
                                 command=self.set_macros)
         SB.grid(row=row,column=col+1,columnspan=2,sticky=E+W)
-        col += 3
 
         # Set up a spin box to control keying speed (WPM)
-        self.WPM_TXT = StringVar()
+        col += 3
         Label(self.root, text='WPM:').grid(row=row,column=col,sticky=E+W)
         SB = Spinbox(self.root,                 \
                      from_=cw_keyer.MIN_WPM,    \
@@ -508,8 +512,9 @@ class GUI():
         SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
         SB.bind("<Key>", self.key_press )
         self.WPM_TXT.set(str(self.keyer.WPM))
-        self.set_wpm(0)
+        self.set_wpm(0,farnsworth=P.FARNS_WPM)
 
+        # Buttons to change WPM up & down 
         btn = Button(self.root, text='+'+str(WPM_STEP)+' WPM', command=lambda j=WPM_STEP: self.set_wpm(j) )
         btn.grid(row=row+1,column=col,sticky=E+W)
         tip = ToolTip(btn,' Increase Speed ')
@@ -518,8 +523,23 @@ class GUI():
         btn.grid(row=row+1,column=col+1,sticky=E+W)
         tip = ToolTip(btn,' Decrease Speed ')
 
+        # Set up a spin box to control Farnsworth speed (WPM)
+        col += 1
+        self.SB3 = Spinbox(self.root,                 \
+                           from_=cw_keyer.MIN_WPM,    \
+                           to=cw_keyer.MAX_WPM,       \
+                           textvariable=self.FARNS_WPM_TXT, \
+                           bg='white',                \
+                           justify='center',          \
+                           command=lambda j=0: self.set_wpm(0))
+        self.SB3.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
+        self.SB3.bind("<Key>", self.key_press )
+        self.FARNS_WPM_TXT.set(str(self.P.FARNS_WPM))
+        if not P.FARNSWORTH:
+            self.SB3.grid_remove()
+
         # Entry box to allow changing my counter
-        col += 2
+        col += 1
         self.counter_lab=Label(self.root, text='Serial:')
         self.counter_lab.grid(row=row,column=col,sticky=E+W)
         self.counter = Entry(self.root,font=self.font2)
@@ -583,7 +603,6 @@ class GUI():
         tip = ToolTip(self.PTTBtn, ' Push-To-Talk ' )
         
         # Force rig into a specific mode and set filters
-        self.MODE = StringVar()
         self.ModeList=['CW','USB','LSB','FM','RTTY','BPSK31']
         self.ModeBox = ttk.OptionMenu(self.root,
                                       self.MODE,
@@ -611,7 +630,6 @@ class GUI():
         # Set up a spin box to allow satellite logging
         row += 1
         col  = 0
-        self.SAT_TXT = StringVar()
         self.sat_lab = Label(self.root, text='Satellites:')
         self.sat_lab.grid(row=row,column=col,sticky=E+W)
         sat_list=sorted( SATELLITE_LIST )
@@ -1152,6 +1170,16 @@ class GUI():
             self.FilterSelect=1-self.FilterSelect
         else:
             self.FilterSelect=iopt
+
+        mode = self.MODE.get()
+        if mode=='CW':
+            self.FilterWidths=[50,200]
+        elif mode in ['USB','LSB']:
+            self.FilterWidths=[1800,2400]
+        elif self.P.SPECIAL:
+            self.FilterWidths=[2500,3000]
+        elif self.P.DIGI:
+            self.FilterWidths=[500,2000]
         
         w=self.FilterWidths[self.FilterSelect]
         c=self.FilterColors[self.FilterSelect]
@@ -1840,11 +1868,17 @@ class GUI():
         """
 
     # Callback for WPM spinner
-    def set_wpm(self,dWPM=0):
+    def set_wpm(self,dWPM=0,farnsworth=None):
         WPM=int( self.WPM_TXT.get() ) + dWPM
-        #print('SET_WPM: WPM,dWPM=',WPM,dWPM)
+        if farnsworth!=None:
+            WPM2=farnsworth
+        elif self.P.FARNSWORTH:
+            WPM2=int( self.FARNS_WPM_TXT.get() )
+        else:
+            WPM2=None
+            
         if WPM>=5:
-            self.keyer.set_wpm(WPM)
+            self.keyer.set_wpm(WPM,farnsworth=WPM2)
             self.sock.set_speed(WPM)
             self.WPM_TXT.set(str(WPM))
             self.P.WPM = WPM
@@ -3341,11 +3375,15 @@ class GUI():
             self.sock.set_filter(['Narrow','200 Hz'],mode)
             self.sock.set_breakin(1)
             self.sock.set_monitor_gain(10)
+            self.FilterWidths=[50,200]
         elif mode in ['FM','RTTY','BPSK31']:
             self.sock.set_filter(['Wide','2400 Hz'],mode)
             if mode=='RTTY':
                 self.P.sock_xml.squelch_mode(0)
                 self.sock.set_monitor_gain(35)
+            self.FilterWidths=[500,2000]
+        elif mode in ['USB','LSB']:
+            self.FilterWidths=[1800,2400]
                 
         """
         else:
@@ -3399,7 +3437,7 @@ class GUI():
 
     # Callback to turn capture on and off
     def CaptureCB(self):
-        print("Toggling Sidetone ...")
+        print("Toggling Audio Capture ...")
         self.P.CAPTURE = not self.P.CAPTURE
         if self.P.CAPTURE:
             if self.P.capture.started:
@@ -3409,6 +3447,15 @@ class GUI():
         else:
             if self.P.capture.started and self.P.capture.enabled:
                 self.P.capture.pause()
+
+    # Callback to turn Farnsworth Spacing on and off
+    def FarnsworthCB(self):
+        print("Toggling Farnsworth Spacing ...")
+        self.P.FARNSWORTH = not self.P.FARNSWORTH
+        if self.P.FARNSWORTH:
+            self.SB3.grid()
+        else:
+            self.SB3.grid_remove()
 
     # Callback to turn split text window on & off
     def SplitTextCB(self):
@@ -3542,6 +3589,14 @@ class GUI():
             underline=0,
             variable=self.Capturing,
             command=self.CaptureCB
+        )
+        
+        self.Farnsworth = BooleanVar(value=self.P.FARNSWORTH)
+        Menu1.add_checkbutton(
+            label="Farnsworth",
+            underline=0,
+            variable=self.Farnsworth,
+            command=self.FarnsworthCB
         )
         
         self.Tuning = BooleanVar(value=False)

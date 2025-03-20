@@ -238,7 +238,7 @@ class Keyer():
                 self.time=time.time();
 
     # Set speed
-    def set_wpm(self,wpm):
+    def set_wpm(self,wpm,farnsworth=None):
         ser = self.P.ser
         
         if wpm>0:
@@ -249,14 +249,14 @@ class Keyer():
             if self.P.USE_KEYER:
                 print("SET_WPM: Setting NANO speed to ",wpm)
                 if self.P.LOCK_SPEED:  
-                    self.P.keyer_device.set_wpm(wpm,idev=3)
+                    self.P.keyer_device.set_wpm(wpm,idev=3,farnsworth=farnsworth)
                     if self.P.gui:
                         #print('P.gui=',self.P.gui)
                         self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
                     else:
                         self.P.PaddlingWin.WPM_TXT.set(str(wpm))
                 else:
-                    self.P.keyer_device.set_wpm(wpm)
+                    self.P.keyer_device.set_wpm(wpm,farnsworth=farnsworth)
                 if self.P.gui:
                     #self.P.gui.WPM_TXT.set(str(wpm))
                     self.P.WPM2=wpm
