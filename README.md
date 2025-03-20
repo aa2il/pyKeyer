@@ -157,17 +157,17 @@ Over the years, a number of very good logging programs have been developed.  The
        
    Find one you like, open a command prompt and effect the following:
    
-      cd %userprofile%
+        cd %userprofile%
    
-      mkdir Python
+        mkdir Python
       
-      cd Python
+        cd Python
       
-      git clone https://github.com/aa2il/pyKeyer
+        git clone https://github.com/aa2il/pyKeyer
       
-      git clone https://github.com/aa2il/libs
+        git clone https://github.com/aa2il/libs
       
-      git clone https://github.com/aa2il/data
+        git clone https://github.com/aa2il/data
 
    Note - to simply grab the latest changes, use "pull" instead of "clone"
    in these commands.
