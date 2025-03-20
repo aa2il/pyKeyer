@@ -147,7 +147,7 @@ Over the years, a number of very good logging programs have been developed.  The
 
 0) One option is to use miniconda and follow the directions above.
       
-1) I had success installing Python (v3.12 as of Oct 2024) the Microslop Store
+1) I had success installing Python (v3.12 as of Oct 2024) via the Microslop Store
    (or directly from python.org).
 
 2) Clone gitub repositories.  There are several tools available for windows
@@ -197,8 +197,8 @@ Over the years, a number of very good logging programs have been developed.  The
 
 To add further complictions, the Winblows device drivers are often buggy and unstable.  My main keying device is a modified version of the K3NG keyer hosted on an Arduino Nano knock-off.  This device emulates the popular Winkeyer.  The Nano-knockoff uses a CH340 chip for USB I/O and not the venerable FTDI chipset.  The latest driver (v3.8 as of Oct 2024) for the CH340 initially works but then hangs upon program exit.  To get the keyer to work properly, I found I needed to use an older version of the driver (v3.7 from 2022).  A zip file with this driver is included in this repository.
 
-I've also built version of the K3NG keyer which is hosted on an ESP32 board.  This particular boards uses a CP2102 USB to UART bridge.  The driver for this one is
+I've also built version of the K3NG keyer which is hosted on an ESP32 board.  This particular board uses a CP2102 USB to UART bridge.  The driver for this one is
 
 https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers
 
-One other reminder - MAKE SURE USB CABLE IS A "FULL SERVICE" CABLE, NOT JUST "POWER-ONLY."  (I admit I wasted a about an hour tracking this down - ugh!)
+One other reminder - MAKE SURE USB CABLE IS A "FULL SERVICE" CABLE, NOT JUST "POWER-ONLY" charging cable.  (I admit that, on mulitple occasions, I have wasted considerable time tracking this down - ugh!)
