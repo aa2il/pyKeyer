@@ -169,9 +169,10 @@ Over the years, a number of very good logging programs have been developed.  The
 
 3) Install dependancies:
 
+        cd pyKeyer
         pip install -r requirements.txt
 
-4a) There are three main codes here - the complete keyer, e.g.:
+4a) There are three codes here - the complete keyer, e.g.:
            
         pyKeyer.py -prac -cwt -adjust -wpm 30 -keyer WINKEY
 
