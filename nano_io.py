@@ -164,7 +164,8 @@ class KEYING_DEVICE():
         self.winkey_switch_point=0x40                 # Paddle switch point - deafult is 50=one dit time
         self.farnsworth_wpm=5                         # Farnsworth wpm - set low to effectively disable on start-up
         self.ser = None
-
+        self.protocol=protocol
+ 
         # Find serial port to the device
         print("\nNANO_IO: KEYING DEVICE INIT: Opening keyer ... device=",device)
         if device:
@@ -192,21 +193,24 @@ class KEYING_DEVICE():
 
         # On windows for some reason, need to open at 9600 baud to reset the device and then
         # open at the 1200 baud used by winkeyer - go figure?!
-        print('BURP!',sys.platform,P.PLATFORM)
+        #print('BURP!',sys.platform,P.PLATFORM)
         if P.PLATFORM == "Windows" and True:
             self.ser = serial.Serial(self.device,9600,timeout=0.1,
                                      dsrdtr=True,rtscts=0)
             time.sleep(2)
             txt=self.nano_read()
-            print('txt=',txt)
+            print('txt=',show_hex(txt))
             self.ser.close()
             time.sleep(2)
+
+        Done=False
+        ntries=0
+        while not Done:
+            ntries+=1
+            print('NANO_IO: Attempting to open serial port ...',ntries)
+            self.ser = serial.Serial(self.device,baud,timeout=0.1,
+                                     dsrdtr=True,rtscts=0)
         
-        self.ser = serial.Serial(self.device,baud,timeout=0.1,
-                                dsrdtr=True,rtscts=0)
-        
-        #sys.exit(0)
-        if P.PLATFORM == "Windows" and True:
             self.ser.setDTR(False)
             time.sleep(1)
             self.ser.setDTR(True)
@@ -218,19 +222,24 @@ class KEYING_DEVICE():
             time.sleep(1)
             self.ser.reset_output_buffer()
             time.sleep(1)
-            #sys.exit(0)
 
-            #self.ser.close()
-            #self.ser = serial.Serial(self.device,baud,timeout=0.1,
-            #                         dsrdtr=True,rtscts=0)
+            """
+            Done2=False
+            ntries2=0
+            while not Done2:
+                ntries2+=1
+                txt=self.nano_read()
+                print('txt=',show_hex(txt))
+                Done2=len(txt)<=2 or ntries2>5
+            """
+            txt=self.nano_read()
+            print('txt=',show_hex(txt))
 
-        
-        self.protocol=protocol
-        #time.sleep(.1)
-        #self.ser.reset_input_buffer
-        #self.ser.reset_output_buffer
-        #time.sleep(.1)
- 
+            if len(txt)>2 and ntries<5:
+                self.ser.close()
+            else:
+                Done=True
+            
         # Make sure its in CW & Iambic-A mode & show current settings
         print('Initial setup ...')
         if P.PLATFORM == "Windows":

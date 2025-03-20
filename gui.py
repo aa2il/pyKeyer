@@ -2971,7 +2971,7 @@ class GUI():
             print('Reset clarifier')
             ClarReset(self,self.P.RX_Clar_On)
 
-        elif key in ['Prior','KP_Add']:
+        elif key in ['Prior','KP_Add','plus']:
             
             # Page up or big +
             print('WPM Up')
@@ -2981,7 +2981,7 @@ class GUI():
                 self.set_wpm(dWPM=+WPM_STEP)
             #return('break')
                 
-        elif key in ['Next','KP_Subtract']:
+        elif key in ['Next','KP_Subtract','minus']:
             
             # Page down or big -
             print('WPM Down')

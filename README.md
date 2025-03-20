@@ -157,7 +157,7 @@ Over the years, a number of very good logging programs have been developed.  The
        
    Find one you like, open a command prompt and effect the following:
    
-      cd %userprofile%       (Goto YOUR_HOME_DIRECTORY, very clumsy!)
+      cd %userprofile% 
       mkdir Python
       cd Python
       git clone https://github.com/aa2il/pyKeyer

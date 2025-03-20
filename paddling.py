@@ -14,7 +14,7 @@
 #
 #                python3 -m serial.tools.list_ports -v
 #
-#        e.g., on my system:
+#        e.g., on my linux mint machine:
 #
 #           ... blah blah blah ...
 #           /dev/ttyUSB3        
@@ -394,13 +394,13 @@ class PADDLING_GUI():
             self.NewItem()
             return "break"
         
-        elif key in ['Prior','KP_Add']:
+        elif key in ['Prior','KP_Add','plus']:
             
             # Page up or big +
             self.SetWpm(+1)
             return "break"
         
-        elif key in ['Next','KP_Subtract']:
+        elif key in ['Next','KP_Subtract','minus']:
             
             # Page down or big -
             self.SetWpm(-1)
@@ -776,6 +776,9 @@ if __name__ == '__main__':
             arg_proc.add_argument("-rig", help="Connection Type",
                                   type=str,default=["NONE"],nargs='+',
                                   choices=CONNECTIONS+['NONE']+RIGS)
+            arg_proc.add_argument("-keyer", help="Keyer Type",
+                                  type=str,default='WINKEY',
+                                  choices=['WINKEY','NANO','K3NG','ANY'])
             args = arg_proc.parse_args()
             
             self.WPM           = args.wpm
@@ -796,7 +799,11 @@ if __name__ == '__main__':
             self.PLATFORM=platform.system()
             if sys.platform in ["linux","linux2"]:
                 # Linux - keyer discovery works fine
-                self.FIND_KEYER=True
+                #self.FIND_KEYER=True
+                self.WINKEYER   = args.keyer=='WINKEY'
+                self.K3NG_IO    = args.keyer=='K3NG'
+                self.NANO_IO    = args.keyer=='NANO'
+                self.FIND_KEYER = args.keyer=='ANY'
             elif sys.platform == "win32":
                 # Windows - keyer discovery doesn't work - use only winkeyer
                 self.FIND_KEYER=False
