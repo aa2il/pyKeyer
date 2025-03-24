@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # cw_keyer.py - Rev 1.0
-# Copyright (C) 2021-4 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Routines for translating keyboard strokes into CW chars.  The rig can be keyed
 # via the DTR line or, more reliably, via a nanoIO ardunino-based interface.

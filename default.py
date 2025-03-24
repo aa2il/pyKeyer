@@ -32,6 +32,7 @@ from scp import *
 from datetime import datetime, date, tzinfo
 import time
 import pytz
+from scoring import CONTEST_SCORING
 
 ############################################################################################
 
@@ -74,8 +75,7 @@ class DEFAULT_KEYING():
         self.SCP=SUPER_CHECK_PARTIAL(SCP_FNAME)
 
         # On the fly scoring
-        self.nqsos=0
-        self.score=0
+        P.SCORING    = CONTEST_SCORING(P,P.CONTEST_ID,'CW')
 
     # Routient to set macros for this contest
     def macros(self):
@@ -932,28 +932,6 @@ class DEFAULT_KEYING():
         return m
         
         
-    # On-the-fly scoring
-    def otf_scoring(self,qso):
-        print("DEFAULT SCORING: qso=",qso)
-        print('*** DUMMY ***')
-
-    # Routine to restore scoring if exited during a contest
-    def init_scoring(self):
-        P=self.P
-        print('INIT SCORING: There are',len(P.gui.log_book),' QSOs in the log book.')
-        now = datetime.utcnow().replace(tzinfo=UTC)
-        MAX_AGE = 60*P.MAX_AGE       # In seconds
-        for qso in P.gui.log_book:
-            if ('CONTEST_ID' in qso) and (qso['CONTEST_ID']==P.CONTEST_ID):
-                date_off = datetime.strptime( qso["QSO_DATE_OFF"]+" "+qso["TIME_OFF"] , "%Y%m%d %H%M%S") \
-                                       .replace(tzinfo=UTC)
-                age = (now - date_off).total_seconds() # In seconds
-                #print('qso=',qso)
-                #print('age=',age)
-                if age<MAX_AGE:
-                    P.SCORING.otf_scoring(qso)
-        
-    
     # Put info into box on upper right - this should be template for all
     def set_info_box(self,txt=None):
         

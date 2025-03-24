@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # foc.py - Rev 1.0
-# Copyright (C) 2024 by Joseph B. Attili, aa2il AT arrl DOT net
+# Copyright (C) 2024-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for FOC BW.
 #
@@ -35,7 +35,7 @@ VERBOSITY=0
 
 ############################################################################################
 
-# Keying class for FOC BW contest  - inherits base class
+# Keying class for FOC BW contest
 class FOCBW_KEYING(DEFAULT_KEYING):
 
     def __init__(self,P):
@@ -49,9 +49,9 @@ class FOCBW_KEYING(DEFAULT_KEYING):
         P.MAX_AGE = self.contest_duration *60
 
         # On-the-fly scoring - NEW!
-        self.nqsos=0
-        self.calls=set([])
-        self.init_scoring()
+        #self.nqsos=0
+        #self.calls=set([])
+        self.P.SCORING.init_otf_scoring()
 
     # Routine to set macros for this contest
     def macros(self):
@@ -274,7 +274,7 @@ class FOCBW_KEYING(DEFAULT_KEYING):
 
     # On-the-fly scoring
     def scoring(self,qso):
-        print("SCORING: qso=",qso)
+        print("FOC->SCORING: qso=",qso)
         self.nqsos+=1
         mults = 1
         self.score=self.nqsos * mults

@@ -36,9 +36,8 @@ set NANO=""
 set NANO="-keyer ANY"
 #set NANO="-keyer NONE"
 #set NANO="-nano"
-#set NANO="-nano -echo"
-#set NANO="-k3ng -echo"
-#set NANO="-winkeyer -echo"
+#set NANO="-k3ng"
+set NANO="-winkeyer "
 
 #set NANO="-sidetone"
 #set NANO="-nano -sidetone"
@@ -60,7 +59,7 @@ set AGGRESSIVE="-aggressive"
 
 set CONTEST="paddling"
 set CONTEST="cwt"
-#set CONTEST="foc"
+set CONTEST="foc"
 #set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="sprint"
@@ -363,9 +362,12 @@ set EXE="pyKeyer.py"
 #cd dist
 #set EXE="pyKeyer"
 pwd
+
+set TMP="/tmp/KEYER"
 echo $EXE $OPTS 
-echo " "        >& /tmp/KEYER
-echo $EXE $OPTS >>& /tmp/KEYER
-echo " "        >& /tmp/KEYER
-#$EXE $OPTS      >>& /tmp/KEYER &
-$EXE $OPTS
+echo " "        >&  $TMP
+echo $EXE $OPTS >>& $TMP
+echo " "        >>& $TMP
+$EXE $OPTS      >>& $TMP &
+tail -f $TMP
+#$EXE $OPTS

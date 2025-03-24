@@ -245,7 +245,7 @@ class KEYING_DEVICE():
         if P.PLATFORM == "Windows":
             delay=1.
         else:
-            delay=0.1
+            delay=0.2
         if self.protocol=='NANO_IO':
             self.delim='~'
             self.wait4it(.1,.1,10)

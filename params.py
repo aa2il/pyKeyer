@@ -327,7 +327,7 @@ class PARAMS:
         if self.FARNSWORTH:
             self.FARNS_WPM   = args.farnsworth
         else:
-            self.FARNS_WPM   = 18
+            self.FARNS_WPM   = 10     # 18
         self.PADDLE_WPM    = args.paddles
         
         self.INIT_MODE     = args.mode

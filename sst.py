@@ -70,6 +70,7 @@ class SST_KEYING(DEFAULT_KEYING):
             GREETING="GBA"
         else:            
             GREETING="[GDAY]"
+            #GREETING="GA"
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] 73EE [LOG]'}
 
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] ESE [LOG]'}

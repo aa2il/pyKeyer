@@ -397,7 +397,7 @@ if P.SCORING!=None and P.SCORING.nqsos>0:
     P.gui.status_bar.setText(P.SCORING.txt)
 else:
     P.gui.status_bar.setText("And away we go !!!")
-print("PYKEYER - And away we go !!! \t nqsos=",P.KEYING.nqsos)
+print("PYKEYER - And away we go !!!")
 P.MEM.take_snapshot()
 mainloop()
 

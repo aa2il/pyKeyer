@@ -73,11 +73,9 @@ from paddling import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
-from utilities import cut_numbers,freq2band,Oh_Canada,error_trap,show_ascii
+from utilities import cut_numbers,freq2band,Oh_Canada,error_trap,show_ascii,stack_trace
 import pyautogui
 from widgets_tk import StatusBar,SPLASH_SCREEN
-
-#from bm_gui import *
 
 ############################################################################################
 
@@ -1475,25 +1473,27 @@ class GUI():
                 call=self.get_call()
                 stn = Station(call)
                 utc = datetime.now(timezone.utc)
-                #print('utc=',utc)
+                #print('GUI->GDAY: utc=',utc)
                 if time.daylight:
                     # My station is under daylight savings time - ugh!
                     offset = -stn.offset+1
                 else:
                     offset = -stn.offset
                 local = utc.astimezone(timezone(timedelta(hours=offset)))
-                #print('local=',local,'\thour=',local.hour)
                 hour = local.hour
+                #print('GUI->GDAY: offset=',offset,'\tlocal=',local,'\thour=',hour)
             except:
                 # Well that didnt work - use my local time instead
                 hour = datetime.now().hour
+                #print('GUI->GDAY: Ooops hour=',hour)
             
             if hour<12:
                 txt = txt.replace('[GDAY]','GM' )
-            elif hour<16:
+            elif hour<18:
                 txt = txt.replace('[GDAY]','GA' )
             else:
                 txt = txt.replace('[GDAY]','GE' )
+            #print('GUI->GDAY: txt=',txt)
 
         # Vary the greeting for friends
         if '[HOWDY]' in txt:
@@ -2417,7 +2417,10 @@ class GUI():
                     
             # On the fly scoring
             try:
-                self.P.SCORING.otf_scoring(qso)
+                if self.P.SCORING:
+                    self.P.SCORING.otf_scoring(qso)
+                else:
+                    stack_trace('OOOOPs - no scoring routine')
             except: 
                 error_trap('GUI->LOG QSO: Failed to update score :-(',1)
 
