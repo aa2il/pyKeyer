@@ -266,7 +266,7 @@ class GUI():
         self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
 
         # Add a tab to manage keyer
-        if self.P.keyer_device:
+        if self.P.keyer_device or True:
             self.keyer_ctrl = KEYER_CONTROL(P)
         else:
             self.keyer_ctrl = None

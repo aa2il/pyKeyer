@@ -25,11 +25,14 @@ import sys
 if sys.version_info[0]==3:
     from tkinter import *
     import tkinter.ttk as ttk
+    import tkinter.messagebox
 else:
     from Tkinter import *
     import ttk
 from functools import partial
 from os import system
+from utilities import list_all_serial_devices,error_trap
+from pprint import pprint
 
 ################################################################################
 
@@ -38,8 +41,18 @@ class KEYER_CONTROL():
         self.P = P
         parent = P.root
         self.sock = P.sock
-        self.winkey_mode = P.keyer_device.winkey_mode
-        print('KEYER CONTROL INIT:',hex(self.winkey_mode))
+
+        # If there is not a keyer connected/detected, just issue a warning
+        if P.keyer_device:
+            self.winkey_mode = P.keyer_device.winkey_mode
+            print('KEYER CONTROL INIT: Winkey mode=',hex(self.winkey_mode))
+        else:
+            self.winkey_mode = 0
+            self.P.gui.splash.hide()
+            list_all_serial_devices(True)
+            msg="No keyer found!\n\nAll sending will be via keyboard"
+            result=tkinter.messagebox.showwarning('Keyer Control',msg)
+            self.P.gui.splash.show()
         
         self.win=Toplevel(parent)
         self.win.title("Keyer Control")
@@ -99,8 +112,23 @@ class KEYER_CONTROL():
         
     def show(self):
         print('Show Keyer Control Window ...')
-        self.win.update()
-        self.win.deiconify()
+        if self.P.keyer_device:
+            self.win.update()
+            self.win.deiconify()
+        else:
+            ports = list_all_serial_devices(True)
+            ndev=0
+            for port in ports:
+                if 'USB' in str(port):
+                    ndev+=1
+                    print('\nport=',port,':')
+                    pprint(vars(port))
+                    txt=str(port)+' : '+port.description+'\n'
+                    self.P.gui.txt.insert(END, txt)
+
+            msg='No keyer found!\n\nThere were '+str(ndev)+' USB devices found\n'
+            result=tkinter.messagebox.showwarning('Keyer Control',msg)
+            self.P.gui.txt.insert(END, msg)
         
     def hide(self):
         print('Hide Keyer Control Window ...')
@@ -124,7 +152,8 @@ class KEYER_CONTROL():
             self.winkey_mode = (self.winkey_mode & ~0x30) | (m<<4)
             
         print('\twk mode=',hex(self.winkey_mode))
-        self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
+        if self.P.keyer_device:
+            self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
         self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 
     def ToggleButton(self,iopt,i,mask):
@@ -141,7 +170,8 @@ class KEYER_CONTROL():
                 self.winkey_mode = self.winkey_mode & ~mask
                 
         #print('\t',self.Flags[i],'\twk mode=',hex(self.winkey_mode))
-        self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
+        if self.P.keyer_device:
+            self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
         self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 
         if not self.Flags[i]:

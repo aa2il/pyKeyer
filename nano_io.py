@@ -181,7 +181,6 @@ class KEYING_DEVICE():
                 sys.exit(0)
 
             print("NANO_IO INIT: Searching for nanoIO device ...")
-            #self.device=find_serial_device('nanoIO',0,1)
             self.device,self.vid_pid=find_serial_device(KEYER_DEVICE_ID,0,1)
             if not self.device:
                 print("NANO_IO INIT: Couldn't find nanoIO device - trying nanIO32 ...")
