@@ -59,6 +59,7 @@ echo or
 echo.
         python -m PyInstaller --onefile pyKeyer.py
         python -m PyInstaller --onefile paddling.py
+        python -m PyInstaller --onefile qrz.py
 echo.
 echo Next, copy support files into distribution director        
          copy ..\data\cty.plist dist
@@ -93,9 +94,16 @@ echo     0. Compiled version seems just fine under linux.
 echo        May need pavucontrol to direct pulse audio output.   
 echo     1. Rig control and keying under windoz doesn't work (yet)
 echo.
-echo Run Inno Setup Compiler and follow the prompts to create an installer.
-echo The compiler is available at jrsoftware.org.  Click on the desktop icon to start it.
-echo This installer works on Windoz 10/11 and Bottles.
+echo Run Inno Setup Compiler and follow the prompts to create installers for each app.
+echo The compiler is available at jrsoftware.org.  Click on the desktop icon to start it,
+echo     select the appropriate .iss file and click on the blue triangle to create each installer.
+echo The resulting installers work on Windoz 10/11 and Bottles and can be found in
+echo.
+echo      dist\Output
+echo.
+echo The installers are too big to share via github so I used Scroogle Drive instead.  Open
+echo Drive with a web browser and drag and drop the installers via a file browser.  
+echo.
 echo Be sure to include the following files:
 echo      keyer_splash.png   - need to rename this to be program specific
 echo      Book.txt, Panagrams.txt, Stumble.txt and QSO_Template.txt
@@ -107,6 +115,4 @@ echo "\Program Files (x86)\AA2IL\pyKeyer.exe" -practice -cwt
 echo.
 echo %DATE% %TIME%
 echo.
-
-
 

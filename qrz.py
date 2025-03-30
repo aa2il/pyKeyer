@@ -208,7 +208,7 @@ if __name__ == '__main__':
     arg_proc = argparse.ArgumentParser(description='QRZ???')
     #arg_proc.add_argument('call',type=str)
     arg_proc.add_argument("call", help="Call(s) worked",
-                          type=str,default=None,nargs='*')
+                          type=str,default=None,nargs='+')    # was *
     arg_proc.add_argument('-cwops', action='store_true',
                               help='CWops Reverse Lookup')
     arg_proc.add_argument('-cw', action='store_true',

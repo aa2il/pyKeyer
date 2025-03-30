@@ -22,7 +22,7 @@
 import sys
 import os
 from nano_io import *
-from utilities import error_trap, get_PIDs,find_serial_device,find_serial_device_by_serial_id
+from utilities import list_all_serial_devices,error_trap, get_PIDs,find_serial_device,find_serial_device_by_serial_id
 from rig_io import BAUD,SERIAL_PORT2,SERIAL_PORT4
 
 from tkinter import messagebox
@@ -72,6 +72,8 @@ def find_keyer(P):
     if KEYER_DEVICE_ID=='':
         print('\n*** Fatal Error *** Need to set MY_KEYER_DEVICE_ID ',
               'in ~/.keyerrc so we can find the keyer port :-(\n')
+        print('\nThese are the USB devices available:')
+        list_all_serial_devices(True)
         sys.exit(0)
 
     # There are a couple of ways to find the device - need to figure out what will work with winbloz
@@ -156,8 +158,10 @@ def find_keyer(P):
 def open_keying_port(P,sock,rig_num):
     if not sock:
         return None
+
+    vid_pid=None
     
-    print('Opening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
+    print('\nOpening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
     print('\tFIND_KEYER=',P.FIND_KEYER)
     if P.gui:
         P.gui.status_bar.setText("Opening Keying Port ...")

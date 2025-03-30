@@ -6,15 +6,8 @@
 # Functions related to the nano IO interface
 #
 # To Do:
-#     The Farnsworth and paddle switch point option aren't working
+#     The paddle switch point option isn't working
 #            - pawing throw .ino file, it looks like switch point (0x12) is NOT supported
-#     keyer_features_and_options.h to try out in k3ng keyer:
-#             Enable  FEATURE_FARNSWORTH - Fixed Farnsworth
-#             Enable  FEATURE_AUTOSPACE
-#             Enable  OPTION_WINKEY_DISCARD_BYTES_AT_STARTUP 
-#             Disable OPTION_WINKEY_2_HOST_CLOSE_NO_SERIAL_PORT_RESET
-#     Also see if esp32 version works better with winbloz (Avoids ASR
-#     problem on arduinos)
 #
 ############################################################################################
 #
@@ -102,6 +95,10 @@
 # \/		: Paginated help
 #
 ############################################################################################
+#
+# See winkeyer docs for commands for winkeyer
+#
+############################################################################################
 
 import sys
 import serial
@@ -165,6 +162,7 @@ class KEYING_DEVICE():
         self.farnsworth_wpm=5                         # Farnsworth wpm - set low to effectively disable on start-up
         self.ser = None
         self.protocol=protocol
+        self.winkey_version=None
  
         # Find serial port to the device
         print("\nNANO_IO: KEYING DEVICE INIT: Opening keyer ... device=",device)
@@ -173,7 +171,15 @@ class KEYING_DEVICE():
         else:
             KEYER_DEVICE_ID = P.SETTINGS["MY_KEYER_DEVICE_ID"]
             print('\tKEYER_DEVICE_ID =',KEYER_DEVICE_ID)
-            
+            if KEYER_DEVICE_ID=='':
+                print('\n*** Fatal Error *** Need to set MY_KEYER_DEVICE_ID ',
+                      'in ~/.keyerrc so we can find the keyer port :-(')
+                #print('\nRun this command to find out what devices/ports are available:')
+                #print('\n\tpython3 -m serial.tools.list_ports -v')
+                print('\nThese are the USB devices available:')
+                list_all_serial_devices(True)
+                sys.exit(0)
+
             print("NANO_IO INIT: Searching for nanoIO device ...")
             #self.device=find_serial_device('nanoIO',0,1)
             self.device,self.vid_pid=find_serial_device(KEYER_DEVICE_ID,0,1)
@@ -211,17 +217,41 @@ class KEYING_DEVICE():
             self.ser = serial.Serial(self.device,baud,timeout=0.1,
                                      dsrdtr=True,rtscts=0)
         
-            self.ser.setDTR(False)
             time.sleep(1)
-            self.ser.setDTR(True)
-            time.sleep(1)
-            self.ser.setDTR(False)
-            time.sleep(1)
+            print('\tin_waiting=',self.ser.in_waiting)
 
-            self.ser.reset_input_buffer()
-            time.sleep(1)
-            self.ser.reset_output_buffer()
-            time.sleep(1)
+            if True:
+                self.ser.setDTR(False)
+                time.sleep(1)
+                self.ser.setDTR(True)
+                time.sleep(1)
+                self.ser.setDTR(False)
+                time.sleep(1)
+
+                self.ser.reset_input_buffer()
+                time.sleep(1)
+                self.ser.reset_output_buffer()
+                time.sleep(1)
+
+            if False:
+                print('Fiddling ... in_waiting=',self.ser.in_waiting)
+                self.ser.flush()
+                time.sleep(1)
+                self.ser.flushInput()
+                time.sleep(1)
+                self.ser.read_all()
+                time.sleep(1)
+
+                print('Faddling ... in_waiting=',self.ser.in_waiting)
+                self.ser.close()
+                time.sleep(1)
+                self.ser = serial.Serial(self.device,baud,timeout=0.1,
+                                     dsrdtr=True,rtscts=0)
+                time.sleep(2)
+                txt=self.ser.read_all()
+                time.sleep(1)
+                print('nread=',len(txt))
+                print('Fumbling ... in_waiting=',self.ser.in_waiting)
 
             """
             Done2=False
@@ -233,7 +263,8 @@ class KEYING_DEVICE():
                 Done2=len(txt)<=2 or ntries2>5
             """
             txt=self.nano_read()
-            print('txt=',show_hex(txt))
+            n=min(len(txt),10)
+            print('txt=',show_hex(txt[:n]))
 
             if len(txt)>2 and ntries<5:
                 self.ser.close()
@@ -245,7 +276,7 @@ class KEYING_DEVICE():
         if P.PLATFORM == "Windows":
             delay=1.
         else:
-            delay=0.2
+            delay=1.   #  0.2
         if self.protocol=='NANO_IO':
             self.delim='~'
             self.wait4it(.1,.1,10)
@@ -339,20 +370,46 @@ class KEYING_DEVICE():
                 # First, we need to open the device
                 self.send_command(chr(0)+chr(2))
                 time.sleep(t2)
-                if self.ser.in_waiting:
-                    print('WAIT4IT: WINKEYER appears to be opened ...')
+                print('\t\t0x02: in_waiting=',self.ser.in_waiting)
 
-                    # Send 'ABC' and see if it gets echoed back
-                    self.send_command(chr(0)+chr(4)+'A')  # Echo test
-                    self.send_command(chr(0)+chr(4)+'B')  # Echo test
-                    self.send_command(chr(0)+chr(4)+'C')  # Echo test
+                if self.ser.in_waiting:
+                    print('\tWAIT4IT: WINKEYER appears to be opened ...')
+                    txt=self.nano_read()
+                    print('\t\t',ntries,'\t0x02:\ttxt=',txt,'\t',show_hex(txt),'\t(Revision Code)')
+                    txt2=txt
+                    self.winkey_version=ord(txt[-1])
+
+                    """
+                    # We can do this again if we want
+                    self.send_command(chr(0)+chr(2))
                     time.sleep(t2)
                     txt=self.nano_read()
-                    print(ntries,txt,'\t',show_hex(txt))
-                    #if txt==chr(0x17)+'ABC':
-                    if chr(0x17) in txt and 'ABC' in txt:
+                    print('\t\t',ntries,'\t0x02:\ttxt=',txt,'\t',show_hex(txt),'\t(Revision Code)')
+                    txt2+=txt
+                    """
+
+                    # Send a few characters and see if they get echoed back
+                    test_str='JBA@#$'
+                    for ch in test_str:
+                        txt=self.get_response(chr(0)+chr(4)+ch,0.1)     # Echo test
+                        print('\t\t',ntries,'\t0x04'+ch,':\ttxt=',txt,'\t',show_hex(txt),'\t(Echo)')
+                        txt2+=txt
+
+                    # There shouldn't be any residual but let's just check and see
+                    time.sleep(.1)
+                    txt2+=self.ser.read_all().decode("utf-8")
+                    print('\t\ttxt2=',txt2,'\t',show_hex(txt2))
+
+                    # Did we find the keyer?
+                    #if chr(0x17) in txt2 and 'ABC' in txt2:
+                    #if self.winkey_version>=10 and self.winkey_version<40 and test_str in txt2:
+                    if test_str in txt2:
                         print('WAIT4IT: Found WINKEYER keying device - yippee!')
+                        print('\tRevision Code=',self.winkey_version)
                         break
+                    else:
+                        print('WAIT4IT: Unexpected response from keyer :-(')
+                        print('\t\tin_waiting=',self.ser.in_waiting)
                 
             else:
 
@@ -365,6 +422,13 @@ class KEYING_DEVICE():
             sys.exit(0)
         return ntries
 
+    # Send a command to the nano and read the response
+    def get_response(self,cmd,delay=0):
+        self.send_command(cmd)
+        time.sleep(.1)
+        txt=self.nano_read()
+        return txt
+    
     # Send a command to the nano 
     def send_command(self,txt):
         try:
@@ -376,11 +440,11 @@ class KEYING_DEVICE():
             error_trap('SEND NANO COMMAND: Problem with write - giving up')
 
     # Read responses from the nano IO
-    def nano_read(self,echo=False):
+    def nano_read(self,echo=False,READ_ALL=False):
         txt=''
         while self.ser and self.ser.in_waiting>0:
             try:
-                if True:
+                if not READ_ALL:
                     txt1 = self.ser.read(256).decode("utf-8",'ignore')
                     txt += txt1
                 else:
@@ -389,9 +453,9 @@ class KEYING_DEVICE():
                     # in the form of 0xc2 and 0xc6.  These appear to be
                     # use to keep the computer from trying to send something
                     # while the paddles are engaged.  We aren't that
-                    # sophisticated so it probablt safe to ignore these for now.
-                    txt1 = self.ser.read(256)
-                    txt = txt + txt1.decode("utf-8",'ignore')
+                    # sophisticated so it probably safe to ignore these for now.
+                    txt1 = self.ser.read_all()
+                    txt = txt + txt1  # .decode("utf-8",'ignore')
                     print('NANO READ ECHO:',txt1,'\t',len(txt1),
                           '\n',show_hex(txt1),
                           '\n',txt,'\t',show_hex(txt),'\t',len(txt))
@@ -401,7 +465,7 @@ class KEYING_DEVICE():
         if echo:
             print('NANO READ ECHO:',txt,'\t',show_hex(txt))
         return txt
-
+    
     # Send chars/commands to the nano IO
     def nano_write(self,txt):
         # Need to make sure serial buffer doesn't over run - h/w flow control doesn't seem to work

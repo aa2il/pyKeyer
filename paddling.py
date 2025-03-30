@@ -49,7 +49,7 @@ import time
 import random
 from nano_io import *
 from fileio import read_text_file
-from utilities import cut_numbers,error_trap,show_hex,show_ascii
+from utilities import cut_numbers,error_trap,show_hex,show_ascii,list_all_serial_devices
 from pprint import pprint
 import Levenshtein
 from keying import *
@@ -755,7 +755,7 @@ class PADDLING_GUI():
 if __name__ == '__main__':
 
     import cw_keyer
-    from settings import read_settings
+    from settings import read_settings,SETTINGS_GUI
     from load_history import load_history
     import argparse
     from rig_io import CONNECTIONS,RIGS
@@ -779,6 +779,8 @@ if __name__ == '__main__':
             arg_proc.add_argument("-keyer", help="Keyer Type",
                                   type=str,default='WINKEY',
                                   choices=['WINKEY','NANO','K3NG','ANY'])
+            arg_proc.add_argument('-settings',action='store_true',
+                                  help='Open setting sindow')
             args = arg_proc.parse_args()
             
             self.WPM           = args.wpm
@@ -819,7 +821,15 @@ if __name__ == '__main__':
             self.need_eol=False
             
             # Read config file
-            self.SETTINGS,RCFILE = read_settings('.keyerrc')
+            self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
+            valid = self.SETTINGS['MY_CALL']!='' and self.SETTINGS["MY_KEYER_DEVICE_ID"]!=''
+            if not valid:
+                print('\n*** Need to set atleast CALL and KEYER_DEVICE_ID ***\n')
+                #print('To find KEYER_DEVICE_ID, press CANCEL and look for port description')
+                print('\nThese are the USB devices available:')
+                list_all_serial_devices(True)
+            if not valid or args.settings:
+                self.SettingsWin = SETTINGS_GUI(None,self,BLOCK=True)  #,refreshCB=self.RefreshSettings)
 
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):
