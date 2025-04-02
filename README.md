@@ -78,11 +78,14 @@ Here is a good video overview of Miniconda:
    https://www.anaconda.com/docs/getting-started/miniconda/main
    
 2) Download and install latest & greatest Mini-conda for your particular OS:
+
    - I used the bash installer for linux
    - As of July 2023: Conda 23.5.2 Python 3.11.3 released July 13, 2023
-   - cd ~/Downloads
-   - bash Miniconda3-latest-Linux-x86_64.sh
-   - Follow the prompts
+
+      cd
+      mkdir -p ~/miniconda3
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+      bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
 
    - If you'd prefer that conda's base environment not be activated on startup, 
       set the auto_activate_base parameter to false: 
