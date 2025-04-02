@@ -25,7 +25,9 @@ Over the years, a number of very good logging programs have been developed.  The
 - Variety of text generation facilities for practicing with keyer paddles.
 - ...
 
-# Installation under Linux:
+# Installation under Linux - Depricated:
+
+0) THIS IS *NOT* THE RECOMMENED PROCEDURE ANYMORE.  As of Linux Mint 22, the system python libraries are heavily guarded.  If you see a message stating that "This environment is externally managed," you will need to use some sort of "virtual" or "container" for your python environment.  I have found that Miniconda is a straight-forward way to do this.  See the next section for the installation instructions under Miniconda.
 
 1) Uses python3 and tkinter
 2) Clone gitub pyKeyer, libs and data repositories
@@ -57,11 +59,22 @@ Over the years, a number of very good logging programs have been developed.  The
      
    See also start and start_cw for examples how to run this thing         
 
-# Installation under Mini-conda:
+# Installation under Mini-conda (Linux):
 
-0) Good video:  https://www.youtube.com/watch?v=23aQdrS58e0&t=552s
+0) There are several ways to achieve a "virtual environment" for python.  Although such "containerized" approaches require a little bit of work up-front, there are several advantages:
 
-1) Point browser to https://docs.conda.io/en/latest/miniconda.html
+   - Protects the system python libraries (required by many recent distro releases)
+   - Allows for establishment of different environments with, say, different versions of python
+   - App will continue to function as python evolves and functions are depricated or syntx changes.
+
+Here is a good video overview of Miniconda:
+
+     https://www.youtube.com/watch?v=23aQdrS58e0&t=552s
+
+1) Point a browser to
+      
+   https://docs.conda.io/en/latest/miniconda.html
+   
 2) Download and install latest & greatest Mini-conda for your particular OS:
    - I used the bash installer for linux
    - As of July 2023: Conda 23.5.2 Python 3.11.3 released July 13, 2023
@@ -80,11 +93,13 @@ Over the years, a number of very good logging programs have been developed.  The
        - This creates ~/.tcshrc - move its contents to .cshrc if need be
        - relaunch tcsh and all should be fine!
        - Test with:
-           - conda list
+       
+          conda list
 
    - To blow away a work environment and start over:
-       - conda deactivate
-       - conda remove -n work --all
+          
+         conda deactivate
+         conda remove -n work --all
            
 3) Create a working enviroment for ham radio stuff:
    - Check which python version we have:
