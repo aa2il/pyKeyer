@@ -29,6 +29,8 @@ Over the years, a number of very good logging programs have been developed.  The
 
 0) THIS IS *NOT* THE RECOMMENED PROCEDURE ANYMORE.  As of Linux Mint 22, the system python libraries are heavily guarded.  If you see a message stating that "This environment is externally managed," you will need to use some sort of "virtual" or "container" for your python environment.  I have found that Miniconda is a straight-forward way to do this.  See the next section for the installation instructions under Miniconda.
 
+The instructions in this section still work on the Raspberry Pi.
+
 1) Uses python3 and tkinter
 2) Clone gitub pyKeyer, libs and data repositories
 
@@ -73,7 +75,7 @@ Here is a good video overview of Miniconda:
 
 1) Point a browser to
       
-   https://docs.conda.io/en/latest/miniconda.html
+   https://www.anaconda.com/docs/getting-started/miniconda/main
    
 2) Download and install latest & greatest Mini-conda for your particular OS:
    - I used the bash installer for linux
