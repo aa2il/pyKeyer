@@ -90,16 +90,18 @@ Here is a good video overview of Miniconda:
    - If you'd prefer that conda's base environment not be activated on startup, 
       set the auto_activate_base parameter to false: 
 
-      conda config --set auto_activate_base false
+         conda config --set auto_activate_base false
 
    - To get it to work under tcsh:
-       - bash
-       - conda init tcsh
+   
+         bash
+         conda init tcsh
+         
        - This creates ~/.tcshrc - move its contents to .cshrc if need be
        - relaunch tcsh and all should be fine!
        - Test with:
        
-          conda list
+         conda list
 
    - To blow away a work environment and start over:
           
@@ -107,56 +109,67 @@ Here is a good video overview of Miniconda:
          conda remove -n work --all
            
 3) Create a working enviroment for ham radio stuff:
+
    - Check which python version we have:
-   - conda list
+   
+         conda list
 
    - !!! By default, conda does not include very many fonts for tk and therefore the
-           Tk GUIs look like crap.  Do this when creating the sandbox to avoid this problem:
+         Tk GUIs look like crap.  Do this when creating the sandbox to avoid this problem:
 
-      bash
-      cd ~/miniconda3/envs/
-      conda create -y --prefix "aa2il" -c conda-forge "python==3.12.*" "tk[build=xft_*]"
-      exit
+         bash
+         cd ~/miniconda3/envs/
+         conda create -y --prefix "aa2il" -c conda-forge "python==3.12.*" "tk[build=xft_*]"
+         exit
 
     - The fonts on an existing sandbox can be upgraded via:
 
-       bash
-       conda install --prefix "aa2il" -c conda-forge "tk=*=xft_* "
-       exit
+         bash
+         conda install --prefix "aa2il" -c conda-forge "tk=*=xft_* "
+         exit
 
    - To activate this environment, use:
-       - conda activate aa2il
-   - To deactivate an active environment, use:
-       - conda deactivate
+   
+         conda activate aa2il
+         
+   - To see what's installed in the currently active environment:
 
-   - conda env list
-   - conda activate aa2il
+         conda env list
+
+   - To deactivate an active environment, use:
+   
+         conda deactivate
 
 4) Clone gitub pyKeyer, libs and data repositories:
 
-      cd
-      mkdir Python
-      cd Python
-      git clone https://github.com/aa2il/pyKeyer
-      git clone https://github.com/aa2il/libs
-      git clone https://github.com/aa2il/data
+         cd
+         mkdir Python
+         cd Python
+         git clone https://github.com/aa2il/pyKeyer
+         git clone https://github.com/aa2il/libs
+         git clone https://github.com/aa2il/data
 
 5) Install packages needed by pyKeyer:
 
-     cd ~/Python/pyKeyer
-     pip3 install -r requirements.txt
+         cd ~/Python/pyKeyer
+         pip3 install -r requirements.txt
 
-6) Set PYTHON PATH so os can find libraries:
+6) Set PYTHON PATH so OS can find libraries:
 
-   - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
-   - Under bash:      export PYTHONPATH="$HOME/Python/libs"
+   - Under tcsh, put this in ~/.cshrc:
+
+         setenv PYTHONPATH $HOME/Python/libs
+         
+   - Under bash, put this in ~/.bashrc:
+   
+         export PYTHONPATH="$HOME/Python/libs"
 
 7) To run pyKeyer, we need to specify python interpreter so it doesn't run in
    the default system environment:
    
-     cd ~/Python/pyKeyer
-     conda activate aa2il
-     python pyKeyer.py
+         cd ~/Python/pyKeyer
+         conda activate aa2il
+         python pyKeyer.py
 
 8) If the fonts look awful, see step 3 above
    
@@ -173,7 +186,7 @@ Here is a good video overview of Miniconda:
 2) Clone gitub repositories.  There are several tools available for windows
    for fetching git repositories.  I use the command line version from
    
-       https://git-scm.com/downloads/win
+        https://git-scm.com/downloads/win
        
    Find one you like, open a command prompt and effect the following:
    
