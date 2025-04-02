@@ -82,10 +82,10 @@ Here is a good video overview of Miniconda:
    - I used the bash installer for linux
    - As of July 2023: Conda 23.5.2 Python 3.11.3 released July 13, 2023
 
-      cd
-      mkdir -p ~/miniconda3
-      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-      bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+         cd
+         mkdir -p ~/miniconda3
+         wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+         bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
 
    - If you'd prefer that conda's base environment not be activated on startup, 
       set the auto_activate_base parameter to false: 
