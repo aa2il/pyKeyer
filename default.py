@@ -33,6 +33,7 @@ from datetime import datetime, date, tzinfo
 import time
 import pytz
 from scoring import CONTEST_SCORING
+import tkinter.messagebox
 
 ############################################################################################
 
@@ -76,6 +77,9 @@ class DEFAULT_KEYING():
 
         # On the fly scoring
         P.SCORING    = CONTEST_SCORING(P,P.CONTEST_ID,'CW')
+
+        # Check self info
+        self.check_my_info(['CALL'])
 
     # Routient to set macros for this contest
     def macros(self):
@@ -961,3 +965,25 @@ class DEFAULT_KEYING():
 
         P.gui.info.delete(0,END)
         P.gui.info.insert(0,txt2)
+
+
+    # Routine to make sure we have the mininum info we'll need
+    def check_my_info(self,fields):
+
+        valid=True
+        msg='Missing one or more of the following fields:\n'
+        for field in fields:
+            f='MY_'+field
+            msg += f+' '
+            valid = valid and (f in self.P.SETTINGS)
+            if valid:
+                value = self.P.SETTINGS[f].strip()
+                valid = valid and len(value)>0
+
+        if not valid:
+            if self.P.gui.splash:
+                self.P.gui.splash.hide()
+            result=tkinter.messagebox.showerror('Check My Info',msg)
+            self.P.gui.SettingsWin.show()
+            if self.P.gui.splash:
+                self.P.gui.splash.show()

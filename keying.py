@@ -69,6 +69,7 @@ def find_keyer(P):
     print('\nFIND KEYER: Looking for keyer device ...')
     print('\tKEYER_DEVICE    =',KEYER_DEVICE)
     print('\tKEYER_DEVICE_ID =',KEYER_DEVICE_ID)
+    print('\tKEYER_PORT      =',P.KEYER_PORT)
     if KEYER_DEVICE_ID=='':
         print('\n*** Fatal Error *** Need to set MY_KEYER_DEVICE_ID ',
               'in ~/.keyerrc so we can find the keyer port :-(\n')
@@ -78,21 +79,24 @@ def find_keyer(P):
 
     # There are a couple of ways to find the device - need to figure out what will work with winbloz
     list_all_serial_devices(USB_ONLY=True)
-    #device,vid_pid=find_serial_device(KEYER_DEVICE,0,2)
-    device,vid_pid=find_serial_device(KEYER_DEVICE_ID,0,2)
-    #device,vid_pid=find_serial_device_by_serial_id(KEYER_DEVICE_ID,0,2)
+    device,vid_pid=find_serial_device(KEYER_DEVICE_ID,0,VERBOSITY=2,PORT=P.KEYER_PORT)
     print('\tkeyer device=',device,'\tvid_pid=',vid_pid)
-    #sys.exit(0)
     
     if not device:
         print('... Not found - Looking for ESP32 keyer device ...')
-        device,vid_pid=find_serial_device('nanoIO32',0,2)
+        device,vid_pid=find_serial_device('nanoIO32',0,VERBOSITY=2)
         print('\tdevice=',device)
     if device:
         print(' ... There it is on port',device,' ...\n')
         set_DTR_hangup(device,False)
         #set_DTR_hangup(device,True)
         #sys.exit(0)
+
+        # Forget the search until we get the winkeyer working for Lloyd
+        if len(KEYER_DEVICE)==0:
+            KEYER_DEVICE='WINKEYER'
+        if len(KEYER_DEVICE)>0:
+            return device,KEYER_DEVICE,vid_pid
     else:
         print('\nNo serial keyer device found\n')
         return None,None,None
@@ -163,18 +167,18 @@ def open_keying_port(P,sock,rig_num):
     
     print('\nOpening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
     print('\tFIND_KEYER=',P.FIND_KEYER)
+    print('\tKEYER_PORT=',P.KEYER_PORT)
     if P.gui:
         P.gui.status_bar.setText("Opening Keying Port ...")
-    #print(sock)
-    #print('\tRig Types=',sock.rig_type,sock.rig_type1,sock.rig_type2)
+
     if P.USE_KEYER and rig_num==1:
-        if P.FIND_KEYER:
+        if P.FIND_KEYER or P.KEYER_PORT!=None:
             
             device,dev_type,vid_pid=find_keyer(P)
             print('device=',device,'\tdev_type=',dev_type)
             Done = dev_type!=None
             while not Done:
-                print('\nUnable to find keyer device!')
+                print('\nOPEN_LEYING_PORT: Unable to find keyer device!')
                 
                 pids = get_PIDs('pyKeyer.py') + get_PIDs('paddling.py')
                 print('\npids=',pids)

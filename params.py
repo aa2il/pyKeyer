@@ -234,7 +234,7 @@ class PARAMS:
         arg_proc.add_argument("-rig3", help="Connection Type - 3rd rig",
                               type=str,default=["NONE"],nargs='+',
                               choices=CONNECTIONS+['NONE']+RIGS)
-        arg_proc.add_argument("-port3", help="Connection Port - 2nd rig",
+        arg_proc.add_argument("-port3", help="Connection Port - 3rd rig",
                               type=int,default=0)
         arg_proc.add_argument("-max_age", help="Max age in hours",
                               type=int,default=None)
@@ -243,6 +243,8 @@ class PARAMS:
         arg_proc.add_argument("-keyer", help="Keyer Type",
                               type=str,default=None,
                               choices=['NONE','NANO','K3NG','WINKEY','ANY'])
+        arg_proc.add_argument("-kport", help="Connection Port for Keyer",
+                              type=str,default=None)
         arg_proc.add_argument('-nano', action='store_true',
                               help="Use Nano IO Interface")
         arg_proc.add_argument('-k3ng', action='store_true',
@@ -342,6 +344,7 @@ class PARAMS:
             self.rig       = None
         self.PORT          = args.port
         self.keyer_device  = None
+        self.KEYER_PORT    = args.kport
             
         self.connection2   = args.rig2[0]
         if len(args.rig2)>=2:

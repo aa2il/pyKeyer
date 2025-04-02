@@ -49,6 +49,9 @@ class MST_KEYING(DEFAULT_KEYING):
         # On-the-fly scoring
         P.SCORING    = MST_SCORING(P)
 
+        # Check self info
+        self.check_my_info(['CALL','NAME'])
+        
     # Routient to set macros for this contest
     def macros(self):
 

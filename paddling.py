@@ -49,13 +49,14 @@ import time
 import random
 from nano_io import *
 from fileio import read_text_file
-from utilities import cut_numbers,error_trap,show_hex,show_ascii,list_all_serial_devices
+from utilities import cut_numbers,error_trap,show_hex,show_ascii,list_all_serial_devices,find_resource_file
 from pprint import pprint
 import Levenshtein
 from keying import *
 from widgets_tk import StatusBar,SPLASH_SCREEN
 from keyer_control_tk import *
 import string
+from settings import read_settings,SETTINGS_GUI
 
 ################################################################################
 
@@ -243,7 +244,7 @@ class PADDLING_GUI():
         self.CasualBtn.grid(row=row,column=col,sticky=E+W)
         self.toggle_casual(0)
 
-        # Button to bring up rig/keyer control
+        # Button to bring up rig/keyer control ...
         col+=1
         if self.STAND_ALONE:
             P.root=self.root
@@ -255,8 +256,15 @@ class PADDLING_GUI():
             self.rig = P.gui.rig        
             #self.keyer_ctrl = P.gui.keyer_ctrl
 
-        # ... and to Quit
+        # ... Button to bring up settings dialog
         col=NCOLS-1
+        if self.STAND_ALONE:
+            self.SettingsWin = SETTINGS_GUI(self.win,P)    # ,refreshCB=self.RefreshSettings)
+            self.SettingsWin.hide()
+            Button(self.win, text="Settings",command=self.SettingsWin.show) \
+                .grid(row=row-1,column=col,sticky=E+W)
+
+        # ... and to Button Quit
         Button(self.win, text="Quit",command=self.Quit) \
             .grid(row=row,column=col,sticky=E+W)
 
@@ -751,11 +759,9 @@ class PADDLING_GUI():
 ################################################################################
 
 # If this file is called as main, run as independent exe
-# Not quite there yet ...
 if __name__ == '__main__':
 
     import cw_keyer
-    from settings import read_settings,SETTINGS_GUI
     from load_history import load_history
     import argparse
     from rig_io import CONNECTIONS,RIGS
@@ -779,6 +785,8 @@ if __name__ == '__main__':
             arg_proc.add_argument("-keyer", help="Keyer Type",
                                   type=str,default='WINKEY',
                                   choices=['WINKEY','NANO','K3NG','ANY'])
+            arg_proc.add_argument("-kport", help="Connection Port for Keyer",
+                                  type=str,default=None)
             arg_proc.add_argument('-settings',action='store_true',
                                   help='Open setting sindow')
             args = arg_proc.parse_args()
@@ -791,6 +799,8 @@ if __name__ == '__main__':
             else:
                 self.rig       = None
 
+            self.KEYER_PORT    = args.kport
+                
             # Init
             self.sock=None
             self.gui=None
@@ -828,8 +838,9 @@ if __name__ == '__main__':
                 #print('To find KEYER_DEVICE_ID, press CANCEL and look for port description')
                 print('\nThese are the USB devices available:')
                 list_all_serial_devices(True)
-            if not valid or args.settings:
-                self.SettingsWin = SETTINGS_GUI(None,self,BLOCK=True)  #,refreshCB=self.RefreshSettings)
+            self.SHOW_SETTINGS = not valid or args.settings
+            #if not valid or args.settings:
+            #    self.SettingsWin = SETTINGS_GUI(None,self,BLOCK=True)  #,refreshCB=self.RefreshSettings)
 
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):
@@ -884,11 +895,19 @@ if __name__ == '__main__':
     # Create GUI
     P.PaddlingWin = PADDLING_GUI(None,P)
     P.PaddlingWin.SetWpm(0)
-
+    if P.SHOW_SETTINGS:
+        P.PaddlingWin.SettingsWin.show()
+    
     # Load master call list
     print('Reading master history file ...')
     P.PaddlingWin.status_bar2.setText('Reading master history file ...')
     P.HIST_DIR=os.path.expanduser('~/Python/data/')
+    if not os.path.isdir(P.HIST_DIR):
+        fname=find_resource_file('master.csv')
+        P.HIST_DIR=os.path.dirname(fname)+'/'
+    #print('HIST_DIR=',P.HIST_DIR)
+    #sys.exit(0)
+    
     P.MASTER,fname9 = load_history(P.HIST_DIR+'master.csv')
     P.calls = list(P.MASTER.keys())
     P.Ncalls = len(P.calls)

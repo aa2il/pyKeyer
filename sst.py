@@ -49,6 +49,10 @@ class SST_KEYING(DEFAULT_KEYING):
 
         # On-the-fly scoring
         P.SCORING = SST_SCORING(P,'SST')
+
+        # Check self info
+        self.check_my_info(['CALL','NAME','STATE'])
+
         
     # Routine to set macros for this contest
     def macros(self):

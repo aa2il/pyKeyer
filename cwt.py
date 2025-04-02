@@ -51,6 +51,9 @@ class CWOPS_KEYING(DEFAULT_KEYING):
         # On-the-fly scoring
         P.SCORING    = CWT_SCORING(P)
 
+        # Check self info
+        self.check_my_info(['CALL','NAME','CWOPS'])
+        
         """
         This code fragment gets the proper history list from the master file
         Eventually, we might go to this model where we only import the master.csv
