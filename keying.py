@@ -363,7 +363,7 @@ def open_keying_port(P,sock,rig_num):
                 sys.exit(0)
         
         else:
-            print('### Unable to open serial port to rig ###')
+            print('### Unable to open serial port to keyer - using DUMMY ###')
             ser=serial_dummy()
 
     return ser

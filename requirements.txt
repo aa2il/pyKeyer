@@ -13,11 +13,18 @@ pyhamtools
 pyautogui
 pyaudio
 pyudev
+psutil
 
+openpyxl
 pandas
 scipy
 levenshtein
 chardet
 
+# As of python 3.13, this is no longer available
+# There is an older copy in the libs directory until I can find a replacement
+#telnetlib
+
 # Only available under linux, not winbloz
-termios
+# Seems to have disappeared with Python 3.13!
+#termios

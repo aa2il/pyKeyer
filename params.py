@@ -29,6 +29,7 @@ from collections import OrderedDict
 import datetime
 from dx.spot_processing import Station
 from pprint import pprint
+#from settings import read_settings,SETTINGS_GUI
 
 ################################################################################
 
@@ -287,6 +288,8 @@ class PARAMS:
                               help='Geometry')
         arg_proc.add_argument('-desktop',type=int,default=None,
                               help='Desk Top Work Space No.')
+        arg_proc.add_argument('-settings',action='store_true',
+                              help='Open setting window')
         arg_proc.add_argument('-special', action='store_true',
                               help='Special settings for VHF work')
         args = arg_proc.parse_args()
@@ -301,6 +304,7 @@ class PARAMS:
         self.TEST_MODE     = args.test
         self.RX_Clar_On    = True
         self.DESKTOP       = args.desktop
+        self.SHOW_SETTINGS = args.settings
 
         self.SENDING_PRACTICE = args.sending
         self.WINKEYER      = args.winkeyer or args.keyer=='WINKEY'
@@ -542,9 +546,12 @@ class PARAMS:
         
         # Read config file
         self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
+        call = self.SETTINGS['MY_CALL']
+        self.SHOW_SETTINGS = self.SHOW_SETTINGS or call==''
+        if self.SHOW_SETTINGS:
+            SettingsWin = SETTINGS_GUI(None,self,BLOCK=True)
 
         # Automajically include /6 if we're in the CQP
-        call = self.SETTINGS['MY_CALL']
         if self.contest_name=='CQP' and '/' not in call:
             print('Checking call for CQP ... call=',call)
             station = Station(call)
@@ -586,6 +593,18 @@ class PARAMS:
             else:
                 self.WORK_DIR=HOME
         print('WORK_DIR=',self.WORK_DIR)
+
+        # Make one more attempt to use a keyer 
+        if not self.USE_KEYER: 
+            KEYER_DEVICE    = self.SETTINGS["MY_KEYER_DEVICE"]
+            KEYER_DEVICE_ID = self.SETTINGS["MY_KEYER_DEVICE_ID"]
+            print('\tKEYER_DEVICE    =',KEYER_DEVICE)
+            print('\tKEYER_DEVICE_ID =',KEYER_DEVICE_ID)
+            if len(KEYER_DEVICE)>0:
+                self.WINKEYER = KEYER_DEVICE=='WINKEYER'
+            self.USE_KEYER  = self.WINKEYER and len(KEYER_DEVICE_ID)>0
+            print('\tWINKEYER        =',self.WINKEYER)
+            print('\tUSE_KEYER       =',self.USE_KEYER)
                     
         #sys,exit(0)
 

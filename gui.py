@@ -247,15 +247,18 @@ class GUI():
         self.fp_txt = open(P.WORK_DIR+self.MY_CALL.replace('/','_')+".TXT","a+")
 
         # Add a check file
-        fname77='snippets.txt'
-        if os.path.exists(fname77):
-            self.fp_snip = open(fname77,"a+")
+        if P.PLATFORM=='Linux':
+            fname77='snippets.txt'
+            if os.path.exists(fname77):
+                self.fp_snip = open(fname77,"a+")
+            else:
+                self.fp_snip = open(fname77,"w")
+                self.fp_snip.write('%s\n' % ('#/bin/tcsh -f') )
+                self.fp_snip.write('%s\n' % (' ') )
+                self.fp_snip.write('%s\n' % ('set fname="capture_*.wav"') )
+                self.fp_snip.write('%s\n' % (' ') )
         else:
-            self.fp_snip = open(fname77,"w")
-            self.fp_snip.write('%s\n' % ('#/bin/tcsh -f') )
-            self.fp_snip.write('%s\n' % (' ') )
-            self.fp_snip.write('%s\n' % ('set fname="capture_*.wav"') )
-            self.fp_snip.write('%s\n' % (' ') )
+            self.fp_snip=None
 
         # Add a tab to manage Rig
         self.rig = RIG_CONTROL(P)
@@ -266,15 +269,14 @@ class GUI():
         self.rotor_ctrl = ROTOR_CONTROL(self.rig.tabs,P)
 
         # Add a tab to manage keyer
-        if self.P.keyer_device or True:
-            self.keyer_ctrl = KEYER_CONTROL(P)
-        else:
-            self.keyer_ctrl = None
+        self.keyer_ctrl = KEYER_CONTROL(P)
                     
-        # Create pop-up window for Settings and Paddle Practice - Need these before we can create the menu
+        # Create s pop-up window for Settings
         self.status_bar.setText("Constructing GUI ...")
         self.SettingsWin = SETTINGS_GUI(self.root,self.P,refreshCB=self.RefreshSettings)
         self.SettingsWin.hide()
+            
+        # Create pop-up window for Paddle Practice
         self.PaddlingWin = PADDLING_GUI(self.root,self.P)
         if P.SENDING_PRACTICE:
             self.PaddlingWin.show()
@@ -1225,14 +1227,15 @@ class GUI():
             ' ; audacity SNIPPIT.wav > & /dev/null'
         print('\n#',note)
         print(cmd,'\n')
-        self.fp_snip.write('\n# %s\n' % (note) )
-        self.fp_snip.write('%s\n' % (cmd) )
-        self.fp_snip.flush()
+        if self.fp_snip:
+            self.fp_snip.write('\n# %s\n' % (note) )
+            self.fp_snip.write('%s\n' % (cmd) )
+            self.fp_snip.flush()
 
-        txt='# FLAG IT!\n'
-        self.fp_adif.write(txt+'\n')
-        self.fp_adif.flush()
-        self.txt.insert(END, txt)            
+            txt='# FLAG IT!\n'
+            self.fp_adif.write(txt+'\n')
+            self.fp_adif.flush()
+            self.txt.insert(END, txt)            
         
     # Callback to bring up rig control menu
     def RigCtrlCB(self):
@@ -2146,7 +2149,8 @@ class GUI():
         self.SaveState()
         self.fp_adif.close()
         self.fp_txt.close()
-        self.fp_snip.close()
+        if self.fp_snip:
+            self.fp_snip.close()
         self.P.SHUTDOWN=True
 
         # Immediately stop sending

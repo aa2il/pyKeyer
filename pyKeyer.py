@@ -66,10 +66,11 @@ VERSION='1.1'
 print("\n\n***********************************************************************************")
 print("\nStarting pyKeyer v"+VERSION+" ...")
 P=PARAMS()
-if True:
-    print("P=")
-    pprint(vars(P))
-    #sys.exit(0)
+print("P=")
+pprint(vars(P))
+#print('\nPython version=',sys.version_info)
+print('\n\tPython version=',sys.version_info[0],'.',
+      sys.version_info[1],'.',sys.version_info[2],'\n')
     
 # Memory Monitor
 if True:

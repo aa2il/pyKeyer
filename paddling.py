@@ -119,6 +119,8 @@ class PADDLING_GUI():
             self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
             self.status_bar2 = self.splash.status_bar
             self.status_bar2.setText("Howdy Ho!!!!! Creating GUI ...")
+        else:
+            self.splash  = None
         
         # Read list of Panagrams
         self.panagrams = read_text_file('Panagrams.txt',KEEP_BLANKS=False)
@@ -260,7 +262,7 @@ class PADDLING_GUI():
         col=NCOLS-1
         if self.STAND_ALONE:
             self.SettingsWin = SETTINGS_GUI(self.win,P)    # ,refreshCB=self.RefreshSettings)
-            self.SettingsWin.hide()
+            #self.SettingsWin.hide()
             Button(self.win, text="Settings",command=self.SettingsWin.show) \
                 .grid(row=row-1,column=col,sticky=E+W)
 
@@ -769,7 +771,10 @@ if __name__ == '__main__':
     from rig_io.socket_io import open_rig_connection
     import platform
 
-    print('Howdy Ho!')
+    VERSION='1.1'
+    
+    print("\n\n***********************************************************************************")
+    print("\nStarting Paddling Practice v"+VERSION+" ...")
     
     # Structure to contain processing params
     class PADDLING_PARAMS:
@@ -788,7 +793,7 @@ if __name__ == '__main__':
             arg_proc.add_argument("-kport", help="Connection Port for Keyer",
                                   type=str,default=None)
             arg_proc.add_argument('-settings',action='store_true',
-                                  help='Open setting sindow')
+                                  help='Open setting window')
             args = arg_proc.parse_args()
             
             self.WPM           = args.wpm
@@ -838,9 +843,9 @@ if __name__ == '__main__':
                 #print('To find KEYER_DEVICE_ID, press CANCEL and look for port description')
                 print('\nThese are the USB devices available:')
                 list_all_serial_devices(True)
-            self.SHOW_SETTINGS = not valid or args.settings
-            #if not valid or args.settings:
-            #    self.SettingsWin = SETTINGS_GUI(None,self,BLOCK=True)  #,refreshCB=self.RefreshSettings)
+            print(valid,args.settings)
+            if not valid or args.settings:
+                SettingsWin = SETTINGS_GUI(None,self,BLOCK=True)
 
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):
@@ -878,6 +883,8 @@ if __name__ == '__main__':
     P=PADDLING_PARAMS()
     print("P=")
     pprint(vars(P))
+    print('\n\tPython version=',sys.version_info[0],'.',
+          sys.version_info[1],'.',sys.version_info[2])
 
     # Open connection to rig if necessary
     print('\nConnection=',P.connection,'\trig=',P.rig,'...')
@@ -895,8 +902,6 @@ if __name__ == '__main__':
     # Create GUI
     P.PaddlingWin = PADDLING_GUI(None,P)
     P.PaddlingWin.SetWpm(0)
-    if P.SHOW_SETTINGS:
-        P.PaddlingWin.SettingsWin.show()
     
     # Load master call list
     print('Reading master history file ...')

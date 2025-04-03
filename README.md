@@ -12,6 +12,8 @@ Also can be used as a sending and receiving CW trainer.
 
 Over the years, a number of very good logging programs have been developed.  The most popular of these today is the N1MM logger.  Unfortunately, this is a Windoz-only application and is very difficult to get working under linux.  My experience with the other options available for linux are either not being actively maintained and/or are too bloated and/or lacking to be useful for contesting.  Hence, the development of yet another keying/logging program.
 
+Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testing these codes.
+
 # Features
 
 - Macros and data entry are focused on contest exchanges.
@@ -97,9 +99,9 @@ Here is a good video overview of Miniconda:
          bash
          conda init tcsh
          
-       - This creates ~/.tcshrc - move its contents to .cshrc if need be
-       - relaunch tcsh and all should be fine!
-       - Test with:
+   - This creates ~/.tcshrc - move its contents to .cshrc if need be
+   - relaunch tcsh and all should be fine!
+   - Test with:
        
          conda list
 
@@ -122,7 +124,7 @@ Here is a good video overview of Miniconda:
          conda create -y --prefix "aa2il" -c conda-forge "python==3.12.*" "tk[build=xft_*]"
          exit
 
-    - The fonts on an existing sandbox can be upgraded via:
+   - The fonts on an existing sandbox can be upgraded via:
 
          bash
          conda install --prefix "aa2il" -c conda-forge "tk=*=xft_* "

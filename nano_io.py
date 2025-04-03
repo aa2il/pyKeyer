@@ -96,16 +96,20 @@
 #
 ############################################################################################
 #
-# See winkeyer docs for commands for winkeyer
+# See winkeyer docs for commands for winkeyer - latest is version 3
 #
 ############################################################################################
 
 import sys
+import os
 import serial
 import time
 from utilities import find_serial_device,list_all_serial_devices,show_hex,error_trap
-if sys.platform == "linux" or sys.platform == "linux2":
-    import termios
+
+# termios seems to have disappeared with python 3.13
+# Let's try doing without it and see what happens
+#if sys.platform == "linux" or sys.platform == "linux2":
+#    import termios
 
 ############################################################################################
 
@@ -117,28 +121,22 @@ ECHO_CMD=chr(0x00)+chr(0x04)
 ############################################################################################
 
 """
+# termios seems to have disappeared with python 3.13
+# I think this is the OS command we're trying to effect with this
+# Let's see if we even need to worry about this
+
 #  stty -F /dev/ttyUSB0 -hupcl
 #
-
-import termios
-
-path = '/dev/ttyACM0'
-
-# Disable reset after hangup
-with open(path) as f:
-    attrs = termios.tcgetattr(f)
-    attrs[2] = attrs[2] & ~termios.HUPCL
-    termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
-
-ser = serial.Serial(path, 9600)
-
 """
-
 # Function to disable/enable DTR hangup
 def set_DTR_hangup(device,ENABLE=False):
+    print('SET DTR HANGUP: device=',device,'\tENABLE=',ENABLE)
+    cmd='stty -F '+device
+    #sys.exit(0)
 
     # Disable reset after hangup - should be done at system level already
     if sys.platform == "linux" or sys.platform == "linux2":
+        """
         with open(device) as f:
             attrs = termios.tcgetattr(f)
             if ENABLE:
@@ -149,7 +147,16 @@ def set_DTR_hangup(device,ENABLE=False):
                 # Normally, everything is fine so disable DTR Hangup
                 print('Turning off DTR hangup ...')
                 attrs[2] = attrs[2] & ~termios.HUPCL
+                
             termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
+        """
+        if ENABLE:
+            cmd+=' hupcl'
+        else:
+            cmd+=' -hupcl'
+        print('\tcmd=',cmd)
+        os.system(cmd)                    
+            
 
 # Interface to keying device
 class KEYING_DEVICE():
@@ -192,7 +199,10 @@ class KEYING_DEVICE():
                     sys.exit(0)
 
         # Disable reset after hangup - should be done at system level already
-        set_DTR_hangup(self.device,False)
+        # Not sure why I thought we needed this - probably has to do with
+        # arduino being reset too often.  
+        # See notes above relating to termios - disabled for now
+        #set_DTR_hangup(self.device,False)
 
         # Open serial port to the device
         print('NANO_IO: KEYING DEVICE INIT: Opening serial port ...')
@@ -487,7 +497,7 @@ class KEYING_DEVICE():
             if self.protocol=='NANO_IO':
                 txt='~T'
             elif self.protocol=='K3NG_IO':
-                txt='\T'
+                txt='\\T'    # Havent tested this
             elif self.protocol=='WINKEYER':
                 txt=chr(0x0B)+chr(0x01)
             else:
@@ -497,7 +507,7 @@ class KEYING_DEVICE():
             if self.protocol=='NANO_IO':
                 txt=']'     # See nanoIO.ino for this little gem
             elif self.protocol=='K3NG_IO':
-                txt='\T'    # Havent tested this
+                txt='\\T'    # Havent tested this
             elif self.protocol=='WINKEYER':
                 txt=chr(0x0B)+chr(0x00)
             else:
