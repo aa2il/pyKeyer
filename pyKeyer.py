@@ -260,7 +260,7 @@ if P.CAPTURE:
 # Create sidetone oscillator & start in a separate thread
 print('Creating Sidetone ...')
 P.MEM.take_snapshot()
-if P.SIDETONE:
+if P.SIDETONE or True:
     P.SideTone = AUDIO_SIDETONE(P)
 else:    
     P.osc      = None

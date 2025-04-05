@@ -1881,6 +1881,7 @@ class GUI():
             WPM2=None
             
         if WPM>=5:
+            print('GUI->SET WPM: Setting speed to',WPM,WPM2,'wpm ...')
             self.keyer.set_wpm(WPM,farnsworth=WPM2)
             self.sock.set_speed(WPM)
             self.WPM_TXT.set(str(WPM))

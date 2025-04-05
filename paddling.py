@@ -49,7 +49,8 @@ import time
 import random
 from nano_io import *
 from fileio import read_text_file
-from utilities import cut_numbers,error_trap,show_hex,show_ascii,list_all_serial_devices,find_resource_file
+from utilities import cut_numbers,error_trap,show_hex,show_ascii,\
+    list_all_serial_devices,find_resource_file
 from pprint import pprint
 import Levenshtein
 from keying import *
@@ -770,6 +771,7 @@ if __name__ == '__main__':
     #from rig_io import socket_io 
     from rig_io.socket_io import open_rig_connection
     import platform
+    from dx import load_cty_info
 
     VERSION='1.1'
     
@@ -847,6 +849,10 @@ if __name__ == '__main__':
             if not valid or args.settings:
                 SettingsWin = SETTINGS_GUI(None,self,BLOCK=True)
 
+            # Take care of non-standard location of support files
+            load_cty_info(DIR=self.SETTINGS['MY_DATA_DIR'])
+                        
+                
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):
 

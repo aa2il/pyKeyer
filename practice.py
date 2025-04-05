@@ -205,7 +205,8 @@ class CODE_PRACTICE():
                 print('PRACTICE_QSO: Sending call=',txt1,'\top_state=',P.OP_STATE)
             if self.P.USE_KEYER:
                 self.P.keyer_device.nano_write(txt1)
-            else:
+            #else:
+            if self.P.SIDETONE:
                 P.osc.send_cw(txt1,keyer.WPM,1,True)
 
             lock.release()
@@ -270,7 +271,8 @@ class CODE_PRACTICE():
                 print('PRACTICE_QSO: Sending exch=',txt2)
             if self.P.USE_KEYER:
                 self.P.keyer_device.nano_write(txt2)
-            else:
+            #else:
+            if self.P.SIDETONE:
                 P.osc.send_cw(txt2,keyer.WPM,1,True)
             lock.release()
 
@@ -321,7 +323,8 @@ class CODE_PRACTICE():
                     print('PRACTICE_QSO: Sending final TU ...')
                 if self.P.USE_KEYER:
                     self.P.keyer_device.nano_write(txt3)
-                else:
+                #else:
+                if self.P.SIDETONE:
                     P.osc.send_cw(txt3,keyer.WPM,1,True)
                 lock.release()
 

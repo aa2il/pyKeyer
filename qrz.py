@@ -34,10 +34,8 @@ else:
     import tkFont
 import time
 from collections import OrderedDict
-from dx import Station
-#from datetime import datetime
 from datetime import datetime, timezone, timedelta
-from dx.spot_processing import ChallengeData,Station
+from dx import ChallengeData,Station,load_cty_info
 from pprint import pprint
 
 #########################################################################################
@@ -194,6 +192,9 @@ if __name__ == '__main__':
             # Read config file
             self.SETTINGS,RCFILE = read_settings('.keyerrc')
 
+            # Take care of non-standard location of support files
+            load_cty_info(DIR=self.SETTINGS['MY_DATA_DIR'])
+                        
             # Load master call list
             t0=time.time()
             print('Reading master history file ...')
@@ -203,7 +204,7 @@ if __name__ == '__main__':
             self.MASTER,fname9 = load_history(self.HIST_DIR+'master.csv')
             self.calls = list(self.MASTER.keys())
             print('Read time=',time.time()-t0)
-            
+
     # Command line args
     arg_proc = argparse.ArgumentParser(description='QRZ???')
     #arg_proc.add_argument('call',type=str)
@@ -242,10 +243,9 @@ if __name__ == '__main__':
         print(calls[0])
 
         print('Reading STATES.XLS ...')
-        #MY_CALL3 = P.SETTINGS['MY_CALL'].split('/')[0]
-        MY_CALL3 = P.SETTINGS['MY_OPERATOR'].split('/')[0]
-        P.DATA_DIR        = os.path.expanduser('~/'+MY_CALL3+'/')
-        P.CHALLENGE_FNAME = P.DATA_DIR+'/states.xls'
+        MY_CALL3          = P.SETTINGS['MY_OPERATOR'].split('/')[0]
+        DATA_DIR          = os.path.expanduser('~/'+MY_CALL3+'/')
+        P.CHALLENGE_FNAME = DATA_DIR+'/states.xls'
         P.data = ChallengeData(P.CHALLENGE_FNAME)
         #print('\nCWops members worked:\n',P.data.cwops_worked)
         #print('\nCWops member no.s worked:\n',P.data.cwops_nums)

@@ -242,7 +242,7 @@ class Keyer():
         ser = self.P.ser
         
         if wpm>0:
-            print("SET_WPM: Setting speed to ",wpm)
+            print("CW_KEYER->SET_WPM: Setting speed to ",wpm)
             self.WPM = wpm
             self.dotlen=1.2/self.WPM
 
@@ -257,9 +257,11 @@ class Keyer():
                         self.P.PaddlingWin.WPM_TXT.set(str(wpm))
                 else:
                     self.P.keyer_device.set_wpm(wpm,farnsworth=farnsworth)
-                if self.P.gui:
-                    #self.P.gui.WPM_TXT.set(str(wpm))
-                    self.P.WPM2=wpm
+                    
+            if self.P.gui:
+                # Can't fiddle with gui here since it would cause a memoery leak
+                # Tell watchdog to do it instead
+                self.P.WPM2=wpm
 
     def txt2morse(self,msg):
         print('\nTXT2MORSE: msg=',msg,len(msg))

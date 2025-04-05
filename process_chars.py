@@ -1,4 +1,3 @@
-#! /usr/bin/python3 -u
 ################################################################################
 #
 # ProcessChars.py - Rev 1.0
@@ -75,9 +74,9 @@ def process_chars(P):
 
             print('PROCESSS_CHARS: txt=',txt,'\tWPM=',keyer.WPM)
 
-            # Check if we need to send this sidetone also
-            #if P.q2 and not P.PRACTICE_MODE and (P.SIDETONE or P.CAPTURE):
+            # Check if we need to send this sidetone also - chars are already sent if we're in practice mode
             if P.q2 and not P.PRACTICE_MODE and P.SIDETONE:
+            #if P.q2 and P.SIDETONE:
                 txt2=''
                 keep=True
                 for ch in txt:

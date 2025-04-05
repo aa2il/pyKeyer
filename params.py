@@ -27,9 +27,8 @@ import platform
 from utilities import find_resource_file
 from collections import OrderedDict
 import datetime
-from dx.spot_processing import Station
+from dx import Station,load_cty_info
 from pprint import pprint
-#from settings import read_settings,SETTINGS_GUI
 
 ################################################################################
 
@@ -380,8 +379,9 @@ class PARAMS:
         self.USE_LOG_HISTORY  = False
         self.USE_ADIF_HISTORY = True        
         
-        self.SIDETONE      = args.sidetone or self.PORT==1 or \
-            (self.PRACTICE_MODE and not self.USE_KEYER)
+        #self.SIDETONE      = args.sidetone or self.PORT==1 or \
+        #    (self.PRACTICE_MODE and not self.USE_KEYER)
+        self.SIDETONE = args.sidetone or (self.PRACTICE_MODE and not self.USE_KEYER)
 
         self.MY_CNTR       = 1
         self.PRECS         = PRECS
@@ -535,12 +535,35 @@ class PARAMS:
 
         # Where to find/put data files
         self.PLATFORM=platform.system()
-        self.HIST_DIR=os.path.expanduser('~/Python/data/')
+        DATA_DIR=self.SETTINGS['MY_DATA_DIR']
+        if DATA_DIR=='':
+            DATA_DIR='~/Python/data'
+        self.HIST_DIR=os.path.expanduser(DATA_DIR+'/')
         if not os.path.isdir(self.HIST_DIR):
             fname=find_resource_file('master.csv')
             self.HIST_DIR=os.path.dirname(fname)+'/'
         self.HISTORY = self.HIST_DIR+'master.csv'
+        load_cty_info(DIR=DATA_DIR)
 
+        # Make one more attempt to use a keyer 
+        if not self.USE_KEYER and not self.PRACTICE_MODE:
+            #print('burp',args.keyer,self.SIDETONE)
+            #sys.exit(0)
+            KEYER_DEVICE    = self.SETTINGS["MY_KEYER_DEVICE"]
+            KEYER_DEVICE_ID = self.SETTINGS["MY_KEYER_DEVICE_ID"]
+            print('\tKEYER_DEVICE    =',KEYER_DEVICE)
+            print('\tKEYER_DEVICE_ID =',KEYER_DEVICE_ID)
+            if len(KEYER_DEVICE)>0:
+                self.WINKEYER = KEYER_DEVICE=='WINKEYER'
+            self.USE_KEYER  = self.WINKEYER and len(KEYER_DEVICE_ID)>0
+            self.SIDETONE = args.sidetone or (self.PRACTICE_MODE and not self.USE_KEYER)
+
+            print('\tWINKEYER        =',self.WINKEYER)
+            print('\tUSE_KEYER       =',self.USE_KEYER)
+            print('\SIDETONE         =',self.SIDETONE)
+            #sys.exit(0)
+
+        
     # Function to read config file and adjust various params accordingly
     def read_config_file(self):
         
@@ -594,17 +617,5 @@ class PARAMS:
                 self.WORK_DIR=HOME
         print('WORK_DIR=',self.WORK_DIR)
 
-        # Make one more attempt to use a keyer 
-        if not self.USE_KEYER: 
-            KEYER_DEVICE    = self.SETTINGS["MY_KEYER_DEVICE"]
-            KEYER_DEVICE_ID = self.SETTINGS["MY_KEYER_DEVICE_ID"]
-            print('\tKEYER_DEVICE    =',KEYER_DEVICE)
-            print('\tKEYER_DEVICE_ID =',KEYER_DEVICE_ID)
-            if len(KEYER_DEVICE)>0:
-                self.WINKEYER = KEYER_DEVICE=='WINKEYER'
-            self.USE_KEYER  = self.WINKEYER and len(KEYER_DEVICE_ID)>0
-            print('\tWINKEYER        =',self.WINKEYER)
-            print('\tUSE_KEYER       =',self.USE_KEYER)
-                    
         #sys,exit(0)
 
