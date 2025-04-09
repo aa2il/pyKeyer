@@ -117,6 +117,7 @@ NANO_BAUD=3*38400
 NULL_CMD=chr(0x13)
 ADMIN_OPEN_CMD=chr(0x00)+chr(0x02)
 ECHO_CMD=chr(0x00)+chr(0x04)
+TIMEOUT=1    # was 0.1 , 1
 
 ############################################################################################
 
@@ -212,7 +213,7 @@ class KEYING_DEVICE():
         # open at the 1200 baud used by winkeyer - go figure?!
         #print('BURP!',sys.platform,P.PLATFORM)
         if P.PLATFORM == "Windows" and False:
-            self.ser = serial.Serial(self.device,9600,timeout=0.1,
+            self.ser = serial.Serial(self.device,9600,timeout=TIMEOUT,
                                      dsrdtr=True,rtscts=0)
             time.sleep(2)
             txt=self.nano_read()
@@ -230,7 +231,7 @@ class KEYING_DEVICE():
                                      bytesize=serial.EIGHTBITS,
                                      parity=serial.PARITY_NONE,
                                      stopbits=serial.STOPBITS_TWO,   # TWO
-                                     timeout=1,
+                                     timeout=TIMEOUT,
                                      write_timeout=1,
                                      dsrdtr=False,rtscts=False,xonxoff=False)
             print('\tser=',self.ser)
@@ -401,7 +402,8 @@ class KEYING_DEVICE():
         while self.ser and self.ser.in_waiting>0:
             try:
                 if not READ_ALL:
-                    txt1 = self.ser.read(256).decode("utf-8",'ignore')
+                    #txt1 = self.ser.read(256).decode("utf-8",'ignore')
+                    txt1 = self.ser.read_all().decode("utf-8",'ignore')
                     txt += txt1
                 else:
                     # Winkeyer returns some funny combos

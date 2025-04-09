@@ -29,6 +29,7 @@ if sys.version_info[0]==3:
     from tkinter import *
     import tkinter.font
     import tkinter.ttk as ttk
+    from tkinter import simpledialog
 else:
     from Tkinter import *
     import tkFont
@@ -207,22 +208,36 @@ if __name__ == '__main__':
 
     # Command line args
     arg_proc = argparse.ArgumentParser(description='QRZ???')
-    #arg_proc.add_argument('call',type=str)
     arg_proc.add_argument("call", help="Call(s) worked",
-                          type=str,default=None,nargs='+')    # was *
+                          type=str,default=None,nargs='*')    # was + (require at least one)
     arg_proc.add_argument('-cwops', action='store_true',
                               help='CWops Reverse Lookup')
     arg_proc.add_argument('-cw', action='store_true',
                               help='Look only for CW QSOs')
     args = arg_proc.parse_args()
+
+    # Grab list of call signs
     calls1 = list(map(str.upper,args.call))
+
+    # If no call sign was given, ask for one
+    while len(calls1)==0:
+        c = simpledialog.askstring("Call?","Enter one or more callsigns:")
+        print(c)
+        if c==None:
+            print('Bye Bye!')
+            sys.exit(0)
+        elif len(c)>3:
+            calls1=[c.upper()]
+    print('calls1=',calls1)
+
+    # Convert list of callsigns into format we can digest
     calls=[]
     for c in calls1:
         calls2=c.split(',')
         for cc in calls2:
-            calls.append(cc)
+            for ccc in cc.split(' '):
+                calls.append(ccc)
     print('calls=',calls)
-    #sys.exit(0)
 
     # Read config file
     P=QRZ_PARAMS()
