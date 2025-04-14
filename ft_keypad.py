@@ -119,12 +119,14 @@ def UpdateKeyerMemory(self):
         self.Keyer[i] = self.ekeyer[i].get()
         if i<5:
             if s.connection=='HAMLIB':
-                cmd='w BY;KM'+str(i+1)+self.Keyer[i]+'}\n'
+                #cmd='w BY;KM'+str(i+1)+self.Keyer[i]+'}\n'           # Old style b4 4.6.2
+                cmd='W KM'+str(i+1)+self.Keyer[i]+'}; 0'
             else:
                 cmd='KM'+str(i+1)+self.Keyer[i]+'};'
         else:
             if s.connection=='HAMLIB':
-                cmd='w BY;EX025'+self.Keyer[i]+'\n'
+                #cmd='w BY;EX025'+self.Keyer[i]+'\n'           # Old style b4 4.6.2
+                cmd='W EX025'+self.Keyer[i]+'; 0' 
             else:
                 cmd='EX025'+self.Keyer[i]+';'
         print("cmd=",cmd)

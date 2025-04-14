@@ -97,7 +97,7 @@ class WatchDog:
         # Read radio status
         # NEED TO MOVE ANYTHING THAT MESSES WITH THE GUI TO gui.gui_updater!!!!!!!!!!!!!!
         if P.sock.connection!='NONE' and not P.sock.tx_evt.is_set():
-            print('Watch Dog - reading radio status ...', P.sock.connection)
+            print('Watch Dog - reading radio status ...', P.sock.connection,flush=True)
 
             P.FREQ = P.sock.get_freq()
             P.MODE = P.sock.get_mode()

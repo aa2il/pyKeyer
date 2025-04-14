@@ -1222,6 +1222,12 @@ class GUI():
             
     # Callback to flag last QSO
     def Flag_It(self):
+        
+        # Can use this as a test button also
+        if False:
+            ClarReset(self,self.P.RX_Clar_On)
+            return
+        
         note=self.prev_qso['CALL']+'  '+self.prev_qso['TIME_OFF']
         cmd='split_wave $fname -snip ' + self.prev_qso['TIME_OFF'] + \
             ' ; audacity SNIPPIT.wav > & /dev/null'

@@ -325,10 +325,14 @@ def open_keying_port(P,sock,rig_num):
                 ser.setDTR(False)
                 ser.setRTS(False)                       # Digi mode uses this for PTT?
 
-                if sock.connection=='DIRECT' or True:
-                    # This type of command doesn't work for most versions of hamlib
-                    cmd = 'BY;EX0603;EX0561;'               # Set DTR keying and full QSK
-                    buf=sock.get_response(cmd)
+                # Set DTR keying and full QSK
+                if sock.connection=='HAMLIB':
+                    # This type of command doesn't work for most versions of hamlib ???
+                    # Need to test again
+                    cmd = 'W EX0603;EX0561; 0'
+                else:
+                    cmd = 'BY;EX0603;EX0561;'
+                buf=sock.get_response(cmd)
             
                 ser.PORT = SERIAL_PORT4
                 ser.BAUD = BAUD
