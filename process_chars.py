@@ -19,6 +19,7 @@
 #
 ################################################################################
 
+import sys
 import time
 from nano_io import *
 from tkinter import END
@@ -38,11 +39,12 @@ def process_chars(P):
 
     last_char_time=time.time()
     need_eol=False
+    nerrors = 0
     
-    while not P.Stopper.isSet():
+    while not P.Stopper.isSet() and nerrors<10:
 
         if VERBOSITY>0:
-            print('PROCESSS_CHARS: Checking msg queue ...',q.qsize())
+            print('PROCESSS_CHARS: Checking msg queue ... q-size=',q.qsize())
             
         # Anything available?
         if q.qsize()>0:
@@ -103,6 +105,7 @@ def process_chars(P):
                     print('PROCESSS_CHARS: Checking rx from keyer ...')
 
                 # This has thrown an error in the past
+                # Probably because keyer port gets closed but its not properly noted
                 try:
                     if P.ser and P.ser.in_waiting>0:              # The error is with "in_waiting"
                         if VERBOSITY>0:
@@ -154,11 +157,21 @@ def process_chars(P):
                         
                 except: 
                     error_trap('PROCESS CHARS - Unknown error?????',1)
-                    print('P.ser=',P.ser)
+                    print('\tP.ser=',P.ser)
+                    print('\tP.keyer_device.ser=',P.keyer_device.ser)
+                    if P.ser and P.keyer_device.ser==None:
+                        print('\n\t*** Inconsistency found in keying port - status fudged! ***\n')
+                        P.ser=None
                     time.sleep(0.1)
-
+                    nerrors += 1
+                    #sys.exit(0)
                     
             else:
                 time.sleep(0.1)
+
+    if nerrors>=10:
+        print('\n*** PROCESSS_CHARS - Too many erros - giving up! ***')
+        #sys.exit(0)
+        P.gui.Quit()
         
     print('PROCESSS_CHARS Done.')

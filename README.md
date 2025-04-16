@@ -200,8 +200,15 @@ Here is a good video overview of Miniconda:
         git clone https://github.com/aa2il/data
 
    Note - to simply grab the latest changes, use "pull" instead of "clone"
-   in these commands.
+   in these commands:
 
+        cd pyKeyer
+        git pull https://github.com/aa2il/pyKeyer
+        cd ../libs
+        git pull https://github.com/aa2il/libs
+        cd ../data
+        git pull https://github.com/aa2il/data
+        
 3) Install dependancies:
 
         cd pyKeyer

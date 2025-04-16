@@ -62,7 +62,7 @@ def GetKeyerMemory(self):
 
 
 def KeyerMemoryDefaults(self,arg):
-    print("\Setting Keypad Defaults ",arg)
+    print("KEYER MEMORY DEFAULTS: Setting Keypad Defaults ... arg=",arg)
     
     MY_CALL     = self.P.SETTINGS['MY_CALL']
     MY_NAME     = self.P.SETTINGS['MY_NAME']

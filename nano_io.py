@@ -529,8 +529,10 @@ class KEYING_DEVICE():
         elif self.protocol=='WINKEYER':
             self.send_command(chr(0x0A))             # Clear buffer should do the trick
                               
-    #
+    # Close the keying device
     def close(self):
         if self.ser:
-            print('KEYING DEVICE CLOSED.')
             self.ser.close()
+            print('KEYING DEVICE CLOSED.')
+            self.ser=None
+            

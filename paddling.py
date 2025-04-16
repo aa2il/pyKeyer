@@ -344,13 +344,18 @@ class PADDLING_GUI():
 
     # Callback to either hide or quit the paddling practice
     def Quit(self):
+        #print('PADDLING: Quitting ...')
         P=self.P
-        if P.keyer_device:
-            P.keyer_device.close()
         if not P.gui:
+            if P.keyer_device:
+                print('PADDLING: Closing keyer ...')
+                P.keyer_device.close()
+            print('PADDLING: Exiting ...')
             sys.exit(0)
         else:
-            self.hide()
+            #print('PADDLING: Hiding ...')
+            #self.hide()
+            P.gui.Toggle_Paddling_Win()
 
     # Callback for monitor level setter
     def SetMonitorLevel(self,level=None):

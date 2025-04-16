@@ -538,6 +538,8 @@ class PARAMS:
         DATA_DIR=self.SETTINGS['MY_DATA_DIR']
         if DATA_DIR=='':
             DATA_DIR='~/Python/data'
+        #print(self.SETTINGS)
+        #sys.exit(0)
         self.HIST_DIR=os.path.expanduser(DATA_DIR+'/')
         if not os.path.isdir(self.HIST_DIR):
             fname=find_resource_file('master.csv')
