@@ -165,9 +165,9 @@ def open_keying_port(P,sock,rig_num):
 
     vid_pid=None
     
-    print('\nOpening keying port ... USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
-    print('\tFIND_KEYER=',P.FIND_KEYER)
-    print('\tKEYER_PORT=',P.KEYER_PORT)
+    print('\nOPEN KEYING PORT: USE_KEYER=',P.USE_KEYER,'\trig_num=',rig_num)
+    print('\tFIND_KEYER =',P.FIND_KEYER)
+    print('\tKEYER_PORT =',P.KEYER_PORT)
     if P.gui:
         P.gui.status_bar.setText("Opening Keying Port ...")
 
@@ -359,11 +359,12 @@ def open_keying_port(P,sock,rig_num):
                 ser.PORT = SERIAL_PORT2
                 ser.BAUD = BAUD
 
-            elif sock.rig_type2 in ['None','TYT9000d','Hamlib','FLDIGI']:
+            elif sock.rig_type2 in ['None','TYT9000d','Hamlib','FLDIGI','KC505']:
                 ser=serial_dummy()
+                print('KEYING->OPEN KEYING PORT: *** WARNING *** Using DUMMY serial port for keying - wont work!')
 
             else:
-                print('KEYING - OPEN KEYING PORT: Unknown rig type:',sock.rig_type,sock.rig_type1,sock.rig_type2)
+                print('KEYING->OPEN KEYING PORT: Unknown rig type: \\',sock.rig_type,sock.rig_type1,sock.rig_type2)
                 sys.exit(0)
         
         else:

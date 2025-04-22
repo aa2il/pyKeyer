@@ -548,9 +548,8 @@ class PARAMS:
         load_cty_info(DIR=DATA_DIR)
 
         # Make one more attempt to use a keyer 
-        if not self.USE_KEYER and not self.PRACTICE_MODE:
-            #print('burp',args.keyer,self.SIDETONE)
-            #sys.exit(0)
+        if not self.USE_KEYER and args.keyer!='NONE' and not self.PRACTICE_MODE:
+            print('PARAMS: One more try ...',args.keyer)
             KEYER_DEVICE    = self.SETTINGS["MY_KEYER_DEVICE"]
             KEYER_DEVICE_ID = self.SETTINGS["MY_KEYER_DEVICE_ID"]
             print('\tKEYER_DEVICE    =',KEYER_DEVICE)
@@ -562,7 +561,7 @@ class PARAMS:
 
             print('\tWINKEYER        =',self.WINKEYER)
             print('\tUSE_KEYER       =',self.USE_KEYER)
-            print('\SIDETONE         =',self.SIDETONE)
+            print('\tSIDETONE         =',self.SIDETONE)
             #sys.exit(0)
 
         

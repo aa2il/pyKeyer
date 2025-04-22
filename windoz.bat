@@ -61,7 +61,7 @@ echo.
         python -m PyInstaller --onefile paddling.py
         python -m PyInstaller --onefile qrz.py
 echo.
-echo Next, copy support files into distribution director        
+echo Next, copy support files into distribution directory:
          copy ..\data\cty.plist dist
          copy ..\data\cty.bin dist
          copy ..\data\master.csv dist
