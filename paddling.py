@@ -790,7 +790,7 @@ if __name__ == '__main__':
             # Process command line args
             arg_proc = argparse.ArgumentParser()
             arg_proc.add_argument("-wpm", help="Keyer Speed",type=int,default=25)
-            arg_proc.add_argument("-paddles", help="Paddle Speed",type=int,default=22)
+            #arg_proc.add_argument("-paddles", help="Paddle Speed",type=int,default=22)
             arg_proc.add_argument("-rig", help="Connection Type",
                                   type=str,default=["NONE"],nargs='+',
                                   choices=CONNECTIONS+['NONE']+RIGS)
@@ -800,16 +800,20 @@ if __name__ == '__main__':
             arg_proc.add_argument("-kport", help="Connection Port for Keyer",
                                   type=str,default=None)
             arg_proc.add_argument('-settings',action='store_true',
-                                  help='Open setting window')
+                                  help='Open settings window')
             args = arg_proc.parse_args()
             
             self.WPM           = args.wpm
-            self.PADDLE_WPM    = args.paddles
-            self.connection    = args.rig[0]
-            if len(args.rig)>=2:
-                self.rig       = args.rig[1]
+            self.PADDLE_WPM    = self.WPM      # args.paddles
+            if True:
+                self.connection    = args.rig[0]
+                if len(args.rig)>=2:
+                    self.rig       = args.rig[1]
+                else:
+                    self.rig       = None
             else:
-                self.rig       = None
+                self.connection    = None
+                self.rig           = None
 
             self.KEYER_PORT    = args.kport
                 
@@ -817,8 +821,6 @@ if __name__ == '__main__':
             self.sock=None
             self.gui=None
             self.LOCK_SPEED=True
-            #self.WPM=22
-            #self.PADDLE_WPM=22
             self.USE_KEYER=True
             self.PLATFORM=platform.system()
             if sys.platform in ["linux","linux2"]:
@@ -898,8 +900,8 @@ if __name__ == '__main__':
           sys.version_info[1],'.',sys.version_info[2])
 
     # Open connection to rig if necessary
-    print('\nConnection=',P.connection,'\trig=',P.rig,'...')
     if P.rig!=None:
+        print('\nConnection=',P.connection,'\trig=',P.rig,'...')
         P.sock = open_rig_connection(P.connection,0,0,0,'KEYER',rig=P.rig)
         if not P.sock:
             print('Unable to open connection to rig - giving up')

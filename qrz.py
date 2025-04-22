@@ -180,7 +180,7 @@ class CALL_INFO_GUI():
 # If this file is called as main, run as independent exe
 if __name__ == '__main__':
     import argparse
-    from settings import read_settings
+    from settings import read_settings,SETTINGS_GUI
     from load_history import load_history
     from fileio import *
 
@@ -214,6 +214,8 @@ if __name__ == '__main__':
                               help='CWops Reverse Lookup')
     arg_proc.add_argument('-cw', action='store_true',
                               help='Look only for CW QSOs')
+    arg_proc.add_argument('-settings',action='store_true',
+                          help='Open setting window')
     args = arg_proc.parse_args()
 
     # Grab list of call signs
@@ -243,6 +245,10 @@ if __name__ == '__main__':
     P=QRZ_PARAMS()
     #print('SETTINGS=',P.SETTINGS)
 
+    # Bring up setting dialog if requested
+    if args.settings:
+        SettingsWin = SETTINGS_GUI(None,P,BLOCK=True)
+        
     # Reverse member no. lookup for CWops
     if args.cwops or calls[0].isdigit():
         print('Reading CWops member roster ...')
