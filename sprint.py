@@ -66,6 +66,7 @@ from utilities import cut_numbers
 from random import randint, random
 import numpy as np
 from utilities import error_trap
+from scoring import SST_SCORING
 
 ############################################################################################
 
@@ -86,10 +87,11 @@ class SPRINT_KEYING(DEFAULT_KEYING):
         P.MAX_AGE = self.contest_duration *60
                 
         # On-the-fly scoring - Same as SST
-        self.nqsos=0
-        self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for pratice mode
-        self.sec_cnt = np.zeros((len(SST_SECS),len(self.BANDS)),dtype=np.int32)
-        self.init_scoring()
+        #self.nqsos=0
+        #self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for pratice mode
+        #self.sec_cnt = np.zeros((len(SST_SECS),len(self.BANDS)),dtype=np.int32)
+        #self.init_scoring()
+        P.SCORING = SST_SCORING(P,'SPRINT')
         
     # Routine to set macros for this contest
     def macros(self):

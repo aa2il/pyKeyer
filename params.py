@@ -35,8 +35,10 @@ from pprint import pprint
 # Structure to contain basic info about various contests
 CONTESTS = OrderedDict()
 ALL=list(range(1,13))
-CONTESTS['Default']      = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['DX-QSO']       = {'Months' : ALL,     'Duration' : 9999}
 CONTESTS['Ragchew']      = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['Default']      = {'Months' : ALL,     'Duration' : 9999}
+CONTESTS['POTA']         = {'Months' : ALL,     'Duration' : 9999}
 CONTESTS['CWT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['MST']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['SST']          = {'Months' : ALL,     'Duration' : 1}
@@ -71,7 +73,6 @@ CONTESTS['ARRL-FD']      = {'Months' : [6],     'Duration' : 30}
 CONTESTS['ARRL-SS-CW']   = {'Months' : [11],    'Duration' : 30}
 CONTESTS['STEW PERRY']   = {'Months' : [],      'Duration' : 24}
 CONTESTS['SATELLITES']   = {'Months' : ALL,     'Duration' : 9999}
-CONTESTS['DX-QSO']       = {'Months' : ALL,     'Duration' : 9999}
 CONTESTS['FOC-BW']       = {'Months' : [3],     'Duration' : 24}
 CONTESTS['JIDX']         = {'Months' : [4],     'Duration' : 30}
 CONTESTS['YURI']         = {'Months' : [4],     'Duration' : 24}
@@ -216,7 +217,7 @@ class PARAMS:
                               help='Only use California Stations for Practice')
         arg_proc.add_argument("-wpm", help="Keyer Speed",type=int,default=25)
         arg_proc.add_argument("-farnsworth", help="Farnsworth Speed",type=int,default=None)
-        arg_proc.add_argument("-paddles", help="Paddle Speed",type=int,default=22)
+        arg_proc.add_argument("-paddles", help="Paddle Speed",type=int,default=24)
         arg_proc.add_argument('-adjust', action='store_true',
                               help='Adjust speed based on correct copy')
         arg_proc.add_argument('-scp', action='store_true',
