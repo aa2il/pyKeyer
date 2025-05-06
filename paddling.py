@@ -138,6 +138,9 @@ class PADDLING_GUI():
                     print(N)
             sys.exit(0)
         
+        # Read list of Quotes
+        self.quotes = read_text_file('Quotes.txt',KEEP_BLANKS=False)
+        
         # Read qso template
         self.QSO_Template = read_text_file('QSO_Template.txt',KEEP_BLANKS=False)
         # KEEP_BLANKS=not RANDOM_QSO_MODE)
@@ -186,9 +189,10 @@ class PADDLING_GUI():
         # Radio button group to select type of practice
         self.Selection = IntVar(value=0)
         col=0
+        self.isst=0
         for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers',\
                       'Special Chars', 'All Chars','Stumble','QSO','Book',\
-                      'Sprint']:
+                      'Sprint','SST','Quotes']:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
@@ -281,8 +285,13 @@ class PADDLING_GUI():
             self.Rst = Entry(self.root,font=font1,justify='center')
             self.Rst.grid(row=row,column=col+2,sticky=E+W)
 
+        # Button to play text through the keyer
+        col=NCOLS-4
+        Button(self.win, text="Play",command=self.PlayText) \
+            .grid(row=row,column=col,sticky=E+W)
+
         # Entry box to hold levenstien distance
-        col=NCOLS-3
+        col+=1
         lab = Label(self.win, text="Current",font=font1)
         lab.grid(row=row-1,column=col,sticky=E+W)
         self.LevDx = Entry(self.root,font=font1,\
@@ -610,7 +619,34 @@ class PADDLING_GUI():
             else:
                 txt=call1+' '+name2+' '+state2+' '+serial+' '+call2
             
+        elif Selection==10:
+
+            # SST
+            if self.isst==0:
+                txt='CQ SST '+P.SETTINGS['MY_CALL']
+                self.isst+=1
+            elif self.isst==1:
+                call1,self.name1,state1 = self.get_sprint_call()
+                call1=call1.replace('/SK','/P')
+                txt=call1+' TU '+P.SETTINGS['MY_NAME']+' '+P.SETTINGS['MY_STATE']
+                self.isst+=1
+            else:
+                txt=' GA '+self.name1+' 73EE'
+                self.isst=0
+
+        elif Selection==11:
+            
+            # Famous Quotes
+            n=len(self.quotes)
+            print('There are',n,'quotes loaded')
+            i = random.randint(0,n-1)
+            txt = self.quotes[i]
+            if TEST_MODE:
+                txt=str(i)+'. '+txt
+                #print('Quote=',txt)
+                
         else:
+            
             print('Unknown selection')
             txt='*** ERROR *** ERROR *** ERROR ***'
             
@@ -764,6 +800,16 @@ class PADDLING_GUI():
                 
         return False
 
+
+    # Function to play text through the keyer
+    def PlayText(self):
+
+        txt=self.item
+        print('PLAY TEXT:',txt)
+        P.keyer_device.nano_write(txt)    
+
+        
+    
 ################################################################################
 
 # If this file is called as main, run as independent exe
@@ -858,7 +904,7 @@ if __name__ == '__main__':
 
             # Take care of non-standard location of support files
             load_cty_info(DIR=self.SETTINGS['MY_DATA_DIR'])
-                        
+
                 
     # Function to ckeck keyer to see if the op has responded
     def check_keyer(P):

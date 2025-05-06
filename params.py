@@ -305,6 +305,7 @@ class PARAMS:
         self.RX_Clar_On    = True
         self.DESKTOP       = args.desktop
         self.SHOW_SETTINGS = args.settings
+        self.nano_txt      = ''
 
         self.SENDING_PRACTICE = args.sending
         self.WINKEYER      = args.winkeyer or args.keyer=='WINKEY'

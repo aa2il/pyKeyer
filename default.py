@@ -34,6 +34,7 @@ import time
 import pytz
 from scoring import CONTEST_SCORING
 import tkinter.messagebox
+from counties import W1_STATES,W7_STATES
 
 ############################################################################################
 
@@ -440,12 +441,14 @@ class DEFAULT_KEYING():
             else:
                 key2=self.key2
             state = P.MASTER[call]['state']
-            if self.contest_name==state+'QP':
+            if (self.contest_name==state+'QP') or (self.contest_name=='W1QP' and state in W1_STATES) or \
+               (self.contest_name=='W7QP' and state in W7_STATES):
                 qth = P.MASTER[call]['county']
             else:
                 qth = P.MASTER[call][key2]    
             txt += qth
-            print('DEFAULFT HINT: key2=',key2,'\tqth=',qth,'\ttxt=',txt)
+            print('DEFAULFT HINT: contest_name=',self.contest_name,'\tstate=',state,
+                  '\tkey2=',key2,'\tqth=',qth,'\ttxt=',txt)
             
         gui.name.delete(0,END)
         gui.info.delete(0,END)
@@ -466,7 +469,7 @@ class DEFAULT_KEYING():
         except: 
             error_trap('DEFAULT->HINT: Unable to retrieve NAME')
 
-        print('DEFAULFT HINT: txt=',txt)
+        print('DEFAULFT HINT: txt=',txt,flush=True)
         return txt
 
     # Routine to get practice qso info

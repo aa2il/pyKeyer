@@ -27,20 +27,55 @@ from utilities import error_trap
 
 ################################################################################
 
+# Routine to look for special messages from the keyer
+def check_nano_txt(P,msg=None):
+        
+    txt = P.keyer_device.nano_read()
+
+    if P.NANO_ECHO:     #   and len(txt)>0:
+        # Check if its been a while since the last char was received
+        # This won't work properly bx linux is not real-time - need to put this in the keyer
+        if P.WINKEYER or P.K3NG_IO:
+            t=time.time()
+            dt=t-P.last_char_time
+            #print('CHECK NANO_TXT: dt=',dt,'\tneed eol=',P.need_eol)
+            if P.need_eol and dt>1.5:
+                #print('CHECK NANO_TXT: Added new line!')
+                txt='\n'+txt
+                P.need_eol=False
+            elif len(txt)>0:
+                P.need_eol=True
+                P.last_char_time=t
+
+    P.nano_txt += txt
+    if msg==None:
+        #print('CHECK NANO_TXT: Returning txt')
+        return txt
+
+    result=False
+    if len(P.nano_txt)>0:
+        print('\tnano_txt=',P.nano_txt)
+
+        if msg in P.nano_txt:
+            result=True
+
+    return result
+
+
 # Set up separate process that actualy does the keying.
 # We do this so that the GUI process is not blocked by the keying.
 def process_chars(P):
-    last_time = 0
-    keyer     = P.keyer
-    lock      = P.lock1
-    q         = P.q
-    VERBOSITY = 0
-    nano_txt  = ''
+    P.last_time  = 0
+    keyer      = P.keyer
+    lock       = P.lock1
+    q          = P.q
+    VERBOSITY  = 0
+    P.nano_txt = ''
 
-    last_char_time=time.time()
-    need_eol=False
+    P.last_char_time=time.time()
+    P.need_eol=False
     nerrors = 0
-    
+
     while not P.Stopper.isSet() and nerrors<10:
 
         if VERBOSITY>0:
@@ -57,10 +92,10 @@ def process_chars(P):
             if VERBOSITY>0:
                 print('PROCESSS_CHARS: txt=',txt)
             this_time = time.time();
-            if this_time - last_time>0.1 and not P.PRACTICE_MODE and False:
+            if this_time - P.last_time>0.1 and not P.PRACTICE_MODE and False:
                 if VERBOSITY>0:
-                    print('PROCESSS_CHARS: this_time=',this_time,last_time)
-                last_time=this_time
+                    print('PROCESSS_CHARS: this_time=',this_time,P.last_time)
+                P.last_time=this_time
                 try:
                     if VERBOSITY>0:
                         print('PROCESSS_CHARS: Read WPM ...')
@@ -110,20 +145,9 @@ def process_chars(P):
                     if P.ser and P.ser.in_waiting>0:              # The error is with "in_waiting"
                         if VERBOSITY>0:
                             print('PROCESSS_CHARS: Getting data from keyer ... echo=',P.NANO_ECHO,P.ser,P.ser.in_waiting)
-                        txt=P.keyer_device.nano_read()
+                        #txt=P.keyer_device.nano_read()
+                        txt=check_nano_txt(P)
                         if P.NANO_ECHO and len(txt)>0:
-                            # Check if its been a while since the last char was received
-                            # This won't work properly bx linux is not real-time - need to put this in the keyer
-                            if P.WINKEYER or P.K3NG_IO:
-                                t=time.time()
-                                dt=t-last_char_time
-                                #print(t,last_char_time,dt,10*P.keyer.dotlen,need_eol)
-                                if need_eol and dt>1.5:      # 10*P.keyer.dotlen:
-                                    txt='\n'+txt
-                                    need_eol=False
-                                else:
-                                    need_eol=True
-                                last_char_time=t
                             
                             # Check if user has responded to current paddling text
                             if P.SENDING_PRACTICE and '\n' in txt:
@@ -138,12 +162,14 @@ def process_chars(P):
                             P.gui.txt.insert(END, txt)
                             P.gui.txt.see(END)
                             P.gui.root.update_idletasks()
-                            nano_txt += txt
+                            P.nano_txt += txt
+                            """
                             if '\n' in txt:
-                                print('NANO: ',nano_txt.strip())
+                                print('NANO: ',P.nano_txt.strip())
                                 #P.gui.fp_txt.write('NANO: %s\n' % (nano_txt) )
                                 #P.gui.fp_txt.flush()
-                                nano_txt = ''
+                                P.nano_txt = ''
+                            """
 
                             # Get text
                             if P.SENDING_PRACTICE:

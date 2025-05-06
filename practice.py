@@ -33,6 +33,11 @@ else:
     from Tkinter import END
 from load_history import *
 from sidetone import *
+from process_chars import check_nano_txt
+
+############################################################################################
+
+DEBUG=1
 
 ############################################################################################
 
@@ -95,7 +100,7 @@ class CODE_PRACTICE():
             self.Ncalls = len(self.calls)
             print('CA ONLY - AFTER:',self.Ncalls)
             #sys.exit(0)
-
+                
 
     # P.OP_STATE:
     #    0 - Nothing
@@ -103,7 +108,6 @@ class CODE_PRACTICE():
     #    2 or 32 - Reply
     #    4 - TU
     #    8 - '?' but not QRZ?
-            
 
     # Main routine that orchestrates code practice
     def run(self):
@@ -114,6 +118,9 @@ class CODE_PRACTICE():
             #print('PRACTICE->RUN ...',self.enable,self.P.OP_STATE,
             #      self.P.HISTORY2,self.P.CONTEST_ID)
             self.enable |= self.P.OP_STATE
+
+            if not self.enable:
+                self.enable = check_nano_txt(self.P,'CQ')
             
             if self.P.PRACTICE_MODE and self.enable:
 
@@ -132,8 +139,6 @@ class CODE_PRACTICE():
             
     # Routine to execute a single practice qso
     def practice_qso(self):
-
-        DEBUG=1
 
         P       = self.P
         HIST    = self.HIST
@@ -154,6 +159,9 @@ class CODE_PRACTICE():
         Done=False
         while not Done:
             Done = (P.OP_STATE & (1+64)) or self.P.Stopper.isSet()
+            if not Done:
+                #print('HEY:',P.nano_txt)
+                Done = check_nano_txt(P,'CQ')
             time.sleep(0.1)
         P.OP_STATE &= ~(1+64)          # Clear CQ/QRZ
 
@@ -374,9 +382,10 @@ class CODE_PRACTICE():
 
     # Routine to wait for keyer to flush - bail out if stopper gets set
     def wait_for_keyer(self):
+        if DEBUG:
+            print('WAIT FOR KEYER ...')
         while not self.P.keyer.evt.wait(timeout=1):
-            #print('Blah')
-            if self.P.Stopper.isSet():
+            if check_nano_txt(self.P,'\n') or self.P.Stopper.isSet():
                 break
         return
 
@@ -404,6 +413,7 @@ class CODE_PRACTICE():
         return call
 
     
+############################################################################################
 
 # If this file is called as main, convert history file into simple log format
 # At some point, change this into a function
