@@ -7,7 +7,7 @@
 # paddling.py - Rev. 1.0
 # Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
-# Gui for sending practice (i.e. fun with paddles)
+# Gui for sending and headcopy practice (i.e. fun with paddles)
 #
 # Note - we need to specify a descriptor in ~/.keyerrc so that we can find the
 #        keyer device.  On linux or Winbloz:
@@ -39,8 +39,10 @@
 
 import sys
 import os
+#import re
 if sys.version_info[0]==3:
     from tkinter import *
+    #from tkinter import END,N,S,E,W
     import tkinter.font
 else:
     from Tkinter import *
@@ -90,6 +92,7 @@ class PADDLING_GUI():
         self.responded=True       # Need to show initial text
         self.item=''
         self.response=''
+        self.HeadCopy = False
         
         self.dxs=[]
         self.ntries=1
@@ -111,8 +114,7 @@ class PADDLING_GUI():
             self.hide()
         else:
             self.win = Tk()
-        self.win.title("Sending Practice by AA2IL")
-        self.win.geometry('1700x240+100+10')
+        self.win.title("Sending & Head Copy Practice by AA2IL")
         self.root=self.win
 
         # Create spash screen
@@ -128,18 +130,19 @@ class PADDLING_GUI():
         if False:
             for p in self.panagrams:
                 P=p.upper()
-                N=26*[0]
+                NN=26*[0]
                 for c in P:
                     if c>='A' and c<='Z':
-                        N[ord(c)-ord('A')]+=1
-                if not all(N):
+                        NN[ord(c)-ord('A')]+=1
+                if not all(NNN):
                     print('\n*** Not a panagram:')
                     print(p)
-                    print(N)
+                    print(NN)
             sys.exit(0)
         
-        # Read list of Quotes
+        # Read lists of Quotes and Jokes
         self.quotes = read_text_file('Quotes.txt',KEEP_BLANKS=False)
+        self.jokes  = read_text_file('Jokes.txt',KEEP_BLANKS=False)
         
         # Read qso template
         self.QSO_Template = read_text_file('QSO_Template.txt',KEEP_BLANKS=False)
@@ -154,28 +157,46 @@ class PADDLING_GUI():
 
         # Load fonts we want to use
         if sys.version_info[0]==3:
-            font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
-            font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
+            self.font1 = tkinter.font.Font(family="monospace",size=12,weight="bold")
+            self.font2 = tkinter.font.Font(family="monospace",size=28,weight="bold")
         else:
-            font1 = tkFont.Font(family="monospace",size=12,weight="bold")
-            font2 = tkFont.Font(family="monospace",size=28,weight="bold")
+            self.font1 = tkFont.Font(family="monospace",size=12,weight="bold")
+            self.font2 = tkFont.Font(family="monospace",size=28,weight="bold")
 
-        # Put up a box for the practice text - use large font
-        # Make this the default object to take the focus & bind keys to effect special mappings
+        # Create pop-up windows for Settings and Keyer Control
+        if self.STAND_ALONE:
+            self.SettingsWin = SETTINGS_GUI(self.win,P)    # ,refreshCB=self.RefreshSettings)
+            #self.SettingsWin.hide()
+            P.root=self.root
+            self.sock=None
+            self.keyer_ctrl = KEYER_CONTROL(P)
+        else:
+            self.SettingsWin = P.gui.SettingsWin
+            self.keyer_ctrl = P.gui.keyer_ctrl
+            
+        # Add menu bar
         NCOLS=12
         row=0
-        lab = Label(self.win, text="",font=font1)
-        lab.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
-        self.txt = Text(self.win, height=2, width=60, bg='white', font=font2,wrap=WORD)
-        self.txt.grid(row=row+1,rowspan=2,column=0,columnspan=NCOLS,sticky=E+W)
+        self.create_menu_bar(NCOLS)
+        
+        # Put up a box for the practice text - use large font
+        # Make this the default object to take the focus & bind keys to effect special mappings
+        row+=1
+        self.txt = Text(self.win, height=2, width=60, bg='white', font=self.font2,wrap=WORD)
+        self.txt.grid(row=row,rowspan=2,column=0,columnspan=NCOLS,sticky=N+S+E+W)
         self.default_object=self.txt
         self.txt.bind("<Key>", self.KeyPress )
-        row+=3
+        for j in range(2):
+            Grid.rowconfigure(self.win, row+j, weight=1)
+        row+=2
 
         # Create another txt box to put echo from keying device into
         if self.STAND_ALONE:
-            self.txt2 = Text(self.win, height=5, width=60, bg='white', font=font1)
-            self.txt2.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
+            self.txt2 = Text(self.win, height=5, width=60, bg='white', font=self.font1)
+            self.txt2.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=N+S+E+W)
+            #Grid.rowconfigure(self.win, row, weight=1,uniform='twelve')
+            #for j in range(5):
+            #   Grid.rowconfigure(self.win, row+j, weight=1)
 
             """
             self.S2 = Scrollbar(self.win)
@@ -184,20 +205,23 @@ class PADDLING_GUI():
             self.txt2.config(yscrollcommand=self.S2.set)
             """
             row+=5
-            self.win.geometry('1700x340+100+10')  
+            #self.win.geometry('1700x340+100+10')  
 
         # Radio button group to select type of practice
         self.Selection = IntVar(value=0)
         col=0
         self.isst=0
-        for itype in ['Panagrams','Call Signs','Letters','Letters+Numbers',\
-                      'Special Chars', 'All Chars','Stumble','QSO','Book',\
-                      'Sprint','SST','Quotes']:
+        # 'Special Chars', 
+        self.prac_group=['Panagrams','Call Signs','Letters','Letters+Numbers',\
+                         'All Chars','Stumble','QSO','Book',\
+                         'Sprint','SST','Quotes','Jokes']
+        for itype in self.prac_group:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
                                  value=col,command=self.NewItem)
             button.grid(row=row,column=col,sticky=E+W)
             col+=1
+        Grid.rowconfigure(self.win, row, weight=0,minsize=30)
 
         # Spin box to control paddle keying speed (WPM)
         row+=1
@@ -227,6 +251,7 @@ class PADDLING_GUI():
         #label="Monitor Level",       
         self.Slider2.grid(row=row,column=col+1,columnspan=4,sticky=E+W)
         self.SetMonitorLevel()
+        Grid.rowconfigure(self.win, row, weight=0,minsize=30)
 
         # Buttons for Previous ...
         row+=1
@@ -256,60 +281,57 @@ class PADDLING_GUI():
         if self.STAND_ALONE:
             P.root=self.root
             self.sock=None
-            self.keyer_ctrl = KEYER_CONTROL(P)
-            self.RigBtn=Button(self.win, text="Keyer Ctrl",command=self.keyer_ctrl.show)
-            self.RigBtn.grid(row=row,column=col,sticky=E+W)
+            #self.keyer_ctrl = KEYER_CONTROL(P)
+            #self.RigBtn=Button(self.win, text="Keyer Ctrl",command=self.keyer_ctrl.show)
+            #self.RigBtn.grid(row=row,column=col,sticky=E+W)
         else:
             self.rig = P.gui.rig        
             #self.keyer_ctrl = P.gui.keyer_ctrl
 
-        # ... Button to bring up settings dialog
-        col=NCOLS-1
-        if self.STAND_ALONE:
-            self.SettingsWin = SETTINGS_GUI(self.win,P)    # ,refreshCB=self.RefreshSettings)
-            #self.SettingsWin.hide()
-            Button(self.win, text="Settings",command=self.SettingsWin.show) \
-                .grid(row=row-1,column=col,sticky=E+W)
-
         # ... and to Button Quit
+        col=NCOLS-1
         Button(self.win, text="Quit",command=self.Quit) \
             .grid(row=row,column=col,sticky=E+W)
 
         # Entry boxes for mock QSO
+        """
         if self.STAND_ALONE:
             col=5
-            self.Call = Entry(self.root,font=font1,justify='center')
+            self.Call = Entry(self.root,font=self.font1,justify='center')
             self.Call.grid(row=row,column=col,sticky=E+W)
-            self.Name = Entry(self.root,font=font1,justify='center')
+            self.Name = Entry(self.root,font=self.font1,justify='center')
             self.Name.grid(row=row,column=col+1,sticky=E+W)
-            self.Rst = Entry(self.root,font=font1,justify='center')
+            self.Rst = Entry(self.root,font=self.font1,justify='center')
             self.Rst.grid(row=row,column=col+2,sticky=E+W)
-
+        """
+        
         # Button to play text through the keyer
         col=NCOLS-4
-        Button(self.win, text="Play",command=self.PlayText) \
-            .grid(row=row,column=col,sticky=E+W)
+        self.PlayBtn=Button(self.win, text="Play")  # ,command=self.PlayText)
+        self.PlayBtn.grid(row=row,column=col,sticky=E+W)
+        self.PlayBtn.bind("<Button>", self.PlayCB)
 
         # Entry box to hold levenstien distance
         col+=1
-        lab = Label(self.win, text="Current",font=font1)
+        lab = Label(self.win, text="Current",font=self.font1)
         lab.grid(row=row-1,column=col,sticky=E+W)
-        self.LevDx = Entry(self.root,font=font1,\
+        self.LevDx = Entry(self.root,font=self.font1,\
                            background='lightgreen',justify='center')
         self.LevDx.grid(row=row,column=col,sticky=E+W)
 
         # Entry box to hold result from previous attempt
         col+=1
-        lab = Label(self.win, text="Previous",font=font1)
+        lab = Label(self.win, text="Previous",font=self.font1)
         lab.grid(row=row-1,column=col,sticky=E+W)
-        self.Prior = Entry(self.root,font=font1,\
+        self.Prior = Entry(self.root,font=self.font1,\
                            background='lightgreen',justify='center')
         self.Prior.grid(row=row,column=col,sticky=E+W)
+        Grid.rowconfigure(self.win, row, weight=0,minsize=30)
 
         # Make sure all columns are adjusted when we resize the width of the window
         for i in range(NCOLS):
             Grid.columnconfigure(self.win, i, weight=1,uniform='twelve')
-        
+            
         # Bind callbacks for whenever a key is pressed or the mouse enters or leaves the window
         self.win.bind("<Key>", self.KeyPress )
         if not self.STAND_ALONE:
@@ -318,7 +340,6 @@ class PADDLING_GUI():
             self.win.bind('<Button-1>', self.P.gui.Root_Mouse )      
 
         # If user clicks on 'x' in upper RH corner, hide or quit
-        #self.win.protocol("WM_DELETE_WINDOW", self.hide)
         self.win.protocol("WM_DELETE_WINDOW", self.Quit)
 
         # Status bar along the bottom
@@ -326,15 +347,29 @@ class PADDLING_GUI():
         self.status_bar = StatusBar(self.root)
         self.status_bar.grid(row=row,rowspan=1,column=0,columnspan=NCOLS,sticky=E+W)
         self.status_bar.setText("Howdy Ho!")
+        Grid.rowconfigure(self.win, row, weight=0,minsize=30)
         
-        # Start the ball rolling with this window not visible
-        if not self.STAND_ALONE:
+        # Set window geometry and Start the ball rolling with this window not visible
+        self.screen_width = self.root.winfo_screenwidth()
+        self.screen_height = self.root.winfo_screenheight()
+        print('Screen=',self.screen_width, self.screen_height)
+        w=int(self.screen_width-200)
+        if self.STAND_ALONE:
+            h=375
+            #self.win.geometry('1700x400+100+10')
+        else:
+            h=240
+            #self.win.geometry('1700x240+100+10')
             try:
                 self.SetWpm(0)
             except:
                 error_trap('PADDLING GUI - Problem setting initial WPM',1)
             self.hide()
 
+        sz=str(w)+'x'+str(h)+'+100+10'
+        print('sz=',sz)
+        self.win.geometry(sz)
+            
     ################################################################################
 
     # Close splash and Show the gui
@@ -411,7 +446,26 @@ class PADDLING_GUI():
     # Callback when a key is pressed 
     def KeyPress(self,event,id=None):
 
+        P = self.P
         key   = event.keysym
+        num   = event.keysym_num
+        ch    = event.char
+        state = event.state
+
+        # Modfiers
+        shift     = ((state & 0x0001) != 0)
+        #caps_lock = state & 0x0002
+        control   = (state & 0x0004) != 0
+
+        # Well this is screwy - there seems to be a difference between
+        # linux and windoz
+        if P.PLATFORM=='Linux':
+            alt       = (state & 0x0008) != 0 
+            #num_lock  = state & 0x0010
+        elif P.PLATFORM=='Windows':
+            alt       = (state & 0x20000) != 0 
+            #num_lock  = state & 0x008
+                    
         print('Paddling->Key Press:',key)
 
         if key in ['Return','KP_Enter','space']:
@@ -430,7 +484,19 @@ class PADDLING_GUI():
             # Page down or big -
             self.SetWpm(-1)
             return "break"
-           
+
+        elif key=='Escape':
+            
+            # Immediately stop sending
+            print('Escape!')
+            self.P.keyer_device.abort()
+            #self.keyer.abort()     
+
+        elif key in ['h','H'] and (alt or control):
+
+            # Toggle headcopy mode
+            self.Toggle_HeadCopy()            
+            
     # Callback to push a prior item into entry box
     def PrevItem(self):
         if TEST_MODE:
@@ -439,8 +505,9 @@ class PADDLING_GUI():
         if self.stack_ptr>0:
             self.stack_ptr-=1
             txt=self.stack[self.stack_ptr]
-            self.txt.delete(1.0, END)
-            self.txt.insert(1.0,txt)
+            if not self.HeadCopy:
+                self.txt.delete(1.0, END)
+                self.txt.insert(1.0,txt)
         else:
             print('Empty stack')
             
@@ -452,8 +519,9 @@ class PADDLING_GUI():
         if self.stack_ptr<len(self.stack)-1:
             self.stack_ptr+=1
             txt=self.stack[self.stack_ptr]
-            self.txt.delete(1.0, END)
-            self.txt.insert(1.0,txt)
+            if not self.HeadCopy:
+                self.txt.delete(1.0, END)
+                self.txt.insert(1.0,txt)
         else:
             print('End of stack --> new item')
             self.NewItem()
@@ -477,182 +545,187 @@ class PADDLING_GUI():
     # Callback to push a new item into entry box
     def NewItem(self):
         P=self.P
-        Selection=self.Selection.get()
+        Selection=self.prac_group[ self.Selection.get() ]
         #print("NEW ITEM - Your selection=",Selection)
         self.responded=False
 
-        if Selection==0:
+        match Selection:
+            case 'Panagrams':
             
-            # Panagrams
-            n=len(self.panagrams)
-            print('There are',n,'panagrams loaded')
-            Done=False
-            while not Done:
-                i = random.randint(0,n-1)
-                if len(self.stack)==0 and False:
-                    i=132                        # The quick brown fox ...
-                txt = self.panagrams[i]
-                if TEST_MODE:
-                    txt=str(i)+'. '+txt
-                #print('Panagram=',txt)
+                # Panagrams
+                n=len(self.panagrams)
+                print('There are',n,'panagrams loaded')
+                Done=False
+                while not Done:
+                    i = random.randint(0,n-1)
+                    if len(self.stack)==0 and False:
+                        i=132                        # The quick brown fox ...
+                    txt = self.panagrams[i]
+                    if TEST_MODE:
+                        txt=str(i)+'. '+txt
+                    #print('Panagram=',txt)
 
-                if self.STRICT_MODE:
-                    Done=self.test_panagraph(txt)
-                    print('valid=',Done)
-                else:
-                    Done=True
+                    if self.STRICT_MODE:
+                        Done=self.test_panagraph(txt)
+                        print('valid=',Done)
+                    else:
+                        Done=True
 
-        elif Selection==1:
+            case 'Call Signs':
             
-            # Call signs 
-            #print('There are',self.Ncalls,'call signs loaded')
-            txt=''
-            for j in range(5):
-                i = random.randint(0, P.Ncalls-1)
-                txt += ' '+P.calls[i]
-
-                # Add a "/" once in a while more practice
-                if '/' not in txt:
-                    i = random.randint(0,10)
-                    if i>6:
-                        i = random.randint(0,len(self.suffixes)-1)
-                        txt+=self.suffixes[i]                        
-                
-            #print('call=',txt)
-            
-        elif Selection>=2 and Selection<=5:
-            
-            # Letter/number/char groups
-            if Selection==2:
-                items=self.letters
-            elif Selection==3:
-                items=self.letters+self.numbers
-            elif Selection==4:
-                items=self.specials
-            elif Selection==5:
-                items=self.letters+self.numbers+self.specials
-
-            txt=''
-            for k in range(5):
+                # Call signs 
+                #print('There are',self.Ncalls,'call signs loaded')
+                txt=''
                 for j in range(5):
-                    i = random.randint(0, len(items)-1)
-                    txt += items[i]
-                txt += ' '
-            #print('letters=',txt)
-            
-        elif Selection==6:
-            
-            # Words I stumble on
-            n=len(self.Stumble)
-            #print('There are',n,'stumble-bumblers loaded')
-            Done=False
-            while not Done:
-                i = random.randint(0,n-1)
-                txt = self.Stumble[i]
-                Done = txt!=self.last_txt
-            self.last_txt=txt
-            #print('Stumble=',txt)
-
-        elif Selection==7:
-            
-            # Normal QSO
-            if RANDOM_QSO_MODE:
-                # Pick a call at random
-                done = False
-                while not done:
                     i = random.randint(0, P.Ncalls-1)
-                    call = P.calls[i]
-                    name = P.MASTER[call]['name']
-                    done = len(call)>2 and len(name)>2
+                    txt += ' '+P.calls[i]
 
-                self.Call.delete(0,END)
-                self.Call.insert(0,call)
-
-                self.Name.delete(0,END)
-                self.Name.insert(0,name)
-
-            # Pick RST at random
-            i = random.randint(2, 10)
-            if i==10:
-                rst='5NN Plus'
-            else:
-                #rst='5'+str(i)+'9'
-                #print('rst1=',rst)
-                rst=cut_numbers('5'+str(i)+'9',3,True)
-                #print('rst2=',rst)
-            self.Rst.delete(0,END)
-            self.Rst.insert(0,rst)
-
-            # Select one of the template lines
-            n=len(self.QSO_Template)
-            if False:
-                i = random.randint(0,n-1)
-            else:
-                self.qso_ptr+=1
-                if self.qso_ptr>n-1:
-                    self.qso_ptr=0
-                i=self.qso_ptr
-            txt = self.QSO_Template[i]
-            #print('QSO=',txt)
-            if P.gui:
-                txt = P.gui.Patch_Macro(txt)
-                txt = P.gui.Patch_Macro2(txt)
-            #print('QSO=',txt)
-            
-        elif Selection==8:
-
-            # Send a book line by line
-            txt = self.Book[self.bookmark]
-            self.bookmark= (self.bookmark+1) % len(self.Book)
-            
-        elif Selection==9:
-
-            # Sprint contest - mimicking IambicMaster
-            call1,name1,state1 = self.get_sprint_call()
-            call1=call1.replace('/SK','/P')
-            call2,name2,state2 = self.get_sprint_call()
-            call2=call2.replace('/SK','/M')
-            serial = str( random.randint(0,999) )
-            i = random.randint(0,1)
-            if i==0:
-                txt=call1+' '+call2+' '+name2+' '+state2+' '+serial
-            else:
-                txt=call1+' '+name2+' '+state2+' '+serial+' '+call2
-            
-        elif Selection==10:
-
-            # SST
-            if self.isst==0:
-                txt='CQ SST '+P.SETTINGS['MY_CALL']
-                self.isst+=1
-            elif self.isst==1:
-                call1,self.name1,state1 = self.get_sprint_call()
-                call1=call1.replace('/SK','/P')
-                txt=call1+' TU '+P.SETTINGS['MY_NAME']+' '+P.SETTINGS['MY_STATE']
-                self.isst+=1
-            else:
-                txt=' GA '+self.name1+' 73EE'
-                self.isst=0
-
-        elif Selection==11:
-            
-            # Famous Quotes
-            n=len(self.quotes)
-            print('There are',n,'quotes loaded')
-            i = random.randint(0,n-1)
-            txt = self.quotes[i]
-            if TEST_MODE:
-                txt=str(i)+'. '+txt
-                #print('Quote=',txt)
+                    # Add a "/" once in a while more practice
+                    if '/' not in txt:
+                        i = random.randint(0,10)
+                        if i>6:
+                            i = random.randint(0,len(self.suffixes)-1)
+                            txt+=self.suffixes[i]                        
                 
-        else:
+                    #print('call=',txt)
             
-            print('Unknown selection')
-            txt='*** ERROR *** ERROR *** ERROR ***'
+            case 'Letters'|'Letters+Numbers'|'Special Chars'|'All Chars':
+
+                match Selection:
+                    case 'Letters':
+                        items=self.letters
+                    case 'Letters+Numbers':
+                        items=self.letters+self.numbers
+                    case 'Special Chars':
+                        items=self.specials
+                    case'All Chars':
+                        items=self.letters+self.numbers+self.specials
+
+                txt=''
+                for k in range(5):
+                    for j in range(5):
+                        i = random.randint(0, len(items)-1)
+                        txt += items[i]
+                    txt += ' '
+                #print('letters=',txt)
             
-        self.txt.delete(1.0, END)
+            case 'Stumble':
+            
+                # Words I stumble on
+                n=len(self.Stumble)
+                #print('There are',n,'stumble-bumblers loaded')
+                Done=False
+                while not Done:
+                    i = random.randint(0,n-1)
+                    txt = self.Stumble[i]
+                    Done = txt!=self.last_txt
+                self.last_txt=txt
+                #print('Stumble=',txt)
+
+            case 'QSO':
+            
+                # Normal QSO
+                if RANDOM_QSO_MODE:
+                    # Pick a call at random
+                    done = False
+                    while not done:
+                        i = random.randint(0, P.Ncalls-1)
+                        call = P.calls[i]
+                        name = P.MASTER[call]['name']
+                        done = len(call)>2 and len(name)>2
+
+                    self.Call.delete(0,END)
+                    self.Call.insert(0,call)
+
+                    self.Name.delete(0,END)
+                    self.Name.insert(0,name)
+
+                # Pick RST at random
+                i = random.randint(2, 10)
+                if i==10:
+                    rst='5NN Plus'
+                else:
+                    #rst='5'+str(i)+'9'
+                    #print('rst1=',rst)
+                    rst=cut_numbers('5'+str(i)+'9',3,True)
+                    #print('rst2=',rst)
+                self.Rst.delete(0,END)
+                self.Rst.insert(0,rst)
+
+                # Select one of the template lines
+                n=len(self.QSO_Template)
+                if False:
+                    i = random.randint(0,n-1)
+                else:
+                    self.qso_ptr+=1
+                    if self.qso_ptr>n-1:
+                        self.qso_ptr=0
+                    i=self.qso_ptr
+                    txt = self.QSO_Template[i]
+                    #print('QSO=',txt)
+                if P.gui:
+                    txt = P.gui.Patch_Macro(txt)
+                    txt = P.gui.Patch_Macro2(txt)
+                #print('QSO=',txt)
+            
+            case 'Book':
+
+                # Send a book line by line
+                txt = self.Book[self.bookmark]
+                self.bookmark= (self.bookmark+1) % len(self.Book)
+            
+            case 'Sprint':
+
+                # Sprint contest - mimicking IambicMaster
+                call1,name1,state1 = self.get_sprint_call()
+                call1=call1.replace('/SK','/P')
+                call2,name2,state2 = self.get_sprint_call()
+                call2=call2.replace('/SK','/M')
+                serial = str( random.randint(0,999) )
+                i = random.randint(0,1)
+                if i==0:
+                    txt=call1+' '+call2+' '+name2+' '+state2+' '+serial
+                else:
+                    txt=call1+' '+name2+' '+state2+' '+serial+' '+call2
+            
+            case 'SST':
+
+                # SST
+                if self.isst==0:
+                    txt='CQ SST '+P.SETTINGS['MY_CALL']
+                    self.isst+=1
+                elif self.isst==1:
+                    call1,self.name1,state1 = self.get_sprint_call()
+                    call1=call1.replace('/SK','/P')
+                    txt=call1+' TU '+P.SETTINGS['MY_NAME']+' '+P.SETTINGS['MY_STATE']
+                    self.isst+=1
+                else:
+                    txt=' GA '+self.name1+' 73EE'
+                    self.isst=0
+
+            case 'Quotes' | 'Jokes':
+            
+                # Jokes or Famous Quotes
+                match Selection:
+                    case 'Quotes':
+                        items=self.quotes
+                    case 'Jokes':
+                        items=self.jokes
+                        
+                n=len(items)
+                print('There are',n,'quotes/jokes loaded')
+                i = random.randint(0,n-1)
+                txt = items[i]
+                
+            case _:
+            
+                print('Unknown selection')
+                txt='*** ERROR *** ERROR *** ERROR ***'
+            
         txt=txt.strip()
-        self.txt.insert(1.0,txt)
+        if not self.HeadCopy:
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,txt)
         self.stack.append(txt)
         if len(self.stack)>100:
             self.stack.pop(0)
@@ -801,15 +874,84 @@ class PADDLING_GUI():
         return False
 
 
-    # Function to play text through the keyer
-    def PlayText(self):
+    # Callback for Play Button
+    def PlayCB(self,evt):
+        print(f"you clicked button {evt.num}")
 
-        txt=self.item
-        print('PLAY TEXT:',txt)
-        P.keyer_device.nano_write(txt)    
+        if evt.num==1:
+            
+            # Left click - play current item text
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,'Head Copy Practice ...')
+            time.sleep(0.5)         # Small delay at start to give op a chance to get ready
+        
+            txt=self.item.replace('-','=').replace("'","").replace('!','').replace('"','')
+            #txt=re.sub(r"!\'\"","",self.item.replace('-','=') )
+            print('PLAY TEXT:',txt)
+            P.keyer_device.nano_write(txt)
+
+        elif evt.num==3:
+
+            # Right click - show the text
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,self.item)
+            
+
+    # Callback to toggle visiblity of text box 1
+    def Toggle_HeadCopy(self):
+        self.HeadCopy = not self.HeadCopy
+        if self.HeadCopy:
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,'Head Copy Practice ...')
+        else:
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,self.item)
+        
+        
+    # Function to create menu bar
+    def create_menu_bar(self,NCOLS):
+        print('Creating Menubar ...')
+
+        # Everything is wrapped in a toolbar frame
+        toolbar = Frame(self.root, bd=1, relief=RAISED)
+        toolbar.grid(row=0,columnspan=NCOLS,column=0,sticky=E+W)
+
+        # Make all columns in the toolbar the same width
+        for i in range(1,NCOLS):
+            toolbar.columnconfigure(i, weight=1,uniform='fred')
+
+        # Put pull-down menu in first column
+        row=0
+        col=0
+        menubar = Menubutton(toolbar,text='File',relief='flat')
+        menubar.grid(row=row,column=col,sticky=E+W)
+            
+        Menu1 = Menu(menubar, tearoff=0)
+        Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
+        Menu1.add_command(label="Keyer Control ...", command=self.keyer_ctrl.show)
+        Menu1.add_command(label="Head Copy ...", command=self.Toggle_HeadCopy)
+        
+        Menu1.add_separator()
+        Menu1.add_command(label="Exit", command=self.Quit)
+
+        menubar.menu =  Menu1
+        menubar["menu"]= menubar.menu  
+
+        # Add boxes to hold info for QSO practice
+        if self.STAND_ALONE:
+            col=4
+            self.Call = Entry(toolbar,font=self.font1,justify='center')
+            self.Call.grid(row=row,column=col,columnspan=1,sticky=E+W)
+
+            col+=1
+            self.Name = Entry(toolbar,font=self.font1,justify='center')
+            self.Name.grid(row=row,column=col,sticky=E+W)
+
+            col+=1
+            self.Rst = Entry(toolbar,font=self.font1,justify='center')
+            self.Rst.grid(row=row,column=col,sticky=E+W)
 
         
-    
 ################################################################################
 
 # If this file is called as main, run as independent exe

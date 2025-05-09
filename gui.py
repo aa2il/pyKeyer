@@ -2019,6 +2019,13 @@ class GUI():
         return h
 
 
+    # Show scoring summary in big text box
+    def ScoringSummary(self):
+        if self.P.SCORING:
+            self.P.SCORING.otf_summary()
+        else:
+            self.txt.insert(END, 'Ooops - no scoring summary!', ('highlight'))
+    
     # Save program state
     def SaveState(self):
         spots  = []
@@ -3586,9 +3593,9 @@ class GUI():
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Rig Control ...", command=self.RigCtrlCB)
         Menu1.add_command(label="Keyer Control ...", command=self.KeyerCtrlCB)
-        #Menu1.add_command(label="Paddling ...", command=self.PaddlingWin.show)
         Menu1.add_command(label="Paddling ...", command=self.Toggle_Paddling_Win)
         Menu1.add_command(label="Clear Stores ...", command=self.ClearState)
+        Menu1.add_command(label="Scoring Summary ...", command=self.ScoringSummary)
         Menu1.add_separator()
         
         Menu1.add_checkbutton(
