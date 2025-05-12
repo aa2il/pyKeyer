@@ -1,0 +1,21 @@
+[project]
+name = "pykeyer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "chardet>=5.2.0",
+    "levenshtein>=0.27.1",
+    "openpyxl>=3.1.5",
+    "pandas>=2.2.3",
+    "psutil>=7.0.0",
+    "pyaudio>=0.2.14",
+    "pyautogui>=0.9.54",
+    "pyhamtools>=0.11.0",
+    "pyserial>=3.5",
+    "pyudev>=0.24.3",
+    "scipy>=1.15.3",
+    "unidecode>=1.4.0",
+    "xlrd>=2.0.1",
+]

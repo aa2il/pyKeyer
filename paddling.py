@@ -1,3 +1,6 @@
+#!/usr/bin/env -S uv run --script
+#
+#! /home/joea/miniconda3/envs/py3_13/bin/python -u
 #! /home/joea/miniconda3/envs/aa2il/bin/python -u
 #
 # NEW: /home/joea/miniconda3/envs/aa2il/bin/python -u
@@ -92,7 +95,7 @@ class PADDLING_GUI():
         self.responded=True       # Need to show initial text
         self.item=''
         self.response=''
-        self.HeadCopy = False
+        P.HEADCOPY = False
         
         self.dxs=[]
         self.ntries=1
@@ -489,8 +492,10 @@ class PADDLING_GUI():
             
             # Immediately stop sending
             print('Escape!')
-            self.P.keyer_device.abort()
-            #self.keyer.abort()     
+            if P.SIDETONE:
+                self.P.SideTone.abort()
+            else:
+                self.P.keyer_device.abort()
 
         elif key in ['h','H'] and (alt or control):
 
@@ -505,7 +510,7 @@ class PADDLING_GUI():
         if self.stack_ptr>0:
             self.stack_ptr-=1
             txt=self.stack[self.stack_ptr]
-            if not self.HeadCopy:
+            if not self.P.HEADCOPY:
                 self.txt.delete(1.0, END)
                 self.txt.insert(1.0,txt)
         else:
@@ -519,7 +524,7 @@ class PADDLING_GUI():
         if self.stack_ptr<len(self.stack)-1:
             self.stack_ptr+=1
             txt=self.stack[self.stack_ptr]
-            if not self.HeadCopy:
+            if not self.P.HEADCOPY:
                 self.txt.delete(1.0, END)
                 self.txt.insert(1.0,txt)
         else:
@@ -723,7 +728,7 @@ class PADDLING_GUI():
                 txt='*** ERROR *** ERROR *** ERROR ***'
             
         txt=txt.strip()
-        if not self.HeadCopy:
+        if not self.P.HEADCOPY:
             self.txt.delete(1.0, END)
             self.txt.insert(1.0,txt)
         self.stack.append(txt)
@@ -888,8 +893,11 @@ class PADDLING_GUI():
             txt=self.item.replace('-','=').replace("'","").replace('!','').replace('"','')
             #txt=re.sub(r"!\'\"","",self.item.replace('-','=') )
             print('PLAY TEXT:',txt)
-            P.keyer_device.nano_write(txt)
-
+            if P.SIDETONE:
+                P.SideTone.push(txt)
+            else:
+                P.keyer_device.nano_write(txt)
+            
         elif evt.num==3:
 
             # Right click - show the text
@@ -899,14 +907,27 @@ class PADDLING_GUI():
 
     # Callback to toggle visiblity of text box 1
     def Toggle_HeadCopy(self):
-        self.HeadCopy = not self.HeadCopy
-        if self.HeadCopy:
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Toggling Head Copy ...",self.HeadCopy)
+        self.P.HEADCOPY = not self.P.HEADCOPY
+        if self.P.HEADCOPY:
             self.txt.delete(1.0, END)
             self.txt.insert(1.0,'Head Copy Practice ...')
         else:
             self.txt.delete(1.0, END)
             self.txt.insert(1.0,self.item)
-        
+
+    # Callback to turn sidetone on and off
+    def Toggle_SideTone(self):
+        print("Toggling Sidetone ...")
+        self.P.SIDETONE = not self.P.SIDETONE
+        if self.P.SIDETONE:
+            if self.P.SideTone.started:
+                self.P.SideTone.resume()
+            else:
+                self.P.SideTone.start()
+        else:
+            if self.P.SideTone.started and self.P.SideTone.enabled:
+                self.P.SideTone.pause()            
         
     # Function to create menu bar
     def create_menu_bar(self,NCOLS):
@@ -929,8 +950,24 @@ class PADDLING_GUI():
         Menu1 = Menu(menubar, tearoff=0)
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Keyer Control ...", command=self.keyer_ctrl.show)
-        Menu1.add_command(label="Head Copy ...", command=self.Toggle_HeadCopy)
+
+        #Menu1.add_command(label="Head Copy ...", command=self.Toggle_HeadCopy)
+        self.HeadCopy = BooleanVar(value=self.P.HEADCOPY)
+        Menu1.add_checkbutton(
+            label="Head Copy",
+            underline=0,
+            variable=self.HeadCopy,
+            command=self.Toggle_HeadCopy
+        )
         
+        self.SideTone = BooleanVar(value=self.P.SIDETONE)
+        Menu1.add_checkbutton(
+            label="Side Tone",
+            underline=0,
+            variable=self.SideTone,
+            command=self.Toggle_SideTone
+        )
+                
         Menu1.add_separator()
         Menu1.add_command(label="Exit", command=self.Quit)
 
@@ -961,10 +998,10 @@ if __name__ == '__main__':
     from load_history import load_history
     import argparse
     from rig_io import CONNECTIONS,RIGS
-    #from rig_io import socket_io 
     from rig_io.socket_io import open_rig_connection
     import platform
     from dx import load_cty_info
+    from sidetone import *
 
     VERSION='1.1'
     
@@ -1004,6 +1041,7 @@ if __name__ == '__main__':
                 self.rig           = None
 
             self.KEYER_PORT    = args.kport
+            self.SIDETONE      = False            # True
                 
             # Init
             self.sock=None
@@ -1100,6 +1138,9 @@ if __name__ == '__main__':
     P.keyer=cw_keyer.Keyer(P,P.WPM)
     P.ser=open_keying_port(P,True,1)
 
+    # Create sidetone oscillator & start in a separate thread
+    P.SideTone = AUDIO_SIDETONE(P)
+    
     # Create GUI
     P.PaddlingWin = PADDLING_GUI(None,P)
     P.PaddlingWin.SetWpm(0)
@@ -1121,7 +1162,11 @@ if __name__ == '__main__':
     # Make sure we don't TX!
     if P.sock:
         P.sock.set_breakin(False)
-    
+
+    # Start sidetone osc
+    if P.SIDETONE:
+        P.SideTone.start()
+        
     # And away we go!
     P.PaddlingWin.status_bar2.setText('Ready to rock ...')
     P.PaddlingWin.show_gui()

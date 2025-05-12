@@ -1242,6 +1242,7 @@ class GUI():
             self.fp_adif.write(txt+'\n')
             self.fp_adif.flush()
             self.txt.insert(END, txt)            
+            self.txt.see(END)
         
     # Callback to bring up rig control menu
     def RigCtrlCB(self):
@@ -2025,6 +2026,7 @@ class GUI():
             self.P.SCORING.otf_summary()
         else:
             self.txt.insert(END, 'Ooops - no scoring summary!', ('highlight'))
+            self.txt.see(END)
     
     # Save program state
     def SaveState(self):
@@ -2428,6 +2430,7 @@ class GUI():
                     #txt=qso2['CALL']+' '+qso2['FREQ']+' '+qso2['SRX_STRING']
                     txt=' '+call+' '+str(freq)+' '+exch+'\n'
                     self.txt.insert(END, txt, ('highlight'))
+                    self.txt.see(END)
                 except: 
                     error_trap('GUI->LOG QSO: ERROR writing logged info to big text box')
                     

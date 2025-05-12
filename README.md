@@ -27,14 +27,14 @@ Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testin
 - Variety of text generation facilities for practicing with keyer paddles.
 - ...
 
-# Installation under Linux - Depricated:
+# Installation under Linux using uv:
 
-0) THIS IS *NOT* THE RECOMMENED PROCEDURE ANYMORE.  As of Linux Mint 22, the system python libraries are heavily guarded.  If you see a message stating that "This environment is externally managed," you will need to use some sort of "virtual" or "container" for your python environment.  I have found that Miniconda is a straight-forward way to do this.  See the next section for the installation instructions under Miniconda.
+0) This seems to be the easiest/best solution.  uv is relatively new and is fast and easy compared to other solutions.  However, it does have a a problem running some tkinter gui apps with recent versions of python.  Of course, to use uv, you need to have it installed on your system:
 
-The instructions in this section still work on the Raspberry Pi.
+      curl -LsSf https://astral.sh/uv/install.sh | sh      
+      rehash     
 
-1) Uses python3 and tkinter
-2) Clone gitub pyKeyer, libs and data repositories
+1) Clone gitub pyKeyer, libs and data repositories
 
       cd
       mkdir Python
@@ -43,23 +43,73 @@ The instructions in this section still work on the Raspberry Pi.
       git clone https://github.com/aa2il/libs
       git clone https://github.com/aa2il/data
       
-3) Install packages needed for pyKeyer:
+2) One of the features of uv is that the virtual environment (a.k.a. container or sandbox) is included in the github repository.  You should NOT have to do anything since uv will install the environment and required packages the first time you run any of these codes.
+
+For the record, here is how I set up the environment:
 
      cd ~/Python/pyKeyer
-     pip3 install -r requirements.txt
-     
-4) Make sure its executable:
+     uv init --python 3.12
+     rm main.py
+     uv add -r requirements.txt
+   
+     *** There is a problem with python 3.13 & tk under uv - use 3.12 until we figure this out ***
+   
+   https://github.com/astral-sh/python-build-standalone/issues/146
+   
+3) Make sure its executable and set PYTHON PATH so os can find libraries:
 
+     cd ~/Python/pyKeyer
      chmod +x pyKeyer.py start start_cw
-     
-5) Set PYTHON PATH so os can find libraries:
 
    - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
    - Under bash:      export PYTHONPATH="$HOME/Python/libs"
    
-6) Bombs away:
+4) Bombs away:
+
+     uv run pyKeyer.py
+     uv run paddling.py
+     uv run qrz.py
+
+   or, 
 
      ./pyKeyer.py
+     ./paddling.py
+     ./qrz.py
+
+# Installation under Linux - Depricated:
+
+0) THIS IS *NOT* THE RECOMMENED PROCEDURE ANYMORE.  As of Linux Mint 22, the system python libraries are heavily guarded.  If you see a message stating that "This environment is externally managed," you will need to use some sort of "virtual" or "container" for your python environment.  I have found that uv is a very easy solution to this (see above).  Also, Miniconda works quite well but requires a little more fiddling.  See the next section for the installation instructions under Miniconda.
+
+The instructions in this section are what I still use a Raspberry Pi.
+
+1) Clone gitub pyKeyer, libs and data repositories
+
+      cd
+      mkdir Python
+      cd Python
+      git clone https://github.com/aa2il/pyKeyer
+      git clone https://github.com/aa2il/libs
+      git clone https://github.com/aa2il/data
+      
+2) Install packages needed for pyKeyer:
+
+     cd ~/Python/pyKeyer
+     pip3 install -r requirements.txt
+     
+3) Make sure its executable:
+
+     chmod +x pyKeyer.py start start_cw qrz.py paddling.py
+     
+4) Set PYTHON PATH so os can find libraries:
+
+   - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
+   - Under bash:      export PYTHONPATH="$HOME/Python/libs"
+   
+5) Bombs away - you may need to change the first line of each executable to match the location of your interretor:
+
+     ./pyKeyer.py
+     ./qrz.py
+     ./paddling.py
      
    See also start and start_cw for examples how to run this thing         
 

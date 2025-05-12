@@ -63,13 +63,15 @@ class AUDIO_SIDETONE():
             self.q2     = Queue.Queue(maxsize=0)
         P.q2=self.q2
 
-        if True:
-            self.sidetone_exec = threading.Thread(target=self.sidetone_executive, args=(),\
-                                    name='Sidetone Osc')
-            self.sidetone_exec.setDaemon(True)
-            #self.sidetone_exec.start()
-            P.threads.append(self.sidetone_exec)
-        
+        self.sidetone_exec = threading.Thread(target=self.sidetone_executive, args=(),\
+                                              name='Sidetone Osc')
+        self.sidetone_exec.setDaemon(True)
+        if not hasattr(P,'threads'):
+            P.threads=[]
+        P.threads.append(self.sidetone_exec)
+        if not hasattr(P,'Stopper'):
+            P.Stopper = threading.Event()
+
     def start(self):
         print('AUDIO SIDETONE: Start ...',self.started)
         if self.P.SIDETONE:
@@ -93,8 +95,13 @@ class AUDIO_SIDETONE():
         self.player.resume()
         self.enabled = True
         #self.osc.resume()
+
+    def push(self,txt):
+        self.q2.put(txt)
+
+    def abort(self):
+        self.osc.abort()
         
-            
     def sidetone_executive(self):
         print('AUDIO SIDETONE: Exec started ...')
         P=self.P
@@ -122,6 +129,7 @@ class SIDETONE_OSC():
             self.F0=[F0]
         self.FS=float(FS)
         print("\nCreating code practice osc ... FS=",self.FS,'\tF0=',self.F0)
+        self.Stopper = threading.Event()
 
         # Generate sigs
         self.gen_elements(WPM,0)
@@ -129,7 +137,7 @@ class SIDETONE_OSC():
         # Use non-blocking audio player
         BUFF_SIZE=4*32*1024                 # Was 1x
         self.rb     = dsp.ring_buffer2('Audio0',BUFF_SIZE,PREVENT_OVERFLOW=False)
-        self.rb2    = dsp.ring_buffer2('Audio1',BUFF_SIZE,PREVENT_OVERFLOW=False)
+        #self.rb2    = dsp.ring_buffer2('Audio1',BUFF_SIZE,PREVENT_OVERFLOW=False)
         self.player = dsp.AudioIO(None,int(self.FS),self.rb,None,'B',True)
 
     #def change_freq():
@@ -186,8 +194,17 @@ class SIDETONE_OSC():
         # Loop over all chars
         for char in msg.upper():
 
-            i=ord(char)
-            cw=morse[i]
+            if self.Stopper.isSet():
+                self.Stopper.clear()
+                break
+
+            try:
+                i=ord(char)
+                cw=morse[i]
+            except:
+                print('SIDETONE->SEND_CW: Invalid character',char,'\t',i)
+                i=32
+                cw=morse[i]
             
             if VERBOSITY>0:
                 print('SIDETONE->SEND_CW: Sending *',i,'*',char,'*',cw,'*')
@@ -207,23 +224,24 @@ class SIDETONE_OSC():
                         x = np.concatenate( (self.dah,self.space) )
 
                     # Send the element
-                    #if AUDIO_ACTIVE and self.enabled:
                     if AUDIO_ACTIVE:
                         if VERBOSITY>0:
                             print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...',el,len(x))
                         self.rb.push(x)
-                    self.rb2.push(x)
+                    #self.rb2.push(x)
 
                 # Effect spacing between letters - we've already added one short space
                 # so we only need 2 more to effect char spacing
                 x = np.concatenate( (self.space,self.space) )
-                #if AUDIO_ACTIVE and self.enabled:
                 if AUDIO_ACTIVE:
                     if VERBOSITY>0:
                         print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
                     self.rb.push(x)                         # Computer Audio
-                self.rb2.push(x)                            # Sidetone for capture
+                #self.rb2.push(x)                            # Sidetone for capture
                 
+    def abort(self):
+        self.Stopper.set()
+        self.rb.clear()
 
     def play(self):
         x = np.concatenate( (self.dit,self.space,self.dah,self.space) )

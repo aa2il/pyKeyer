@@ -13,11 +13,11 @@ cls
 set RIG="NONE"
 #set RIG="HAMLIB"
 #set RIG="DIRECT"
-set RIG1="FLRIG"
+#set RIG1="FLRIG"
 #set RIG="ANY"
 
 set RIG_TYPE=""
-set RIG_TYPE="FTdx3000"
+#set RIG_TYPE="FTdx3000"
 #set RIG_TYPE="FT991a"
 #set RIG_TYPE="IC9700"
 
@@ -30,8 +30,8 @@ set RIG2="NONE"
 # Rig finder
 set PYTHON=""
 #conda activate aa2il
-conda activate py3_13
-set PYTHON="python"
+#conda activate py3_13
+#set PYTHON="python"
 which python
 set FIND_RIG="$PYTHON ~/Python/findRig/findRig.py"
 
@@ -73,6 +73,7 @@ set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="sprint"
 
+#set CONTEST="wpx"
 #set CONTEST="naqp"
 #set CONTEST="cq160m"
 #set CONTEST="arrl_dx"
@@ -83,7 +84,6 @@ set CONTEST="sst"
 #set CONTEST="stew"
 #set CONTEST="sat"
 #set CONTEST="cqp"
-#set CONTEST="wpx"
 #set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="cwopen"
@@ -367,7 +367,7 @@ echo OPTS=$OPTS
 echo " "
 
 cd ~/Python/pyKeyer
-set EXE="pyKeyer.py"
+set EXE="$PYTHON pyKeyer.py"
 #cd dist
 #set EXE="pyKeyer"
 pwd

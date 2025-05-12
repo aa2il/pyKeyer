@@ -22,8 +22,9 @@
 from tkinter import END,E,W
 from collections import OrderedDict
 from random import randint
-from utilities import cut_numbers
+from utilities import cut_numbers,error_trap
 from default import DEFAULT_KEYING
+from scoring import CQ_WPX_SCORING
 
 ############################################################################################
 
@@ -39,6 +40,9 @@ class WPX_KEYING(DEFAULT_KEYING):
 
         P.CONTEST_ID=contest_name
         self.contest_duration = 48
+
+        # On-the-fly scoring
+        P.SCORING    = CQ_WPX_SCORING(P,'CW',contest_name)        
         
     # Routient to set macros for this contest
     def macros(self):
