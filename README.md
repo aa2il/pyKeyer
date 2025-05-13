@@ -31,74 +31,85 @@ Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testin
 
 0) This seems to be the easiest/best solution.  uv is relatively new and is fast and easy compared to other solutions.  However, it does have a a problem running some tkinter gui apps with recent versions of python.  Of course, to use uv, you need to have it installed on your system:
 
-      curl -LsSf https://astral.sh/uv/install.sh | sh      
-      rehash     
+        curl -LsSf https://astral.sh/uv/install.sh | sh      
+        rehash     
 
 1) Clone gitub pyKeyer, libs and data repositories
 
-      cd
-      mkdir Python
-      cd Python
-      git clone https://github.com/aa2il/pyKeyer
-      git clone https://github.com/aa2il/libs
-      git clone https://github.com/aa2il/data
+        cd
+        mkdir Python
+        cd Python
+        git clone https://github.com/aa2il/pyKeyer
+        git clone https://github.com/aa2il/libs
+        git clone https://github.com/aa2il/data
       
 2) One of the features of uv is that the virtual environment (a.k.a. container or sandbox) is included in the github repository.  You should NOT have to do anything since uv will install the environment and required packages the first time you run any of these codes.
 
-For the record, here is how I set up the environment:
+   For the record, here is how I set up the environment:
 
-     cd ~/Python/pyKeyer
-     uv init --python 3.12
-     rm main.py
-     uv add -r requirements.txt
+        cd ~/Python/pyKeyer
+        uv init --python 3.12
+        rm main.py
+        uv add -r requirements.txt
    
-     *** There is a problem with python 3.13 & tk under uv - use 3.12 until we figure this out ***
+   *** There is a problem with python 3.13 & tk under uv - use 3.12 until we figure this out ***
+   *** It is a known issue and hopefully will get resolved b4 we fall too far behind ***
    
-   https://github.com/astral-sh/python-build-standalone/issues/146
+        https://github.com/astral-sh/python-build-standalone/issues/146  7036  and  11942
    
 3) Make sure its executable and set PYTHON PATH so os can find libraries:
 
-     cd ~/Python/pyKeyer
-     chmod +x pyKeyer.py start start_cw
+        cd ~/Python/pyKeyer
+        chmod +x pyKeyer.py start start_cw
 
-   - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
-   - Under bash:      export PYTHONPATH="$HOME/Python/libs"
+        - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
+        - Under bash:      export PYTHONPATH="$HOME/Python/libs"
    
 4) Bombs away:
 
-     uv run pyKeyer.py
-     uv run paddling.py
-     uv run qrz.py
+        uv run pyKeyer.py
+        uv run paddling.py
+        uv run qrz.py
 
    or, 
 
-     ./pyKeyer.py
-     ./paddling.py
-     ./qrz.py
+        ./pyKeyer.py
+        ./paddling.py
+        ./qrz.py
 
-# Installation for Windoz using uv:
+# Installation under Windoz using uv:
 
 0) This couldn't be much easier - and there's no need for a bulky installer!  You will need to install uv on your system by opening a cmd prompt and executing:
 
-     powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 You will also need a git client.  I use the command line version available from:
 
-     https://git-scm.com/downloads/win
+        https://git-scm.com/downloads/win
        
-1) Open a cmd prompt and clone gitub wclock, libs and data repositories
+1) Open a cmd prompt and clone gitub wclock, libs and data repositories:
 
-     cd %userprofile%
-     mkdir Python
-     cd Python
-     git clone https://github.com/aa2il/pyKeyer
-     git clone https://github.com/aa2il/libs
-     git clone https://github.com/aa2il/data
+        cd %userprofile%
+        mkdir Python
+        cd Python
+        git clone https://github.com/aa2il/pyKeyer
+        git clone https://github.com/aa2il/libs
+        git clone https://github.com/aa2il/data
 
 2) Run it - uv will magically rebuild the virtual environment the first time:
 
-     cd wclock
-     uv run wclock.py
+       cd pyKeyer
+       uv run pyKeyer.py
+       uv run paddling.py
+       uv run qrz.py
+
+   Apparently, the tkinter bug doesn't bite us under windows so it it possible to use the latest python version:
+
+       uv python pin 3.13
+
+3) Known issues:
+
+     - Sound playback is not working correctly under windows - appears to be picking the wrong sound output device? TBD
 
 # Other Installation Options
 
@@ -106,10 +117,10 @@ In the past, I have used other installation methods for both linux and windoz.  
 
 Additional note - to simply grab the latest changes, use "pull" instead of "clone" in the git commands:
 
-      cd pyKeyer
-      git pull https://github.com/aa2il/pyKeyer
-      cd ../libs
-      git pull https://github.com/aa2il/libs
-      cd ../data
-      git pull https://github.com/aa2il/data
+       cd pyKeyer
+       git pull https://github.com/aa2il/pyKeyer
+       cd ../libs
+       git pull https://github.com/aa2il/libs
+       cd ../data
+       git pull https://github.com/aa2il/data
      
