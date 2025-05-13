@@ -29,7 +29,7 @@ Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testin
 
 # Installation under Linux using uv:
 
-0) This seems to be the easiest/best solution.  uv is relatively new and is fast and easy compared to other solutions.  However, it does have a a problem running some tkinter gui apps with recent versions of python.  Of course, to use uv, you need to have it installed on your system:
+<0) This seems to be the easiest/best solution.  uv is relatively new and is fast and easy compared to other solutions.  However, it does have a a problem running some tkinter gui apps with recent versions of python.  Of course, to use uv, you need to have it installed on your system:
 
         curl -LsSf https://astral.sh/uv/install.sh | sh      
         rehash     
