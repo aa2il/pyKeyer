@@ -29,7 +29,7 @@ Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testin
 
 # Installation under Linux using uv:
 
-\0) This seems to be the easiest/best solution.  uv is relatively new and is fast and easy compared to other solutions.  However, it does have a a problem running some tkinter gui apps with recent versions of python.  Of course, to use uv, you need to have it installed on your system:
+0) This seems to be the easiest/best solution.  uv is relatively new and is fast and easy compared to other solutions.  However, it does have a a problem running some tkinter gui apps with recent versions of python.  Of course, to use uv, you need to have it installed on your system:
 
         curl -LsSf https://astral.sh/uv/install.sh | sh      
         rehash     
@@ -83,7 +83,7 @@ Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testin
 
         powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-You will also need a git client.  I use the command line version available from:
+   You will also need a git client.  I use the command line version available from:
 
         https://git-scm.com/downloads/win
        
@@ -109,8 +109,9 @@ You will also need a git client.  I use the command line version available from:
 
 3) Known issues:
 
-     - Sound playback is not working correctly under windows - appears to be picking the wrong sound output device? TBD
-
+     - Settings window can be too big - need to query screen size - buttons can be hidden by task bar on bottom
+     - Get rid of need for -winkeyer switch - Already done?
+                                       
 # Other Installation Options
 
 In the past, I have used other installation methods for both linux and windoz.  These are summarized in the companion file README2.md.

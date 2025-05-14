@@ -31,7 +31,6 @@ It does not matter how slowly you go as long as you do not stop. Confucius
 Courage is grace under pressure. Ernest Hemingway
 The most difficult thing is the decision to act, the rest is merely tenacity. Amelia Earhart
 Dream big and dare to fail. Norman Vaughan
-You miss 100 percent of the shots you don't take. Wayne Gretzky
 Everything you've ever wanted is on the other side of fear. George Addair
 Nothing is impossible, the word itself says, ‘I'm possible.' Audrey Hepburn
 You become what you believe. Oprah Winfrey
@@ -153,7 +152,7 @@ The attempt to combine wisdom and power has only rarely been successful, and the
 Common sense in an uncommon degree is what the world calls wisdom. Samuel Taylor Coleridge
 Science is what you know. Philosophy is what you don't know. Bertrand Russell.
 If you have knowledge, let others light their candles in it. Margaret Fuller
-Wisdom is not a product of schooling but of the lifelong attempt to acquire it. Albert Einstein.
+Wisdom is not a product of schooling but of the lifelong attempt to acquire it. Albert Einstein
 Philosophy is at once the most sublime and the most trivial of human pursuits. William James
 Honesty is the first chapter in the book of wisdom. Thomas Jefferson
 Dogmatism and skepticism are both, in a sense, absolute philosophies, one is certain of knowing, the other of not knowing. What philosophy should dissipate is certainty, whether of knowledge or ignorance. Bertrand Russell
@@ -179,3 +178,107 @@ Passion is energy. Feel the power that comes from focusing on what excites you. 
 Become the person who would attract the results you seek. Jim Cathcart
 Don't watch the clock, do what it does. Keep going. Sam Levenson
 When obstacles arise, you change your direction to reach your goal, you do not change your decision to get there. Zig Ziglar
+
+If you can dream it, you can do it.   Walt Disney
+If you look at what you have in life, you'll always have more. If you look at what you don't have in life, you'll never have enough.   Oprah Winfrey
+If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success.   James Cameron
+Spread love everywhere you go. Let no one ever come to you without leaving happier.   Mother Teresa
+Always remember that you are absolutely unique. Just like everyone else.   Margaret Mead
+Tell me and I forget. Teach me and I remember. Involve me and I learn.   Benjamin Franklin
+You will face many defeats in life, but never let yourself be defeated.   Maya Angelou
+Many of life's failures are people who did not realize how close they were to success when they gave up.  Thomas A. Edison
+Life is never fair, and perhaps it is a good thing for most of us that it is not.   Oscar Wilde
+Life is what happens when you're busy making other plans.   John Lennon
+Success is not final; failure is not fatal: It is the courage to continue that counts.   Winston S. Churchill
+If you really look closely, most overnight successes took a long time.   Steve Jobs
+Don't judge each day by the harvest you reap but by the seeds that you plant.   Robert Louis Stevenson
+Don't be distracted by criticism. Remember   the only taste of success some people get is to take a bite out of you.   Zig Ziglar
+The road to success and the road to failure are almost exactly the same.   Colin R. Davis
+Things work out best for those who make the best of how things work out.   John Wooden
+Try not to become a man of success. Rather become a man of value.   Albert Einstein
+It is during our darkest moments that we must focus to see the light.   Aristotle
+Don't be afraid to give up the good to go for the great.   John D. Rockefeller
+The best and most beautiful things in the world cannot be seen or even touched   they must be felt with the heart.   Helen Keller
+I've missed more than 9,000 shots in my career. I've lost almost 300 games. Twenty six times I've been trusted to take the game winning shot and missed. I've failed over and over and over again in my life. And that is why I succeed.   Michael Jordan
+Champions keep playing until they get it right.   Billie Jean King
+The only person who can stop you from reaching your goals is you.   Jackie Joyner Kersee
+You can't put a limit on anything. The more you dream, the farther you get.   Michael Phelps
+I'll do whatever it takes to win games, whether it's sitting on a bench waving a towel, handing a cup of water to a teammate, or hitting the game winning shot.   Kobe Bryant
+Strength does not come from winning. Your struggles develop your strengths.   Arnold Schwarzenegger
+I'd rather regret the risks that didn't work out than the chances I didn't take at all.   Simone Biles
+It is more difficult to stay on top than to get there.   Mia Hamm
+He who is not courageous enough to take risks will accomplish nothing in life.   Muhammad Ali
+Don't walk through life just playing football. Don't walk through life just being an athlete. Athletics will fade. Character and integrity and really making an impact on someone's life, that's the ultimate vision, that's the ultimate goal – bottom line.   Ray Lewis
+You're playing a game, whether its Little League or Game 7 of the Word Series. It's impossible to do well unless you are having a good time. People talk about pressure. Yeah, there's pressure. But I just look at it as fun.   Derek Jeter
+
+Winners never quit and quitters never win.   Vince Lombardi
+Don't think about the start of the race, think about the ending.   Usain Bolt
+I really think a champion is defined not by their wins, but how they can recover when they fall.   Serena Williams
+Never let the fear of striking out get in your way.   Babe Ruth
+
+Pain is temporary. It may last a minute, or an hour, or a day, or a year, but eventually it will subside and something else will take its place. If I quit, however, it lasts forever.   Lance Armstrong
+The harder the battle, the sweeter the victory.   Les Brown
+I  hated every minute of training, but I said, don't quit, suffer now and live the rest of your life as a champion.   Muhammad Ali
+If you do the work you get rewarded. There are no shortcuts in life.   Michael Jordan
+Ask not what your country can do for you – ask what you can do for your country.   JFK 
+The only thing we have to fear is fear itself.   Franklin Delano Roosevelt
+Government of the people, by the people, for the people.   Abraham Lincoln
+Speak softly and carry a big stick.   Theodore Roosevelt
+America will never be destroyed from the outside. If we falter and lose our freedoms, it will be because we destroyed it ourselves.   Abraham Lincoln
+The greatest good we can do our country is to heal its party divisions & make them one people. I do not speak of their leaders who are incurable, but of the honest and well intentioned body of the people.   Thomas Jefferson
+Democracy cannot succeed unless those who express their choice are prepared to choose wisely.   Franklin Roosevelt
+Let us not despair but act. Let us not seek the Republican answer or the Democratic answer but the right answer. Let us not seek to fix the blame for the past – let us accept our own responsibility for the future.   JFK
+The terms of peace may be negotiated by political leaders, but the fate of peace is up to each of us.   Barack Obama
+Any woman who understands the problems of running a home will be nearer to understand the problems of running a country.   Margaret Thatcher
+Men make history and not the other way around. In periods where there is no leadership, society stands still. Progress occurs when courageous, skillful leaders seize the opportunity to change things for the better.   Harry S. Truman
+If a man is called to be a street sweeper, he should sweep streets even as Michelangelo painted or Beethoven composed music or Shakespeare wrote poetry. He should sweep streets so well that all the hosts of heaven and earth will pause and say, here lived a great street sweeper who did his job well.   Martin Luther King, Jr.
+A sense of humor is part of the art of leadership, of getting along with people, of getting things done.   Dwight D. Eisenhower
+Never tell people how to do things. Tell them what to do and they will surprise you with their ingenuity.   General George Patton
+To be prepared for war is one of the most effective means of preserving peace.   George Washington
+In matters of style, swim with the current; in matters of principle, stand like a rock.   Thomas Jefferson
+If you would not be forgotten, as soon as you are dead and rotten, either write things worth reading, or do things worth the writing.   Benjamin Franklin
+The price of greatness is responsibility.   Winston Churchill
+We can't help everyone, but everyone can help someone.   Ronald Reagan 
+
+If we ever forget that we are One Nation Under God, then we will be a nation gone under.   Ronald Reagan
+I've read the last page of the Bible. It's all going to turn out all right.   Billy Graham
+Some of the most powerful times are when we're quiet.   Michael W. Smith
+Do not go where the path may lead, go instead where there is no path and leave a trail.   Ralph Waldo Emerson
+Keep smiling, because life is a beautiful thing and there's so much to smile about.   Marilyn Monroe
+Success seems to be connected with action. Successful people keep moving. They make mistakes but they don't quit.   Conrad Hilton
+There are no secrets to success. It is the result of preparation, hard work, and learning from failure.   Colin Powell
+Successful people do what unsuccessful people are not willing to do. Don't wish it were easier; wish you were better.   Jim Rohn
+A successful man is one who can lay a firm foundation with the bricks others have thrown at him.   David Brinkley
+Success is walking from failure to failure with no loss of enthusiasm.   Winston Churchill
+Everything you do and every word you say can become a ministering seed. You can be a blessing to everyone with whom you come in contact.   Kenneth Copeland
+People who succeed have momentum. The more they succeed, the more they want to succeed and the more they find a way to succeed. Similarly, when someone is failing, the tendency is to get on a downward spiral that can even become a self fulfilling prophecy.   Tony Robbins
+I have learned over the years that when one's mind is made up, this diminishes fear.   Rosa Parks
+The question isn't who is going to let me; it's who is going to stop me.   Ayn Rand
+I've learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel.   Maya Angelou
+The most difficult thing is the decision to act, the rest is merely tenacity.   Amelia Earhart
+How wonderful it is that nobody need wait a single moment before starting to improve the world.   Anne Frank
+Everything you've ever wanted is on the other side of fear.   George Addair
+Life is 10% what happens to me and 90% of how I react to it.   Charles Swindoll
+When everything seems to be going against you, remember that the airplane takes off against the wind, not with it.   Henry Ford
+You know you are on the road to success if you would do your job and not be paid for it.   Oprah Winfrey
+Whoever is happy will make others happy too.   Anne Frank
+In the end, it's not the years in your life that count. It's the life in your years.   Abraham Lincoln
+Life is either a daring adventure or nothing at all.   Helen Keller
+Life is a succession of lessons which must be lived to be understood.   Ralph Waldo Emerson
+Only a life lived for others is a life worthwhile.   Albert Einstein
+Life is really simple, but we insist on making it complicated.   Confucius
+Life is ours to be spent, not to be saved.   D. H. Lawrence
+Life is a long lesson in humility.   James M. Barrie
+Life is trying things to see if they work.   Ray Bradbury
+The way to get started is to quit talking and begin doing.   Walt Disney
+The secret of success is to do the common thing uncommonly well.   John D. Rockefeller Jr.
+I find that the harder I work, the more luck I seem to have.   Thomas Jefferson
+I never dreamed about success, I worked for it.   Estee Lauder
+The only limit to our realization of tomorrow will be our doubts of today.   Franklin D. Roosevelt
+It is better to fail in originality than to succeed in imitation.   Herman Melville
+I failed my way to success.   Thomas Edison
+The only place where success comes before work is in the dictionary.   Vidal Sassoon
+Before anything else, preparation is the key to success.   Alexander Graham Bell
+Whether you think you can or you think you can't, you're right.   Henry Ford
+Nothing is impossible, the word itself says, I'm possible.   Audrey Hepburn
+Believe you can and you're halfway there.   Theodore Roosevelt
