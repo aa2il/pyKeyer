@@ -146,6 +146,14 @@ class PADDLING_GUI():
         # Read lists of Quotes and Jokes
         self.quotes = read_text_file('Quotes.txt',KEEP_BLANKS=False)
         self.jokes  = read_text_file('Jokes.txt',KEEP_BLANKS=False)
+
+        # Proverbs
+        txt=read_text_file('Proverbs.txt',KEEP_BLANKS=False)
+        self.proverbs = self.cleanup(txt)
+        #print(self.proverbs)
+        #print(self.proverbs[0])
+        #print(self.proverbs[-1])
+        #sys.exit(0)
         
         # Read qso template
         self.QSO_Template = read_text_file('QSO_Template.txt',KEEP_BLANKS=False)
@@ -214,10 +222,10 @@ class PADDLING_GUI():
         self.Selection = IntVar(value=0)
         col=0
         self.isst=0
-        # 'Special Chars', 
+        # 'Special Chars', 'Stumble',
         self.prac_group=['Panagrams','Call Signs','Letters','Letters+Numbers',\
-                         'All Chars','Stumble','QSO','Book',\
-                         'Sprint','SST','Quotes','Jokes']
+                         'All Chars','QSO','Book',\
+                         'Sprint','SST','Quotes','Jokes','Proverbs']
         for itype in self.prac_group:
             button = Radiobutton(self.win, text=itype,
                                  variable=self.Selection,
@@ -373,6 +381,31 @@ class PADDLING_GUI():
         print('sz=',sz)
         self.win.geometry(sz)
             
+    ################################################################################
+
+    def cleanup(self,txt):
+        txt2=[]
+        lineout=[]
+        for line in txt:
+            #print(line)
+            if len(line)==0 or line[0]=='#':
+                #print('\tskipped')
+                continue
+            tt=line.split(' ')
+            if tt[0].isnumeric():
+                if len(lineout)>0:
+                    txt2.append(lineout)
+                    #print('\t',lineout)
+                lineout=' '.join(tt[1:])
+            else:
+                lineout+=' '+' '.join(tt)
+
+        if len(lineout)>0:
+            txt2.append(lineout)
+            #print('\t',lineout)
+            
+        return txt2
+
     ################################################################################
 
     # Close splash and Show the gui
@@ -708,7 +741,7 @@ class PADDLING_GUI():
                     txt=' GA '+self.name1+' 73EE'
                     self.isst=0
 
-            case 'Quotes' | 'Jokes':
+            case 'Quotes' | 'Jokes' | 'Proverbs':
             
                 # Jokes or Famous Quotes
                 match Selection:
@@ -716,9 +749,11 @@ class PADDLING_GUI():
                         items=self.quotes
                     case 'Jokes':
                         items=self.jokes
+                    case 'Proverbs':
+                        items=self.proverbs
                         
                 n=len(items)
-                print('There are',n,'quotes/jokes loaded')
+                print('There are',n,' ',Selection,' loaded')
                 i = random.randint(0,n-1)
                 txt = items[i]
                 
@@ -890,7 +925,11 @@ class PADDLING_GUI():
             self.txt.insert(1.0,'Head Copy Practice ...')
             time.sleep(0.5)         # Small delay at start to give op a chance to get ready
         
-            txt=self.item.replace('-','=').replace("'","").replace('!','').replace('"','')
+            txt=self.item.replace(';',',') \
+                         .replace('-','=') \
+                         .replace("'","") \
+                         .replace('!','') \
+                         .replace('"','')
             #txt=re.sub(r"!\'\"","",self.item.replace('-','=') )
             print('PLAY TEXT:',txt)
             if P.SIDETONE:

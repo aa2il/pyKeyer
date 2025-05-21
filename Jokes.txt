@@ -39,7 +39,7 @@ A termite walks into a bar. He says, "So, is the bar tender here?"
 Did you hear that Larry got a new job working for Old MacDonald? He's the new CIEIO.
 Apparently, you can't use the words "beef stew" as a password. It's just not stroganoff.
 What did one plate say to the other plate? Dinner is on me.
-What did the janitor say when he jumped out of the closet? Supplies  HEE/EE
+What did the janitor say when he jumped out of the closet?  Supplies HEE/EE
 What do you call a lazy kangaroo? A pouch potato.
 I stayed up all night and tried to figure out where the sun was. Then it dawned on me.
 Why do bananas never get lonely? Because they hang out in bunches.
@@ -59,7 +59,7 @@ There were two muffins in an oven, and one said, "It's getting hot in here, isn'
 What was Beethoven's favorite fruit? A ba na na na.
 What do you call a female chicken staring at a pile of lettuce? A Chicken Caesar Salad.
 How do trees access their email? They log in.
-Why don't scientists trust atoms? They make up everything.
+Why don't scientists trust atoms? They make up everything HEE/EE
 Which program do Jedi use to sign their files? Adobe Sign Kenobi.
 What is the best way to criticize your boss? Very quietly, so she cannot hear you.
 Our computers went down at the office today, so we had to do everything manually. It took me 15 minutes to shuffle the cards for Solitaire.
@@ -79,7 +79,7 @@ Archaeologist, someone whose career lies in ruins.
 The trouble with being punctual is that nobody's there to appreciate it.
 I think they picked me for my motivational skills. Everyone always says they have to work twice as hard when I'm around HEE/EE
 Have you heard about the guy who stole the calendar? He got 12 months HEE/EE
-Why does the golfer wear two pairs of pants? Because he's afraid he might get a hole in one.
+Why does the golfer wear two pairs of pants? Because he's afraid he might get a hole in one HEE/EE
 I'm so good at sleeping that I can do it with my eyes closed HEE/EE
 Why is it impossible to starve in the desert? Because of all the sand which is there.
 Two antennas decided to get married. The ceremony was pretty boring, but the reception was great HEE/EE
@@ -100,50 +100,43 @@ What's the best part about living in Switzerland? I don't know, but the flag is 
 Have you heard the rumor about butter? Never mind, I shouldn't be spreading it.
 
 
-I told my computer I needed a break, and now it won’t stop sending me beach wallpapers 
+I told my computer I needed a break, and now it won't stop sending me beach wallpapers 
 Why did the scarecrow win an award? Because he was outstanding in his field 
-I’m on a whiskey diet. I’ve lost three days already 
+I'm on a whiskey diet. I've lost three days already 
 Did you hear about the claustrophobic astronaut? He just needed a little space 
-Why don’t scientists trust atoms? Because they make up everything 
-I would tell you a joke about an elevator, but it’s an uplifting experience 
+I would tell you a joke about an elevator, but it's an uplifting experience 
 Why did the bicycle fall over? It was two tired 
 I used to play piano by ear, but now I use my hands 
-Parallel lines have so much in common. It’s a shame they’ll never meet 
-Why did the golfer bring two pairs of pants? In case he got a hole in one 
+Parallel lines have so much in common. It's a shame they'll never meet 
 What do you call fake spaghetti? An impasta 
-Why don’t skeletons fight each other? They don’t have the guts 
+Why don't skeletons fight each other? They don't have the guts 
 I told my wife she was drawing her eyebrows too high. She looked surprised 
 
 Why did the math book look sad? Because it had too many problems 
-What did one wall say to the other wall? I’ll meet you at the corner 
+What did one wall say to the other wall? I'll meet you at the corner 
 How does a penguin build its house? Igloos it together 
-What do you call cheese that isn’t yours? Nacho cheese 
+What do you call cheese that isn't yours? Nacho cheese 
 Why did the computer go to the doctor? It had a virus 
 What do you call a bear with no teeth? A gummy bear 
 Why did the tomato turn red? Because it saw the salad dressing 
 
 Why did the chicken cross the road? To get to the punchline on the other side
 Why did the bicycle fall over?  Because it was two tired 
-What do you call cheese that isn’t yours?  Nacho cheese 
 How does a penguin build its house?  Igloos it together 
 Why did the math book look sad?  Because it had too many problems 
-What did one wall say to the other wall?  I’ll meet you at the corner 
-Why don’t scientists trust atoms?  Because they make up everything 
+What did one wall say to the other wall?  I'll meet you at the corner 
 
-Why did the scarecrow win an award?  Because he was outstanding in his field 
 Why did the computer go to the doctor?  It had a virus 
 What do you call a bear with no teeth?  A gummy bear 
-Why did the golfer bring two pairs of pants?  In case he got a hole in one 
 What did the ocean say to the beach?  Nothing, it just waved 
 Why did the tomato turn red?  Because it saw the salad dressing 
 How does a scientist freshen her breath?  With experimints 
 What do you call fake spaghetti?  An impasta 
-Why don’t skeletons fight each other?  They don’t have the guts 
 Why did the cookie go to the hospital?  Because it felt crummy 
 
 What do you call an alligator in a vest?  An investigator 
 Why was the math book sad?  It had too many problems 
-What do you call a snowman with a six pack?  An abdominal snowman 
+What do you call a snowman with a six pack?   An abdominal snowman 
 Why did the belt get arrested?  For holding up a pair of pants 
 What do you call a sleeping bull?  A bulldozer 
 
@@ -151,11 +144,11 @@ Why did the cookie go to school? Because it wanted to be a smart cookie
 What did the big flower say to the little flower? “Hey, bud” 
 Why was the computer cold? It left its Windows open 
 What do you call a dinosaur that is sleeping? A dino snore 
-Why can’t you give Elsa a balloon? Because she will let it go 
+Why can't you give Elsa a balloon? Because she will let it go 
 
 What do you call a fish that wears a bowtie? Sofishticated 
 Why did the student eat his homework? Because the teacher said it was a piece of cake 
-What do you call a bear that’s stuck in the rain? A drizzly bear 
+What do you call a bear that's stuck in the rain? A drizzly bear 
 Why did the music teacher go to jail? Because she got caught with too many sharp notes.
 What do you get when you cross a snowman and a vampire? Frostbite 
 Why did the teddy bear say no to dessert? Because it was stuffed.
@@ -163,7 +156,7 @@ How do you organize a space party? You planet
 Why did the picture go to jail? Because it was framed.
 Why did the kid bring a ladder to school? Because he wanted to go to high school 
 What do you call a magical dog? A labracadabrador 
-Why do seagulls fly over the ocean? Because if they flew over the bay, they’d be bagels 
+Why do seagulls fly over the ocean? Because if they flew over the bay, they'd be bagels 
 
 What's orange and sounds like a parrot? A carrot 
 Why was the broom late? It swept in 
@@ -176,21 +169,18 @@ How do you make a tissue dance? You put a little boogie in it
 What do you call a bear with no ears? B 
 Why did the golfer bring an extra pair of socks? In case he got a hole in one 
 Why did the cookie cry? Because its mom was a wafer (away for) so long 
-What did one plate say to another plate? Dinner’s on me 
+What did one plate say to another plate? Dinner's on me 
 Why did the math book look so sad? It had too many problems 
-How does a scientist freshen her breath? With experi mints 
 What do you call a snowman in the summer? A puddle 
 Why did the computer go to the beach? To surf the net 
 Why are ghosts bad liars? Because you can see right through them 
-What did the janitor say when he jumped out of the closet? Supplies 
-Why don’t skeletons ever go trick or treating? Because they have no body to go with 
+Why don't skeletons ever go trick or treating? Because they have no body to go with 
 What do you call a lazy kangaroo? A pouch potato 
 Why did the chicken join a band? Because it had the drumsticks 
 Why did the grape stop in the middle of the road? Because it ran out of juice 
 How does a penguin build its house? Igloos it together 
 
 Why did the cookie go to the doctor? Because it felt crummy 
-What do you call a fish with no eyes? Fsh 
 Why did the computer go to the dentist? It had a byte that hurt 
 What do you call a dog magician? A labracadabrador 
 How do you catch a squirrel? Climb a tree and act like a nut 
@@ -198,44 +188,33 @@ Why did the math book look so unhappy? Because it had too many problems
 What do you call a bear with no teeth? A gummy bear 
 Why did the bicycle fall over? Because it was two tired 
 What did one ocean say to the other ocean? Nothing, they just waved 
-Why did the golfer bring two pairs of pants? In case he got a hole in one 
-What do you call a snowman with a six pack? An abdominal snowman 
 Why was the math book sad? It had too many problems 
 How does a penguin build its house? Igloos it together 
-Why don’t skeletons fight each other? They don’t have the guts 
 Why did the tomato turn red? Because it saw the salad dressing 
-What did one wall say to the other? I’ll meet you at the corner 
+What did one wall say to the other? I'll meet you at the corner 
 Why did the student bring a ladder to school? Because he wanted to go to high school 
-Why did the scarecrow win an award? Because he was outstanding in his field 
-What do you call cheese that isn’t yours? Nacho cheese 
 
-Why did the golfer bring an extra pair of socks? In case he got a hole in one 
 What do you call a fake noodle? An impasta 
 Why did the teddy bear say no to dessert? Because it was stuffed 
-What did the janitor say when he jumped out of the closet? Supplies 
 Why did the computer go to the beach? To surf the net 
-How does a scientist freshen her breath? With experi mints 
 What do you call a bear with no ears? B 
 Why was the broom late? It swept in 
 Why did the cookie cry? Because its mom was a wafer (away for) so long 
 Why did the grape stop in the middle of the road? Because it ran out of juice 
-Why don’t skeletons ever go trick or treating? Because they have no body to go with 
+Why don't skeletons ever go trick or treating? Because they have no body to go with 
 How do you organize a space party? You planet 
 What did one volcano say to the other? I lava you 
 Why did the music teacher go to jail? Because she got caught with too many sharp notes 
 What do you call a lazy kangaroo? A pouch potato 
 Why did the picture go to jail? Because it was framed 
 Why are ghosts bad liars? Because you can see right through them 
-What do you call a snowman in the summer? A puddle 
 
-What do you call a bear that’s stuck in the rain? A drizzly bear 
+What do you call a bear that's stuck in the rain? A drizzly bear 
 Why did the bicycle fall over? Because it was two tired 
-What did the janitor say when he jumped out of the closet? Supplies 
 How do you organize a space party? You planet 
 Why did the cookie go to school? Because it wanted to be a smart cookie 
-What did one wall say to the other wall? I’ll meet you at the corner 
-What do you call a snowman in the summer? A puddle 
-Why don’t skeletons ever go trick or treating? Because they have no body to go with 
+What did one wall say to the other wall? I'll meet you at the corner 
+Why don't skeletons ever go trick or treating? Because they have no body to go with 
 What do you call a lazy kangaroo? A pouch potato 
 Why did the grape stop in the middle of the road? Because it ran out of juice 
 Why did the music teacher go to jail? Because she got caught with too many sharp notes 
@@ -251,17 +230,12 @@ Why did the cookie cry? Because its mom was a wafer (away for) so long
 Why did the computer go to the party? Because it wanted to have a byte 
 What do you call a dancing sheep? A baa llerina 
 Why did the music teacher go to jail? Because she got caught with too many sharp notes 
-What did one ocean say to the other ocean? Nothing, they just waved 
 Why did the tomato turn red? Because it saw the salad dressing 
 What do you call a bear with no ears? B 
-Why don’t skeletons fight each other? They don’t have the guts 
 
-What do you call a snowman with a six pack? An abdominal snowman 
 How do you organize a space party? You planet 
-Why did the golfer bring two pairs of pants? In case he got a hole in one 
 What do you call a fake noodle? An impasta 
 Why did the bicycle fall over? Because it was two tired 
-What did the janitor say when he jumped out of the closet? Supplies 
 What do you call a lazy kangaroo? A pouch potato 
 Why was the broom late? It swept in 
 What do you call a magical dog? A labracadabrador 
@@ -274,19 +248,14 @@ Popular Today:  200+ Bio Jokes That Will Make You Laugh Out Loud Today
 
 Why did the chicken join a band? Because it had the drumsticks 
 What do you call a bear with no teeth? A gummy bear 
-Why did the golfer bring an extra pair of socks? In case he got a hole in one 
 What do you call a fake noodle? An impasta 
 Why did the stadium get hot after the game? Because all the fans left 
 How do you make a tissue dance? You put a little boogie in it 
-What did one plate say to another plate? Dinner’s on me 
-What do you call a snowman in the summer? A puddle 
+What did one plate say to another plate? Dinner's on me 
 
-What did the janitor say when he jumped out of the closet? Supplies 
-Why don’t scientists trust atoms? Because they make up everything 
 What do you call a lazy kangaroo? A pouch potato 
 What did the grape stop in the middle of the road? Because it ran out of juice 
 Why did the cookie cry? Because its mom was a wafer (away for) so long 
-What did one ocean say to the other ocean? Nothing, they just waved 
 How does a penguin build its house? Igloos it together 
 Why did the computer go to the beach? To surf the net 
 What do you call a magical dog? A labracadabrador 
@@ -301,10 +270,9 @@ Why was the math book sad? It had too many problems
 Why did the employee stay at their desk? They wanted to work on their “typing” skills 
 What do you call a group of musical whales? An orca stra 
 Why did the manager bring a pencil to the meeting? To draw up some ideas 
-What do you call a can opener that doesn’t work? A can’t opener 
+What do you call a can opener that doesn't work? A can't opener 
 Why did the computer go to the doctor? It had a virus 
 What did one printer say to the other? “Could you please lift my paper?” 
-Why don’t scientists trust atoms? Because they make up everything 
 Why did the employee bring string to work? To tie up loose ends 
 What do you call a factory that makes good products? A satisfactory 
 Why was the office desk always happy? Because it had a lot of good “support” 
@@ -318,16 +286,12 @@ Why did the cookie cry? Because its mom was a wafer (away for) so long
 Why did the stadium get hot after the game? Because all the fans left 
 What do you call a magical dog? A labracadabrador 
 How do you make a tissue dance? You put a little boogie in it 
-Why did the golfer bring two pairs of pants? In case he got a hole in one 
-What did the janitor say when he jumped out of the closet? Supplies 
 What do you call a lazy kangaroo? A pouch potato 
 Why did the computer go to the beach? To surf the net 
 Why did the grape stop in the middle of the road? Because it ran out of juice 
-What do you call a snowman in the summer? A puddle 
-What did one ocean say to the other ocean? Nothing, they just waved 
 What do you call a fish that wears a bowtie? Sofishticated 
 How does a penguin build its house? Igloos it together 
-What did one plate say to another plate? Dinner’s on me 
+What did one plate say to another plate? Dinner's on me 
 Why was the broom late? It swept in 
 What do you call a dancing sheep? A baa llerina 
 Why did the cookie go to school? Because it wanted to be a smart cookie 
@@ -341,14 +305,11 @@ How does a penguin build its house? Igloos it together
 Why did the computer go to the beach? To surf the net 
 What do you call a bear with no ears? B 
 Why did the grape stop in the middle of the road? Because it ran out of juice 
-What did one ocean say to the other ocean? Nothing, they just waved 
 Why was the broom late? It swept in 
-What did one plate say to another plate? Dinner’s on me 
-Why don’t skeletons ever go trick or treating? Because they have no body to go with 
+What did one plate say to another plate? Dinner's on me 
+Why don't skeletons ever go trick or treating? Because they have no body to go with 
 How do you make a tissue dance? You put a little boogie in it 
 What do you call a lazy kangaroo? A pouch potato 
-What did the janitor say when he jumped out of the closet? Supplies 
-
 
 Why did the tomato turn red? Because it saw the salad dressing 
 Why did the cookie cry? Because its mom was a wafer (away for) so long 
@@ -359,27 +320,19 @@ Why did the computer go to the doctor? It had a virus
 What do you call a bear with no teeth? A gummy bear 
 Why did the tomato turn red? Because it saw the salad dressing 
 What do you call fake spaghetti? An impasta 
-Why don’t skeletons fight each other? They don’t have the guts 
 How does a penguin build its house? Igloos it together 
 Why did the bicycle fall over? Because it was two tired 
-What do you call cheese that isn’t yours? Nacho cheese 
 
-Why did the golfer bring two pairs of pants? In case he got a hole in one 
-What did one wall say to the other wall? I’ll meet you at the corner 
+What did one wall say to the other wall? I'll meet you at the corner 
 Why did the math book look sad? Because it had too many problems 
-What did one ocean say to the other ocean? Nothing, they just waved 
-What do you call a snowman with a six pack? An abdominal snowman 
 Why did the cookie go to school? Because it wanted to be a smart cookie 
 What do you call a lazy kangaroo? A pouch potato 
 Why did the grape stop in the middle of the road? Because it ran out of juice 
-What did the janitor say when he jumped out of the closet? Supplies 
 
 What do you call a magical dog? A labracadabrador 
 Why was the broom late? It swept in 
-Why did the scarecrow win an award? Because he was outstanding in his field 
 
 Why did the cookie go to the doctor? Because it felt crummy 
-What do you call a fish with no eyes? Fsh 
 Why did the computer go to the dentist? It had a byte that hurt 
 What do you call a dog magician? A labracadabrador 
 How do you catch a squirrel? Climb a tree and act like a nut 
@@ -387,46 +340,32 @@ Why did the math book look so unhappy? Because it had too many problems
 
 What do you call a bear with no teeth? A gummy bear 
 Why did the bicycle fall over? Because it was two tired 
-What did one ocean say to the other ocean? Nothing, they just waved 
-Why did the golfer bring two pairs of pants? In case he got a hole in one 
-What do you call a snowman with a six pack? An abdominal snowman 
 Why was the math book sad? It had too many problems 
 How does a penguin build its house? Igloos it together 
-Why don’t skeletons fight each other? They don’t have the guts 
 Why did the tomato turn red? Because it saw the salad dressing 
-What did one wall say to the other? I’ll meet you at the corner 
+What did one wall say to the other? I'll meet you at the corner 
 Why did the student bring a ladder to school? Because he wanted to go to high school 
 
-Why did the scarecrow win an award? Because he was outstanding in his field 
-What do you call cheese that isn’t yours? Nacho cheese 
-
 Why did the cookie go to the doctor? Because it felt crummy 
-What do you call a fish with no eyes? Fsh 
 Why did the computer go to the dentist? It had a byte that hurt 
 What do you call a dog magician? A labracadabrador 
 How do you catch a squirrel? Climb a tree and act like a nut 
 Why did the math book look so unhappy? Because it had too many problems 
 What do you call a bear with no teeth? A gummy bear 
 Why did the bicycle fall over? Because it was two tired 
-What did one ocean say to the other ocean? Nothing, they just waved 
-Why did the golfer bring two pairs of pants? In case he got a hole in one 
-What do you call a snowman with a six pack? An abdominal snowman 
 Why was the math book sad? It had too many problems 
 How does a penguin build its house? Igloos it together 
-Why don’t skeletons fight each other? They don’t have the guts 
 Why did the tomato turn red? Because it saw the salad dressing 
-What did one wall say to the other? I’ll meet you at the corner 
+What did one wall say to the other? I'll meet you at the corner 
 Why did the student bring a ladder to school? Because he wanted to go to high school 
-Why did the scarecrow win an award? Because he was outstanding in his field 
-What do you call cheese that isn’t yours? Nacho cheese 
 
 People think "icy" is the easiest word to spell. Come to think of it, I see why.
 My teachers told me I'd never amount to much because I procrastinate so much. I told them, "Just you wait "
-What do we want? Low-flying airplane noises  When do we want them? NEEEEYYYOOOOOOOOWWWW 
+What do we want? Low flying airplane noises  When do we want them? NEEEEYYYOOOOOOOOWWWW 
 What building in New York has the most stories? The public library.
 Comic Sans walks into a bar. The bartender says, "We don't serve your type here."
-Sometimes I tuck my knees into my chest and lean forward. That’s just how I roll.
-What washes up on very small beaches? Micro-waves.
+Sometimes I tuck my knees into my chest and lean forward. That's just how I roll.
+What washes up on very small beaches? Micro waves.
 How does a farmer mend his overalls? With cabbage patches.
 I got my husband a fridge for his birthday. His face lit up when he opened it.
 Why were they called the Dark Ages? Because there were lots of knights.
@@ -443,7 +382,7 @@ What should you do if you're attacked by a group of clowns? Go straight for the 
 I saw a movie about how ships are put together. It was riveting.
 Why did the taxi driver get fired? Passengers didn't like it when she went the extra mile.
 How do you look for Will Smith in the snow? Just follow the fresh prints.
-What's a pirate's favorite letter? You probably think it’s “R” but it be the “C.”
+What's a pirate's favorite letter? You probably think it's “R” but it be the “C.”
 Why can you never gossip in a cornfield? Too many ears.
 Which rock group has four guys who can't sing or play instruments? Mount Rushmore.
 Why does Humpty Dumpty love autumn? Because he always has a great fall.
@@ -452,7 +391,7 @@ Why should you never trust stairs? They're always up to something.
 How do mountains stay warm in the winter? Snowcaps.
 What do you call a religious person who sleepwalks? A roamin' Catholic.
 What kind of shorts do clouds wear? Thunderpants.
-What's the difference between a poorly dressed man on a unicycle and a well-dressed man on a bicycle? Attire.
+What's the difference between a poorly dressed man on a unicycle and a well dressed man on a bicycle? Attire.
 What is the best day to go to the beach? Sunday, of course.
 
 I tried to catch fog yesterday. I mist.
@@ -467,7 +406,7 @@ What's a balloon's least favorite type of music? Pop.
 What does a house wear? Address.
 Can February March? No, but April May.
 What is red and smells like blue paint? Red paint.
-What do dentists call their x-rays? Tooth pics.
+What do dentists call their xrays? Tooth pics.
 
 What did the frustrated cat say? "Are you kitten me right meow?"
 Why aren't koalas actual bears? They don't have the right koalafications.
@@ -486,13 +425,13 @@ Why do bees have such sticky hair? Because they use a honeycomb.
 What happens to a frog's car when it breaks down? It gets toad away.
 Why do spiders make such great baseball players? Because they catch flies.
 What is worse than raining cats and dogs? Hailing taxis.
-How many tickles does it take to make an octopus laugh? Ten-tickles.
+How many tickles does it take to make an octopus laugh? Ten tickles.
 How does a dog stop a video? By hitting the paws button.
 What do you call a bear with no teeth? A gummy bear.
 What's the difference between a hippo and a Zippo? One is really heavy, the other's a little lighter.
 What do you get from a pampered cow? Spoiled milk.
 
-Can a kangaroo jump higher than the Empire State Building? Of course  The Empire State Building can’t jump.
+Can a kangaroo jump higher than the Empire State Building? Of course  The Empire State Building can't jump.
 
 Have you heard about Murphy's Law? Yes. Anything that can go wrong will go wrong. How about Cole's Law? No. It's julienned cabbage in a creamy dressing.
 Did you hear about the painter who was hospitalized? The doctors say it was due to too many strokes.
@@ -502,10 +441,10 @@ I went into a store to buy some books about turtles. "Hardbacks?" asked the shop
 A grasshopper sits down at a bar. The bartender says, "We have a drink named after you " The grasshopper replies, "Who names a drink 'Steve'?"
 I can't take my dog to the park because the ducks keep trying to bite him. I guess that's what I get for buying a purebread dog.
 You: What cartoon mouse walks on two feet?
-Can a kangaroo jump higher than the Empire State Building? Of course  The Empire State Building can’t jump.
+Can a kangaroo jump higher than the Empire State Building? Of course  The Empire State Building can't jump.
 A man walks into a library and asks the librarian for books about paranoia. She whispers, "They're right behind you "
 I couldn't believe that the highway department called my dad a thief. But when I got home, all the signs were there.
-I submitted 10 puns to a joke-writing competition to see if any of them made the finals. Sadly, no pun in 10 did.
+I submitted 10 puns to a joke writing competition to see if any of them made the finals. Sadly, no pun in 10 did.
 Two windmills are standing on a wind farm. One asks, "What's your favorite kind of music?" The other replies, "I'm a big metal fan."
 
 Some people eat snails. They must not like fast food.
@@ -514,7 +453,7 @@ Where do hamburgers take their sweethearts on Valentine's Day to dance? The Meat
 Some people eat snails. They must not like fast food.
 What did the green grape say to the purple grape? "Breathe, man  Breathe "
 What do you call a fake noodle? An impasta.
-Did you hear about the cheese factory that exploded in France? There was nothing left but de-Brie.
+Did you hear about the cheese factory that exploded in France? There was nothing left but deBrie.
 What is the resemblance between a green apple and a red apple? They're both red except for the green one.
 Did you hear about the first restaurant to open on the moon? It had great food, but no atmosphere.
 Why did the tomato blush? Because it saw the salad dressing.
@@ -531,7 +470,7 @@ Knock, knock. Who's there? Leash. Leash who? Leash you could do is answer the do
 Knock, knock. Who's there? Adam. Adam who? Adam my way, I'm coming in 
 Knock, knock. Who's there? Lena. Lena who? Lena little closer and I'll tell you 
 Knock, knock. Who's there? Theodore. Theodore who? Theodore wasn't open so I knocked 
-Did you hear about the guy who invented the knock-knock joke? He won the "no-bell" prize.
+Did you hear about the guy who invented the knock knock joke? He won the "no bell" prize.
 
 What did one toilet say to the other? "You look flushed."
 How do you make a tissue dance? You put a little boogie in it.
@@ -542,3 +481,11 @@ What did the nose say to the finger? "Quit picking on me."
 A cement mixer and a prison bus crashed on the highway. Police advise citizens to look out for a group of hardened criminals.
 Two muffins were sitting in an oven. One turned to the other and said, "Wow, it's pretty hot in here." The other one shouted, "Wow, a talking muffin "
 I couldn't figure out why the baseball kept getting bigger. Then it hit me.
+
+When a form that asks "who to contact in case of an emergency," I always write "an ambulance."
+If you garden in your back yard naked, your neighbors will build you a free privacy fence.
+During a job interview, the interviewer asked "Why should I offer you a job?"  I said, "Well, my best friend works in your IT department and told me you were having an affair with your secretary."
+Three things that tell the truth, Small Children, Drunks and Yoga Pants.
+I was standing on the bathroom scale sucking in my stomach.  My wife said "Thats not going to help"  I replied "Yes it does, its the only way I can see the numbers."
+When I married Miss Right, I didn't realize her first name was "Always."
+My wife told me that my 5 year old son wasnt mine.  She said I need to pay more attention when I pick him up from school.

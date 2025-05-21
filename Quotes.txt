@@ -180,13 +180,11 @@ Don't watch the clock, do what it does. Keep going. Sam Levenson
 When obstacles arise, you change your direction to reach your goal, you do not change your decision to get there. Zig Ziglar
 
 If you can dream it, you can do it.   Walt Disney
-If you look at what you have in life, you'll always have more. If you look at what you don't have in life, you'll never have enough.   Oprah Winfrey
 If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success.   James Cameron
 Spread love everywhere you go. Let no one ever come to you without leaving happier.   Mother Teresa
 Always remember that you are absolutely unique. Just like everyone else.   Margaret Mead
 Tell me and I forget. Teach me and I remember. Involve me and I learn.   Benjamin Franklin
 You will face many defeats in life, but never let yourself be defeated.   Maya Angelou
-Many of life's failures are people who did not realize how close they were to success when they gave up.  Thomas A. Edison
 Life is never fair, and perhaps it is a good thing for most of us that it is not.   Oscar Wilde
 Life is what happens when you're busy making other plans.   John Lennon
 Success is not final; failure is not fatal: It is the courage to continue that counts.   Winston S. Churchill
@@ -282,3 +280,5 @@ Before anything else, preparation is the key to success.   Alexander Graham Bell
 Whether you think you can or you think you can't, you're right.   Henry Ford
 Nothing is impossible, the word itself says, I'm possible.   Audrey Hepburn
 Believe you can and you're halfway there.   Theodore Roosevelt
+
+When you are 20, you care about what everyone thinks.  When you are 40, you stop caring about what everyone thinks.  When you are 60, you realize no one was thinking about you in the first place.  Winston Churchill
