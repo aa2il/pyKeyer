@@ -1,0 +1,39 @@
+#! /bin/tcsh 
+#
+# Experiments in WLAN audio streaming
+
+# Devices
+aplay -l
+cat /proc/asound/cards
+pactl list short sources
+
+#cvlc -vvv alsa://hw:1,0 --sout '#transcode{acodec=mp2,ab=32}:rtp{dst=192.168.0.158,port=1234,sdp=rtsp://192.168.0.158:8085/stream.sdp}'
+
+#cvlc -vvv alsa://hw:1,0 --sout="#transcode{vcodec=none,acodec=mp3,ab=128,channeyls=2,samplerate=44100}:http{mux=mp3,dst=192.168.0.158:8080/stream}" --sout-keep --loop
+
+#mplayer http://192.168.0.158:8080/stream
+
+#ffmpeg -f oss -i /dev/dsp -acodec libmp3lame -ab 32k -ac 1 -re -f rtp rtp://192.168.0.158:1234
+
+#ffmpeg -f alsa -i default -acodec libmp3lame -ab 128k -ar 44100 -f rtsp rtsp://192.168.0.158:8554/stream
+
+#ffmpeg -ac 1 -f alsa -i hw:1,0 -acodec libmp3lame -ab 32k -ac 1 –re -f rtsp rtsp://192.168.0.158:8554/stream
+
+#ffmpeg -ac 1 -f alsa -i hw:1,0 -acodec libmp3lame -ab 128k -ac 2 -ar 44100 -f rtp rtp://192.168.0.158
+
+#ffmpeg -ac 1 -f alsa -i hw:1,0 -acodec libmp3lame -ab 32k -ac 1 -re -f rtp rtp://localhost:1234
+
+# This seems to work ok between mac and laptop but ... 
+set DEV="alsa://hw:0,0"            # Microphone
+set DEV="alsa://hw:1,0"            # Radio soundcard
+set DEV="pulse://alsa_output.pci-0000_00_1b.0.analog-stereo.monitor"
+
+# latency is high
+#cvlc -vvv $DEV --sout '#transcode{acodec=vorb,ab=128,samplerate=44100}:standard{access=http,mux=ogg,dst=192.168.0.158:8080}'
+# latency is tolerable
+#cvlc -vvv $DEV --sout="#transcode{vcodec=none,acodec=mp3,ab=128,channels=1,samplerate=44100}:http{mux=mp3,dst=192.168.0.158:8080}"
+cvlc -vvv $DEV --sout="#transcode{vcodec=none,acodec=mp3,ab=128,channels=1,samplerate=44100}:http{mux=mp3,dst=192.168.0.158:8080}"
+
+
+# On the laptop
+#cvlc http://192.168.0.158:8080

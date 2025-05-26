@@ -81,20 +81,21 @@ class WPX_KEYING(DEFAULT_KEYING):
             MACROS[9+12]  = {'Label' : 'DIT DIT'   , 'Text' : 'GL [NAME] DIT DIT'}
         else:
             # CW
-            MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
-            MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [SERIAL]'}
+            MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
+            MACROS[4+12]  = {'Label' : 'His Call'   , 'Text' : '[CALL] '}
+            MACROS[5]     = {'Label' : 'S&P Reply'  , 'Text' : 'TU 5NN [SERIAL]'}
             #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [SERIAL] [SERIAL]'}
-            MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] 5NN [SERIAL]'}
-            MACROS[6]     = {'Label' : '?'         , 'Text' : '? '}
-            MACROS[6+12]  = {'Label' : 'AGN? '     , 'Text' : 'AGN? '}
-            MACROS[8]     = {'Label' : 'Serial 1x' , 'Text' : '[-3][SERIAL] [+3]'}
-            #MACROS[8+12]  = {'Label' : 'Serial 1x' , 'Text' : '[-3][CUT_SERIAL] [+3]'}
+            MACROS[5+12]  = {'Label' : 'S&P Reply'  , 'Text' : 'TU [NAME] 5NN [SERIAL]'}
+            MACROS[6]     = {'Label' : '?'          , 'Text' : '? '}
+            MACROS[6+12]  = {'Label' : 'AGN? '      , 'Text' : 'AGN? '}
+            MACROS[8]     = {'Label' : 'Serial 1x'  , 'Text' : '[-3][SERIAL] [+3]'}
+            MACROS[8+12]  = {'Label' : 'Cut Serial' , 'Text' : '[-3][CUT_SERIAL_CUT] [+3]'}
 
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR'}
         
         MACROS[9]     = {'Label' : 'NR?'       , 'Text' : 'NR? '}
+        MACROS[9+12]  = {'Label' : 'His #?'    , 'Text' : '[SERIAL_IN]? '}
         MACROS[10]    = {'Label' : '-'         , 'Text' : ' '}
         MACROS[11]    = {'Label' : '-'         , 'Text' : ' '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}

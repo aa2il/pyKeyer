@@ -441,7 +441,7 @@ class KEYING_DEVICE():
                 txt2=self.nano_read(echo=True)
 
     # Change WPM
-    def set_wpm(self,wpm,idev=1,farnsworth=None):
+    def set_wpm(self,wpm,idev=1,farnsworth=None,buffered=False):
 
         DEBUG=False
         DEBUG=True
@@ -456,7 +456,10 @@ class KEYING_DEVICE():
             elif self.protocol=='K3NG_IO':
                 txt='W'+str(wpm)+chr(13)
             elif self.protocol=='WINKEYER':
-                txt=chr(2)+chr(wpm)
+                if buffered:
+                    txt=chr(0x1c)+chr(wpm)
+                else:
+                    txt=chr(2)+chr(wpm)
             else:
                 txt=None
             if DEBUG:

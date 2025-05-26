@@ -238,7 +238,7 @@ class Keyer():
                 self.time=time.time();
 
     # Set speed
-    def set_wpm(self,wpm,farnsworth=None):
+    def set_wpm(self,wpm,farnsworth=None,buffered=False):
         ser = self.P.ser
         
         if wpm>0:
@@ -249,14 +249,14 @@ class Keyer():
             if self.P.USE_KEYER:
                 print("SET_WPM: Setting NANO speed to ",wpm)
                 if self.P.LOCK_SPEED:  
-                    self.P.keyer_device.set_wpm(wpm,idev=3,farnsworth=farnsworth)
+                    self.P.keyer_device.set_wpm(wpm,idev=3,farnsworth=farnsworth,buffered=buffered)
                     if self.P.gui:
                         #print('P.gui=',self.P.gui)
                         self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
                     else:
                         self.P.PaddlingWin.WPM_TXT.set(str(wpm))
                 else:
-                    self.P.keyer_device.set_wpm(wpm,farnsworth=farnsworth)
+                    self.P.keyer_device.set_wpm(wpm,farnsworth=farnsworth,buffered=buffered)
                     
             if self.P.gui:
                 # Can't fiddle with gui here since it would cause a memoery leak
@@ -509,13 +509,13 @@ class Keyer():
                 elif cmd2[0]=="+":
                     # Increase speed
                     dWPM = int(cmd2[1:])
-                    self.set_wpm( self.WPM + dWPM )
+                    self.set_wpm( self.WPM + dWPM ,buffered=True)
                     print("Increaing speed by",dWPM," to",self.WPM)
 
                 elif cmd2[0]=="-":
                     # Decrease speed
                     dWPM = int(cmd2[1:])
-                    self.set_wpm( self.WPM - dWPM )
+                    self.set_wpm( self.WPM - dWPM ,buffered=True)
                     print("Decreaing speed by",dWPM," to",self.WPM)
 
                 else:

@@ -76,7 +76,10 @@ class CALL_INFO_GUI():
                     if call2 in P.MASTER.keys():
                         print('CALL_LOOKUP:',call2,' is in master list')
                         info=P.MASTER[call2]
-            info['Country']=dx_station.country
+            if dx_station.country!=None:
+                info['Country']=dx_station.country
+            else:
+                info['Country']=''
 
             if qso!=None and qso[0]!=None:
                 if nqsos!=None:
@@ -137,6 +140,8 @@ class CALL_INFO_GUI():
                 lb.grid(row=row, column=0,sticky=W)
                 e = Entry(tab,justify=CENTER)
                 e.grid(row=row,column=1,sticky=E+W)
+                #print('\nkey=',key)
+                #print('info=',info[key])
                 e.insert(0,info[key])
         
             row+=1

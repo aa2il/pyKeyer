@@ -1663,7 +1663,7 @@ class GUI():
         # Highlight appropriate buttons for running or s&p
         self.P.KEYING.highlight(self,arg)
         print("\nSend_Macro:",arg,':\ttxt=',txt,'\tstate=',state)
-        if '[SERIAL]' in txt:
+        if '[SERIAL]' in txt or '[SERIAL_CUT]' in txt:
             if False:
                 # Old - reading from rig or fldigi or somewhere else?!
                 cntr = self.sock.get_serial_out()
@@ -1674,10 +1674,16 @@ class GUI():
                 # Use local counter!!!
                 cntr=self.P.MY_CNTR
             print('SEND MACRO: cntr2=',cntr,'\tndigits=',self.ndigits)
-            self.cntr = cut_numbers(cntr,ndigits=self.ndigits)
-            txt = txt.replace('[SERIAL]',self.cntr)
-            self.serial_out = self.cntr
-            print('SEND MACRO: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits)
+            if '[SERIAL]' in txt:
+                self.cntr = cut_numbers(cntr,ndigits=self.ndigits)
+                txt = txt.replace('[SERIAL]',self.cntr)
+                print('SEND MACRO: cntr=',self.cntr,'\ttxt=',txt,'\tndigits=',self.ndigits,'\tALL=False')
+            else:
+                self.cntr = cut_numbers(cntr,ALL=True,ndigits=3)
+                txt = txt.replace('[SERIAL_CUT]',self.cntr)
+                print('SEND MACRO: cntr=',self.cntr,'\ttxt=',txt,
+                      '\tndigits=',3,'\tALL=',True)
+            #self.serial_out = self.cntr
 
         # Fill in name
         name=self.get_name().upper()
