@@ -670,6 +670,7 @@ class DEFAULT_KEYING():
     def logging(self):
 
         gui=self.P.gui
+        serial=0
 
         # Get his call
         call    = gui.get_call().upper()
@@ -683,11 +684,12 @@ class DEFAULT_KEYING():
         else:
             cntr=gui.cntr
         if gui.rstin in gui.boxes:
-            exch_in  += gui.get_rst_in()   + ','
-            exch_out += gui.get_rst_out()  + ','
+            exch_in  += gui.get_rst_in()  + ','
+            exch_out += gui.get_rst_out() + ','
         if gui.serial_box in gui.boxes:
-            exch_in  += gui.get_serial()   + ','
-            exch_out += str(cntr)          + ','
+            serial    = gui.get_serial()
+            exch_in  += serial()  + ','
+            exch_out += str(cntr) + ','
         if gui.exch in gui.boxes:
             exch_in  += gui.get_exchange() + ','
             exch_out += str(cntr)          + ','

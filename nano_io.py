@@ -258,7 +258,11 @@ class KEYING_DEVICE():
         elif self.protocol=='WINKEYER':
             self.delim=''
             ntries = self.wait4it(4,delay,10)
-            print('Found it after',ntries,'tries')
+            if ntries>=0:
+                print('Found it after',ntries,'tries')
+            else:
+                print("Well that didn't work!")
+                self.ser=None
 
             # Make sure we're in proper mode
             self.send_command(chr(0x0E)+chr(self.winkey_mode))
@@ -288,7 +292,9 @@ class KEYING_DEVICE():
         # There shouldn't be any residual but let's just check and see
         print('\tin_waiting=',self.ser.in_waiting,'\tout_waiting=',self.ser.out_waiting)
         txt=self.ser.read_all().decode("utf-8")
-        print('\ttxt0=',txt,'\t',show_hex(txt))
+        print('txt0=',txt,'\t',show_hex(txt),'\t',len(txt))
+        if len(txt)>0:
+            print('NANO_IO->WAIT4IT: Unexpected residual junk from keying device')
         
         ntries=0
         while self.ser.in_waiting==0 and ntries<n:
@@ -374,8 +380,14 @@ class KEYING_DEVICE():
                 sys.exit(0)
                 
         else:
-            print('NANO_io->WAIT4IT: Could not find keyer device - giving up!!!')
+            print('\nNANO_io->WAIT4IT: Could not find keyer device - giving up!!!')
+            print('\tntries=',ntries,'\tin_waiting=', self.ser.in_waiting)
+            if self.ser.in_waiting>0 and ntries<n:
+                print('\tLooks like keyer device is generating junk!')
+                return -1
+            
             sys.exit(0)
+            
         return ntries
 
     # Send a command to the nano and read the response

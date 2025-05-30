@@ -2227,14 +2227,23 @@ class GUI():
         qth =self.get_qth().upper()
         notes =self.get_notes()
         print('LOG_QSO:',call,name,qth)
-        serial=0
+        qso2 = {}
+        srx=0
 
         MY_NAME     = self.P.SETTINGS['MY_NAME']
         MY_STATE    = self.P.SETTINGS['MY_STATE']
         
         if self.contest:
             rst='5NN'
-            exch,valid,self.exch_out,qso2 = self.P.KEYING.logging()
+            #exch,valid,self.exch_out,qso2 = self.P.KEYING.logging()
+            x = self.P.KEYING.logging()
+            exch = x[0]
+            valid = x[1]
+            self.exch_out = x[2]
+            if len(x)>=4:
+                qso2 = x[3]
+            if len(x)>=5:
+                srx = x[4]
         else:
             rstin =self.get_rst_in().upper()
             exch=str(rstin)+','+ name
@@ -2325,14 +2334,16 @@ class GUI():
             qso = dict( list(zip(['QSO_DATE_ON','TIME_ON',
                                   'QSO_DATE_OFF','TIME_OFF',
                                   'CALL','FREQ','BAND','MODE', 
-                                  'SRX_STRING','STX_STRING','NAME','QTH','SRX',
-                                  'STX','SAT_NAME','FREQ_RX','BAND_RX','NOTES',
+                                  'SRX_STRING','STX_STRING',
+                                  'NAME','QTH','SRX','STX',
+                                  'SAT_NAME','FREQ_RX','BAND_RX','NOTES',
                                   'RUNNING','MY_RIG','CONTEST_ID'],
                                  [date_on,time_on,date_off,time_off,
                                   call,
                                   str( round(1e-3*freq_kHz,4) ),band,mode, 
-                                  exch,self.exch_out,name,qth,str(serial),
-                                  str(self.cntr),satellite,
+                                  exch,self.exch_out,name,qth,
+                                  str(srx),str(self.cntr),
+                                  satellite,
                                   str( round(1e-3*freq_kHz_rx,4)),
                                   band_rx,notes,str(int(self.RUNNING)),
                                   self.P.sock.rig_type2,

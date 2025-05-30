@@ -236,7 +236,7 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         qso2={}
         
-        return exch,valid,exch_out,qso2
+        return exch,valid,exch_out,qso2,serial
     
     # Dupe processing for this contest
     def dupe(self,a):

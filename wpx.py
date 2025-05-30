@@ -219,7 +219,7 @@ class WPX_KEYING(DEFAULT_KEYING):
 
         qso2={}
         
-        return exch,valid,exch_out,qso2
+        return exch,valid,exch_out,qso2,serial
     
     def dupe(self,a):
         return

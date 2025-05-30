@@ -196,7 +196,7 @@ def open_keying_port(P,sock,rig_num):
                     print('\nChecking device usage ...')
                     cmd="lsof "+device
                     print('\tcmd=',cmd)
-                    os.system(cmd)                    
+                    os.system(cmd)
 
                 result = try_usb_reset(P,vid_pid)
                 
@@ -209,8 +209,11 @@ def open_keying_port(P,sock,rig_num):
         else:
             
             device=None
-            
-        try:
+
+        Done=False
+        while not Done:
+
+            try_again=False
             FATAL_ERROR=False
             if P.NANO_IO:
                 protocol='NANO_IO'
@@ -224,36 +227,43 @@ def open_keying_port(P,sock,rig_num):
             else:
                 print('OPEN KEYING PORT - Unknown protocol')
                 sys.exit(0)
-            print('OPEN KEYING PORT: device=',device,'\tprotocol=',protocol)
-            P.keyer_device = KEYING_DEVICE(P,device,protocol,baud=BAUD_KEYER)
-            ser = P.keyer_device.ser
-        except: 
-            error_trap('KEYING->OPEN KEYING PORT',1)
-            print('\n*************************************')
-            print(  '*** Unable to open Nano IO device ***')
-            print(  '***  Make sure it is plugged in   ***')
-            print(  '***  and that no app is using it  ***')
-            print(  '*************************************')
-            print(  '***          Giving up            ***')
-            print('*************************************\n')
-
-            pids = get_PIDs('pyKeyer.py') + get_PIDs('paddling.py')
-            print('\npids=',pids)
-            if len(pids)>0:
-                print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-                print(  "@ Try killing other instances of this program! @")
-                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
-
-            result=try_usb_reset(P,vid_pid)
-            if result:
-                print('keyer_device=',P.keyer_device)
+                
+            try:
+                print('OPEN KEYING PORT: device=',device,'\tprotocol=',protocol)
+                P.keyer_device = KEYING_DEVICE(P,device,protocol,baud=BAUD_KEYER)
                 ser = P.keyer_device.ser
-                print('ser=',ser)
-            else:
-                FATAL_ERROR=True
+                if ser==None:
+                    try_again=True
+                    raise ValueError('OPEN KEYING PORT: Unable to open keying device')
+                else:
+                    Done=True
+            except: 
+                error_trap('KEYING->OPEN KEYING PORT',1)
+                print('\n*************************************')
+                print(  '*** Unable to open Nano IO device ***')
+                print(  '***  Make sure it is plugged in   ***')
+                print(  '***  and that no app is using it  ***')
+                print(  '*************************************')
+                print(  '***          Giving up            ***')
+                print('*************************************\n')
 
-        if FATAL_ERROR:
-            sys.exit(0)
+                pids = get_PIDs('pyKeyer.py') + get_PIDs('paddling.py')
+                print('\npids=',pids)
+                if len(pids)>0:
+                    print("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+                    print(  "@ Try killing other instances of this program! @")
+                    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
+
+                result=try_usb_reset(P,vid_pid)
+                if result:
+                    print('keyer_device=',P.keyer_device)
+                    ser = P.keyer_device.ser
+                    print('ser=',ser)
+                else:
+                    FATAL_ERROR=not try_again
+
+            if FATAL_ERROR:
+                sys.exit(0)
 
             
     elif sock.rig_type2=='TS850':
@@ -386,6 +396,8 @@ def try_usb_reset(P,vid_pid):
     #result=messagebox.askyesno(lab,msg)
     result=messagebox.askyesnocancel(lab,msg)
     if result==True:
+        if vid_pid==None:
+            device,dev_type,vid_pid=find_keyer(P)
         cmd="sudo usbreset "+vid_pid
         print('\tcmd=',cmd)
         os.system(cmd)                    
