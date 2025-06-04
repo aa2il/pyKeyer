@@ -33,7 +33,6 @@ else:
     from Tkinter import END
 from load_history import *
 from sidetone import *
-from process_chars import check_nano_txt
 
 ############################################################################################
 
@@ -49,6 +48,8 @@ class CODE_PRACTICE():
         self.P = P
         self.enable = False
         self.last_id=None
+        self.last_len=0
+        self.last_cntr = -1
 
     def load_practice_history(self):
         P=self.P
@@ -111,7 +112,13 @@ class CODE_PRACTICE():
 
     # Main routine that orchestrates code practice
     def run(self):
-        print('PRACTICE->RUN Beginning ...')
+        print('PRACTICE->RUN: Beginning ...',flush=True)
+
+        if self.P.PRACTICE_MODE:
+
+            # Check that we have the right history file
+            if self.last_id!=self.P.CONTEST_ID:
+                self.load_practice_history()
 
         # Loop until exit event is set
         while not self.P.Stopper.isSet():
@@ -120,21 +127,42 @@ class CODE_PRACTICE():
             self.enable |= self.P.OP_STATE
 
             if not self.enable:
-                self.enable = check_nano_txt(self.P,'CQ')
+                #print('PRACTICE->RUN: Checking keyer...',flush=True)
+                self.enable = self.check_nano_txt2(['CQ'])
+                if self.enable:
+                    print('PRACTICE->RUN: Woo Hoo - Found CQ! Practice session ENABLED ...',flush=True)
             
-            if self.P.PRACTICE_MODE and self.enable:
+            if self.P.PRACTICE_MODE:
+                if self.enable:
 
-                # Check that we have the right history file - put this in cwt.py
-                if self.last_id!=self.P.CONTEST_ID:
-                    self.load_practice_history()
+                    # Check that we have the right history file - op could have changed it
+                    if self.last_id!=self.P.CONTEST_ID:
+                        self.load_practice_history()
 
-                # Send a practice message
-                self.practice_qso()
+                    # Send a practice message
+                    self.practice_qso()
+
+                else:
+                    
+                    time.sleep(.1)
 
             else:
                 
                 time.sleep(1)
-                
+
+    # Routine to perform handshake with the keyer
+    def keyer_handshake(self,stage,to,done,repeats):
+        
+        P     = self.P
+        keyer = P.keyer
+        
+        if DEBUG:
+            print('PRACTICE_QSO: Waiting '+stage+'c for keyer ... set=',keyer.evt.isSet(),
+                  '\top_state=',P.OP_STATE,'\tdone=',done,'\trepeats=',repeats,flush=True)                  
+        keyer.evt.wait(timeout=to) 
+        keyer.evt.clear()
+        if DEBUG:
+            print('PRACTICE_QSO: Waiting '+stage+'d - Got handshake with keyer ...')
 
             
     # Routine to execute a single practice qso
@@ -145,41 +173,41 @@ class CODE_PRACTICE():
         keyer   = P.keyer
         lock    = P.lock1
         MY_CALL = P.SETTINGS['MY_CALL']
+        MY_EXCH = P.KEYING.exch_out
         repeats = False
+        done    = False
     
         # Pick a call at random
         if DEBUG:
             print('\nPRACTICE_QSO: Waiting 0 - Picking call ... ncalls=',self.Ncalls-1)
+            print('\tMY CALL=',MY_CALL)
+            print('\tMY EXCH=',MY_EXCH)
         call = self.grab_call()
-        
+
         # Wait for op to hit CQ
         if DEBUG:
-            print('PRACTICE_QSO: Waiting 1a - op CQ ... call=',call,'\tOP_STATE=',P.OP_STATE)
-        self.wait_for_keyer()
+            print('\nPRACTICE_QSO: Waiting 1a - op CQ ... call=',call,'\tOP_STATE=',P.OP_STATE,MY_CALL,flush=True)
         Done=False
+        to=5
         while not Done:
-            Done = (P.OP_STATE & (1+64)) or self.P.Stopper.isSet()
-            if not Done:
-                #print('HEY:',P.nano_txt)
-                Done = check_nano_txt(P,'CQ')
+            if self.check_nano_txt2([MY_CALL]):
+                P.OP_STATE |= 1
+                P.nano_txt=''
+                to=0.1
+            Done = (P.OP_STATE & (1+64)) or P.Stopper.isSet() 
             time.sleep(0.1)
-        P.OP_STATE &= ~(1+64)          # Clear CQ/QRZ
+        P.OP_STATE &= ~(1+64)          # Clear CQ/QRZ/Log
 
         # Abort ?
         if DEBUG:
-            print('PRACTICE_QSO: Waiting 1b - Got CQ ...')
+            print('PRACTICE_QSO: Waiting 1b - Got CQ ...',flush=True)
         if P.Stopper.isSet():
             return
         
         # Wait for handshake with keyer
-        if DEBUG:
-            print('PRACTICE_QSO: Waiting 1c for keyer ... ',keyer.evt.isSet() )
-        keyer.evt.clear()
-        if DEBUG:
-            print('PRACTICE_QSO: Waiting 1d - Got handshake with keyer ...')
+        self.keyer_handshake('1',to,done,repeats)
 
         # Get info for qso partner
-        done = False
         txt1 = ' '+call
         if P.KEYING:
             txt2 = P.KEYING.qso_info(HIST,call,2)
@@ -187,8 +215,8 @@ class CODE_PRACTICE():
         else:
             txt2='?????'
             print('PRACTICE_QSO: Unknown Contest')
-        print('PRACTICE_QSO: txt1=',txt1)
-        print('PRACTICE_QSO: txt2=',txt2)
+        #print('PRACTICE_QSO: txt1=',txt1)
+        #print('PRACTICE_QSO: txt2=',txt2)
                                     
         # Decision time for sprints
         if P.CONTEST_ID=='NCCC-SPRINT':
@@ -211,42 +239,60 @@ class CODE_PRACTICE():
             lock.acquire()
             if DEBUG:
                 print('PRACTICE_QSO: Sending call=',txt1,'\top_state=',P.OP_STATE)
-            if self.P.USE_KEYER:
-                self.P.keyer_device.nano_write(txt1)
-            #else:
-            if self.P.SIDETONE:
+            if P.USE_KEYER:
+                P.keyer_device.nano_write(txt1)
+            if P.SIDETONE:
                 P.osc.send_cw(txt1,keyer.WPM,1,True)
 
             lock.release()
 
+            # Fix-up exchange
+            EXCH_OUT=MY_EXCH.copy()
+            for i in range(len(MY_EXCH)):
+                if 'SERIAL' in EXCH_OUT[i]:
+                    while P.MY_CNTR == self.last_cntr:
+                        print('\tWaiting for counter update ...')
+                        time.sleep(0.1)
+                    self.last_cntr = P.MY_CNTR
+                    EXCH_OUT[i] = str( self.last_cntr )
+                    #EXCH_OUT[i] = P.gui.get_counter()
+                    
             # Wait for op to answer
             Done=False
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 2a - op exchange ...\top_state=',P.OP_STATE)
-            self.wait_for_keyer()
+                print('\nPRACTICE_QSO: Waiting 2a - op exchange ...\top_state=',P.OP_STATE,
+                      'my exch=',EXCH_OUT,flush=True)
+            to=5
             while not Done:
-                Done = (P.OP_STATE & (2+8+16)) or self.P.Stopper.isSet()
+                if self.check_nano_txt2(EXCH_OUT):
+                    print('--- GOT EXCH ---')
+                    P.OP_STATE |= 2
+                    P.nano_txt=''
+                    to=.1
+                elif self.check_nano_txt2(['?']):
+                    print('--- GOT ? ---')
+                    P.OP_STATE |= 8
+                    P.nano_txt=''
+                    to=.1
+                Done = (P.OP_STATE & (2+8+16)) or P.Stopper.isSet() 
+                #print('op_state=',P.OP_STATE,Done,flush=True)
                 time.sleep(0.1)
 
-            # Abort
+            # Check for Abort
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 2b - Got answer - \top_state=',P.OP_STATE,'\tDone=',Done)
-            if self.P.Stopper.isSet():
+                print('PRACTICE_QSO: Waiting 2b - Got answer - \top_state=',P.OP_STATE,'\tDone=',Done,flush=True)
+            if P.Stopper.isSet():
                 return
             
             # Check for repeats
-            done = P.OP_STATE & (2+16)
-            P.OP_STATE &= ~(2+16)          # Clear Reply
+            done = P.OP_STATE & (2+32)
+            P.OP_STATE &= ~(2+32)          # Clear Reply
             if not done:
                 repeats=repeats or (P.OP_STATE & 8)
                 P.OP_STATE &= ~8          # Clear Repeat
 
             # Wait for handshake with keyer
-            if DEBUG:
-                print('PRACTICE_QSO: Waiting 2c - keyer',P.OP_STATE,done,'\trepeats=',repeats,'\top_state=',P.OP_STATE)
-            keyer.evt.clear()
-            if DEBUG:
-                print('PRACTICE_QSO: Waiting 2d - keyer ... done=',done,'\trepeats=',repeats,'\top_state=',P.OP_STATE)
+            self.keyer_handshake('2',to,done,repeats)
 
         # Decision time again for sprints
         if P.CONTEST_ID=='NCCC-SPRINT':
@@ -262,7 +308,7 @@ class CODE_PRACTICE():
         while not done:
             
             # Abort
-            if self.P.Stopper.isSet():
+            if P.Stopper.isSet():
                 return
 
             # Check if call is correct
@@ -277,38 +323,47 @@ class CODE_PRACTICE():
             lock.acquire()
             if DEBUG:
                 print('PRACTICE_QSO: Sending exch=',txt2)
-            if self.P.USE_KEYER:
-                self.P.keyer_device.nano_write(txt2)
-            #else:
-            if self.P.SIDETONE:
+            if P.USE_KEYER:
+                P.keyer_device.nano_write(txt2)
+            if P.SIDETONE:
                 P.osc.send_cw(txt2,keyer.WPM,1,True)
             lock.release()
 
             # Wait for op to answer
             Done=False
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 3a - op to Answer ... op_state=',P.OP_STATE)
-            self.wait_for_keyer()
+                print('PRACTICE_QSO: Waiting 3a - op to Answer ... op_state=',P.OP_STATE,flush=True)
             while not Done:
-                Done = (P.OP_STATE & (4+8+32)) or self.P.Stopper.isSet()
+                #logged = len(P.nano_txt)>0 and (P.OP_STATE & 64)
+                #print('--- LOOGED= ---',logged)
+                if self.check_nano_txt2(['73']):
+                    print('--- GOT 73 ---')
+                    P.OP_STATE |= 4
+                    P.nano_txt=''
+                elif self.check_nano_txt2(['?']):
+                    print('--- GOT ? ---')
+                    P.OP_STATE |= 8
+                    P.nano_txt=''
+                Done = (P.OP_STATE & (4+8+32)) or P.Stopper.isSet() # or logged
                 time.sleep(0.1)
 
             # Abort ?
             if DEBUG:
-                print('PRACTICE_QSO: Waiting 3b - Got Answer, keyer ... op_state=',P.OP_STATE)
-            if self.P.Stopper.isSet():
+                print('PRACTICE_QSO: Waiting 3b - Got Answer - \top_state=',P.OP_STATE)
+            if P.Stopper.isSet():
                 return
             done = P.OP_STATE & (4+32)
             P.OP_STATE &= ~(4+32)          # Clear TU
 
-            if DEBUG:
-                print('PRACTICE_QSO: Waiting 3c - Got keyer ... done=',done)
+            # Wait for handshake with keyer
+            self.keyer_handshake('3',to,done,repeats)
+
             if not done:
                 repeats=repeats or (P.OP_STATE & 8)
                 P.OP_STATE &= ~8          # Clear Repeat
                 label=P.gui.macro_label.upper()
                 if DEBUG:
-                    print('Waiting 3d - Repeats=',repeats,'\tlabel=',label)
+                    print('Waiting 3e - Repeats=',repeats,'\tlabel=',label)
                 
                 # Determine next element
                 if P.KEYING:
@@ -329,10 +384,9 @@ class CODE_PRACTICE():
                 lock.acquire()
                 if DEBUG:
                     print('PRACTICE_QSO: Sending final TU ...')
-                if self.P.USE_KEYER:
-                    self.P.keyer_device.nano_write(txt3)
-                #else:
-                if self.P.SIDETONE:
+                if P.USE_KEYER:
+                    P.keyer_device.nano_write(txt3)
+                if P.SIDETONE:
                     P.osc.send_cw(txt3,keyer.WPM,1,True)
                 lock.release()
 
@@ -340,9 +394,8 @@ class CODE_PRACTICE():
                 Done=False
                 if DEBUG:
                     print('PRACTICE_QSO: Waiting 4a - op to Log contact ... op_state=',P.OP_STATE)
-                self.wait_for_keyer()
                 while not Done:
-                    Done = (P.OP_STATE & 64) or self.P.Stopper.isSet()
+                    Done = (P.OP_STATE & 64) or P.Stopper.isSet()
                     time.sleep(0.1)
 
                 
@@ -354,9 +407,9 @@ class CODE_PRACTICE():
             print('PRACTICE_QSO: Error check ... match=',match)
 
         # We have everything we need, now the main program can clear the gui boxes
-        keyer.evt.clear()
+        keyer.evt2.clear()
         if DEBUG:
-            print('PRACTICE_QSO: Keyer EVT Cleared ...')
+            print('PRACTICE_QSO: Keyer EVT2 Cleared ...',flush=True)
 
         # Check call & exchange matching
         if not match and not P.KEYING:
@@ -379,15 +432,22 @@ class CODE_PRACTICE():
                     #print("NO ERROR - WPM UP ...")
                     P.gui.set_wpm(+1)
         print(' ')
+        P.nano_txt=''
+        
+    # Routine to look for special messages from the keyer
+    def check_nano_txt2(self,msg):
+        #print('CHECK NANO_TXT2: msg=',msg)
 
-    # Routine to wait for keyer to flush - bail out if stopper gets set
-    def wait_for_keyer(self):
-        if DEBUG:
-            print('WAIT FOR KEYER ...')
-        while not self.P.keyer.evt.wait(timeout=1):
-            if check_nano_txt(self.P,'\n') or self.P.Stopper.isSet():
-                break
-        return
+        n=len(self.P.nano_txt)
+        if n!=self.last_len:
+            print('\tnano_txt2=',self.P.nano_txt,flush=True)
+            self.last_len=n
+
+        result=True
+        for m in msg:
+            result = result and (m in self.P.nano_txt)
+            
+        return result
 
 
     # Routine to grab a call at random

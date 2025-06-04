@@ -220,16 +220,11 @@ if P.TEST_MODE:
     P.keyer.disable()           # Disable TX keying for debugging
 
 # We need a queue for sending messages to the keying thread
-# and a locks to coordinate time-critical sections of the keying & practice
-# threads
 if sys.version_info[0]==3:
     P.q     = queue.Queue(maxsize=0)
 else:
     P.q     = Queue.Queue(maxsize=0)
 P.lock1 = threading.Lock()
-#P.lock2 = threading.Lock()
-P.keyer.evt =  threading.Event()
-P.keyer.evt.clear()
 
 # Start a thread that controls keying of TX
 P.gui.status_bar.setText("Spawning worker-bee threads ...")

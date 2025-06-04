@@ -202,7 +202,7 @@ class PARAMS:
         arg_proc.add_argument('-immediate', action='store_true',
                               help='Send text immediately')
         arg_proc.add_argument('-sidetone', action='store_true',
-                              help='Sidetone Osc')
+                              help='Use Sidetone Osc')
         arg_proc.add_argument('-split', action='store_true',
                               help='Split Text Window')
         arg_proc.add_argument('-hints', action='store_true',
@@ -384,6 +384,7 @@ class PARAMS:
         #self.SIDETONE      = args.sidetone or self.PORT==1 or \
         #    (self.PRACTICE_MODE and not self.USE_KEYER)
         self.SIDETONE = args.sidetone or (self.PRACTICE_MODE and not self.USE_KEYER)
+        self.USE_PYGAME    = False
 
         self.MY_CNTR       = 1
         self.PRECS         = PRECS

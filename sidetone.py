@@ -22,17 +22,17 @@
 #
 ############################################################################################
 
-import pyaudio
 import numpy as np
 from cw_keyer import morse
 import sys
 import time
-import sig_proc as dsp
 import threading
 if sys.version_info[0]==3:
     import queue
 else:
     import Queue
+from sig_proc import ring_buffer2
+from audio_io import AudioIO,pgPLAYER    
 
 ###################################################################
 
@@ -40,7 +40,7 @@ else:
 FS = 8000    # 48000              # Playback rate
 F1 = 680                # My pitch
 F2 = 700                # Caller's pitch
-AMP=0.5
+AMP = 0.5
 
 ################################################################################
 
@@ -52,7 +52,7 @@ class AUDIO_SIDETONE():
         self.P=P
         self.started = False
         self.enabled = False
-        self.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS)
+        self.osc = SIDETONE_OSC(P.keyer.WPM,AMP,[F1,F2],FS,P.USE_PYGAME)
         P.keyer.sidetone = self.osc
         P.osc=self.osc
         self.player=self.osc.player
@@ -120,7 +120,7 @@ class AUDIO_SIDETONE():
         
 
 class SIDETONE_OSC():
-    def __init__(self,WPM,AMP,F0,FS):
+    def __init__(self,WPM,AMP,F0,FS,USE_PYGAME=False):
 
         self.AMP=AMP
         if type(F0) is list:
@@ -136,9 +136,11 @@ class SIDETONE_OSC():
         
         # Use non-blocking audio player
         BUFF_SIZE=4*32*1024                 # Was 1x
-        self.rb     = dsp.ring_buffer2('Audio0',BUFF_SIZE,PREVENT_OVERFLOW=False)
-        #self.rb2    = dsp.ring_buffer2('Audio1',BUFF_SIZE,PREVENT_OVERFLOW=False)
-        self.player = dsp.AudioIO(None,int(self.FS),self.rb,None,'B',True)
+        if USE_PYGAME:
+            self.player=pgPLAYER(self.FS)
+        else:
+            self.rb     = ring_buffer2('Audio0',BUFF_SIZE,PREVENT_OVERFLOW=False)
+            self.player = AudioIO(None,int(self.FS),self.rb,None,'B',True)
 
     #def change_freq():
     #    self.gen_elements(self.WPM,1-self.nfrq)
@@ -192,6 +194,7 @@ class SIDETONE_OSC():
             self.gen_elements(WPM,nfrq)
 
         # Loop over all chars
+        x=np.array([])
         for char in msg.upper():
 
             if self.Stopper.isSet():
@@ -217,28 +220,20 @@ class SIDETONE_OSC():
                         # After each char, 3 short spaces have already been added (see code below).
                         # Hence, we need 4 short spaces to get letter spacing correct (7 short)
                         # This seems too long so we cheat and only 3 short spaces (6 short)
-                        x = np.concatenate( (self.long_space,self.space) )
+                        x = np.concatenate( (x,self.long_space,self.space) )
                     elif( el=='.' ):
-                        x = np.concatenate( (self.dit,self.space) )
+                        x = np.concatenate( (x,self.dit,self.space) )
                     elif( el=='-' ):
-                        x = np.concatenate( (self.dah,self.space) )
-
-                    # Send the element
-                    if AUDIO_ACTIVE:
-                        if VERBOSITY>0:
-                            print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...',el,len(x))
-                        self.rb.push(x)
-                    #self.rb2.push(x)
+                        x = np.concatenate( (x,self.dah,self.space) )
 
                 # Effect spacing between letters - we've already added one short space
                 # so we only need 2 more to effect char spacing
-                x = np.concatenate( (self.space,self.space) )
-                if AUDIO_ACTIVE:
-                    if VERBOSITY>0:
-                        print('SIDETONE->SEND_CW:  Pushing to Computer Audio ...')
-                    self.rb.push(x)                         # Computer Audio
-                #self.rb2.push(x)                            # Sidetone for capture
+                x = np.concatenate( (x,self.space,self.space) )
                 
+        # Play the message
+        if AUDIO_ACTIVE:
+            self.player.push(x)
+                        
     def abort(self):
         self.Stopper.set()
         self.rb.clear()

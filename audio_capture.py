@@ -52,6 +52,8 @@ class AUDIO_CAPTURE():
             gain=[2,1]            # was 4
         elif P.sock.rig_type2=='FTdx3000':
             gain=[1,1]
+            #gain=[1.,1.]
+            #gain=[.5,.5]
         else:
             gain=[1,1]
             

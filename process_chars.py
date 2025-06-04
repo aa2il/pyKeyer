@@ -27,55 +27,20 @@ from utilities import error_trap
 
 ################################################################################
 
-# Routine to look for special messages from the keyer
-def check_nano_txt(P,msg=None):
-        
-    txt = P.keyer_device.nano_read()
-
-    if P.NANO_ECHO:     #   and len(txt)>0:
-        # Check if its been a while since the last char was received
-        # This won't work properly bx linux is not real-time - need to put this in the keyer
-        if P.WINKEYER or P.K3NG_IO:
-            t=time.time()
-            dt=t-P.last_char_time
-            #print('CHECK NANO_TXT: dt=',dt,'\tneed eol=',P.need_eol)
-            if P.need_eol and dt>1.5:
-                #print('CHECK NANO_TXT: Added new line!')
-                txt='\n'+txt
-                P.need_eol=False
-            elif len(txt)>0:
-                P.need_eol=True
-                P.last_char_time=t
-
-    P.nano_txt += txt
-    if msg==None:
-        #print('CHECK NANO_TXT: Returning txt')
-        return txt
-
-    result=False
-    if len(P.nano_txt)>0:
-        print('\tnano_txt=',P.nano_txt)
-
-        if msg in P.nano_txt:
-            result=True
-
-    return result
-
-
 # Set up separate process that actualy does the keying.
 # We do this so that the GUI process is not blocked by the keying.
 def process_chars(P):
     P.last_time  = 0
-    keyer      = P.keyer
-    lock       = P.lock1
-    q          = P.q
-    VERBOSITY  = 0
+    keyer     = P.keyer
+    lock      = P.lock1
+    q         = P.q
+    VERBOSITY = 0
     P.nano_txt = ''
 
     P.last_char_time=time.time()
     P.need_eol=False
     nerrors = 0
-
+    
     while not P.Stopper.isSet() and nerrors<10:
 
         if VERBOSITY>0:
@@ -113,7 +78,6 @@ def process_chars(P):
 
             # Check if we need to send this sidetone also - chars are already sent if we're in practice mode
             if P.q2 and not P.PRACTICE_MODE and P.SIDETONE:
-            #if P.q2 and P.SIDETONE:
                 txt2=''
                 keep=True
                 for ch in txt:
@@ -145,9 +109,20 @@ def process_chars(P):
                     if P.ser and P.ser.in_waiting>0:              # The error is with "in_waiting"
                         if VERBOSITY>0:
                             print('PROCESSS_CHARS: Getting data from keyer ... echo=',P.NANO_ECHO,P.ser,P.ser.in_waiting)
-                        #txt=P.keyer_device.nano_read()
-                        txt=check_nano_txt(P)
+                        txt=P.keyer_device.nano_read()
                         if P.NANO_ECHO and len(txt)>0:
+                            # Check if its been a while since the last char was received
+                            # This won't work properly bx linux is not real-time - need to put this in the keyer
+                            if P.WINKEYER or P.K3NG_IO:
+                                t=time.time()
+                                dt=t-P.last_char_time
+                                #print(t,last_char_time,dt,10*P.keyer.dotlen,need_eol)
+                                if P.need_eol and dt>1.5:      # 10*P.keyer.dotlen:
+                                    txt='\n'+txt
+                                    P.need_eol=False
+                                else:
+                                    P.need_eol=True
+                                P.last_char_time=t
                             
                             # Check if user has responded to current paddling text
                             if P.SENDING_PRACTICE and '\n' in txt:
@@ -194,7 +169,7 @@ def process_chars(P):
                     
             else:
                 time.sleep(0.1)
-
+        
     if nerrors>=10:
         print('\n*** PROCESSS_CHARS - Too many erros - giving up! ***')
         #sys.exit(0)

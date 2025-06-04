@@ -32,7 +32,7 @@ set PYTHON=""
 #conda activate aa2il
 #conda activate py3_13
 #set PYTHON="python"
-which python
+#which python
 set FIND_RIG="$PYTHON ~/Python/findRig/findRig.py"
 
 # Various prog options
@@ -68,10 +68,10 @@ set AGGRESSIVE="-aggressive"
 # Pick a contest
 set CONTEST="paddling"
 set CONTEST="cwt"
-#set CONTEST="foc"
 set CONTEST="sst"
-#set CONTEST="mst"
+set CONTEST="mst"
 #set CONTEST="sprint"
+#set CONTEST="foc"
 
 #set CONTEST="wpx"
 #set CONTEST="naqp"
@@ -114,6 +114,9 @@ echo " "
 set WS=`wmctrl -d | fgrep " * " | cut -f 1 -d ' '`
 echo Current Workspace = $WS
 echo " "
+
+# Force unbuffered output to stdout - same as python -u opt
+setenv PYTHONUNBUFFERED 1
 
 # Settings for sending practice
 if( ($CONTEST == "paddling") && ($RIG != "NONE") )then
@@ -181,7 +184,7 @@ else if( $CONTEST == "sprint" )then
 # Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then
     set WPM=20
-    set HINTS="-adjust"
+    set HINTS="-adjust -lock"
     #set HINTS="-adjust -autofill"
     #set HINTS="-use_log_hist -autofill -nrows 1"
 
@@ -377,6 +380,6 @@ echo $EXE $OPTS
 echo " "        >&  $TMP
 echo $EXE $OPTS >>& $TMP
 echo " "        >>& $TMP
-$EXE $OPTS      >>& $TMP &
-tail -f $TMP
-#$EXE $OPTS
+#$EXE $OPTS      >>& $TMP &
+#tail -f $TMP
+$EXE $OPTS

@@ -52,6 +52,10 @@ class MST_KEYING(DEFAULT_KEYING):
         # Check self info
         self.check_my_info(['CALL','NAME'])
         
+        # Info for practice routine
+        self.cqtest   = 'MST'
+        self.exch_out = [ self.P.SETTINGS['MY_NAME'] , 'SERIAL' ]
+        
     # Routient to set macros for this contest
     def macros(self):
 

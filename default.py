@@ -81,7 +81,9 @@ class DEFAULT_KEYING():
 
         # Check self info
         self.check_my_info(['CALL'])
-
+        self.cqtest   = 'DE'
+        self.exch_out = [ 'RST',self.P.SETTINGS['MY_STATE'] ]
+        
     # Routient to set macros for this contest
     def macros(self):
 

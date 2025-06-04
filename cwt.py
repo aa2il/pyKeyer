@@ -53,7 +53,11 @@ class CWOPS_KEYING(DEFAULT_KEYING):
 
         # Check self info
         self.check_my_info(['CALL','NAME','CWOPS'])
-        
+
+        # Info for practice routine
+        self.cqtest   = 'CWT'
+        self.exch_out = [ self.P.SETTINGS['MY_NAME'] , self.P.SETTINGS['MY_CWOPS'] ]
+                
         """
         This code fragment gets the proper history list from the master file
         Eventually, we might go to this model where we only import the master.csv

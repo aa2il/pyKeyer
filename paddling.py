@@ -1,10 +1,4 @@
 #!/usr/bin/env -S uv run --script
-#
-#! /home/joea/miniconda3/envs/py3_13/bin/python -u
-#! /home/joea/miniconda3/envs/aa2il/bin/python -u
-#
-# NEW: /home/joea/miniconda3/envs/aa2il/bin/python -u
-# OLD: /usr/bin/python3 -u 
 ################################################################################
 #
 # paddling.py - Rev. 1.0
@@ -42,10 +36,8 @@
 
 import sys
 import os
-#import re
 if sys.version_info[0]==3:
     from tkinter import *
-    #from tkinter import END,N,S,E,W
     import tkinter.font
 else:
     from Tkinter import *
@@ -1063,6 +1055,10 @@ if __name__ == '__main__':
                                   choices=['WINKEY','NANO','K3NG','ANY'])
             arg_proc.add_argument("-kport", help="Connection Port for Keyer",
                                   type=str,default=None)
+            arg_proc.add_argument('-sidetone', action='store_true',
+                                  help='Use Sidetone Osc')
+            arg_proc.add_argument('-pg', action='store_true',
+                                  help='Use PyGame Audio instead of Pulse')
             arg_proc.add_argument('-settings',action='store_true',
                                   help='Open settings window')
             args = arg_proc.parse_args()
@@ -1080,7 +1076,8 @@ if __name__ == '__main__':
                 self.rig           = None
 
             self.KEYER_PORT    = args.kport
-            self.SIDETONE      = False            # True
+            self.SIDETONE      = args.sidetone
+            self.USE_PYGAME    = args.pg
                 
             # Init
             self.sock=None

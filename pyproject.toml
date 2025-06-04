@@ -12,10 +12,16 @@ dependencies = [
     "psutil>=7.0.0",
     "pyaudio>=0.2.14",
     "pyautogui>=0.9.54",
+    "pygame>=2.6.1",
     "pyhamtools>=0.11.0",
     "pyserial>=3.5",
     "pyudev>=0.24.3",
     "scipy>=1.15.3",
     "unidecode>=1.4.0",
     "xlrd>=2.0.1",
+]
+
+[tool.uv.workspace]
+members = [
+    "save93",
 ]

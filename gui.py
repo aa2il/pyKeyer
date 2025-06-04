@@ -1983,9 +1983,13 @@ class GUI():
     def get_cat(self):
         return self.cat.get().upper()
 
-    # Read serial from entry box
+    # Read serial in from entry box
     def get_serial(self):
         return self.serial_box.get().upper()
+
+    # Read serial out from entry box
+    def get_counter(self):
+        return self.counter.get().upper()
 
     # Read prec from entry box
     def get_prec(self):
@@ -2226,7 +2230,7 @@ class GUI():
         name=self.get_name().upper()
         qth =self.get_qth().upper()
         notes =self.get_notes()
-        print('LOG_QSO:',call,name,qth)
+        print('LOG_QSO:',call,name,qth,flush=True)
         qso2 = {}
         srx=0
 
@@ -2300,9 +2304,10 @@ class GUI():
                 mode='AM'
             elif mode in ['PKTUSB','PSK-U','DATA-U']:
                 mode='RTTY'
-            band     = freq2band(1e-3*freq_kHz)
-            if band=='None':
+            band = freq2band(1e-3*freq_kHz)
+            if band in ['None','MW']:
                 print("*** WARNING - Can't determine band - no rig connection?")
+                band='160m'
 
             # For satellites, read vfo B also  - MOVE THIS TO LOGGING() IN SATS.PY
             if self.P.contest_name=='SATELLITES':
@@ -2366,12 +2371,12 @@ class GUI():
 
             # Log contact using FLLOG
             if self.P.sock_log.connection=='FLLOG':
-                print('GUI - LOG_QSO: via FLLOG ...')
+                print('GUI->LOG_QSO: via FLLOG ...')
                 self.P.sock_log.Add_QSO(qso)
 
             # Log contact using FLDIGI - dont use if in RTTY mode - This path needs work!!!
             elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE and False:
-                print('GUI - LOG_QSO: FLDIGI ...')
+                print('GUI->LOG_QSO: FLDIGI ...')
                 fields = {'Call':call,'Name':name,'RST_out':rstout,'QTH':qth,'Exchange':exch}
                 if not self.P.WF_ONLY:
                     self.sock.set_log_fields(fields)
@@ -2383,14 +2388,14 @@ class GUI():
 
             # Make sure practice exec gets what it needs
             if self.P.PRACTICE_MODE:
-                print('LOG_QSO - PRACTICE MODE: Waiting for handshake ... EVT=',\
+                print('GUI->LOG_QSO - PRACTICE MODE: Waiting for handshake ... EVT=',\
                       self.keyer.evt.isSet(),\
-                      '\nIf you want to log an actual contact, exit PRACTICE_MODE and try again')
+                      '\nIf you want to log an actual contact, exit PRACTICE_MODE and try again',flush=True)
                 while self.keyer.evt.isSet():
-                    print('EVT:',self.keyer.evt.isSet(), '\tSTOP:',self.keyer.stop )
+                    print('EVT:',self.keyer.evt.isSet(), '\tSTOP:',self.keyer.stop,flush=True )
                     time.sleep(1)
                 print('LOG_QSO: Got handshake ...',\
-                      self.keyer.evt.isSet(), self.keyer.stop )
+                      self.keyer.evt.isSet(), self.keyer.stop, flush=True )
 
             # Clear fields
             self.prefill=False

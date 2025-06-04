@@ -53,6 +53,9 @@ class SST_KEYING(DEFAULT_KEYING):
         # Check self info
         self.check_my_info(['CALL','NAME','STATE'])
 
+        # Info for practice routine
+        self.cqtest   = 'SST'
+        self.exch_out = [ self.P.SETTINGS['MY_NAME'] , self.P.SETTINGS['MY_STATE'] ]
         
     # Routine to set macros for this contest
     def macros(self):

@@ -1,3 +1,5 @@
+###############################################################################
+#
 # pip3 install -r requirements.txt
 #
 # Also need the "libs" directory which is available in this repository and to
@@ -5,6 +7,9 @@
 # e.g. for csh/tcsh:
 #
 #     setenv PYTHONPATH $HOME/Python/libs
+#
+###############################################################################
+#
 
 pyserial
 xlrd
@@ -20,6 +25,8 @@ pandas
 scipy
 levenshtein
 chardet
+
+pygame
 
 # As of python 3.13, this is no longer available
 # There is an older copy in the libs directory until I can find a replacement

@@ -131,6 +131,12 @@ class Keyer():
         self.Udp=False
         self.Cmd=[]
 
+        # We need locks to coordinate time-critical sections of the keying & practice threads
+        self.evt  =  threading.Event()
+        self.evt.clear()
+        self.evt2 =  threading.Event()
+        self.evt2.clear()
+
         # Compute weight (in dots) of each char
         self.weight=128*[0]
         for i in range(128):
@@ -143,8 +149,9 @@ class Keyer():
                 
 
     def abort(self):
-        print('CW_KEYER - ABORT!')
+        print('CW_KEYER - ABORT! \t evt cleared')
         self.evt.clear()
+        self.evt2.clear()
         self.stop=True
         if self.P.DIGI:
             self.P.sock_xml.put_tx_buff( '',HALT=True )  
@@ -162,6 +169,7 @@ class Keyer():
     #    4. The space between letters is 3 time units.
     #    5. The space between words is 7 time units.
     def send_cw(self,msg):
+        #print('CW_KEYER->SEND CW: msg=',msg)
 
         if self.P.DIGI:
             return
@@ -178,15 +186,17 @@ class Keyer():
                 wght+=self.weight[ord(char)]
 
             dt=dotlen*wght
-            #print('send_cw: msg=',msg,'\t@ wpm=',self.WPM,'\twght=',wght,'\tdt=',dt)
+            #print('\tsend_cw: msg=',msg,'\t@ wpm=',self.WPM,'\twght=',wght,'\tdt=',dt)
             self.P.keyer_device.nano_write(msg)
+            #print('\t\tsent dt=',dt)
             
             time.sleep(dt)
+            #print('\t\t\tdone dt=',dt,flush=True)
             return
 
         # If in practice mode, use pc audio instead
         elif self.P.PRACTICE_MODE:
-            #print('KEYER->SEND_CW: msg=',msg,len(msg))
+            print('CW_KEYER->SEND_CW: msg=',msg,len(msg))
             self.sidetone.send_cw(msg,self.WPM,0,True)
             return
 
@@ -198,6 +208,7 @@ class Keyer():
         # If we get here, we have to do all the heavy lifiting.
         # Loop over all chars in message to form symbols and timing
         for char in msg.upper():
+            #print('\tchar=',char)
 
             i=ord(char)
             cw=morse[i]
@@ -251,8 +262,8 @@ class Keyer():
                 if self.P.LOCK_SPEED:  
                     self.P.keyer_device.set_wpm(wpm,idev=3,farnsworth=farnsworth,buffered=buffered)
                     if self.P.gui:
-                        #print('P.gui=',self.P.gui)
-                        self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
+                        if hasattr(self.P.gui,'PaddlingWin'):
+                            self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
                     else:
                         self.P.PaddlingWin.WPM_TXT.set(str(wpm))
                 else:
@@ -310,21 +321,21 @@ class Keyer():
     #        []
     def send_msg(self,msg):
 
-        print('SEND_MSG: ',msg,' at ',self.WPM,' wpm - evt=',self.evt.isSet())
+        print('CW_KEYER->SEND_MSG: ',msg,' at ',self.WPM,' wpm - evt=',self.evt.isSet())
         P=self.P
         ser = self.P.ser
 
-        # Testing only
+        # Send the entire message at once if we can (i.e. if there are no cmds buried in the msg)
         if self.P.USE_KEYER and ('[' not in msg) and (']' not in msg) and True:
-            print('send_msg: msg=',msg,'\t@ wpm=',self.WPM)
+            print('\tsend_msg: msg=',msg,'\t@ wpm=',self.WPM,'\tevt set')
             self.P.keyer_device.nano_write(msg)
-            self.evt.set()           # Signal to other processes that we've went the message
+            self.evt.set()           # Signal to other processes that we've sent the message
             return
         
         self.stop   = False
         txt2=''
         for ch in msg:
-            #print('ch=',ch)
+            #print('\tch=',ch,flush=True)
 
             self.stop = self.stop or P.Stopper.isSet()
             if self.stop:
@@ -339,6 +350,7 @@ class Keyer():
                 self.Cmd=[]
 
             elif ch==']':
+                
                 # End of a Udp command
                 self.Udp=False
                 cmd2=''.join(self.Cmd)
@@ -382,9 +394,10 @@ class Keyer():
 
                 elif cmd2[:3]=="LOG":
                     # log the qso
-                    print('SEND_MSG: Logging ...')
-                    self.evt.set()
+                    print('SEND_MSG: Logging - evt set ...',flush=True)
+                    self.evt2.set()
                     self.P.gui.log_qso()
+                    print('SEND_MSG: ... Done Logging',flush=True)
 
                 elif cmd2=="SERIAL":
                     # Substitute SERIAL NUMBER OUT
@@ -534,7 +547,7 @@ class Keyer():
                     txt2+=ch
 
         # Signal to other processes that we've went the message
-        #print('SEND_MSG: Setting evt...')
+        print('SEND_MSG: Setting evt...',flush=True)
         self.evt.set()
         if self.P.DIGI and len(txt2.strip())>0:
             print('SEND_MSG: sending txt2=',txt2,'to fldigi ... len=',len(txt2.strip()))
