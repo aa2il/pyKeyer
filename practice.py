@@ -232,6 +232,17 @@ class CODE_PRACTICE():
                 sys.exit(0)
             print('PRACTICE_QSO: txt3=',txt3)
 
+        # Fix-up exchange
+        EXCH_OUT=MY_EXCH.copy()
+        for i in range(len(MY_EXCH)):
+            if 'SERIAL' in EXCH_OUT[i]:
+                while P.MY_CNTR == self.last_cntr:
+                    print('\tWaiting for counter update ...',P.MY_CNTR,self.last_cntr)
+                    time.sleep(0.1)
+                self.last_cntr = P.MY_CNTR
+                EXCH_OUT[i] = str( P.MY_CNTR )
+                #EXCH_OUT[i] = P.gui.get_counter()
+            
         # Send a call
         while not done:
 
@@ -243,20 +254,8 @@ class CODE_PRACTICE():
                 P.keyer_device.nano_write(txt1)
             if P.SIDETONE:
                 P.osc.send_cw(txt1,keyer.WPM,1,True)
-
             lock.release()
 
-            # Fix-up exchange
-            EXCH_OUT=MY_EXCH.copy()
-            for i in range(len(MY_EXCH)):
-                if 'SERIAL' in EXCH_OUT[i]:
-                    while P.MY_CNTR == self.last_cntr:
-                        print('\tWaiting for counter update ...')
-                        time.sleep(0.1)
-                    self.last_cntr = P.MY_CNTR
-                    EXCH_OUT[i] = str( self.last_cntr )
-                    #EXCH_OUT[i] = P.gui.get_counter()
-                    
             # Wait for op to answer
             Done=False
             if DEBUG:
@@ -336,8 +335,10 @@ class CODE_PRACTICE():
             while not Done:
                 #logged = len(P.nano_txt)>0 and (P.OP_STATE & 64)
                 #print('--- LOOGED= ---',logged)
-                if self.check_nano_txt2(['73']):
-                    print('--- GOT 73 ---')
+                if self.check_nano_txt2(['73' ]) or \
+                   self.check_nano_txt2(['GL']) or \
+                   self.check_nano_txt2(['EE']):
+                    print('--- GOT 73/GL/EE ---')
                     P.OP_STATE |= 4
                     P.nano_txt=''
                 elif self.check_nano_txt2(['?']):

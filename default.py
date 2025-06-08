@@ -170,10 +170,10 @@ class DEFAULT_KEYING():
                                        'NHQP','NJQP','NMQP','NYQP','OHQP',
                                        'OKQP','SCQP','SDQP','TNQP','TXQP',
                                        'VTQP','WAQP','WVQP',
-                                       'BCQP','ONQP','QCQP',
-                                       'W1QP','W7QP','CPQP']:
+                                       'BCQP','ONQP','QCQP', 
+                                       'W1QP','W7QP','CPQP','ACQP']:
 
-                # W1 = New England, W7=7QP, CP=CA Prairies (central provinces)
+                # W1 = New England, W7=7QP, CP=CA Prairies (central provinces), AC=Atlantic CA Provinces
 
                 # RST + State
                 LAB1  = 'RST'

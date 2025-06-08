@@ -69,7 +69,7 @@ set AGGRESSIVE="-aggressive"
 set CONTEST="paddling"
 set CONTEST="cwt"
 set CONTEST="sst"
-set CONTEST="mst"
+#set CONTEST="mst"
 #set CONTEST="sprint"
 #set CONTEST="foc"
 
@@ -184,14 +184,16 @@ else if( $CONTEST == "sprint" )then
 # Settings for K1USN slow speed tests
 else if( $CONTEST == "sst" )then
     set WPM=20
-    set HINTS="-adjust -lock"
+    set HINTS="-lock"
+    #set HINTS="-adjust -lock"
     #set HINTS="-adjust -autofill"
     #set HINTS="-use_log_hist -autofill -nrows 1"
 
 # Settings for ICWC Medium speed tests
 else if( $CONTEST == "mst" )then
     set WPM=25
-    set HINTS="-adjust"
+    set HINTS="-lock"
+    #set HINTS="-adjust"
 
 # Settings for NCCC CW Sprints
 else if( $CONTEST == "sprint" )then

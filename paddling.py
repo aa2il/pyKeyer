@@ -88,12 +88,13 @@ class PADDLING_GUI():
         self.item=''
         self.response=''
         P.HEADCOPY = False
+        self.STRICT_MODE = True
+        self.CASUAL_MODE = False
         
         self.dxs=[]
         self.ntries=1
         self.down=True
         self.last_txt=None
-        self.CASUAL_MODE=False
         if not P.gui:
             self.STAND_ALONE=True
         else:
@@ -117,8 +118,11 @@ class PADDLING_GUI():
             self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
             self.status_bar2 = self.splash.status_bar
             self.status_bar2.setText("Howdy Ho!!!!! Creating GUI ...")
+            P.root=self.root
+            self.sock=None
         else:
             self.splash  = None
+            self.rig = P.gui.rig        
         
         # Read list of Panagrams
         self.panagrams = read_text_file('Panagrams.txt',KEEP_BLANKS=False)
@@ -136,12 +140,14 @@ class PADDLING_GUI():
             sys.exit(0)
         
         # Read lists of Quotes and Jokes
-        self.quotes = read_text_file('Quotes.txt',KEEP_BLANKS=False)
-        self.jokes  = read_text_file('Jokes.txt',KEEP_BLANKS=False)
+        self.quotes = read_text_file('Quotes.txt',KEEP_BLANKS=False,
+                                      KEEP_COMMENTS=False)
+        self.jokes  = read_text_file('Jokes.txt',KEEP_BLANKS=False,
+                                      KEEP_COMMENTS=False)
 
         # Proverbs
         txt=read_text_file('Proverbs.txt',KEEP_BLANKS=False)
-        self.proverbs = self.cleanup(txt)
+        self.proverbs = self.cleanup(txt,SIMPLE=False)
         #print(self.proverbs)
         #print(self.proverbs[0])
         #print(self.proverbs[-1])
@@ -155,8 +161,12 @@ class PADDLING_GUI():
         # Read words we stumble with
         self.Stumble = read_text_file('Stumble.txt',KEEP_BLANKS=False)
 
-        # Read Book
+        # Read a Book
         self.Book = read_text_file('Book.txt',KEEP_BLANKS=False)
+
+        # Read list of "squeezables"
+        self.Squeeze = read_text_file('Squeeze.txt',KEEP_BLANKS=False,
+                                      KEEP_COMMENTS=False)
 
         # Load fonts we want to use
         if sys.version_info[0]==3:
@@ -210,24 +220,8 @@ class PADDLING_GUI():
             row+=5
             #self.win.geometry('1700x340+100+10')  
 
-        # Radio button group to select type of practice
-        self.Selection = IntVar(value=0)
-        col=0
-        self.isst=0
-        # 'Special Chars', 'Stumble',
-        self.prac_group=['Panagrams','Call Signs','Letters','Letters+Numbers',\
-                         'All Chars','QSO','Book',\
-                         'Sprint','SST','Quotes','Jokes','Proverbs']
-        for itype in self.prac_group:
-            button = Radiobutton(self.win, text=itype,
-                                 variable=self.Selection,
-                                 value=col,command=self.NewItem)
-            button.grid(row=row,column=col,sticky=E+W)
-            col+=1
-        Grid.rowconfigure(self.win, row, weight=0,minsize=30)
-
         # Spin box to control paddle keying speed (WPM)
-        row+=1
+        #row+=1
         col=0
         self.WPM_TXT = StringVar()
         Label(self.win, text='Paddles:').grid(row=row,column=col,sticky=E+W)
@@ -243,7 +237,7 @@ class PADDLING_GUI():
         else:
             self.WPM_TXT.set(self.P.PADDLE_WPM)
 
-        # Slider to control rig monitor level (i.e. sidetone volume)
+        # Slider to control rig monitor (sidetone) level
         col+=2
         Label(self.win, text='Monitor:').grid(row=row,column=col,sticky=E+W)
         self.Slider2 = Scale(self.win,
@@ -252,13 +246,40 @@ class PADDLING_GUI():
                        length=300,       
                        command=self.SetMonitorLevel )
         #label="Monitor Level",       
-        self.Slider2.grid(row=row,column=col+1,columnspan=4,sticky=E+W)
+        self.Slider2.grid(row=row,column=col+1,columnspan=2,sticky=E+W)
         self.SetMonitorLevel()
         Grid.rowconfigure(self.win, row, weight=0,minsize=30)
 
-        # Buttons for Previous ...
+        # Slider to control computer sidetone level
+        col+=7
+        Label(self.win, text='Audio:').grid(row=row,column=col,sticky=E+W)
+        self.Slider3 = Scale(self.win,
+                       from_=0, to=100,
+                       orient=HORIZONTAL,
+                       length=300,       
+                       command=self.SetVolume )
+        self.Slider3.grid(row=row,column=col+1,columnspan=2,sticky=E+W)
+        self.SetVolume()
+        Grid.rowconfigure(self.win, row, weight=0,minsize=30)
+
+        # Set up a spin box to control select text drill group
         row+=1
         col=0
+        self.prac_groups=['Panagrams','Jokes','Quotes','Proverbs','Book',
+                          'Call Signs','Letters','Letters+Numbers',
+                          'Special Chars','All Chars','Squeeze',
+                          'Stumble','QSO','Sprint','SST']
+        self.GROUP_TXT = StringVar()
+        Label(self.win, text='Drill Group:').grid(row=row,column=col,sticky=E+W)
+        SB = ttk.OptionMenu(self.win, 
+                            self.GROUP_TXT, 
+                            self.prac_groups[0],
+                            *self.prac_groups,
+                            command=self.NewItem)
+        SB.grid(row=row,column=col+1,columnspan=1,sticky=E+W)
+
+        # Buttons for Previous ...
+        col+=3
         Button(self.win, text="Previous",command=self.PrevItem) \
             .grid(row=row,column=col,sticky=E+W)
 
@@ -267,55 +288,8 @@ class PADDLING_GUI():
         Button(self.win, text="Next",command=self.NextItem) \
             .grid(row=row,column=col,sticky=E+W)
 
-        # ... and to toggle STRICT Mode ...
-        col+=1
-        self.StrictBtn=Button(self.win, text="Strict",command=self.toggle_strict)
-        self.StrictBtn.grid(row=row,column=col,sticky=E+W)
-        self.toggle_strict(1)
-
-        # ... and to toggle CASUAL Mode ...
-        col+=1
-        self.CasualBtn=Button(self.win, text="Casual",command=self.toggle_casual)
-        self.CasualBtn.grid(row=row,column=col,sticky=E+W)
-        self.toggle_casual(0)
-
-        # Button to bring up rig/keyer control ...
-        col+=1
-        if self.STAND_ALONE:
-            P.root=self.root
-            self.sock=None
-            #self.keyer_ctrl = KEYER_CONTROL(P)
-            #self.RigBtn=Button(self.win, text="Keyer Ctrl",command=self.keyer_ctrl.show)
-            #self.RigBtn.grid(row=row,column=col,sticky=E+W)
-        else:
-            self.rig = P.gui.rig        
-            #self.keyer_ctrl = P.gui.keyer_ctrl
-
-        # ... and to Button Quit
-        col=NCOLS-1
-        Button(self.win, text="Quit",command=self.Quit) \
-            .grid(row=row,column=col,sticky=E+W)
-
-        # Entry boxes for mock QSO
-        """
-        if self.STAND_ALONE:
-            col=5
-            self.Call = Entry(self.root,font=self.font1,justify='center')
-            self.Call.grid(row=row,column=col,sticky=E+W)
-            self.Name = Entry(self.root,font=self.font1,justify='center')
-            self.Name.grid(row=row,column=col+1,sticky=E+W)
-            self.Rst = Entry(self.root,font=self.font1,justify='center')
-            self.Rst.grid(row=row,column=col+2,sticky=E+W)
-        """
-        
-        # Button to play text through the keyer
-        col=NCOLS-4
-        self.PlayBtn=Button(self.win, text="Play")  # ,command=self.PlayText)
-        self.PlayBtn.grid(row=row,column=col,sticky=E+W)
-        self.PlayBtn.bind("<Button>", self.PlayCB)
-
         # Entry box to hold levenstien distance
-        col+=1
+        col+=2
         lab = Label(self.win, text="Current",font=self.font1)
         lab.grid(row=row-1,column=col,sticky=E+W)
         self.LevDx = Entry(self.root,font=self.font1,\
@@ -331,6 +305,22 @@ class PADDLING_GUI():
         self.Prior.grid(row=row,column=col,sticky=E+W)
         Grid.rowconfigure(self.win, row, weight=0,minsize=30)
 
+        # Button for HeadCopy mode
+        col+=2
+        self.HeadCopyBtn=Button(self.win, text="Head Copy",command=self.Toggle_HeadCopy)
+        self.HeadCopyBtn.grid(row=row,column=col,sticky=E+W)
+
+        # Button for Computer Sidetone
+        col+=1
+        self.SideToneBtn=Button(self.win, text="Side Tone",command=self.Toggle_SideTone)
+        self.SideToneBtn.grid(row=row,column=col,sticky=E+W)
+
+        # Button to play text through the keyer
+        col=NCOLS-1
+        self.PlayBtn=Button(self.win, text="Play")  # ,command=self.PlayText)
+        self.PlayBtn.grid(row=row,column=col,sticky=E+W)
+        self.PlayBtn.bind("<Button>", self.PlayCB)
+        
         # Make sure all columns are adjusted when we resize the width of the window
         for i in range(NCOLS):
             Grid.columnconfigure(self.win, i, weight=1,uniform='twelve')
@@ -375,7 +365,7 @@ class PADDLING_GUI():
             
     ################################################################################
 
-    def cleanup(self,txt):
+    def cleanup(self,txt,SIMPLE=True):
         txt2=[]
         lineout=[]
         for line in txt:
@@ -383,6 +373,10 @@ class PADDLING_GUI():
             if len(line)==0 or line[0]=='#':
                 #print('\tskipped')
                 continue
+            elif SIMPLE:
+                txt2.append(line)
+                continue
+                
             tt=line.split(' ')
             if tt[0].isnumeric():
                 if len(lineout)>0:
@@ -392,7 +386,7 @@ class PADDLING_GUI():
             else:
                 lineout+=' '+' '.join(tt)
 
-        if len(lineout)>0:
+        if not SIMPLE and len(lineout)>0:
             txt2.append(lineout)
             #print('\t',lineout)
             
@@ -429,7 +423,15 @@ class PADDLING_GUI():
             #self.hide()
             P.gui.Toggle_Paddling_Win()
 
-    # Callback for monitor level setter
+    # Callback for monitor level slider
+    def SetVolume(self,level=None):
+        print('Set Volume: Level=',level,type(level))
+        if level==None:
+            level=int( 100*self.P.SideTone.player.vol )
+            self.Slider3.set(level)
+        self.P.SideTone.player.set_volume(0.01*int(level))
+        
+    # Callback for monitor level slider
     def SetMonitorLevel(self,level=None):
         if not self.P.sock:
             print('SET MONITOR LEVEL - No connection to rig - nothing to see here')
@@ -467,8 +469,9 @@ class PADDLING_GUI():
         # Get a new panagram, call, etc.
         if self.responded:
             print('PADDLING->SetWpm responded=',self.responded)
-            Selection=self.Selection.get()
-            if Selection!=7 or RANDOM_QSO_MODE:
+            #Selection=self.Selection.get()
+            Selection=self.GROUP_TXT.get()
+            if Selection!='QSO' or RANDOM_QSO_MODE:
                 self.NewItem()
         
     # Callback when a key is pressed 
@@ -570,14 +573,30 @@ class PADDLING_GUI():
         #count = Counter( txt.upper() )
         #print(count)
         #return False
-    
+
+    # Callback to select which audio device to play sidetone on
+    def SelectAudioDevice(self,val=None):
+        P=self.P
+        Selection=self.DEVS_TXT.get()
+        print("SELECT AUDIO DEV: Your selection=",Selection,'\tval=',val)
+        print('\tCurrent player device=',P.SideTone.player.device_name)
+        if val==None:
+            self.DEVS_TXT.set( P.SideTone.player.device_name )
+        else:
+            P.SideTone.player.set_device(val)
+        
             
     # Callback to push a new item into entry box
-    def NewItem(self):
+    def NewItem(self,val=None):
         P=self.P
-        Selection=self.prac_group[ self.Selection.get() ]
-        #print("NEW ITEM - Your selection=",Selection)
+        if val==None:
+            Selection=self.GROUP_TXT.get()
+            #Selection=self.prac_groups[ self.Selection.get() ]
+        else:
+            Selection=val
+        print("NEW ITEM - Your selection=",Selection,'\tval=',val)
         self.responded=False
+        self.last_txt = ''
 
         match Selection:
             case 'Panagrams':
@@ -638,19 +657,6 @@ class PADDLING_GUI():
                         txt += items[i]
                     txt += ' '
                 #print('letters=',txt)
-            
-            case 'Stumble':
-            
-                # Words I stumble on
-                n=len(self.Stumble)
-                #print('There are',n,'stumble-bumblers loaded')
-                Done=False
-                while not Done:
-                    i = random.randint(0,n-1)
-                    txt = self.Stumble[i]
-                    Done = txt!=self.last_txt
-                self.last_txt=txt
-                #print('Stumble=',txt)
 
             case 'QSO':
             
@@ -733,10 +739,14 @@ class PADDLING_GUI():
                     txt=' GA '+self.name1+' 73EE'
                     self.isst=0
 
-            case 'Quotes' | 'Jokes' | 'Proverbs':
+            case 'Stumble' | 'Squeeze' | 'Quotes' | 'Jokes' | 'Proverbs':
             
-                # Jokes or Famous Quotes
+                # Jokes, Famous Quotes, Proverbs, Squeezables, Words I stumble on
                 match Selection:
+                    case 'Stumble':
+                        items=self.Stumble
+                    case 'Squeeze':
+                        items=self.Squeeze
                     case 'Quotes':
                         items=self.quotes
                     case 'Jokes':
@@ -746,8 +756,15 @@ class PADDLING_GUI():
                         
                 n=len(items)
                 print('There are',n,' ',Selection,' loaded')
-                i = random.randint(0,n-1)
-                txt = items[i]
+                Done=False
+                while not Done:
+                    if Selection=='Squeeze' and len(self.last_txt)==0:
+                        i=0
+                    else:
+                        i = random.randint(0,n-1)
+                    txt = items[i]
+                    Done = txt!=self.last_txt
+                self.last_txt=txt
                 
             case _:
             
@@ -755,7 +772,10 @@ class PADDLING_GUI():
                 txt='*** ERROR *** ERROR *** ERROR ***'
             
         txt=txt.strip()
-        if not self.P.HEADCOPY:
+        if self.P.HEADCOPY:
+            self.txt.delete(1.0, END)
+            self.txt.insert(1.0,'Head Copy Practice ...')
+        else:
             self.txt.delete(1.0, END)
             self.txt.insert(1.0,txt)
         self.stack.append(txt)
@@ -824,30 +844,9 @@ class PADDLING_GUI():
 ################################################################################
 
     # Callback to toggle STRICT_MODE
-    def toggle_strict(self,onoff=None):
-        if onoff==None:
-            self.STRICT_MODE = not self.STRICT_MODE
-        else:
-            self.STRICT_MODE = onoff>0
-        if self.STRICT_MODE:
-            self.StrictBtn.configure(relief='sunken')
-            if self.CASUAL_MODE:
-                self.toggle_casual()
-        else:
-            self.StrictBtn.configure(relief='raised')
-        
-    # Callback to toggle CASUAL_MODE
-    def toggle_casual(self,onoff=None):
-        if onoff==None:
-            self.CASUAL_MODE = not self.CASUAL_MODE
-        else:
-            self.CASUAL_MODE = onoff>0
-        if self.CASUAL_MODE:
-            self.CasualBtn.configure(relief='sunken')
-            if self.STRICT_MODE:
-                self.toggle_strict()
-        else:
-            self.CasualBtn.configure(relief='raised')
+    def toggle_strict(self):
+        self.STRICT_MODE = not self.STRICT_MODE
+        self.CASUAL_MODE = not self.STRICT_MODE
         
     # Routine to check response
     def check_response(self,txt):
@@ -938,25 +937,29 @@ class PADDLING_GUI():
 
     # Callback to toggle visiblity of text box 1
     def Toggle_HeadCopy(self):
-        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Toggling Head Copy ...",self.HeadCopy)
+        print("Toggling Head Copy ...",self.P.HEADCOPY)
         self.P.HEADCOPY = not self.P.HEADCOPY
         if self.P.HEADCOPY:
+            self.HeadCopyBtn.configure(relief='sunken')
             self.txt.delete(1.0, END)
             self.txt.insert(1.0,'Head Copy Practice ...')
         else:
             self.txt.delete(1.0, END)
             self.txt.insert(1.0,self.item)
+            self.HeadCopyBtn.configure(relief='raised')
 
     # Callback to turn sidetone on and off
     def Toggle_SideTone(self):
         print("Toggling Sidetone ...")
         self.P.SIDETONE = not self.P.SIDETONE
         if self.P.SIDETONE:
+            self.SideToneBtn.configure(relief='sunken')
             if self.P.SideTone.started:
                 self.P.SideTone.resume()
             else:
                 self.P.SideTone.start()
         else:
+            self.SideToneBtn.configure(relief='raised')
             if self.P.SideTone.started and self.P.SideTone.enabled:
                 self.P.SideTone.pause()            
         
@@ -975,37 +978,40 @@ class PADDLING_GUI():
         # Put pull-down menu in first column
         row=0
         col=0
-        menubar = Menubutton(toolbar,text='File',relief='flat')
+        menubar = Menubutton(toolbar,text='Options',relief='flat')
         menubar.grid(row=row,column=col,sticky=E+W)
             
         Menu1 = Menu(menubar, tearoff=0)
         Menu1.add_command(label="Settings ...", command=self.SettingsWin.show)
         Menu1.add_command(label="Keyer Control ...", command=self.keyer_ctrl.show)
 
-        #Menu1.add_command(label="Head Copy ...", command=self.Toggle_HeadCopy)
-        self.HeadCopy = BooleanVar(value=self.P.HEADCOPY)
+        # Submenu to selct audio output device
+        DeviceMenu = Menu(menubar, tearoff=0)
+        self.DEVS_TXT = StringVar()
+        self.devs = self.P.SideTone.player.playback_devices
+        for dev in self.devs:
+            DeviceMenu.add_radiobutton(label=dev,
+                                    variable=self.DEVS_TXT,
+                                    value=dev,
+                                    command=self.SelectAudioDevice)
+        Menu1.add_cascade(menu=DeviceMenu,label='Audio Device')        
+        self.SelectAudioDevice()
+
+        self.Strict = BooleanVar(value=self.STRICT_MODE)
         Menu1.add_checkbutton(
-            label="Head Copy",
+            label="Strict",
             underline=0,
-            variable=self.HeadCopy,
-            command=self.Toggle_HeadCopy
+            variable=self.Strict,
+            command=self.toggle_strict
         )
         
-        self.SideTone = BooleanVar(value=self.P.SIDETONE)
-        Menu1.add_checkbutton(
-            label="Side Tone",
-            underline=0,
-            variable=self.SideTone,
-            command=self.Toggle_SideTone
-        )
-                
         Menu1.add_separator()
         Menu1.add_command(label="Exit", command=self.Quit)
 
         menubar.menu =  Menu1
         menubar["menu"]= menubar.menu  
 
-        # Add boxes to hold info for QSO practice
+        # Add boxes to hold info for mock QSO practice
         if self.STAND_ALONE:
             col=4
             self.Call = Entry(toolbar,font=self.font1,justify='center')
@@ -1034,7 +1040,7 @@ if __name__ == '__main__':
     from dx import load_cty_info
     from sidetone import *
 
-    VERSION='1.1'
+    VERSION='1.2'
     
     print("\n\n***********************************************************************************")
     print("\nStarting Paddling Practice v"+VERSION+" ...")

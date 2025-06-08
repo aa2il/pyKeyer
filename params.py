@@ -398,7 +398,7 @@ class PARAMS:
         self.PTT           = False
 
         self.STATE_LIST=args.state
-        self.STATE_QPs = ['BCQP','ONQP','QCQP','W1QP','W7QP','CPQP']
+        self.STATE_QPs = ['BCQP','ONQP','QCQP','W1QP','W7QP','CPQP','ACQP']
         for state in STATES:
             self.STATE_QPs.append(state+'QP')
 

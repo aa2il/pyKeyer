@@ -72,7 +72,7 @@ The desire to reach for the stars is ambitious. The desire to reach hearts is wi
 The way to get started is to quit talking and begin doing. Walt Disney
 If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success. James Cameron
 The holy passion of friendship is of so sweet and steady and loyal and enduring a nature that it will last through a whole lifetime, if not asked to lend money. Mark Twain
-Your time is limited, so don't waste it living someone else's life. Don't be trapped by dogma  which is living with the results of other people's thinking. Steve Jobs
+Your time is limited, so don't waste it living someone else's life. Don't be trapped by dogma which is living with the results of other people's thinking. Steve Jobs
 Success is not final, failure is not fatal. It is the courage to continue that counts. Winston Churchill
 Nothing in life is to be feared, it is only to be understood. Now is the time to understand more, so that we may fear less. Marie Curie
 The world is extremely interesting to a joyful soul. Alexandra Stoddard
@@ -139,7 +139,7 @@ The very essence of leadership is that you have to have a vision. It's got to be
 When Paul Allen and I started Microsoft over 30 years ago, we had big dreams about software. Bill Gates
 The test of leadership is not to put greatness into humanity, but to elicit it, for the greatness is already there. James Buchanan
 Good people are good because they've come to wisdom through failure. William Saroyan
-The only true wisdom is in knowing you know nothing. Socrates
+The only true wisdom is in knowing that you know nothing. Socrates
 Wisdom is a good purchase, though we pay dearly for it. Dutch Proverb
 We are not what we know but what we are willing to learn. Mary Catherine Bateson
 Yesterday, I was clever, so I wanted to change the world. Today I am wise, so I am changing myself. Rumi

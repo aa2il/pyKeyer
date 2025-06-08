@@ -236,7 +236,7 @@ class SIDETONE_OSC():
                         
     def abort(self):
         self.Stopper.set()
-        self.rb.clear()
+        self.player.stop()
 
     def play(self):
         x = np.concatenate( (self.dit,self.space,self.dah,self.space) )
