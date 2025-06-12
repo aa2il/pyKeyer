@@ -244,7 +244,7 @@ class KEYING_DEVICE():
         delay=1
         if self.protocol=='NANO_IO':
             self.delim='~'
-            self.wait4it(.1,.1,10)
+            self.wait4it(1,1,10)
             self.send_command('C')
             self.send_command('A')
             self.send_command('?')
@@ -306,7 +306,7 @@ class KEYING_DEVICE():
                 self.send_command('?')
                 time.sleep(t2)
                 txt=self.nano_read()
-                print(ntries,txt)
+                print('\t\ttxt=',txt)
                 if 'nanoIO ver' in txt:
                     print('WAIT4IT: Found NANO_IO keying device - yippee!')
                     break

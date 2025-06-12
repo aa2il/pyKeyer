@@ -67,7 +67,7 @@ class DEFAULT_KEYING():
         if HISTORY==None:
             P.HISTORY = P.HIST_DIR+'master.csv'
         elif HISTORY:
-            P.HISTORY = P.HIST_DIR+HISTORY
+            P.HISTORY = P.HIST_DIR2+HISTORY
         else:
             P.HISTORY = None
         P.HISTORY=os.path.expanduser(P.HISTORY)

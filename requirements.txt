@@ -16,7 +16,7 @@ xlrd
 unidecode
 pyhamtools
 pyautogui
-pyaudio
+pyaudio        # If this is a problem, try   sudo apt install portaudio19-dev
 pyudev
 psutil
 

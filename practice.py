@@ -87,9 +87,10 @@ class CODE_PRACTICE():
         self.Ncalls = len(self.calls)
         print('There are',self.Ncalls,'call signs to play with.')
         if P.PRACTICE_MODE and self.Ncalls==0:
-            print('CODE_PRACTICE INIT: Need some calls to play with!!!!!')
+            print('\nCODE_PRACTICE INIT: **** Need some calls to play with!!!!! **** Giving Up !!!!! ****\n')
             print('History2=',P.HISTORY2)
             P.SHUTDOWN=True
+            P.Stopper.set()
             sys.exit(0)
         if P.CA_ONLY:
             print('CA ONLY - B4:',self.Ncalls)

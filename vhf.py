@@ -25,6 +25,7 @@ import sys
 from default import DEFAULT_KEYING
 from utilities import error_trap
 from latlon2maiden import distance_maidenhead
+from scoring import VHF_SCORING
 
 ############################################################################################
 
@@ -40,14 +41,8 @@ class VHF_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID=contest_name
         self.contest_duration = 5*8
         P.MAX_AGE = self.contest_duration *60
-        print('VHF KEYING: ID=',P.CONTEST_ID)
+        print('VHF KEYING: CONTEST_ID=',P.CONTEST_ID)
 
-        # On-the-fly scoring
-        self.total_points = 0
-        self.max_km = 0
-        self.total_km = 0
-        self.total_score = 0
-        
         self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
         grids  = []
         self.NQSOS = OrderedDict()
@@ -61,10 +56,13 @@ class VHF_KEYING(DEFAULT_KEYING):
         self.grids = OrderedDict(grids)
         self.MY_GRID = P.SETTINGS['MY_GRID'][:4]
         self.all_grids=set([])
-        self.init_scoring()
 
         self.NAME = ''
         self.NUM  = ''
+
+        # On-the-fly scoring
+        P.SCORING    = VHF_SCORING(P,None,False)
+
         
     # Routine to set macros for this contest
     def macros(self):

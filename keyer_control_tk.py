@@ -143,36 +143,47 @@ class KEYER_CONTROL():
     def SelectIambic(self,iopt=None):
         print('\nSELECT IAMBIC: opt=',iopt,'\twk mode=',hex(self.winkey_mode))
         if iopt==1:
-            m = (self.winkey_mode & 0x30) >> 4
-            print('\tm=',hex(m))
+            if self.P.keyer_device.protocol=='WINKEYER':
+                m = (self.winkey_mode & 0x30) >> 4
+                print('\tm=',hex(m))
+            elif self.P.keyer_device.protocol=='NANO_IO':
+                m = ord('A')
             self.iambic.set( m )
         else:
             m = self.iambic.get()
             print('\tm=',m)
-            self.winkey_mode = (self.winkey_mode & ~0x30) | (m<<4)
+            if self.P.keyer_device.protocol=='WINKEYER':
+                self.winkey_mode = (self.winkey_mode & ~0x30) | (m<<4)
             
-        print('\twk mode=',hex(self.winkey_mode))
+        print('\twinkey mode=',hex(self.winkey_mode))
         if self.P.keyer_device:
-            self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
-        self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
+            if self.P.keyer_device.protocol=='WINKEYER':
+                self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
+                self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
+            elif self.P.keyer_device.protocol=='NANO_IO':
+                self.P.keyer_device.send_command('~'+chr(m))
+                self.status.set( 'Nano IO Mode='+chr(m) )
 
     def ToggleButton(self,iopt,i,mask):
         #print('\nTOGGLE BUTTON: opt=',iopt,'\ti=',i,'\tmask=',mask)
         if iopt==1:
-            m = self.winkey_mode & mask
-            #print('\tm=',hex(m))
-            self.Flags[i] = m>0
+            if self.P.keyer_device.protocol=='WINKEYER':
+                m = self.winkey_mode & mask
+                #print('\tm=',hex(m))
+                self.Flags[i] = m>0
         else:
-            self.Flags[i]  = not self.Flags[i]
-            if self.Flags[i]:
-                self.winkey_mode = self.winkey_mode | mask
-            else:
-                self.winkey_mode = self.winkey_mode & ~mask
+            if self.P.keyer_device.protocol=='WINKEYER':
+                self.Flags[i]  = not self.Flags[i]
+                if self.Flags[i]:
+                    self.winkey_mode = self.winkey_mode | mask
+                else:
+                    self.winkey_mode = self.winkey_mode & ~mask
                 
         #print('\t',self.Flags[i],'\twk mode=',hex(self.winkey_mode))
         if self.P.keyer_device:
-            self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
-        self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
+            if self.P.keyer_device.protocol=='WINKEYER':
+                self.P.keyer_device.send_command(chr(0x0E)+chr(self.winkey_mode))       
+                self.status.set( 'WinKeyer Mode='+hex(self.winkey_mode) )
 
         if not self.Flags[i]:
             self.Buttons[i].configure(relief='raised')

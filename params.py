@@ -547,6 +547,7 @@ class PARAMS:
         if not os.path.isdir(self.HIST_DIR):
             fname=find_resource_file('master.csv')
             self.HIST_DIR=os.path.dirname(fname)+'/'
+        self.HIST_DIR2=os.path.dirname(self.HIST_DIR)+'/../history/data/'
         self.HISTORY = self.HIST_DIR+'master.csv'
         load_cty_info(DIR=DATA_DIR)
 
