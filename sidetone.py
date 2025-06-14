@@ -142,8 +142,16 @@ class SIDETONE_OSC():
             self.rb     = ring_buffer2('Audio0',BUFF_SIZE,PREVENT_OVERFLOW=False)
             self.player = AudioIO(None,int(self.FS),self.rb,None,'B',True)
 
-    #def change_freq():
-    #    self.gen_elements(self.WPM,1-self.nfrq)
+    def get_freq(self,n=None):
+        if n==None:
+            n=self.nfrq
+        return int( self.F0[n] )
+
+    def change_freq(self,fnew,n=None):
+        if n==None:
+            n=self.nfrq
+        self.F0[n] = fnew
+        self.gen_elements(self.WPM,n)
 
     # Signal generation 
     def gen_elements(self,WPM,nfrq):

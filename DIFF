@@ -60,7 +60,10 @@ endif
 #echo This part of the script is new so remove the exit if all is ok
 #exit
 
-rm -f DIFFS
+# A little bit of cleanup
+rm -f DIFFS snippets.txt spot_processing.log
+
+# Compare source files 
 echo OLD=$old
 foreach i (*.py AA2IL.adif sats.adif start* DIFF *.txt *.bat *.md dist/*.iss)
     echo $i

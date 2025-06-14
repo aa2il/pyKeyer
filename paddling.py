@@ -581,10 +581,33 @@ class PADDLING_GUI():
         print("SELECT AUDIO DEV: Your selection=",Selection,'\tval=',val)
         print('\tCurrent player device=',P.SideTone.player.device_name)
         if val==None:
+            # Set device to gui selection
+            P.SideTone.player.set_device(Selection)
+        elif val==-1:
+            # Get current device being used
             self.DEVS_TXT.set( P.SideTone.player.device_name )
         else:
-            P.SideTone.player.set_device(val)
-        
+            # Set device to specific device number
+            P.SideTone.player.set_device( self.devs[val] )
+            self.DEVS_TXT.set( P.SideTone.player.device_name )
+            
+    # Callback to select Side Tone Freq
+    def SelectSideToneFreq(self,val=None):
+        P=self.P
+        Selection=self.SideToneFreq.get()
+        print("SELECT SIDE TONE FREQ: Your selection=",Selection,'\tval=',val)
+        if val==None:
+            # Set tone to gui selection
+            P.SideTone.osc.change_freq(Selection)
+        elif val==-1:
+            # Get current freq used
+            f=P.SideTone.osc.get_freq()
+            print('\tf=',f)
+            self.SideToneFreq.set( f )
+        else:
+            # Set tone to specific value
+            P.SideTone.osc.change_freq(val)
+            self.SideToneFreq.set( val )
             
     # Callback to push a new item into entry box
     def NewItem(self,val=None):
@@ -995,8 +1018,21 @@ class PADDLING_GUI():
                                     value=dev,
                                     command=self.SelectAudioDevice)
         Menu1.add_cascade(menu=DeviceMenu,label='Audio Device')        
-        self.SelectAudioDevice()
+        self.SelectAudioDevice(-1)
 
+        # Submenu to select sidetone freq
+        ToneMenu = Menu(menubar, tearoff=0)
+        self.SideToneFreq = IntVar()
+        self.tones = range(400, 1100, 100)
+        for f in self.tones:
+            ToneMenu.add_radiobutton(label=str(f),
+                                     variable=self.SideToneFreq,
+                                     value=f,
+                                     command=self.SelectSideToneFreq)
+        Menu1.add_cascade(menu=ToneMenu,label='Side Tone Frequency')        
+        self.SelectSideToneFreq(700)
+
+        # Strict mode selector
         self.Strict = BooleanVar(value=self.STRICT_MODE)
         Menu1.add_checkbutton(
             label="Strict",
