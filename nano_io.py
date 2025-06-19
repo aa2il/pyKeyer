@@ -239,22 +239,23 @@ class KEYING_DEVICE():
             print('\tin_waiting=',self.ser.in_waiting,'\tout_waiting=',self.ser.out_waiting)
             Done=self.ser!=None
             
-        # Make sure its in CW & Iambic-A mode & show current settings
+        # Make sure its in CW & Iambic-A mode 
         print('Initial setup ...')
         delay=1
         if self.protocol=='NANO_IO':
             self.delim='~'
             self.wait4it(1,1,10)
-            self.send_command('C')
-            self.send_command('A')
-            self.send_command('?')
+            self.send_command('C')          # CW
+            self.send_command('A')          # Iambic A
+            self.send_command('X0')         # PTT must also be off
+            #self.send_command('?')          # Show current state
         elif self.protocol=='K3NG_IO':
             self.delim='\\'
             self.wait4it(2,.1,10)
             self.send_command('R')          # Regular speed mode
             self.send_command('A')          # Iambic A
             self.send_command('Y5')         # Contest word spacing
-            self.send_command('S')          # Show status
+            #self.send_command('S')          # Show status
         elif self.protocol=='WINKEYER':
             self.delim=''
             ntries = self.wait4it(4,delay,10)

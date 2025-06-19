@@ -140,6 +140,7 @@ class SIDETONE_OSC():
             self.player=pgPLAYER(self.FS)
         else:
             self.rb     = ring_buffer2('Audio0',BUFF_SIZE,PREVENT_OVERFLOW=False)
+            #self.rb2    = dsp.ring_buffer2('Audio1',BUFF_SIZE,PREVENT_OVERFLOW=False)         # For capture if we need it
             self.player = AudioIO(None,int(self.FS),self.rb,None,'B',True)
 
     def get_freq(self,n=None):
@@ -241,7 +242,8 @@ class SIDETONE_OSC():
         # Play the message
         if AUDIO_ACTIVE:
             self.player.push(x)
-                        
+        #self.rb2.push(x)                            # Sidetone for capture
+                            
     def abort(self):
         self.Stopper.set()
         self.player.stop()

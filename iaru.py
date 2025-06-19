@@ -23,6 +23,8 @@ from tkinter import END,E,W
 from collections import OrderedDict
 from default import DEFAULT_KEYING
 from dx import Station
+from utilities import error_trap
+from scoring import IARU_HF_SCORING
 
 ############################################################################################
 
@@ -37,6 +39,9 @@ class IARU_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,'IARU-HF')
         P.CONTEST_ID='IARU-HF'
 
+        # On-the-fly scoring - NEW!
+        P.SCORING    = IARU_HF_SCORING(P,False)
+        
     # Routient to set macros for this contest
     def macros(self):
 

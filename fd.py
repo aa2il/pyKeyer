@@ -26,6 +26,7 @@ from datetime import datetime
 from rig_io import CONTEST_BANDS,ARRL_SECS
 import numpy as np
 from utilities import error_trap
+from scoring import FIELD_DAY_SCORING
 
 ############################################################################################
 
@@ -47,10 +48,7 @@ class FD_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID=EVENT+'-FIELD-DAY'
 
         # On-the-fly scoring - NEW!
-        self.nqsos=0
-        self.BANDS = CONTEST_BANDS
-        self.sec_cnt = np.zeros((len(ARRL_SECS),len(self.BANDS)),dtype=np.int32)
-        self.init_scoring()
+        P.SCORING    = FIELD_DAY_SCORING(P,False)
 
         
     # Routient to set macros for this contest
@@ -247,29 +245,3 @@ class FD_KEYING(DEFAULT_KEYING):
 
 
 
-    # On-the-fly scoring
-    def scoring(self,qso):
-        print("\nFD->SCORING: qso=",qso)
-        self.nqsos+=1        
-        call=qso['CALL']
-
-        band = qso["BAND"]
-        idx = self.BANDS.index(band)
-
-        try:
-            qth  = qso["QTH"].upper()
-            idx1 = ARRL_SECS.index(qth)
-        except:
-            self.P.gui.status_bar.setText('Unrecognized/invalid section!')
-            error_trap('FD->SCORING - Unrecognized/invalid section!')
-            return
-        self.sec_cnt[idx1,idx] = 1
-        
-        mults = 1    # np.sum( np.sum(self.sec_cnt,axis=0) )
-        score=self.nqsos * mults
-        print("SCORING: score=",score,self.nqsos,mults)
-
-        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
-        self.P.gui.status_bar.setText(txt)
-                

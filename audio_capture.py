@@ -74,7 +74,7 @@ class AUDIO_CAPTURE():
             P.AUDIO_DEVICE  = 'USB Audio CODEC'            # Rig sound card
             P.RIG_AUDIO_IDX = self.P.rec.list_input_devices(self.P.AUDIO_DEVICE)
             card='Rig'
-            P.SIDETONE=True
+            #P.SIDETONE=True              # Enable sidetone audio capture - problem child?
         if P.RIG_AUDIO_IDX==None:
             print('\nAUDIO CAPTURE - Cant find sound card!!!')
             sys.exit(0)

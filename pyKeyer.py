@@ -275,7 +275,6 @@ print('... Info for',len(P.calls),'calls were loaded.')
 # Actually create the GUI
 print('Constructing GUI ...')
 P.gui.construct_gui()
-#sys.exit(0)
 
 # Set up a thread for code practice
 if P.PRACTICE_MODE or True:
@@ -384,7 +383,7 @@ if os.path.isfile(FNAME):
 if P.SIDETONE:
     print('Starting Sidetone ...')
     if P.CAPTURE:
-        P.rec.rb2 = P.osc.rb2
+        #P.rec.rb2 = P.osc.rb2        # Sidetone audio capture
         P.rec.wavefile.setnchannels(P.rec.channels+1)
     P.SideTone.start()
 if P.CAPTURE:
