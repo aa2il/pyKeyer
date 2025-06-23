@@ -158,8 +158,8 @@ class CODE_PRACTICE():
         keyer = P.keyer
         
         if DEBUG:
-            print('PRACTICE_QSO: Waiting '+stage+'c for keyer ... set=',keyer.evt.isSet(),
-                  '\top_state=',P.OP_STATE,'\tdone=',done,'\trepeats=',repeats,flush=True)                  
+            print('PRACTICE_QSO: Waiting '+stage+'c for keyer ... evt set=',keyer.evt.isSet(),
+                  '\top_state=',P.OP_STATE,'\tto=',to,'\tdone=',done,'\trepeats=',repeats,flush=True)                  
         keyer.evt.wait(timeout=to) 
         keyer.evt.clear()
         if DEBUG:
@@ -353,11 +353,12 @@ class CODE_PRACTICE():
             if DEBUG:
                 print('PRACTICE_QSO: Waiting 3b - Got Answer - \top_state=',P.OP_STATE)
             if P.Stopper.isSet():
+                print('PRACTICE_QSO: Stopper set - bailing out!')
                 return
             done = P.OP_STATE & (4+32)
             P.OP_STATE &= ~(4+32)          # Clear TU
 
-            # Wait for handshake with keyer
+            # Wait for handshake with keyer - 3c & 3d
             self.keyer_handshake('3',to,done,repeats)
 
             if not done:

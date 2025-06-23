@@ -394,7 +394,7 @@ class Keyer():
 
                 elif cmd2[:3]=="LOG":
                     # log the qso
-                    print('SEND_MSG: Logging - evt set ...',flush=True)
+                    print('SEND_MSG: Logging - evt2 set ...',flush=True)
                     self.evt2.set()
                     self.P.gui.log_qso()
                     print('SEND_MSG: ... Done Logging',flush=True)

@@ -2388,14 +2388,14 @@ class GUI():
 
             # Make sure practice exec gets what it needs
             if self.P.PRACTICE_MODE:
-                print('GUI->LOG_QSO - PRACTICE MODE: Waiting for handshake ... EVT=',\
-                      self.keyer.evt.isSet(),\
+                print('GUI->LOG_QSO - PRACTICE MODE: Waiting for handshake ... EVT2=',\
+                      self.keyer.evt2.isSet(),\
                       '\nIf you want to log an actual contact, exit PRACTICE_MODE and try again',flush=True)
-                while self.keyer.evt.isSet():
-                    print('EVT:',self.keyer.evt.isSet(), '\tSTOP:',self.keyer.stop,flush=True )
+                while self.keyer.evt2.isSet():
+                    print('\tEVT2:',self.keyer.evt2.isSet(), '\tSTOP:',self.keyer.stop,flush=True )
                     time.sleep(1)
                 print('LOG_QSO: Got handshake ...',\
-                      self.keyer.evt.isSet(), self.keyer.stop, flush=True )
+                      '\tevt2 set=',self.keyer.evt2.isSet(),'\tstop=',self.keyer.stop,flush=True )
 
             # Clear fields
             self.prefill=False

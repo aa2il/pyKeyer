@@ -105,8 +105,8 @@ print('P.sock1=',P.sock1,P.sock1.rig_type,P.sock1.rig_type1,P.sock1.rig_type2)
 if P.connection2 != "NONE":
     print('\nPYKEYER: Opening connection to secondary rig - connection=',P.connection2,'\trig=',P.rig2,'...')
     P.sock2 = socket_io.open_rig_connection(P.connection2,0,P.PORT2,0,'KEYER',rig=P.rig2,force=P.FORCE)
-    if P.sock2.connection=='NONE':
-        P.sock2=None
+    #if P.sock2.connection=='NONE':
+    #    P.sock2=None
 else:
     P.sock2=None
 #print('P.sock2=',P.sock2,P.sock2.rig_type,P.sock2.rig_type1,P.sock2.rig_type2)
@@ -313,6 +313,7 @@ if P.WATCHDOG:
     P.monitor = WatchDog(P,1000)
 else:
     P.monitor = None
+#sys.exit(0)
 
 # Init rig to useful settings    
 if P.sock.active:
@@ -325,6 +326,12 @@ if P.sock.active:
     P.sock.set_vfo('A->B')
     #SetVFO(self,'A')
     #SetVFO(self,'A->B')
+    if P.sock.rig_type2=='IC9700':
+        if P.contest_name=='SATELLITES':
+            P.sock.sat_mode(1)
+        else:
+            P.sock.sat_mode(0)        
+    #sys,exit(0)
     
     # Set TX power
     P.sock.set_power(99)

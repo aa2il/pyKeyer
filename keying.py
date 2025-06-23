@@ -291,21 +291,30 @@ def open_keying_port(P,sock,rig_num):
             # but, in general, we'll use USB B in case we are using hamlib for rig control
             #print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
             try:
+                print('OPEN KEYING PORT: ICOM Rig =',sock.rig_type2,'...')
                 port,vid_pid=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
+                print('\tport=',port,'\tvid_pid=',vid_pid)
                 ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
-                print('OPEN KEYING PORT: Sock Init...')
+                print('\tser=',ser)
+
+                # Set full QSK, etc.
+                # This only works on DIRECT I/O for now since we no longer
+                # inhereit that as out base class
                 sock.init_keyer()
+
+                # For some reason, we need to clear the DTR and RTS lines
                 time.sleep(.1)
                 ser.setDTR(False)
                 ser.setRTS(False)  
                 time.sleep(1)
                 ser.setDTR(False)
-                ser.setRTS(False)  
+                ser.setRTS(False)
+                
             except: 
                 error_trap('KEYING->OPEN KEYING PORT')
-                print('\n*************************************')
-                print('Unable to open keying port for rig',rig_num)
-                print('*************************************')
+                print('\n*****************************************')
+                print('* Unable to open keying port for rig',rig_num,' *')
+                print('*****************************************')
                 ser=None
                 sys.exit(0)
         
