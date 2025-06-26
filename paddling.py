@@ -410,7 +410,6 @@ class PADDLING_GUI():
 
     # Callback to either hide or quit the paddling practice
     def Quit(self):
-        #print('PADDLING: Quitting ...')
         P=self.P
         if not P.gui:
             if P.keyer_device:
@@ -419,13 +418,12 @@ class PADDLING_GUI():
             print('PADDLING: Exiting ...')
             sys.exit(0)
         else:
-            #print('PADDLING: Hiding ...')
-            #self.hide()
+            print('PADDLING: Hiding ...')
             P.gui.Toggle_Paddling_Win()
 
     # Callback for monitor level slider
     def SetVolume(self,level=None):
-        print('Set Volume: Level=',level,type(level))
+        print('Setting Monitor Volume: Level=',level,type(level))
         if level==None:
             level=int( 100*self.P.SideTone.player.vol )
             self.Slider3.set(level)

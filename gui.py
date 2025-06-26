@@ -2978,9 +2978,8 @@ class GUI():
         #obj = self.Master(event.widget)
         #window=obj.root
 
-        if True:
-            print("Key Press:",key,'\tState:',hex(state),shift,control,alt)
-            #print('\tself=',self,'\tobj=',obj,'\twindow=',window)
+        print("Key Press:",key,'\tState:',hex(state),shift,control,alt)
+        #print('\tself=',self,'\tobj=',obj,'\twindow=',window)
 
         # This should never happen
         if len(key)==0:
@@ -3053,6 +3052,11 @@ class GUI():
 
             # Screen capture
             self.PrtScrn()
+    
+        elif key in ['q','Q'] and (alt or control):
+
+            # Query rig
+            self.QueryRig()
     
         elif key in ['b','B'] and (alt or control):
 
@@ -3592,6 +3596,17 @@ class GUI():
         print('Taking screen snapshot ...',fname)
         screenshot = pyautogui.screenshot()
         screenshot.save(fname)
+        print('Done.')
+            
+    # Callback to query rig
+    def QueryRig(self):
+
+        rig=self.sock.rig_type2
+        print('Rig query...',rig)
+        frqA  = 1e-3*self.sock.get_freq(VFO='A') 
+        mode  = self.sock.get_mode()
+        txt = '{:s} \t {:d} \t {:s}\n'.format(rig,frqA,mode)
+        self.P.gui.txt.insert(END, txt, ('highlight'))
         print('Done.')
             
     # Callback to update settings changes
