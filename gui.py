@@ -559,7 +559,7 @@ class GUI():
         tip = ToolTip(self.inc_btn,' Increment Serial')
                 
         # Radio button group to support SO2R
-        col += 2
+        col += 1
         self.iRadio = IntVar(value=1)
         self.Radio1 = Radiobutton(self.root, text=P.sock1.rig_type2,
                                   variable=self.iRadio,
@@ -3053,7 +3053,7 @@ class GUI():
             # Screen capture
             self.PrtScrn()
     
-        elif key in ['q','Q'] and (alt or control):
+        elif key in ['t','T'] and (alt or control):
 
             # Query rig
             self.QueryRig()
@@ -3605,8 +3605,9 @@ class GUI():
         print('Rig query...',rig)
         frqA  = 1e-3*self.sock.get_freq(VFO='A') 
         mode  = self.sock.get_mode()
-        txt = '{:s} \t {:d} \t {:s}\n'.format(rig,frqA,mode)
+        txt = '{:s} \t {:d} \t {:s}\n'.format(rig,int(frqA),mode)
         self.P.gui.txt.insert(END, txt, ('highlight'))
+        self.P.gui.txt.see(END)
         print('Done.')
             
     # Callback to update settings changes

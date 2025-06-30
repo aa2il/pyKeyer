@@ -32,7 +32,8 @@ from tkinter import messagebox
 class serial_dummy():
     def __init__(self):
         print('Serial dummy object substituted')
-        self.out_waiting=0
+        self.in_waiting  = 0
+        self.out_waiting = 0
         return
 
     def setDTR(self,a):

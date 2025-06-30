@@ -477,14 +477,18 @@ class DEFAULT_KEYING():
     # Routine to get practice qso info
     def qso_info(self,HIST,call,iopt):
 
-        if self.key2!=None:
-            qth   = HIST[call][self.key2]
+        print('DEFAULT QSO INFO: iopt=',iopt,
+              '\tkey1=',self.key1,'\tkey2=',self.key2)
+
+        #if self.key2!=None:
+        if self.key2 in HIST[call].keys():
+            qth = HIST[call][self.key2]
         else:
-            qth=''
+            qth = ''
             
         if iopt==1:
             
-            done = len(qth)>0
+            done = len(qth)>0 or self.key2=='nr'
             return done
 
         else:
@@ -499,7 +503,11 @@ class DEFAULT_KEYING():
                     txt+=self.rst+' '
 
             if self.key2!=None:
-                if self.key2 in ['sec']:
+                if self.key2=='nr':
+                    serial = cut_numbers( randint(0, 999) )
+                    self.serial = serial
+                    txt+=self.serial+' '
+                elif self.key2 in ['sec']:
                     txt+=self.qth
             
             return txt
