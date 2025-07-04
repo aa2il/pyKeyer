@@ -108,7 +108,7 @@ class WatchDog:
                 if VERBOSITY>0:
                     print("WatchDog - Checking WPM ...")
                 wpm = P.sock.read_speed()
-                if wpm!=P.WPM and wpm>0:
+                if wpm!=P.WPM and wpm>0 and not P.keyer.busy():
                     print("WatchDog - Changing WPM to",wpm)
                     P.keyer.set_wpm(wpm)
                     P.WPM2 = wpm

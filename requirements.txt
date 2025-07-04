@@ -1,5 +1,18 @@
 ###############################################################################
 #
+# Under uv:
+#     rm -r .venv/ pyproject.toml .python-version uv.lock
+#     uv init
+#     uv add -r requirements.txt
+#
+# Since we often run the qrz script from another directory, embed the dependencies
+# in the script itself:
+#
+#     uv add --script qrz.py -r requirements.txt
+#
+# This was how this all used to work:
+#     pip3 install -r requirements.txt
+#
 # pip3 install -r requirements.txt
 #
 # Also need the "libs" directory which is available in this repository and to

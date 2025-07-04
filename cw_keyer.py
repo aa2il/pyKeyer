@@ -146,7 +146,12 @@ class Keyer():
                 else:
                     self.weight[i]+=1
                 self.weight[i]+=1
-                
+
+
+    def busy(self):
+        status = self.P.keyer_device.get_status()
+        return (status[0] & 4) > 0
+
 
     def abort(self):
         print('CW_KEYER - ABORT! \t evt cleared')

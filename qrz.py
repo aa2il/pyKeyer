@@ -1,4 +1,24 @@
 #!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "chardet",
+#     "levenshtein",
+#     "openpyxl",
+#     "pandas",
+#     "psutil",
+#     "pyaudio",
+#     "pyautogui",
+#     "pygame",
+#     "pyhamtools",
+#     "pyserial",
+#     "pyudev",
+#     "scipy",
+#     "unidecode",
+#     "xlrd",
+# ]
+# ///
+
 #
 #! /home/joea/miniconda3/envs/aa2il/bin/python -u
 #

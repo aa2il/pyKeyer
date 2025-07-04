@@ -71,14 +71,19 @@ class SST_KEYING(DEFAULT_KEYING):
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
             GREETING="MC"
+            GREETING2="73EE"
         elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
             GREETING="HNY"
+            GREETING2="73EE"
         elif now.month==7 and now.day<=7:
-            GREETING="GBA"
+            GREETING="[HOWDY]"
+            GREETING2="GBA"
         else:            
             GREETING="[GDAY]"
-            #GREETING="GA"
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] 73EE [LOG]'}
+            GREETING2="73EE"
+        GREETING3="[GDAY]"
+            
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING+' [NAME] '+GREETING2+' [LOG]'}
 
         MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [HOWDY] [NAME] ESE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -87,7 +92,7 @@ class SST_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : GREETING+' [NAME] [MYNAME] [MYSTATE]'}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : GREETING3+' [NAME] [MYNAME] [MYSTATE]'}
         MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [MYSTATE]'}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}

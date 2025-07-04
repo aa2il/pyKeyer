@@ -559,7 +559,7 @@ class GUI():
         tip = ToolTip(self.inc_btn,' Increment Serial')
                 
         # Radio button group to support SO2R
-        col += 1
+        col += 2              # Need to move this group!
         self.iRadio = IntVar(value=1)
         self.Radio1 = Radiobutton(self.root, text=P.sock1.rig_type2,
                                   variable=self.iRadio,

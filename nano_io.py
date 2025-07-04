@@ -117,6 +117,7 @@ NANO_BAUD=3*38400
 NULL_CMD=chr(0x13)
 ADMIN_OPEN_CMD=chr(0x00)+chr(0x02)
 ECHO_CMD=chr(0x00)+chr(0x04)
+STATUS_CMD=chr(0x15)
 TIMEOUT=1    # was 0.1 , 1
 
 ############################################################################################
@@ -391,6 +392,16 @@ class KEYING_DEVICE():
             
         return ntries
 
+    # Get keyer status
+    def get_status(self):
+        txt=b''
+        if self.protocol=='WINKEYER':
+            self.send_command( STATUS_CMD )
+            while self.ser and len(txt)==0:
+                txt = self.ser.read_all()
+            #print('^^^^^^^^^^^^^ NANO_IO GET STATUS: txt=',txt,'\t',show_hex(txt))
+        return txt
+
     # Send a command to the nano and read the response
     def get_response(self,cmd,delay=0):
         self.send_command(cmd)
@@ -412,11 +423,12 @@ class KEYING_DEVICE():
     # Read responses from the nano IO
     def nano_read(self,echo=False,READ_ALL=False):
         txt=''
+        #txt=b''
         while self.ser and self.ser.in_waiting>0:
             try:
                 if not READ_ALL:
-                    #txt1 = self.ser.read(256).decode("utf-8",'ignore')
                     txt1 = self.ser.read_all().decode("utf-8",'ignore')
+                    #txt1 = self.ser.read_all()
                     txt += txt1
                 else:
                     # Winkeyer returns some funny combos
@@ -426,8 +438,8 @@ class KEYING_DEVICE():
                     # while the paddles are engaged.  We aren't that
                     # sophisticated so it probably safe to ignore these for now.
                     txt1 = self.ser.read_all()
-                    txt = txt + txt1  # .decode("utf-8",'ignore')
-                    print('NANO READ ECHO:',txt1,'\t',len(txt1),
+                    txt = txt + txt1          # .decode("utf-8",ignore)
+                    print('NANO READ ECHO: txt1=',txt1,'\t',len(txt1),
                           '\n',show_hex(txt1),
                           '\n',txt,'\t',show_hex(txt),'\t',len(txt))
             except:
