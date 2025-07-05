@@ -71,14 +71,14 @@ class VHF_KEYING(DEFAULT_KEYING):
         if not self.P.DIGI:
             # VHF
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
-            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] [MYGRID]'}
             MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] R73 [MYCALL] [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         else:
             # Makrothen
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ MAK [MYCALL] [MYCALL] '}
-            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] [MYGRID] [CALL] '}
+            MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYGRID] [CALL] '}
             MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL] TNX AGN [NAME] 73 [MYCALL] CQ [LOG]'}
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL] 73 [MYCALL] CQ [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL] GL [NAME] DIT DIT [MYCALL] CQ [LOG]'}
@@ -89,7 +89,7 @@ class VHF_KEYING(DEFAULT_KEYING):
         if not self.P.DIGI:
             MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
             MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
-            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID]'}
+            MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYGRID] [MYGRID] '}
             #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU [MYGRID] [MYGRID] '}
             MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] [MYGRID]'}
         else:
@@ -200,17 +200,17 @@ class VHF_KEYING(DEFAULT_KEYING):
         else:
             col+=cspan
 
+        cspan=12-col
+        gui.scp_lab.grid(column=col,columnspan=cspan)
+        gui.scp.grid(column=col,columnspan=cspan)
+        if not self.P.USE_SCP:
+            gui.scp_lab.grid_remove()
+            gui.scp.grid_remove()
+                    
         gui.boxes=[gui.call]
         gui.boxes.append(gui.qth)
         gui.boxes.append(gui.hint)
-            
-        if False:
-            # Debug name insertion
-            col+=cspan
-            cspan=2
-            gui.name_lab.grid(column=col,columnspan=cspan,sticky=E+W)
-            gui.name.grid(column=col,columnspan=cspan)
-        
+        gui.boxes.append(gui.scp)
             
     # Gather together logging info for this contest
     def logging(self):

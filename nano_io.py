@@ -423,12 +423,10 @@ class KEYING_DEVICE():
     # Read responses from the nano IO
     def nano_read(self,echo=False,READ_ALL=False):
         txt=''
-        #txt=b''
         while self.ser and self.ser.in_waiting>0:
             try:
                 if not READ_ALL:
                     txt1 = self.ser.read_all().decode("utf-8",'ignore')
-                    #txt1 = self.ser.read_all()
                     txt += txt1
                 else:
                     # Winkeyer returns some funny combos
