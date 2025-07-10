@@ -1,1 +1,0 @@
-../adif_tool/adif_tool.py

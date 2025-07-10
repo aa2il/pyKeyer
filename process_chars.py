@@ -46,7 +46,7 @@ def process_chars(P):
         if VERBOSITY>0:
             print('PROCESSS_CHARS: Checking msg queue ... q-size=',q.qsize())
             
-        # Anything available?
+        # Anything available to send?
         if q.qsize()>0:
             if VERBOSITY>0:
                 print('PROCESSS_CHARS: Get txt...')

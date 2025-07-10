@@ -157,6 +157,7 @@ class GUI():
         self.text_buff=''
         self.macro_label=''
         self.last_text=None
+        self.USE_KEYER=P.USE_KEYER
 
         # Special fonts for various widgets
         FAMILY='monospace'
@@ -1003,14 +1004,17 @@ class GUI():
         if iRadio==1:
             self.P.sock=self.P.sock1
             self.P.ser=self.P.ser1
+            self.P.USE_KEYER=self.USE_KEYER
         elif iRadio==2:
             self.P.sock=self.P.sock2
             self.P.ser=self.P.ser2
+            self.P.USE_KEYER=False
         else:
             self.P.sock=self.P.sock3
             self.P.ser=self.P.ser3
+            self.P.USE_KEYER=False
         self.sock=self.P.sock
-        print("You selected radio " + str(iRadio),'\tP.sock=',self.P.sock)
+        print("\nYou selected radio " + str(iRadio),'\tP.sock=',self.P.sock,'\tser=',self.P.ser,'\n')
         rig=self.P.sock.rig_type2
         self.root.title("pyKeyer by AA2IL"+rig)
 
