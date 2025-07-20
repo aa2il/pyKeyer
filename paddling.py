@@ -1213,6 +1213,19 @@ if __name__ == '__main__':
     #P.PaddlingWin.status_bar2.setText('Opening keyer ...')
     P.keyer=cw_keyer.Keyer(P,P.WPM)
     P.ser=open_keying_port(P,True,1)
+    print('P.ser=',P.ser)
+    if P.ser==None:
+        msg='Continue without keyer (Playback Only)?'
+        lab="Paddling"
+        #if P.gui:
+        #P.gui.splash.hide()
+        result=messagebox.askyesno(lab,msg)
+        print('\tresult=',result)
+        if result:
+            P.SIDETONE=True
+        else:
+            print('\nWe need the keyer! Giving up!')
+            sys.exit(0)
 
     # Create sidetone oscillator & start in a separate thread
     P.SideTone = AUDIO_SIDETONE(P)

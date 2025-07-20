@@ -101,7 +101,7 @@ def process_chars(P):
             if P.USE_KEYER:
 
                 if VERBOSITY>0:
-                    print('PROCESSS_CHARS: Checking rx from keyer ...')
+                    print('PROCESSS_CHARS: Checking rx from keyer ... P.ser=',P.ser)
 
                 # This has thrown an error in the past
                 # Probably because keyer port gets closed but its not properly noted

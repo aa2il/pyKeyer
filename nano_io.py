@@ -193,11 +193,14 @@ class KEYING_DEVICE():
 
             print("NANO_IO INIT: Searching for nanoIO device ...")
             self.device,self.vid_pid=find_serial_device(KEYER_DEVICE_ID,0,VERBOSITY=1)
+            print('\tdevice=',self.device,'\tvid_pid=',self.vid_pid)
             if not self.device:
-                print("NANO_IO INIT: Couldn't find nanoIO device - trying nanIO32 ...")
-                self.device=find_serial_device('nanoIO32',0,VERBOSITY=1)
+                print("NANO_IO INIT: Couldn't find nanoIO device - trying nanoIO32 ...")
+                self.device,self.vid_pid=find_serial_device('nanoIO32',0,VERBOSITY=1)
+                print('\tdevice=',self.device,'\tvid_pid=',self.vid_pid)
                 if not self.device:
-                    print("NANO_IO INIT: Couldn't find nanoIO32 device - giving up!")
+                    print("NANO_IO INIT: Couldn't find nanoIO32 device either - giving up!")
+                    return
                     sys.exit(0)
 
         # Disable reset after hangup - should be done at system level already

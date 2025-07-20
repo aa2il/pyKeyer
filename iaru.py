@@ -49,21 +49,24 @@ class IARU_KEYING(DEFAULT_KEYING):
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
         MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYITUZ] '}
+        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYITUZ]'}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : '5NN [MYITUZ] [MYITUZ]'}
+        #MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [MYITUZ] [MYITUZ]'}
+        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'TU [NAME] 5NN [MYITUZ]'}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
         MACROS[7+12]  = {'Label' : 'RR'        , 'Text' : 'RR '}
 
-        MACROS[8]     = {'Label' : 'Zone 6x'   , 'Text' : '[-2][MYITUZ] [MYITUZ] [MYITUZ] [+2]'}
-        MACROS[9]     = {'Label' : 'Zone 2x'   , 'Text' : '[-2][MYITUZ] [MYITUZ] [+2]'}
+        MACROS[8]     = {'Label' : 'My Zone 3x'   , 'Text' : '[-2][MYITUZ] [MYITUZ] [MYITUZ] [+2]'}
+        MACROS[9]     = {'Label' : 'My Zone 2x'   , 'Text' : '[-3][MYITUZ] [MYITUZ] [+3]'}
         MACROS[10]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[11]    = {'Label' : 'NR?'       , 'Text' : 'NR? '}
         MACROS[11+12] = {'Label' : 'QRL? '     , 'Text' : 'QRL? '}
@@ -235,6 +238,13 @@ class IARU_KEYING(DEFAULT_KEYING):
         if False:
             gui.name.delete(0, END)
             gui.name.insert(0,self.NAME)
-        if True:
+        if False:
             gui.info.delete(0, END)
             gui.info.insert(0,self.NAME)
+
+        if False:
+            gui.info.delete(0, END)
+            if len(h)>1:
+                print('CQP INSERT HINT: h4=',h[1:])
+                gui.info.insert(0,''.join(h[1:]))
+            

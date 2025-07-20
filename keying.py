@@ -256,12 +256,24 @@ def open_keying_port(P,sock,rig_num):
                     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n")
 
                 result=try_usb_reset(P,vid_pid)
-                if result:
+                print('\tresult=',result)
+                if result==None:
+                    print('OPEN KEYING PORT - Try again?')
+                    FATAL_ERROR=False
+                elif result=='CANCEL':
+                    print('OPEN KEYING PORT - Bailing out!')
+                    sys.exit(0)
+                elif result:
                     print('keyer_device=',P.keyer_device)
-                    ser = P.keyer_device.ser
-                    print('ser=',ser)
+                    print('\tdevice=',P.keyer_device.device,'\tser=',P.keyer_device.ser)
                 else:
-                    FATAL_ERROR=not try_again
+                    print('keyer_device=',P.keyer_device)
+                    print('\tdevice=',P.keyer_device.device,'\tser=',P.keyer_device.ser)
+                    if P.keyer_device.device==None and P.keyer_device.ser==None:
+                        print('Proceeding without keyer')
+                        return None
+                    else:
+                        FATAL_ERROR=not try_again
 
             if FATAL_ERROR:
                 sys.exit(0)
@@ -405,23 +417,29 @@ def try_usb_reset(P,vid_pid):
         P.gui.splash.hide()
     #result=messagebox.askyesno(lab,msg)
     result=messagebox.askyesnocancel(lab,msg)
+    print('\tresult=',result)
     if result==True:
+        
         if vid_pid==None:
             device,dev_type,vid_pid=find_keyer(P)
+            if vid_pid==None:
+                print('\nTRY USB RESET: Unable to find a device to reset - vid_pid=',vid_pid)
+                return None
         cmd="sudo usbreset "+vid_pid
         print('\tcmd=',cmd)
         os.system(cmd)                    
         Done = False
-        #sys.exit(0)
+        
     elif result==False:
+        
         device,dev_type,vid_pid=find_keyer(P)
         print('device=',device,'\tdev_type=',dev_type)
         Done = dev_type!=None
         if P.gui:
             P.gui.splash.show()
+            
     else:
-        print('Giving up!')
-        Done = True
-        sys.exit(0)
+        
+        Done = 'CANCEL'
                     
     return Done        # ,device,dev_type,vid_pid
