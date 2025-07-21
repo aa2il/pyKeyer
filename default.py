@@ -453,6 +453,7 @@ class DEFAULT_KEYING():
                   '\tkey2=',key2,'\tqth=',qth,'\ttxt=',txt)
             
         gui.name.delete(0,END)
+        gui.qth.delete(0,END)
         gui.info.delete(0,END)
         self.NAME = ''
         try:

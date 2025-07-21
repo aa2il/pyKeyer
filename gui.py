@@ -3330,6 +3330,8 @@ class GUI():
             #self.sock.set_log_fields({'Call':call}) 
             self.dup_check(call)
             self.info.delete(0,END)
+            self.name.delete(0,END)
+            self.qth.delete(0,END)
             self.auto_fill(call,key)
 
             # Save call so we can keep track of changes
