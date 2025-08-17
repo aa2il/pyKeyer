@@ -32,7 +32,12 @@ Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testin
 0) This seems to be the easiest/best solution.  uv is relatively new and is fast and easy compared to other solutions.  However, it does have a a problem running some tkinter gui apps with recent versions of python.  Of course, to use uv, you need to have it installed on your system:
 
         curl -LsSf https://astral.sh/uv/install.sh | sh      
-        rehash     
+        rehash
+
+which will install uv in ~/.local/bin/uv .   If you want it system wide, try this:
+
+        curl -LsSf https://astral.sh/uv/install.sh | sudo env UV_INSTALL_DIR="/usr/local/bin" sh
+        rehash 
 
 1) Clone gitub pyKeyer, libs and data repositories
 
@@ -60,7 +65,7 @@ Many thanks to Bill, N7DZ, and Lloyd, K7NX, for their efforts and help in testin
 3) Make sure its executable and set PYTHON PATH so os can find libraries:
 
         cd ~/Python/pyKeyer
-        chmod +x pyKeyer.py start start_cw
+        chmod +x pyKeyer.py paddling.py qrz.py start start_cw
 
         - Under tcsh:      setenv PYTHONPATH $HOME/Python/libs
         - Under bash:      export PYTHONPATH="$HOME/Python/libs"

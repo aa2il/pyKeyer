@@ -429,6 +429,7 @@ def try_usb_reset(P,vid_pid):
         print('\tcmd=',cmd)
         os.system(cmd)                    
         Done = False
+        time.sleep(5)
         
     elif result==False:
         

@@ -624,12 +624,14 @@ class PADDLING_GUI():
             
                 # Panagrams
                 n=len(self.panagrams)
-                print('There are',n,'panagrams loaded')
+                print('There are',n,'panagrams loaded - FIRST=',P.FIRST)
                 Done=False
                 while not Done:
-                    i = random.randint(0,n-1)
-                    if len(self.stack)==0 and False:
-                        i=132                        # The quick brown fox ...
+                    if P.FIRST:
+                        i=0
+                        #P.FIRST=False
+                    else:
+                        i = random.randint(0,n-1)
                     txt = self.panagrams[i]
                     if TEST_MODE:
                         txt=str(i)+'. '+txt
@@ -1095,6 +1097,8 @@ if __name__ == '__main__':
                                   choices=['WINKEY','NANO','K3NG','ANY'])
             arg_proc.add_argument("-kport", help="Connection Port for Keyer",
                                   type=str,default=None)
+            arg_proc.add_argument('-first', action='store_true',
+                                  help='Use First Panagram')
             arg_proc.add_argument('-sidetone', action='store_true',
                                   help='Use Sidetone Osc')
             arg_proc.add_argument('-pg', action='store_true',
@@ -1145,6 +1149,7 @@ if __name__ == '__main__':
             self.NANO_ECHO=True
             self.last_char_time=time.time()
             self.need_eol=False
+            self.FIRST = args.first
             
             # Read config file
             self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
