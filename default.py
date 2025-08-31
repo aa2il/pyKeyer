@@ -432,7 +432,7 @@ class DEFAULT_KEYING():
         qth=''
         if self.key1=='name':
             txt+=self.NAME+' '
-            print('DEFAULFT HINT: key1=',key1,'\ttxt=',txt)
+            print('DEFAULFT HINT: key1=',self.key1,'\ttxt=',txt)
         elif self.key1!=None and self.key1 not in ['rst']:
             #txt+='TBD '
             pass

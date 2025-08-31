@@ -84,7 +84,6 @@ class PADDLING_GUI():
         self.last_focus=None
         self.WIN_NAME='PADDLING WINDOW'
         self.OnTop=False
-        self.responded=True       # Need to show initial text
         self.item=''
         self.response=''
         P.HEADCOPY = False
@@ -94,11 +93,13 @@ class PADDLING_GUI():
         self.dxs=[]
         self.ntries=1
         self.down=True
+        self.LAST_ITEM  = -1
         self.last_txt=None
         if not P.gui:
             self.STAND_ALONE=True
         else:
             self.STAND_ALONE=False
+        self.responded=not self.STAND_ALONE
 
         self.suffixes=['/M','/P','/QRP','/MM']
         for i in range(10):
@@ -467,7 +468,6 @@ class PADDLING_GUI():
         # Get a new panagram, call, etc.
         if self.responded:
             print('PADDLING->SetWpm responded=',self.responded)
-            #Selection=self.Selection.get()
             Selection=self.GROUP_TXT.get()
             if Selection!='QSO' or RANDOM_QSO_MODE:
                 self.NewItem()
@@ -624,14 +624,16 @@ class PADDLING_GUI():
             
                 # Panagrams
                 n=len(self.panagrams)
-                print('There are',n,'panagrams loaded - FIRST=',P.FIRST)
+                print('There are',n,'panagrams loaded - FIRST=',P.FIRST,
+                      '\tLAST ITEM=',self.LAST_ITEM)
                 Done=False
                 while not Done:
                     if P.FIRST:
-                        i=0
+                        i=self.LAST_ITEM+1
                         #P.FIRST=False
                     else:
                         i = random.randint(0,n-1)
+                    self.LAST_ITEM=i
                     txt = self.panagrams[i]
                     if TEST_MODE:
                         txt=str(i)+'. '+txt
@@ -660,6 +662,7 @@ class PADDLING_GUI():
                             txt+=self.suffixes[i]                        
                 
                     #print('call=',txt)
+                self.LAST_ITEM=i
             
             case 'Letters'|'Letters+Numbers'|'Special Chars'|'All Chars':
 
@@ -788,6 +791,7 @@ class PADDLING_GUI():
                     txt = items[i]
                     Done = txt!=self.last_txt
                 self.last_txt=txt
+                self.LAST_ITEM=i
                 
             case _:
             

@@ -112,6 +112,7 @@ class KEYER_CONTROL():
         
     def show(self):
         print('Show Keyer Control Window ...')
+        print('\twinkey mode=',hex(self.winkey_mode))
         if self.P.keyer_device:
             self.win.update()
             self.win.deiconify()
