@@ -25,6 +25,7 @@ from collections import OrderedDict
 from random import randint
 from utilities import cut_numbers
 from default import DEFAULT_KEYING
+from scoring import CWT_SCORING
 
 ############################################################################################
 
@@ -42,12 +43,9 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID='CWOPS-CWOPEN'
         self.number_key='cwops'
 
-        # On-the-fly scoring - NEW!
-        self.nqsos=0
-        self.calls=set([])
-        self.init_scoring()
+        # On-the-fly scoring
+        P.SCORING    = CWT_SCORING(P)
 
-        
     # Routient to set macros for this contest
     def macros(self):
 
@@ -57,10 +55,10 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] [SERIAL] [MYNAME] '}
         #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
+        MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [MYCALL] [LOG]'}
 
         MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [MYCALL] [LOG]'}
         
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
@@ -232,17 +230,3 @@ class CWOPEN_KEYING(DEFAULT_KEYING):
         gui.name.delete(0, END)
         gui.name.insert(0,h[0])
 
-
-    # On-the-fly scoring
-    def scoring(self,qso):
-        print("SCORING: qso=",qso)
-        self.nqsos+=1
-        call=qso['CALL']
-        self.calls.add(call)
-        mults = len(self.calls)
-        score=self.nqsos * mults
-        print("SCORING: score=",score)
-
-        txt='{:3d} QSOs  x {:3d} Uniques = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
-        self.P.gui.status_bar.setText(txt)
