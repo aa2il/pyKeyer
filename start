@@ -11,6 +11,7 @@ cls
 
 # Primary rig
 set RIG="NONE"
+#set RIG="DUMMY"
 #set RIG="HAMLIB"
 #set RIG="DIRECT"
 #set RIG1="FLRIG"
@@ -40,6 +41,12 @@ set PRACTICE=""
 set PRACTICE="-prac -nrows 0"
 #set PRACTICE="-prac -nrows 0 -lock"
 
+# Overrides for Video Conferences
+if( 1 )then
+    set RIG="DUMMY"
+    set PRACTICE="-log JUNK.LOG -mode CW -nrows 0"
+endif
+
 set NANO=""
 #set NANO="-keyer ANY"
 #set NANO="-keyer NONE"
@@ -68,7 +75,7 @@ set AGGRESSIVE="-aggressive"
 # Pick a contest
 set CONTEST="paddling"
 #set CONTEST="cwt"
-#set CONTEST="sst"
+set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="sprint"
 #set CONTEST="foc"
@@ -79,14 +86,14 @@ set CONTEST="paddling"
 #set CONTEST="arrl_dx"
 #set CONTEST="vhf"
 #set CONTEST="fd"
-set CONTEST="iaru"
+#set CONTEST="iaru"
 #set CONTEST="cqvhf"
 #set CONTEST="stew"
 #set CONTEST="sat"
 #set CONTEST="cqp"
 #set CONTEST="ss"
 #set CONTEST="cqww"
-set CONTEST="cwopen"
+#set CONTEST="cwopen"
 #set CONTEST="ten"
 #set CONTEST="arrl_160m"
 #set CONTEST="arrl_10m"

@@ -42,6 +42,7 @@ CONTESTS['POTA']         = {'Months' : ALL,     'Duration' : 9999}
 CONTESTS['CWT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['MST']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['SST']          = {'Months' : ALL,     'Duration' : 1}
+CONTESTS['SSTOPEN']      = {'Months' : [9],     'Duration' : 4}
 CONTESTS['AWT']          = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['NS']           = {'Months' : ALL,     'Duration' : 1}
 CONTESTS['WRT']          = {'Months' : ALL,     'Duration' : 1}
@@ -101,6 +102,8 @@ class PARAMS:
                               help='CQ 160m CW')
         arg_proc.add_argument('-sst', action='store_true',
                               help='K1USN SST')
+        arg_proc.add_argument('-sstopen', action='store_true',
+                              help='K1USN SST Open')
         arg_proc.add_argument('-mst', action='store_true',
                               help='ICWC MST')
         arg_proc.add_argument('-awt', action='store_true',
@@ -423,6 +426,8 @@ class PARAMS:
             self.contest_name='CWT'
         elif args.sst:
             self.contest_name='SST'
+        elif args.sstopen:
+            self.contest_name='SSTOPEN'
         elif args.wrt:
             self.contest_name='WRT'
         elif args.mst:

@@ -1781,7 +1781,7 @@ class GUI():
             self.P.KEYING=CWOPS_KEYING(self.P)
         elif val=='FOC-BW':
             self.P.KEYING=FOCBW_KEYING(self.P)
-        elif val=='SST':
+        elif val in ['SST','SSTOPEN']:
             self.P.KEYING=SST_KEYING(self.P)
         elif val=='MST':
             self.P.KEYING=MST_KEYING(self.P)
