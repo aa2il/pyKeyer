@@ -250,7 +250,8 @@ class SIDETONE_OSC():
 
     def play(self):
         x = np.concatenate( (self.dit,self.space,self.dah,self.space) )
-        data = x.astype(np.float32).tostring()
+        #data = x.astype(np.float32).tostring()
+        data = x.astype(np.float32).tobytes()
         self.stream.write(data)
 
     def quit(self):

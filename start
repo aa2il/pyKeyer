@@ -42,7 +42,7 @@ set PRACTICE="-prac -nrows 0"
 #set PRACTICE="-prac -nrows 0 -lock"
 
 # Overrides for Video Conferences
-if( 1 )then
+if( 0 )then
     set RIG="DUMMY"
     set PRACTICE="-log JUNK.LOG -mode CW -nrows 0"
 endif
@@ -64,7 +64,7 @@ set HINTS=""
 #set HINTS="-hints"
 
 set CA_ONLY=""
-set CA_ONLY="-ca_only"
+#set CA_ONLY="-ca_only"
 
 set SCP=""
 set SCP="-scp"
@@ -75,7 +75,7 @@ set AGGRESSIVE="-aggressive"
 # Pick a contest
 set CONTEST="paddling"
 #set CONTEST="cwt"
-set CONTEST="sst"
+#set CONTEST="sst"
 #set CONTEST="mst"
 #set CONTEST="sprint"
 #set CONTEST="foc"
@@ -90,7 +90,7 @@ set CONTEST="sst"
 #set CONTEST="cqvhf"
 #set CONTEST="stew"
 #set CONTEST="sat"
-#set CONTEST="cqp"
+set CONTEST="cqp"
 #set CONTEST="ss"
 #set CONTEST="cqww"
 #set CONTEST="cwopen"
@@ -111,7 +111,7 @@ set CONTEST="sst"
 #set CAPTURE="-capture"
 #set CAPTURE=""
 
-#set STATE="CP"
+set STATE="TX"
 
 ########################################################################
 

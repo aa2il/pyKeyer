@@ -27,11 +27,9 @@ from utilities import cut_numbers
 from default import DEFAULT_KEYING
 from dx import Station
 import hint
-from rig_io import CQP_MULTS
 import numpy as np
 from utilities import error_trap
-from dx import Station
-from counties import COUNTIES
+from scoring import CQP_SCORING
 
 ############################################################################################
 
@@ -49,12 +47,9 @@ class CQP_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID='CA-QSO-PARTY'
 
         # On-the-fly scoring
-        self.nqsos=0
-        self.BANDS = ['MW','160m','80m','40m','20m','15m','10m']         # Need MW for practice mode
-        self.sec_cnt = np.zeros(len(CQP_MULTS),dtype=np.int32)
-        self.init_scoring()
-        self.NAME = ''
-        self.NUM  = ''
+        P.SCORING = CQP_SCORING(P)
+        #self.NAME = ''
+        #self.NUM  = ''
                 
     # Routient to set macros for this contest
     def macros(self):
@@ -267,7 +262,7 @@ class CQP_KEYING(DEFAULT_KEYING):
         #gui.info.insert(0,self.NAME+' '+self.NUM)
         if len(h)>1:
             print('CQP INSERT HINT: h4=',h[1:])
-            gui.info.insert(0,''.join(h[1:]))
+            gui.info.insert(0,' '.join(h[1:]))
 
         
     # Hints if we're in the qth window
@@ -286,34 +281,3 @@ class CQP_KEYING(DEFAULT_KEYING):
                 gui.hint.insert(0,h)
 
 
-    # On-the-fly scoring
-    def scoring(self,qso):
-        print("\nSCORING: qso=",qso)
-        self.nqsos+=1        
-        call=qso['CALL']
-
-        try:
-            qth  = qso["QTH"].upper()
-            if '/' in qth:
-                qth=qth.split('/')[0]
-            if qth in COUNTIES['CA']:
-                qth='CA'
-            if qth!='DX':
-                idx1 = CQP_MULTS.index(qth)
-        except:
-            self.P.gui.status_bar.setText('Unrecognized/invalid QTH!')
-            error_trap('CQP->SCORING - Unrecognized/invalid QTH!')
-            return
-        
-        if qth!='DX':
-            self.sec_cnt[idx1] = 1
-        
-        mults = np.sum(self.sec_cnt)
-        score = 3*self.nqsos * mults
-        print("SCORING: score=",score,self.nqsos,mults)
-
-        txt='{:3d} QSOs  x {:3d} Mults = {:6,d} \t\t\t Last Worked: {:s}' \
-            .format(self.nqsos,mults,score,call)
-        self.P.gui.status_bar.setText(txt)
-    
-                

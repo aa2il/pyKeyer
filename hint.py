@@ -60,7 +60,7 @@ def master(P,call,dx_station=None,VERBOSITY=0):
 
 
 # Routine to give a hint of QTH of a CA station
-def commie_fornia(dx_station,qth):
+def commie_fornia(dx_station,qth,VERBOSITY=0):
     if dx_station.country=='United States' and dx_station.cqz==3:
         if VERBOSITY>0:
             print('Commie-fornia')

@@ -116,6 +116,7 @@ class GUI():
         self.FARNS_WPM_TXT = StringVar()
         self.SAT_TXT = StringVar()
         self.qsl_rcvd=tk.IntVar()
+        self.txt=None
 
         # Over-ride default-font with custom settings
         # Not necesary but I'm leaving this code here fore later reference
@@ -1586,6 +1587,8 @@ class GUI():
         print('SEND CW TEXT: txt=',txt,'\tpounced=',self.pounced,
               '\trunning=',self.RUNNING,'\tsearching=',self.searching)
 
+        P=self.P
+        
         # Send text to keyer ...
         self.q.put(txt)
 
@@ -1603,14 +1606,14 @@ class GUI():
             else:
                 txt  = '['+call+'] '+txt
         if '[LOG]' not in txt or True:
-            if self.P.DIGI:
+            if P.DIGI:
                 txt='\n'+txt
             else:
                 txt+='\n'
-        if not self.P.DIGI or '[LOG]' in txt or True:
+        if not P.DIGI or '[LOG]' in txt or True:
             print('\ttxt=',txt)
 
-            if self.P.DIGI:
+            if P.DIGI:
                 self.txt.insert(END, txt, ('highlight'))
             else:
                 self.txt.insert(END, txt)
@@ -1618,6 +1621,9 @@ class GUI():
             self.root.update_idletasks()
 
         # ... and to disk
+        if len(P.nano_txt)>0:
+            self.fp_txt.write('NANO: %s\n' % (P.nano_txt).strip() )
+            P.nano_txt = ''
         self.fp_txt.write('%s\n' % (txt) )
         self.fp_txt.flush()
     

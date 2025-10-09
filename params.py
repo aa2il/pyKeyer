@@ -179,7 +179,7 @@ class PARAMS:
         arg_proc.add_argument('-wag', action='store_true',
                               help='Work All Germany')
         arg_proc.add_argument('-sac', action='store_true',
-                              help='Scandinavia Activity')
+                              help='Scandinavian Activity Context')
         arg_proc.add_argument('-beru', action='store_true',
                               help='RSGB Commonwealth')
         arg_proc.add_argument('-rac', action='store_true',
@@ -588,6 +588,12 @@ class PARAMS:
         # Automajically include /6 if we're in the CQP
         if self.contest_name=='CQP' and '/' not in call:
             print('Checking call for CQP ... call=',call)
+
+            DATA_DIR=self.SETTINGS['MY_DATA_DIR']
+            if DATA_DIR=='':
+                DATA_DIR='~/Python/data'
+            load_cty_info(DIR=DATA_DIR)
+            
             station = Station(call)
             #pprint(vars(station))
             n = station.call_number

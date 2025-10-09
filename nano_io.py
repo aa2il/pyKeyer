@@ -476,7 +476,8 @@ class KEYING_DEVICE():
         DEBUG=True
 
         if DEBUG:
-            print('NANO_IO: SET WPM: wpm=',wpm,'\tidev=',idev,'\tprot=',self.protocol,'\tfarnsworth=',farnsworth)
+            print('NANO_IO: SET WPM: wpm=',wpm,'\tidev=',idev,
+                  '\tprot=',self.protocol,'\tfarnsworth=',farnsworth)
         
         if idev==1 or idev==3:
             # Set wpm of chars sent from the keyboard

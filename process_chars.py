@@ -134,19 +134,20 @@ def process_chars(P):
                                 txt+='\n'
 
                             # Put it in the big text box also
-                            P.gui.txt.insert(END, txt)
-                            P.gui.txt.see(END)
-                            P.gui.root.update_idletasks()
-                            P.nano_txt += txt
-                            """
-                            if '\n' in txt:
-                                print('NANO: ',P.nano_txt.strip())
-                                #P.gui.fp_txt.write('NANO: %s\n' % (nano_txt) )
-                                #P.gui.fp_txt.flush()
+                            if P.gui.txt:
+                                P.gui.txt.insert(END, txt)
+                                P.gui.txt.see(END)
+                                P.gui.root.update_idletasks()
+
+                            # and save a copy to disk
+                            if '\n' in txt and True:
+                                #print('NANO: ',P.nano_txt.strip())
+                                P.gui.fp_txt.write('NANO: %s\n' % (P.nano_txt).strip() )
+                                P.gui.fp_txt.flush()
                                 P.nano_txt = ''
-                            """
 
                             # Get text
+                            P.nano_txt += txt
                             if P.SENDING_PRACTICE:
                                 P.gui.PaddlingWin.check_response(txt)
 
