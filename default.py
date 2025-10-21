@@ -699,7 +699,7 @@ class DEFAULT_KEYING():
             exch_out += gui.get_rst_out() + ','
         if gui.serial_box in gui.boxes:
             serial    = gui.get_serial()
-            exch_in  += serial()  + ','
+            exch_in  += serial  + ','
             exch_out += str(cntr) + ','
         if gui.exch in gui.boxes:
             exch_in  += gui.get_exchange() + ','

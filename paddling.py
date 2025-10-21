@@ -140,10 +140,12 @@ class PADDLING_GUI():
                     print(NN)
             sys.exit(0)
         
-        # Read lists of Quotes and Jokes
+        # Read lists of Quotes and Jokes and Idioms
         self.quotes = read_text_file('Quotes.txt',KEEP_BLANKS=False,
                                       KEEP_COMMENTS=False)
         self.jokes  = read_text_file('Jokes.txt',KEEP_BLANKS=False,
+                                      KEEP_COMMENTS=False)
+        self.idioms = read_text_file('Idioms.txt',KEEP_BLANKS=False,
                                       KEEP_COMMENTS=False)
 
         # Proverbs
@@ -266,7 +268,8 @@ class PADDLING_GUI():
         # Set up a spin box to control select text drill group
         row+=1
         col=0
-        self.prac_groups=['Panagrams','Jokes','Quotes','Proverbs','Book',
+        self.prac_groups=['Panagrams','Jokes','Idioms','Quotes',
+                          'Proverbs','Book',
                           'Call Signs','Letters','Letters+Numbers',
                           'Special Chars','All Chars','Squeeze',
                           'Stumble','QSO','Sprint','SST']
@@ -765,7 +768,7 @@ class PADDLING_GUI():
                     txt=' GA '+self.name1+' 73EE'
                     self.isst=0
 
-            case 'Stumble' | 'Squeeze' | 'Quotes' | 'Jokes' | 'Proverbs':
+            case 'Stumble' | 'Squeeze' | 'Quotes' | 'Jokes' | 'Idioms' | 'Proverbs':
             
                 # Jokes, Famous Quotes, Proverbs, Squeezables, Words I stumble on
                 match Selection:
@@ -777,6 +780,8 @@ class PADDLING_GUI():
                         items=self.quotes
                     case 'Jokes':
                         items=self.jokes
+                    case 'Idioms':
+                        items=self.idioms
                     case 'Proverbs':
                         items=self.proverbs
                         

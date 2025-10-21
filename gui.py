@@ -1526,27 +1526,37 @@ class GUI():
             else:
                 stn1 = Station(call)
                 try:
-                    prefix1=stn1.call_prefix+stn1.call_number
+                    prefix1 = stn1.call_prefix+stn1.call_number
+                    suffix1 = stn1.call_suffix
                     print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
                 except:
                     error_trap('PATCH MACRO2 - Problem getting prefix for STN1')
-                    print('\tcall  =',call)
-                    print('\tcall2 =',call2)
-                    prefix1=''
-                    
-                stn2 = Station(call2)
-                try:
-                    prefix2=stn2.call_prefix+stn2.call_number
-                    print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
-                except:
-                    error_trap('PATCH MACRO2 - Problem getting prefix for STN2 - call2='+call2)
-                    prefix2=''
+                    print('call  =',call)
+                    pprint(vars(stn1))
+                    prefix1 = ''
+                    suffix1 = ''
+
+                if len(call2)>0:
+                    stn2 = Station(call2)
+                    try:
+                        prefix2=stn2.call_prefix+stn2.call_number
+                        suffix2 = stn2.call_suffix
+                        print('STN2:',stn2.call_prefix,stn2.call_number,stn2.call_suffix)
+                    except:
+                        error_trap('PATCH MACRO2 - Problem getting prefix for STN2 - call2='+call2)
+                        print('call2=',call2)
+                        pprint(vars(stn2))
+                        prefix2 = ''
+                        suffix2 = ''
+                else:
+                    prefix2 = ''
+                    suffix2 = ''
 
                 # Only send back part that has changed, provided it is long enough
                 call3=call
                 if prefix1==prefix2 and len(stn1.call_suffix)>1:
-                    call3=stn1.call_suffix
-                elif stn1.call_suffix==stn2.call_suffix and len(prefix1)>1:
+                    call3=suffix1
+                elif suffix1==suffix2 and len(prefix1)>1:
                     call3=prefix1
                 txt = txt.replace('[CALL_CHANGED]',call3)
 
@@ -1698,15 +1708,24 @@ class GUI():
         # Fill in name
         name=self.get_name().upper()
         if name=='' and '[NAME]' in txt:
+            info=self.get_info().upper().split()
+            print('\tinfo=',info)
             try:
                 call=self.get_call().upper()
-                name2=self.P.MASTER[call]['name']
+                if len(info[0])>0:
+                    name2=info[0]
+                elif call in self.P.MASTER:
+                    name2=self.P.MASTER[call]['name']
+                else:
+                    name2=' '
+                    print('\tcall=',call,' not in MASTER List')
                 my_name = self.P.SETTINGS['MY_NAME']
                 if name2==my_name and '[NAME] '+my_name in txt:
                     name2=' '
                 txt = txt.replace('[NAME]',name2).replace('  ',' ')
             except:
                 error_trap('GUI->SEND MACRO - Unable to retrieve NAME')
+                print('\tcall=',call)
 
         # Send macro text
         txt = self.Patch_Macro2(txt,state)
@@ -1835,10 +1854,13 @@ class GUI():
         elif val=='RANDOM CALLS':
             self.P.KEYING=RANDOM_CALLS_KEYING(self.P)
         else:
-            print('SET_MACROS: *** ERROR *** Cant figure which contest !')
-            print('val=',val)
-            #return
-            sys.exit(0)
+            txt='SET_MACROS: *** ERROR *** Cant figure which contest !'
+            txt+='\nval='+val
+            print(txt)
+            self.txt.insert(END, txt+'\n')
+            self.txt.see(END)
+            return
+            #sys.exit(0)
             
         self.P.contest_name  = self.P.KEYING.contest_name
         self.macros = self.P.KEYING.macros()
@@ -1871,27 +1893,12 @@ class GUI():
         # Enable the specific input boxes
         self.P.KEYING.enable_boxes(self)
 
-        """
-        elif self.P.CONTEST[val]:
-            # Generic contest exchange 
-            self.contest=True
-            self.hide_all()
-
-            self.exch_lab.grid()
-            self.exch.grid()
-            
-        else:
-            # Generic QSO
-            self.contest=False
-            self.hide_all()
-
-            self.name_lab.grid()
-            self.name.grid()
-            self.rstin_lab.grid()
-            self.rstin.grid()
-            self.rstout_lab.grid()
-            self.rstout.grid()
-        """
+        # Check pre-fills
+        call = self.call.get()
+        if len(call)>0:
+            self.get_hint()
+            if self.P.AUTOFILL:
+                self.P.KEYING.insert_hint()
 
     # Callback for WPM spinner
     def set_wpm(self,dWPM=0,farnsworth=None):
@@ -1957,6 +1964,11 @@ class GUI():
         txt=self.name.get().strip()
         if txt=='' and not self.contest:
             txt='OM'
+        return txt.upper()
+
+    # Read info from info bax
+    def get_info(self):
+        txt=self.info.get().strip()
         return txt.upper()
 
     # Read incoming RST from the entry box

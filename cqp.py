@@ -30,6 +30,7 @@ import hint
 import numpy as np
 from utilities import error_trap
 from scoring import CQP_SCORING
+from pprint import pprint
 
 ############################################################################################
 
@@ -89,16 +90,18 @@ class CQP_KEYING(DEFAULT_KEYING):
     def hint(self,call):
         P=self.P
 
-        #print('------------------------ CQP HINT ...')
+        dx_station = Station(call)
+        #print('------------------------ CQP HINT ... call=',call)
+        #pprint(vars(dx_station))
+
         self.NAME = P.MASTER[call]['name']
         state     = P.MASTER[call]['state']
         self.NUM  = P.MASTER[call]['cwops']
-        #print('------------------------ CQP HINT: state=',state)
 
-        dx_station = Station(call)
         #print('------------------------ CQP HINT: country=',dx_station.country )
-        if not dx_station.country in ['United States','Canada']:
+        if not dx_station.country in ['United States','Canada','Alaska','Hawaii']:
             state='DX'
+        #print('------------------------ CQP HINT: state=',state,'\tname=',self.NAME,'\tnum=',self.NUM)
             
         if state=='CA':
             county=P.MASTER[call]['county']
@@ -207,6 +210,8 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         gui.counter_lab.grid()
         gui.counter.grid()
+        gui.inc_btn.grid()
+        gui.dec_btn.grid()
 
         if not gui.P.NO_HINTS:
             col+=cspan

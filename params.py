@@ -57,7 +57,7 @@ CONTESTS['NAQP-CW']      = {'Months' : [1,8],   'Duration' : 12}
 CONTESTS['NAQP-RTTY']    = {'Months' : [2,7],   'Duration' : 12}
 CONTESTS['TEN-TEN']      = {'Months' : [],      'Duration' : 48}
 CONTESTS['WINTER-FD']    = {'Months' : [1],     'Duration' : 30}
-CONTESTS['WAG']          = {'Months' : [],      'Duration' : 48}
+CONTESTS['WAG']          = {'Months' : [10],    'Duration' : 24}
 CONTESTS['SAC']          = {'Months' : [9],     'Duration' : 24}
 CONTESTS['RAC']          = {'Months' : [6,12],  'Duration' : 24}
 CONTESTS['BERU']         = {'Months' : [],      'Duration' : 48}
@@ -84,7 +84,7 @@ CONTESTS['AADX']         = {'Months' : [6],     'Duration' : 48}
 CONTESTS['IOTA']         = {'Months' : [7],     'Duration' : 24}
 CONTESTS['MARAC']        = {'Months' : [7],     'Duration' : 48}
 CONTESTS['SOLAR']        = {'Months' : [],      'Duration' : 10}
-CONTESTS['OCDX']         = {'Months' : [],      'Duration' : 24}
+CONTESTS['OCDX']         = {'Months' : [10],    'Duration' : 24}
 CONTESTS['MARCONI']      = {'Months' : [7],     'Duration' : 24}
                    
 # Structure to contain processing params
