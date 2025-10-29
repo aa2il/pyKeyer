@@ -26,7 +26,9 @@ from random import randint
 from utilities import cut_numbers,error_trap
 from default import DEFAULT_KEYING
 import numpy as np
-from rig_io import ARRL_SECS
+#from rig_io import ARRL_SECS
+from scoring import ARRL_SS_SCORING
+from pprint import pprint
 
 ############################################################################################
 
@@ -45,9 +47,7 @@ class SS_KEYING(DEFAULT_KEYING):
         P.CONTEST_ID='ARRL-SS-CW'
 
         # On-the-fly scoring
-        self.nqsos=0
-        self.sec_cnt = np.zeros(len(ARRL_SECS),dtype=np.int32)
-        self.init_scoring()
+        P.SCORING = ARRL_SS_SCORING(P,False)
         
     # Routine to set macros for this contest
     def macros(self):
@@ -303,6 +303,7 @@ class SS_KEYING(DEFAULT_KEYING):
             gui.call2.insert(0,call)
             
 
+"""            
     # On-the-fly scoring
     def scoring(self,qso):
         #print("\nSCORING: qso=",qso)
@@ -333,5 +334,4 @@ class SS_KEYING(DEFAULT_KEYING):
         txt='{:3d} QSOs x {:3d} Mults = {:6,d}\t\tLast Worked: {:s}\t{:.150}' \
             .format(self.nqsos,mults,score,call,txt1)
         self.P.gui.status_bar.setText(txt)
-    
-            
+"""

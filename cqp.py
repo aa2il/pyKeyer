@@ -49,8 +49,6 @@ class CQP_KEYING(DEFAULT_KEYING):
 
         # On-the-fly scoring
         P.SCORING = CQP_SCORING(P)
-        #self.NAME = ''
-        #self.NUM  = ''
                 
     # Routient to set macros for this contest
     def macros(self):
