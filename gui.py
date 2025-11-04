@@ -1204,6 +1204,8 @@ class GUI():
     # Callback to look up a call on qrz.com
     def Call_LookUp(self):
         call = self.get_call()
+        if len(call)==0:
+            call = self.last_qso['call']
         if len(call)>=3:
             print('CALL_LOOKUP: Looking up '+call+' on QRZ.com')
             if True:

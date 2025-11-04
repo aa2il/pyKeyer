@@ -60,6 +60,8 @@ from collections import OrderedDict
 from datetime import datetime, timezone, timedelta
 from dx import ChallengeData,Station,load_cty_info
 from pprint import pprint
+from ToolTip import *
+import webbrowser
 
 #########################################################################################
 
@@ -165,8 +167,13 @@ class CALL_INFO_GUI():
                 e.insert(0,info[key])
         
             row+=1
+            button = Button(tab, text='QRZ ?',command=self.Call_LookUp)
+            button.grid(row=row,column=0,sticky=E+W)
+            tip = ToolTip(button, ' Query QRZ.com ' )
+        
             button = Button(tab, text="Dismiss",command=self.Dismiss)
-            button.grid(row=row,column=0,columnspan=2,sticky=E+W)
+            button.grid(row=row,column=1,sticky=E+W)
+            tip = ToolTip(button, ' Dismiss ' )
 
             # Info from last qso
             idx=calls.index(call)
@@ -191,17 +198,30 @@ class CALL_INFO_GUI():
                         txt2 = date.strftime('%H:%M:%S')
                     e.insert(0,txt2)
                     row+=1
-                
+
+                button = Button(tab, text='QRZ ?',command=self.Call_LookUp)
+                button.grid(row=row,column=0,sticky=E+W)
+                tip = ToolTip(button, ' Query QRZ.com ' )
+
                 button = Button(tab, text="Dismiss",command=self.Dismiss)
-                button.grid(row=row,column=0,columnspan=2,sticky=E+W)
-        
+                button.grid(row=row,column=1,sticky=E+W)
+                tip = ToolTip(button, ' Dismiss ' )
+                    
             self.book.pack(expand=1, fill="both")
             self.win.protocol("WM_DELETE_WINDOW", self.Dismiss)        
 
         
     def Dismiss(self):
         self.win.destroy()
-        
+
+    def Call_LookUp(self):
+        call=self.call.get()
+        print('\n********************************** Call Lookup ...',call)
+        if len(call)>=3:
+            print('CALL_LOOKUP: Looking up '+call+' on QRZ.com')
+            link = 'https://www.qrz.com/db/' + call
+            webbrowser.open(link, new=2)
+            
 #########################################################################################
 
 # If this file is called as main, run as independent exe
