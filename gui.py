@@ -1478,10 +1478,14 @@ class GUI():
                 print('PATCH_MACRO:  **** ERROR **** Unknown platform',P.PLATFORM)
                 alt = (state & 0x0008) != 0 
 
-            # Yes - shorten response by eliminating my call
+            # Yes - Modify macro text
             if alt or control or shift:
                 if self.MY_CALL in txt:
+                    # Shorten response by eliminating my call
                     txt = txt.replace(self.MY_CALL,'')
+                elif 'QRL?' in txt:
+                    # Send TEST so we get spotted on RBN
+                    txt = 'TEST '+self.MY_CALL
 
         # Greeting might depend on local time of day
         if '[GDAY]' in txt:

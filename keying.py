@@ -22,7 +22,7 @@
 import sys
 import os
 from nano_io import *
-from utilities import list_all_serial_devices,error_trap, get_PIDs,find_serial_device,find_serial_device_by_serial_id
+from utilities import list_all_serial_devices,error_trap,get_PIDs,find_serial_device,find_serial_device_by_serial_id
 from rig_io import BAUD,SERIAL_PORT2,SERIAL_PORT4
 
 from tkinter import messagebox

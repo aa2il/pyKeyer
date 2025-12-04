@@ -38,6 +38,7 @@ from os import system
 
 class RIG_CONTROL():
     def __init__(self,P):
+        print("\nRIG_CONTROL_TK: Init ...")
         self.P = P
         parent = P.root
         self.sock = P.sock
@@ -49,9 +50,6 @@ class RIG_CONTROL():
         self.win.protocol("WM_DELETE_WINDOW", self.hide)
         self.Visible=False
 
-        if not self.sock or self.sock.connection == 'NONE':
-            return None
-        
         # Legacy compatibility
         self.station   = IntVar(self.win)
         self.band      = StringVar(self.win)
@@ -59,6 +57,9 @@ class RIG_CONTROL():
         self.mode      = StringVar(self.win)
         self.frequency = 0  
 
+        if not self.sock or self.sock.connection == 'NONE':
+            return None
+        
         # Add a tab for basic rig control
         tab1 = ttk.Frame(self.tabs)            # Create a tab 
         self.tabs.add(tab1, text='Rig Ctrl')   # Add the tab
@@ -232,6 +233,10 @@ class RIG_CONTROL():
         Button(MiscFrame,
                text="TXW",     
                command=lambda: SetVFO(self,'TXW') ).pack(side=LEFT,anchor=W)
+        Button(MiscFrame,
+               text="BreakIn",     
+               command=self.ToggleBreakIn ).pack(side=LEFT,anchor=W)
+        self.ToggleBreakIn(True)
         
         ######################################################################
 
@@ -293,9 +298,19 @@ class RIG_CONTROL():
     ############################################################################################
 
     def ToggleContest(self):
-        self.ContestMode = 1-self.ContestMode
+        self.ContestMode = not self.ContestMode
         print("Content mode=",self.ContestMode)
         SetFilter(self)
+
+    ############################################################################################
+
+    def ToggleBreakIn(self,opt=None):
+        if opt==None:
+            self.BreakIn = not self.BreakIn
+        else:
+            self.BreakIn = opt
+        print("TOGGLE BREAKIN: BreakIn=",self.BreakIn)
+        self.sock.set_breakin(self.BreakIn)
 
     ############################################################################################
 
@@ -601,6 +616,7 @@ class RIG_CONTROL():
             #print('===================== Updating Rig Gui ================')
             P=self.P
             mode=P.MODE
+            #print('\tmode=',mode,'\tband=',P.BAND,self.band.get())
             self.band.set(P.BAND)
             x=str(int(P.FREQ*1e-3))+' KHz  '+str(mode)
             self.status.set(x)

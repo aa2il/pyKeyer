@@ -345,6 +345,9 @@ class PARAMS:
         if self.INIT_MODE==None and self.DIGI:
             self.INIT_MODE     = 'RTTY'
         self.LOG_FILE      = args.log
+        self.MODE          = None
+        self.BAND          = None
+        self.FREQ          = 0
         
         self.connection    = args.rig[0]
         if len(args.rig)>=2:

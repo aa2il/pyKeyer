@@ -104,7 +104,7 @@ import sys
 import os
 import serial
 import time
-from utilities import find_serial_device,list_all_serial_devices,show_hex,error_trap
+from utilities import find_serial_device,list_all_serial_devices,show_hex,error_trap,get_PIDs,Clobber_Procs
 
 # termios seems to have disappeared with python 3.13
 # Let's try doing without it and see what happens
@@ -343,6 +343,12 @@ class KEYING_DEVICE():
                         print('\t\t ... So Far So Good :-)')
                     else:
                         print('\t\t ... No such luck - try again :-(')
+                        pids = get_PIDs('pyKeyer.py') + get_PIDs('paddling.py')
+                        print('\npids=',pids)
+                        if len(pids)>0:
+                            print('... Looks like there is another process controlling the keyer ...\n')
+                            Clobber_Procs(pids)
+                            
                         continue
 
                     print('\t\tSending ADMIN OPEN command ...',t2)
@@ -568,4 +574,4 @@ class KEYING_DEVICE():
             self.ser.close()
             print('KEYING DEVICE CLOSED.')
             self.ser=None
-            
+
