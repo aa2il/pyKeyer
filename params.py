@@ -120,7 +120,7 @@ class PARAMS:
                               help='CQ WPX (CW or RTTY)')
         arg_proc.add_argument('-arrl_dx', action='store_true',
                               help='ARRL Intl DX')
-        arg_proc.add_argument('-arrl_10m', action='store_true',
+        arg_proc.add_argument('-ten', action='store_true',
                               help='ARRL 10m')
         arg_proc.add_argument('-arrl_160m', action='store_true',
                               help='ARRL 160m')
@@ -172,7 +172,7 @@ class PARAMS:
                               help='CQ VHF')
         arg_proc.add_argument('-iaru', action='store_true',
                               help='IARU HF Championship')
-        arg_proc.add_argument('-ten', action='store_true',
+        arg_proc.add_argument('-tenten', action='store_true',
                               help='10-10 CW')
         arg_proc.add_argument('-foc', action='store_true',
                               help='FOC BW')
@@ -437,7 +437,7 @@ class PARAMS:
             self.contest_name='MST'
         elif args.awt:
             self.contest_name='AWT'
-        elif args.ten:
+        elif args.tenten:
             self.contest_name='TEN-TEN'
         elif args.foc:
             self.contest_name='FOC-BW'
@@ -509,7 +509,7 @@ class PARAMS:
                 self.contest_name = 'CQ-WPX-RTTY'
             else:
                 self.contest_name = 'CQ-WPX-CW'
-        elif args.arrl_10m:
+        elif args.ten:
             self.contest_name = 'ARRL-10M'
         elif args.arrl_160m:
             self.contest_name = 'ARRL-160M'

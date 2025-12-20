@@ -71,10 +71,10 @@ class SST_KEYING(DEFAULT_KEYING):
         now = datetime.utcnow()
         if now.month==12 and now.day>=11 and now.day<28:
             GREETING="MC"
-            GREETING2="73EE"
+            GREETING2="EE"
         elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
             GREETING="HNY"
-            GREETING2="73EE"
+            GREETING2="EE"
         elif now.month==7 and now.day<=7:
             GREETING="[HOWDY]"
             GREETING2="GBA"

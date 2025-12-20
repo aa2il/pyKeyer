@@ -31,6 +31,8 @@ from dx import Station
 from datetime import datetime
 from rig_io.ft_tables import TEN_METER_SECS
 import numpy as np
+from utilities import error_trap
+from scoring import ARRL_RTTY_RU_SCORING
 
 ############################################################################################
 
@@ -62,7 +64,10 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         self.contest_duration = 48
         P.MAX_AGE = self.contest_duration *60
 
-        # On-the-fly scoring - NEW!
+        # On-the-fly scoring
+        P.SCORING = ARRL_RTTY_RU_SCORING(P,'ARRL-10')
+
+        """
         self.nqsos=0
         dxccs  = []
         if self.P.contest_name=='ARRL-10M':
@@ -78,6 +83,7 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
             self.dxccs = OrderedDict(dxccs)
             self.scoring = self.scoring_dx              # Override
         self.init_scoring()
+        """
         
     # Routine to set macros for this contest
     def macros(self):
@@ -87,15 +93,15 @@ class TEN_METER_KEYING(DEFAULT_KEYING):
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
         MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYSTATE] '}
         #MACROS[1+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
-        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
-        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
+        MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [MYCALL] [LOG]'}
+        MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] MC [NAME] EE [LOG]'}
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
         MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}
         
         MACROS[4]     = {'Label' : '[MYCALL]'   , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
         MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU 5NN [MYSTATE] '}
-        MACROS[5+12]  = {'Label' : 'S&P 2x'    , 'Text' : 'TU 5NN [MYSTATE] [MYSTATE] '}
+        MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : 'MC [NAME] 5NN [MYSTATE] '}
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
         MACROS[6+12]  = {'Label' : 'AGN?'      , 'Text' : 'AGN? '}
         MACROS[7]     = {'Label' : 'Log QSO'   , 'Text' : '[LOG] '}
