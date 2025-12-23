@@ -98,6 +98,7 @@ class DEFAULT_KEYING():
             
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ CQ CQ DE [MYCALL] [MYCALL] K '}
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : 'TU [RST] [MYSTATE] '}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
             MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TU [NAME] 73EE [LOG]'}
             MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
@@ -373,7 +374,8 @@ class DEFAULT_KEYING():
             #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
             MACROS[0+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU '+EXCH1+' '+EXCH2+' '}
-            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [+2]73 EE [-2] [LOG]'}
+            #MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [+2]73 EE [-2] [LOG]'}
+            MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
 
             # Check date for any special greetings
             # Consider "GBA" for week around July 4?

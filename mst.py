@@ -90,7 +90,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
 
-        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : 'TU [MYNAME] [SERIAL] '}
+        MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : GREETING+' [MYNAME] [SERIAL] '}
         MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : GREETING+' [NAME] [MYNAME] [SERIAL] '}
             
         MACROS[6]     = {'Label' : '? '        , 'Text' : '? '}
