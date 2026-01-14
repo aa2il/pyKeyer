@@ -71,7 +71,7 @@ class MST_KEYING(DEFAULT_KEYING):
         if now.month==12 and now.day>=11 and now.day<28:
             GREETING="MC"
             GREETING2="EE"
-        elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
+        elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=10):
             GREETING="HNY"
             GREETING2="EE"
         elif now.month==7 and now.day<=7:

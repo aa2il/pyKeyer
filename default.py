@@ -384,7 +384,7 @@ class DEFAULT_KEYING():
                 GREETING1="MC"
                 GREETING2="MC"
                 GREETING3="MC"
-            elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=14):
+            elif (now.month==12 and now.day>=28) or (now.month==1 and now.day<=10):
                 GREETING1="HNY"
                 GREETING2="HNY"
                 GREETING3="HNY"
