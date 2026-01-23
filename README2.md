@@ -145,7 +145,7 @@ Here is a good video overview of Miniconda:
          conda activate aa2il
          python pyKeyer.py
 
-8) If the fonts look awful, see step 3 above
+8) If the fonts look awful/pixelated, see step 3 above
    
 9) Known issues using this (as of March 2025):
    - None

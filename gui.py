@@ -224,8 +224,9 @@ class GUI():
         self.status_bar.setText("Reading log book "+P.LOG_FILE+" ...")
         print('GUI: Reading ADIF log file',P.LOG_FILE)
         qsos = parse_adif(P.LOG_FILE,upper_case=True,verbosity=0)
-        for qso in qsos:
-            self.log_book.append(qso)
+        if qsos:
+            for qso in qsos:
+                self.log_book.append(qso)
 
         self.nqsos_start = len(self.log_book)
         print('There are',len(self.log_book),'QSOs in the log book')
