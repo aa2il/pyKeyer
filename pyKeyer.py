@@ -137,15 +137,16 @@ print('\nPYKEYER: Opening connection to keyer ...',P.FIND_KEYER,P.USE_KEYER)
 P.MEM.take_snapshot()
 P.gui.status_bar.setText("\nOpening connection to keyer ...")
 print('\n\tsock1=',P.sock1)
-P.ser1=open_keying_port(P,P.sock1,1)
+P.ser1,P.direct1=open_keying_port(P,P.sock1,1)
 print('\tser1=',P.ser1)
 print('\n\tsock2=',P.sock2)
-P.ser2=open_keying_port(P,P.sock2,2)
+P.ser2,P.direct2=open_keying_port(P,P.sock2,2)
 print('\tser2=',P.ser2)
 print('\n\tsock3=',P.sock3)
-P.ser3=open_keying_port(P,P.sock3,2)
+P.ser3,P.direct3=open_keying_port(P,P.sock3,2)
 print('\tser3=',P.ser3)
 P.ser=P.ser1
+P.direct=P.direct1
 #sys.exit(0)
     
 # Put rig and FLDIGI into initial mode

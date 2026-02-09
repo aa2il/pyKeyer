@@ -93,7 +93,7 @@ set CONTEST=""
 #set CONTEST="skcc"
 
 # Specify one or more state QSO parties - W1=New England QP, W7=7QP
-set STATE="IL"
+set STATE="VT MN BC"
 
 # Various options for pyKeyer
 set CAPTURE=""

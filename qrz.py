@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run --script
 # /// script
-# requires-python = ">=3.12"
+# requires-python = ">=3.11"
 # dependencies = [
 #     "chardet",
 #     "levenshtein",
@@ -12,6 +12,7 @@
 #     "pygame",
 #     "pyhamtools",
 #     "pyserial",
+#     "pytz>=2025.2",
 #     "pyudev",
 #     "scipy",
 #     "unidecode",
@@ -61,7 +62,7 @@ from datetime import datetime, timezone, timedelta
 from dx import ChallengeData,Station,load_cty_info
 from pprint import pprint
 from ToolTip import *
-import webbrowser
+from utilities import open_web_page
 
 #########################################################################################
 
@@ -220,7 +221,7 @@ class CALL_INFO_GUI():
         if len(call)>=3:
             print('CALL_LOOKUP: Looking up '+call+' on QRZ.com')
             link = 'https://www.qrz.com/db/' + call
-            webbrowser.open(link, new=2)
+            open_web_page('https://www.qrz.com/db/' + call)
             
 #########################################################################################
 

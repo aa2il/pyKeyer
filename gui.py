@@ -40,7 +40,6 @@ import cw_keyer
 import hint
 from dx import Station
 from pprint import pprint
-import webbrowser
 from rig_io import ClarReset,SetTXSplit
 from rig_io import DELAY
 from rig_control_tk import *
@@ -73,7 +72,9 @@ from paddling import *
 from ragchew import *
 from dx_qso import *
 from qrz import *
-from utilities import cut_numbers,freq2band,Oh_Canada,error_trap,show_ascii,stack_trace
+from utilities import cut_numbers,freq2band,Oh_Canada,error_trap, \
+    show_ascii,stack_trace,open_web_page
+
 import pyautogui
 from widgets_tk import StatusBar,SPLASH_SCREEN
 
@@ -1060,6 +1061,24 @@ class GUI():
             self.SendBtn.configure(background='Green',highlightbackground= 'Green')
         """
         
+    # Callback to toggle DTR sending
+    def Toggle_DTR_Sending(self,iop=None):
+        if iop==None:
+            self.P.SEND_VIA_DTR = not self.P.SEND_VIA_DTR
+        print('\n%%%%%%%%%%%%%%%%%% Toggle_DTR_Sending:',self.P.SEND_VIA_DTR)
+        if self.P.SEND_VIA_DTR and self.P.SEND_VIA_CMD:
+            self.Toggle_CMD_Sending()
+        self.DTR_Sending.set(self.P.SEND_VIA_DTR)
+        
+    # Callback to toggle command sending
+    def Toggle_CMD_Sending(self,iop=None):
+        if iop==None:
+            self.P.SEND_VIA_CMD = not self.P.SEND_VIA_CMD
+        print('\n%%%%%%%%%%%%%%%%%% Toggle_CMD_Sending:',self.P.SEND_VIA_CMD)
+        if self.P.SEND_VIA_CMD and self.P.SEND_VIA_DTR:
+            self.Toggle_DTR_Sending()
+        self.CMD_Sending.set(self.P.SEND_VIA_CMD)
+        
     # Callback to toggle SO2V mode
     def Toggle_SO2V(self,iop=None):
         print('TOOGLE SO2V:',self.P.SO2V,'\top=',iop)
@@ -1209,9 +1228,7 @@ class GUI():
             call = self.last_qso['call']
         if len(call)>=3:
             print('CALL_LOOKUP: Looking up '+call+' on QRZ.com')
-            if True:
-                link = 'https://www.qrz.com/db/' + call
-                webbrowser.open(link, new=2)
+            open_web_page('https://www.qrz.com/db/' + call)
 
             self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],[self.last_qso])
             #self.qrzWin.hide()
@@ -3450,6 +3467,8 @@ class GUI():
         mode = self.MODE.get()
         print('SET RIG MODE: mode=',mode)
         self.sock.set_mode(mode)
+        if self.P.contest_name=='SATELLITES':
+            self.sock.set_mode(mode,VFO='B')
         if self.P.udp_server:
             self.P.udp_server.Broadcast('MODE:'+mode)
         if mode=='CW':
@@ -3786,6 +3805,22 @@ class GUI():
             underline=0,
             variable=self.ImmediateTX,
             command=self.Toggle_Immediate_TX
+        )
+        
+        self.DTR_Sending = BooleanVar(value=self.P.SEND_VIA_DTR)
+        Menu1.add_checkbutton(
+            label="Send Via DTR",
+            underline=0,
+            variable=self.DTR_Sending,
+            command=self.Toggle_DTR_Sending
+        )
+        
+        self.CMD_Sending = BooleanVar(value=self.P.SEND_VIA_CMD)
+        Menu1.add_checkbutton(
+            label="Send Via Hamlib Cmd",
+            underline=0,
+            variable=self.CMD_Sending,
+            command=self.Toggle_CMD_Sending
         )
         
         Menu1.add_checkbutton(

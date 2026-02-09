@@ -154,17 +154,18 @@ class Keyer():
 
 
     def abort(self):
+        P=self.P
         print('CW_KEYER - ABORT! \t evt cleared')
         self.evt.clear()
         self.evt2.clear()
         self.stop=True
-        if self.P.DIGI:
-            self.P.sock_xml.put_tx_buff( '',HALT=True )  
+        if P.DIGI:
+            P.sock_xml.put_tx_buff( '',HALT=True )  
             time.sleep(.1)
-            self.P.sock_xml.ptt(0)                       
-        elif self.P.USE_KEYER:
+            P.sock_xml.ptt(0)                       
+        elif P.USE_KEYER:
             #self.P.keyer_device.nano_write('\\')
-            self.P.keyer_device.abort()
+            P.keyer_device.abort()
             return
 
     # Routine to send a message in cw by toggling DTR line
@@ -174,25 +175,40 @@ class Keyer():
     #    4. The space between letters is 3 time units.
     #    5. The space between words is 7 time units.
     def send_cw(self,msg):
-        #print('CW_KEYER->SEND CW: msg=',msg)
+        P   = self.P
+        print('CW_KEYER->SEND CW: msg=',msg,
+              '\tUSE_KEYER=',P.USE_KEYER,
+              '\tVIA DTR=',P.SEND_VIA_DTR,
+              'VIA CMD=',P.SEND_VIA_CMD)
 
-        if self.P.DIGI:
+        if P.DIGI:
             return
 
         # Init
-        ser = self.P.ser
+        if P.SEND_VIA_DTR:        
+            ser = P.direct
+        else:
+            ser = P.ser
         WPM = self.WPM
         dotlen = self.dotlen
 
-        # If using nano IO interface, send the char & let the nano do the rest
-        if self.P.USE_KEYER:
+        if P.SEND_VIA_CMD:
+            # When using hamlib command, send the char & let the rig do the rest
+            P.sock.send_morse(msg,VERBOSITY=1)
+            return
+            
+        elif P.SEND_VIA_DTR:
+            pass
+            
+        elif P.USE_KEYER:
+            # When using nano IO interface, send the char & let the nano do the rest
             wght=0
             for char in msg.upper():
                 wght+=self.weight[ord(char)]
 
             dt=dotlen*wght
             #print('\tsend_cw: msg=',msg,'\t@ wpm=',self.WPM,'\twght=',wght,'\tdt=',dt)
-            self.P.keyer_device.nano_write(msg)
+            P.keyer_device.nano_write(msg)
             #print('\t\tsent dt=',dt)
             
             time.sleep(dt)
@@ -200,7 +216,7 @@ class Keyer():
             return
 
         # If in practice mode, use pc audio instead
-        elif self.P.PRACTICE_MODE:
+        elif P.PRACTICE_MODE:
             print('CW_KEYER->SEND_CW: msg=',msg,len(msg))
             self.sidetone.send_cw(msg,self.WPM,0,True)
             return
@@ -210,7 +226,7 @@ class Keyer():
             print("send_cw:",msg)    # ,WPM,dotlen
             return
 
-        # If we get here, we have to do all the heavy lifiting.
+        # If we get here, we're toggling the DTR and have to do all the heavy lifiting.
         # Loop over all chars in message to form symbols and timing
         for char in msg.upper():
             #print('\tchar=',char)
@@ -255,29 +271,31 @@ class Keyer():
 
     # Set speed
     def set_wpm(self,wpm,farnsworth=None,buffered=False):
-        ser = self.P.ser
+
+        P   = self.P
+        ser = P.ser
         
         if wpm>0:
             print("CW_KEYER->SET_WPM: Setting speed to ",wpm)
             self.WPM = wpm
             self.dotlen=1.2/self.WPM
 
-            if self.P.USE_KEYER:
+            if P.USE_KEYER:
                 print("SET_WPM: Setting NANO speed to ",wpm)
-                if self.P.LOCK_SPEED:  
-                    self.P.keyer_device.set_wpm(wpm,idev=3,farnsworth=farnsworth,buffered=buffered)
-                    if self.P.gui:
-                        if hasattr(self.P.gui,'PaddlingWin'):
-                            self.P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
+                if P.LOCK_SPEED:  
+                    P.keyer_device.set_wpm(wpm,idev=3,farnsworth=farnsworth,buffered=buffered)
+                    if P.gui:
+                        if hasattr(P.gui,'PaddlingWin'):
+                            P.gui.PaddlingWin.WPM_TXT.set(str(wpm))
                     else:
-                        self.P.PaddlingWin.WPM_TXT.set(str(wpm))
+                        P.PaddlingWin.WPM_TXT.set(str(wpm))
                 else:
-                    self.P.keyer_device.set_wpm(wpm,farnsworth=farnsworth,buffered=buffered)
+                    P.keyer_device.set_wpm(wpm,farnsworth=farnsworth,buffered=buffered)
                     
-            if self.P.gui:
+            if P.gui:
                 # Can't fiddle with gui here since it would cause a memoery leak
                 # Tell watchdog to do it instead
-                self.P.WPM2=wpm
+                P.WPM2=wpm
 
     def txt2morse(self,msg):
         print('\nTXT2MORSE: msg=',msg,len(msg))
@@ -326,17 +344,36 @@ class Keyer():
     #        []
     def send_msg(self,msg):
 
-        print('CW_KEYER->SEND_MSG: ',msg,' at ',self.WPM,' wpm - evt=',self.evt.isSet())
-        P=self.P
-        ser = self.P.ser
+        P   = self.P
+        ser = P.ser
+        print('CW_KEYER->SEND_MSG: ',msg,' at ',self.WPM,' wpm - evt=',
+              self.evt.isSet(),'\tVIA DTR=',P.SEND_VIA_DTR,
+              '\tUSE KEYER=',P.USE_KEYER)
 
-        # Send the entire message at once if we can (i.e. if there are no cmds buried in the msg)
-        if self.P.USE_KEYER and ('[' not in msg) and (']' not in msg) and True:
-            print('\tsend_msg: msg=',msg,'\t@ wpm=',self.WPM,'\tevt set')
-            self.P.keyer_device.nano_write(msg)
-            self.evt.set()           # Signal to other processes that we've sent the message
-            return
-        
+        # Select manner we're going to key the rig
+        HAS_CMD = ('[' in msg) or ('[' in msg) 
+        if not HAS_CMD:
+
+            # Send the entire message at once - there are no cmds buried in the msg
+            if P.SEND_VIA_CMD:
+                # Send via a hamlib command - most rigs dont support this!
+                print('\tSEND_MSG: Via hamlib command - msg=',msg,'\t@ wpm=',self.WPM)
+                P.sock.send_morse(msg,VERBOSITY=1)
+                return
+
+            elif P.SEND_VIA_DTR:
+                # Send by toggling DTR - need to do more work
+                pass
+            
+            elif P.USE_KEYER:
+                # Send via external keyer & let it do all the hard work - most common pathway
+                print('\tSEND_MSG: Via keyer - msg=',msg,'\t@ wpm=',self.WPM,'\tevt set')
+                P.keyer_device.nano_write(msg)
+                self.evt.set()           # Signal to other processes that we've sent the message
+                return
+
+        # If we get here, the mesage has a keyer command and/or we are keying the rig by toggling DTR
+        # Either way, we have to do the heavy lifting ...
         self.stop   = False
         txt2=''
         for ch in msg:
@@ -378,8 +415,8 @@ class Keyer():
                     self.set_wpm(self.DEFAULT_WPM)
 
                     print("Reseting serial port ...")
-                    self.P.ser = serial.Serial(ser.PORT,ser.BAUD,timeout=0.1)
-                    self.P.ser.setDTR(False)
+                    P.ser = serial.Serial(ser.PORT,ser.BAUD,timeout=0.1)
+                    P.ser.setDTR(False)
 
                 #elif cmd2=="EXIT":
                     # Exit server
@@ -393,15 +430,15 @@ class Keyer():
                 elif cmd2[:3]=="QSY":
                     # Change freq
                     df = float( cmd2[3:] )
-                    frq = .001*self.P.sock.freq + df
-                    print('SEND_MSG - QSY - DF=',df,self.P.sock.freq,frq)
-                    self.P.sock.freq = self.P.sock.set_freq(frq)
+                    frq = .001*P.sock.freq + df
+                    print('SEND_MSG - QSY - DF=',df,P.sock.freq,frq)
+                    P.sock.freq = P.sock.set_freq(frq)
 
                 elif cmd2[:3]=="LOG":
                     # log the qso
                     print('SEND_MSG: Logging - evt2 set ...',flush=True)
                     self.evt2.set()
-                    self.P.gui.log_qso()
+                    P.gui.log_qso()
                     print('SEND_MSG: ... Done Logging',flush=True)
 
                 elif cmd2=="SERIAL":
@@ -468,7 +505,7 @@ class Keyer():
                 elif cmd2=="CALL":
                     # Substitute his call
                     #print '@@@@@@@@@@@@@@@@@@@@@ CALL @@@@@@@@@@@@@@@@@@@@'
-                    txt=self.P.gui.get_call()
+                    txt=P.gui.get_call()
                     #print txt
                     self.send_cw(txt)
                     txt2+=txt
@@ -476,7 +513,7 @@ class Keyer():
                 elif cmd2=="NAME":
                     # Substitute his name
                     #print '@@@@@@@@@@@@@@@@@@@@@ NAME @@@@@@@@@@@@@@@@@@@@'
-                    txt=self.P.gui.get_name()
+                    txt=P.gui.get_name()
                     #print txt
                     self.send_cw(txt)
                     txt2+=txt
@@ -484,7 +521,7 @@ class Keyer():
                 elif cmd2=="RST":
                     # Substitute outgoing rst
                     #print '@@@@@@@@@@@@@@@@@@@@@ RST @@@@@@@@@@@@@@@@@@@@'
-                    txt=self.P.gui.get_rst()
+                    txt=P.gui.get_rst()
                     #print txt
                     self.send_cw(txt)
                     txt2+=txt
@@ -496,29 +533,29 @@ class Keyer():
                         SEC=int(cmd2[4:])
                         print("Keying TX for ",SEC)
                         #pwr=read_tx_pwr(self)
-                        self.P.sock.set_power(5)
-                        if self.P.USE_KEYER:
-                            self.P.keyer_device.tune(True)
+                        P.sock.set_power(5)
+                        if P.USE_KEYER:
+                            P.keyer_device.tune(True)
                             time.sleep(SEC)
-                            self.P.keyer_device.tune(False)
+                            P.keyer_device.tune(False)
                         else:
                             ser.setDTR(True)
                             time.sleep(SEC)
                             ser.setDTR(False)
-                        self.P.sock.set_power(99)
+                        P.sock.set_power(99)
                     elif self.KEY_DOWN:
-                        if self.P.USE_KEYER:
-                            self.P.keyer_device.tune(False)
+                        if P.USE_KEYER:
+                            P.keyer_device.tune(False)
                         else:
                             ser.setDTR(False)
                         self.KEY_DOWN=False
                         print('TUNE - key up')
-                        self.P.sock.set_power(99)
+                        P.sock.set_power(99)
                     else:
                         #pwr=read_tx_pwr(self)
-                        self.P.sock.set_power(5)
-                        if self.P.USE_KEYER:
-                            self.P.keyer_device.tune(True)
+                        P.sock.set_power(5)
+                        if P.USE_KEYER:
+                            P.keyer_device.tune(True)
                         else:
                             ser.setDTR(True)
                         self.KEY_DOWN=True
@@ -547,17 +584,17 @@ class Keyer():
 
                 else:
                     # Nothing special - key tranmitter
-                    #print("Sending ",ch)
+                    print("\tSending ",ch)
                     self.send_cw(""+ch)
                     txt2+=ch
 
         # Signal to other processes that we've went the message
         print('SEND_MSG: Setting evt...',flush=True)
         self.evt.set()
-        if self.P.DIGI and len(txt2.strip())>0:
+        if P.DIGI and len(txt2.strip())>0:
             print('SEND_MSG: sending txt2=',txt2,'to fldigi ... len=',len(txt2.strip()))
-            self.P.sock_xml.put_tx_buff( chr(10)+txt2+chr(10)+"^r" )        # Pad with LineFeeds and go back into rx mode after we send it
-            self.P.sock_xml.ptt(1)                                     # Start TX
+            P.sock_xml.put_tx_buff( chr(10)+txt2+chr(10)+"^r" )        # Pad with LineFeeds and go back into rx mode after we send it
+            P.sock_xml.ptt(1)                                     # Start TX
         
         return txt2
 

@@ -86,7 +86,6 @@ class PADDLING_GUI():
         self.OnTop=False
         self.item=''
         self.response=''
-        P.HEADCOPY = False
         self.STRICT_MODE = True
         self.CASUAL_MODE = False
         
@@ -1159,6 +1158,8 @@ if __name__ == '__main__':
             self.last_char_time=time.time()
             self.need_eol=False
             self.FIRST = args.first
+            self.PRACTICE_MODE = True
+            self.HEADCOPY = False
             
             # Read config file
             self.SETTINGS,self.RCFILE = read_settings('.keyerrc')
@@ -1226,7 +1227,7 @@ if __name__ == '__main__':
     # We need the keyer
     #P.PaddlingWin.status_bar2.setText('Opening keyer ...')
     P.keyer=cw_keyer.Keyer(P,P.WPM)
-    P.ser=open_keying_port(P,True,1)
+    P.ser,P.direct=open_keying_port(P,True,1)
     print('P.ser=',P.ser)
     if P.ser==None:
         msg='Continue without keyer (Playback Only)?'

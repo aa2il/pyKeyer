@@ -162,7 +162,7 @@ def find_keyer(P):
 # Function to open keying control port
 def open_keying_port(P,sock,rig_num):
     if not sock:
-        return None
+        return None,None
 
     vid_pid=None
     
@@ -172,7 +172,10 @@ def open_keying_port(P,sock,rig_num):
     if P.gui:
         P.gui.status_bar.setText("Opening Keying Port ...")
 
+    ser_direct = open_direct_keying_port(P,sock)
+        
     if P.USE_KEYER and rig_num==1:
+        
         if P.FIND_KEYER or P.KEYER_PORT!=None:
             
             device,dev_type,vid_pid=find_keyer(P)
@@ -271,7 +274,7 @@ def open_keying_port(P,sock,rig_num):
                     print('\tdevice=',P.keyer_device.device,'\tser=',P.keyer_device.ser)
                     if P.keyer_device.device==None and P.keyer_device.ser==None:
                         print('Proceeding without keyer')
-                        return None
+                        return None,ser_direct
                     else:
                         FATAL_ERROR=not try_again
 
@@ -279,75 +282,74 @@ def open_keying_port(P,sock,rig_num):
                 sys.exit(0)
 
             
-    elif sock.rig_type2=='TS850':
-        if P.PRACTICE_MODE and False:
-            ser=serial_dummy()
-        elif sock.connection=='DIRECT':
-            ser = sock.s
-        else:
-            ser = serial.Serial(SERIAL_PORT5,4800,timeout=0.1)
-        
-        ser.setDTR(False)
-        #toggle_dtr(5)
-        #sys.exit(0)
-        
-    elif sock.rig_type=='Icom' or \
-         (sock.rig_type=='Hamlib' and sock.rig_type2 in ['IC9700','IC7300']) or \
-         (sock.rig_type=='FLRIG'  and sock.rig_type2 in ['IC9700','IC7300']):
-
-        if P.PRACTICE_MODE:
-            ser=serial_dummy()
-    
-        elif sock.rig_type2 in ['IC9700','IC7300']:
-            # If direct connect, could use USB A ...
-            #ser = P.sock.s
-            # but, in general, we'll use USB B in case we are using hamlib for rig control
-            #print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
-            try:
-                print('OPEN KEYING PORT: ICOM Rig =',sock.rig_type2,'...')
-                port,vid_pid=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
-                print('\tport=',port,'\tvid_pid=',vid_pid)
-                ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
-                print('\tser=',ser)
-
-                # Set full QSK, etc.
-                # This only works on DIRECT I/O for now since we no longer
-                # inhereit that as out base class
-                sock.init_keyer()
-
-                # For some reason, we need to clear the DTR and RTS lines
-                time.sleep(.1)
-                ser.setDTR(False)
-                ser.setRTS(False)  
-                time.sleep(1)
-                ser.setDTR(False)
-                ser.setRTS(False)
-                
-            except: 
-                error_trap('KEYING->OPEN KEYING PORT')
-                print('\n*****************************************')
-                print('* Unable to open keying port for rig',rig_num,' *')
-                print('*****************************************')
-                ser=None
-                sys.exit(0)
-        
-        else:
-            # DTR keying does not work for the IC706
-            # Instead, we need to connect the TS850 interface to the keying line
-            # It looks like DTR keying is supported by the IC9700 - needs work
-            
-            print('Opening keying port on IC706 ...')
-            ser = serial.Serial(SERIAL_PORT5,19200,timeout=0.1)
-            ser.setDTR(False)
-            print('... Opened keying port on IC706 ...')
-
-        if False:
-            toggle_dtr()
-        
     else:
 
-        if not P.PRACTICE_MODE:
+        ser = ser_direct
+        
+    return ser,ser_direct
 
+        
+
+def try_usb_reset(P,vid_pid):
+    
+    print('\nTRY USB RESET: vid_pid=',vid_pid)
+    
+    msg='Try Resetting USB Bus?'
+    lab="pyKeyer"
+    if P.gui:
+        P.gui.splash.hide()
+    #result=messagebox.askyesno(lab,msg)
+    result=messagebox.askyesnocancel(lab,msg)
+    print('\tresult=',result)
+    if result==True:
+        
+        if vid_pid==None:
+            device,dev_type,vid_pid=find_keyer(P)
+            if vid_pid==None:
+                print('\nTRY USB RESET: Unable to find a device to reset - vid_pid=',vid_pid)
+                return None
+        cmd="sudo usbreset "+vid_pid
+        print('\tcmd=',cmd)
+        os.system(cmd)                    
+        Done = False
+        time.sleep(5)
+        
+    elif result==False:
+        
+        device,dev_type,vid_pid=find_keyer(P)
+        print('device=',device,'\tdev_type=',dev_type)
+        Done = dev_type!=None
+        if P.gui:
+            P.gui.splash.show()
+            
+    else:
+        
+        Done = 'CANCEL'
+                    
+    return Done        # ,device,dev_type,vid_pid
+
+
+def open_kenwood_keying_port(P,sock):        
+
+    if P.PRACTICE_MODE and False:
+        ser=serial_dummy()
+    elif sock.connection=='DIRECT':
+        ser = sock.s
+    else:
+        ser = serial.Serial(SERIAL_PORT5,4800,timeout=0.1)
+        
+    ser.setDTR(False)
+    #toggle_dtr(5)
+    #sys.exit(0)
+
+    return ser
+
+    
+def open_yaesu_keying_port(P,sock):        
+
+    if True:
+        if True:
+            
             if sock.rig_type2=='FT991a':
                 
                 port,vid_pid=find_serial_device('FT991a',1,VERBOSITY=1)
@@ -391,56 +393,96 @@ def open_keying_port(P,sock,rig_num):
                 ser.PORT = SERIAL_PORT2
                 ser.BAUD = BAUD
 
-            elif sock.rig_type2 in ['None','TYT9000d','Hamlib','FLDIGI','KC505']:
-                ser=serial_dummy()
-                print('KEYING->OPEN KEYING PORT: *** WARNING *** Using DUMMY serial port for keying - wont work!')
+    return ser
 
-            else:
-                print('KEYING->OPEN KEYING PORT: Unknown rig type: \\',sock.rig_type,sock.rig_type1,sock.rig_type2)
+def open_icom_keying_port(P,sock):        
+
+    if True:
+        
+        if P.PRACTICE_MODE:
+            ser=serial_dummy()
+    
+        elif sock.rig_type2 in ['IC9700','IC7300']:
+            # If direct connect, could use USB A ...
+            #ser = P.sock.s
+            # but, in general, we'll use USB B in case we are using hamlib for rig control
+            #print('OPEN KEYING PORT:',SERIAL_PORT10,BAUD)
+            try:
+                print('OPEN ICOM KEYING PORT: ICOM Rig =',sock.rig_type2,'...')
+                port,vid_pid=find_serial_device(sock.rig_type2,1,VERBOSITY=1)
+                print('\tport=',port,'\tvid_pid=',vid_pid)
+                ser = serial.Serial(port,BAUD,timeout=0.1,dsrdtr=0,rtscts=0)
+                print('\tser=',ser)
+
+                # Set full QSK, etc.
+                # This only works on DIRECT I/O for now since we no longer
+                # inhereit that as out base class
+                sock.init_keyer()
+
+                # For some reason, we need to clear the DTR and RTS lines
+                time.sleep(.1)
+                ser.setDTR(False)
+                ser.setRTS(False)  
+                time.sleep(1)
+                ser.setDTR(False)
+                ser.setRTS(False)
+                
+            except: 
+                error_trap('KEYING->OPEN KEYING PORT')
+                print('\n*****************************************')
+                print('* Unable to open keying port for rig',rig_num,' *')
+                print('*****************************************')
+                ser=None
                 sys.exit(0)
         
         else:
-            print('### Unable to open serial port to keyer - using DUMMY ###')
-            ser=serial_dummy()
+            # DTR keying does not work for the IC706
+            # Instead, we need to connect the TS850 interface to the keying line
+            # It looks like DTR keying is supported by the IC9700 - needs work
+            
+            print('Opening keying port on IC706 ...')
+            ser = serial.Serial(SERIAL_PORT5,19200,timeout=0.1)
+            ser.setDTR(False)
+            print('... Opened keying port on IC706 ...')
 
+        if False:
+            toggle_dtr()
+        
     return ser
 
-        
 
-def try_usb_reset(P,vid_pid):
+
+
+def open_direct_keying_port(P,sock):        
+
+    if P.PRACTICE_MODE:
+        
+        ser=serial_dummy()
     
-    print('\nTRY USB RESET: vid_pid=',vid_pid)
-    
-    msg='Try Resetting USB Bus?'
-    lab="pyKeyer"
-    if P.gui:
-        P.gui.splash.hide()
-    #result=messagebox.askyesno(lab,msg)
-    result=messagebox.askyesnocancel(lab,msg)
-    print('\tresult=',result)
-    if result==True:
+    elif sock.rig_type2=='TS850':
         
-        if vid_pid==None:
-            device,dev_type,vid_pid=find_keyer(P)
-            if vid_pid==None:
-                print('\nTRY USB RESET: Unable to find a device to reset - vid_pid=',vid_pid)
-                return None
-        cmd="sudo usbreset "+vid_pid
-        print('\tcmd=',cmd)
-        os.system(cmd)                    
-        Done = False
-        time.sleep(5)
+        ser = open_kenwood_keying_port(P,sock)
+
+    elif sock.rig_type=='Icom' or \
+         (sock.rig_type in ['Hamlib','FLRIG'] and sock.rig_type2 in ['IC9700','IC7300']):
+
+        ser = open_icom_keying_port(P,sock)
         
-    elif result==False:
+    elif sock.rig_type=='Yaesu' or \
+         (sock.rig_type in ['Hamlib','FLRIG'] and sock.rig_type2 in ['FTdx3000','FT991a']):
         
-        device,dev_type,vid_pid=find_keyer(P)
-        print('device=',device,'\tdev_type=',dev_type)
-        Done = dev_type!=None
-        if P.gui:
-            P.gui.splash.show()
-            
+        ser = open_yaesu_keying_port(P,sock)
+        
+    elif sock.rig_type2 in ['None','TYT9000d','Hamlib','FLDIGI','KC505']:
+        
+        ser=serial_dummy()
+        print('KEYING->OPEN DIRECT KEYING PORT: *** WARNING *** Using DUMMY serial port for keying - wont work!')
+
     else:
         
-        Done = 'CANCEL'
-                    
-    return Done        # ,device,dev_type,vid_pid
+        print('KEYING->OPEN DIRECT KEYING PORT: Unknown rig type:',\
+              sock.rig_type,'\ttype1=',sock.rig_type1,'\ttype2=',sock.rig_type2)
+        sys.exit(0)
+        
+    return ser
+        

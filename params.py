@@ -318,6 +318,8 @@ class PARAMS:
         self.FIND_KEYER    = args.keyer=='ANY'
         self.USE_KEYER     = self.NANO_IO or self.K3NG_IO or \
             self.WINKEYER or self.FIND_KEYER
+        self.SEND_VIA_DTR  = not self.USE_KEYER
+        self.SEND_VIA_CMD  = not (self.USE_KEYER or self.SEND_VIA_DTR)
         self.NANO_ECHO     = self.USE_KEYER and not args.noecho
         self.CW_IO         = args.cwio
         self.LOCK_SPEED    = args.lock
@@ -348,6 +350,7 @@ class PARAMS:
         self.MODE          = None
         self.BAND          = None
         self.FREQ          = 0
+        self.HEADCOPY      = False
         
         self.connection    = args.rig[0]
         if len(args.rig)>=2:
