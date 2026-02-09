@@ -141,6 +141,8 @@ class GUI():
         self.dx_station = None
         self.CHECK_DIAL = 1
         self.last_qso=None
+        self.last_logged=None
+        self.match1=False
         self.rig=None
         self.pounced=False
         self.searching=False
@@ -1224,8 +1226,14 @@ class GUI():
     # Callback to look up a call on qrz.com
     def Call_LookUp(self):
         call = self.get_call()
-        if len(call)==0:
-            call = self.last_qso['call']
+        print('CALL_LOOKUP: call from box=',call,
+              '\tlast_logged=',self.last_logged,
+              '\n\tlast qso=',self.last_qso)
+        #if len(call)<3 and self.last_qso!=None:
+        #    call = self.last_qso['CALL']
+        if len(call)<3 and self.last_logged!=None:
+            call = self.last_logged
+        print('CALL_LOOKUP: call2=',call)
         if len(call)>=3:
             print('CALL_LOOKUP: Looking up '+call+' on QRZ.com')
             open_web_page('https://www.qrz.com/db/' + call)
@@ -1233,6 +1241,7 @@ class GUI():
             self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],[self.last_qso])
             #self.qrzWin.hide()
 
+        """
         if self.match1:
             print('\nWorked B4:')
             print(self.last_qso,'\n')
@@ -1240,6 +1249,7 @@ class GUI():
             #    if qso['CALL']==call:
             #        print(qso)
             #print(' ')
+        """
             
         else:
             print('CALL_LOOKUP: Need a valid call first! ',call)
@@ -2382,6 +2392,7 @@ class GUI():
                 self.txt.see(END)
             
             # Construct QSO record
+            self.last_logged = call
             qso = dict( list(zip(['QSO_DATE_ON','TIME_ON',
                                   'QSO_DATE_OFF','TIME_OFF',
                                   'CALL','FREQ','BAND','MODE', 
