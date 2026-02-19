@@ -565,7 +565,10 @@ class GUI():
         tip = ToolTip(self.inc_btn,' Increment Serial')
                 
         # Radio button group to support SO2R
-        col += 2              # Need to move this group!
+        if P.sock3==None:
+            col += 2   # 2              # Need to move this group!
+        else:
+            col += 1   # 2              # Need to move this group!
         self.iRadio = IntVar(value=1)
         self.Radio1 = Radiobutton(self.root, text=P.sock1.rig_type2,
                                   variable=self.iRadio,
@@ -1241,16 +1244,6 @@ class GUI():
             self.qrzWin = CALL_INFO_GUI(self.root,self.P,[call],[self.last_qso])
             #self.qrzWin.hide()
 
-        """
-        if self.match1:
-            print('\nWorked B4:')
-            print(self.last_qso,'\n')
-            #for qso in self.log_book:
-            #    if qso['CALL']==call:
-            #        print(qso)
-            #print(' ')
-        """
-            
         else:
             print('CALL_LOOKUP: Need a valid call first! ',call)
             self.status_bar.setText('QRZ? - Need a valid call first!')
