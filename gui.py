@@ -1306,7 +1306,7 @@ class GUI():
             if txt=='--':
                 frqA  = 1e-3*self.sock.get_freq(VFO='A') 
                 frqB  = 1e-3*self.sock.get_freq(VFO='B') 
-                mode  = self.sock.get_mode()
+                mode,bw  = self.sock.get_mode()
                 split = self.sock.split_mode(-1)
                 ant = self.sock.get_ant()
                 if split:
@@ -1350,7 +1350,7 @@ class GUI():
             call  = self.get_call().upper()
             frqA  = 1e-3*self.sock.get_freq(VFO='A') 
             frqB  = 1e-3*self.sock.get_freq(VFO='B') 
-            mode  = self.sock.get_mode()
+            mode,bw  = self.sock.get_mode()
             split = self.sock.split_mode(-1)
             ant   = self.sock.get_ant()
             if split:
@@ -2342,9 +2342,9 @@ class GUI():
             freq_kHz = 1e-3*self.sock.get_freq()
             freq     = int( freq_kHz )
             if self.P.DIGI:
-                mode     = self.P.sock_xml.get_mode()
+                mode,bw  = self.P.sock_xml.get_mode()
             else:
-                mode     = self.P.sock.get_mode()
+                mode,bw  = self.P.sock.get_mode()
             if mode in ['CW-U']:
                 mode='CW'
             elif mode=='FMN':
@@ -2671,7 +2671,7 @@ class GUI():
         if self.P.DIGI:
             mode = self.P.sock_xml.get_mode()
         else:
-            mode = self.sock.get_mode()
+            mode,bw = self.sock.get_mode()
         band = freq2band(1e-6*freq)
             
         if self.P.sock_log.connection=='FLLOG' and True:
@@ -3658,7 +3658,7 @@ class GUI():
         rig=self.sock.rig_type2
         print('Rig query...',rig)
         frqA  = 1e-3*self.sock.get_freq(VFO='A') 
-        mode  = self.sock.get_mode()
+        mode,bw  = self.sock.get_mode()
         txt = '{:s} \t {:d} \t {:s}\n'.format(rig,int(frqA),mode)
         self.P.gui.txt.insert(END, txt, ('highlight'))
         self.P.gui.txt.see(END)

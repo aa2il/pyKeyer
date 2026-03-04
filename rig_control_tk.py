@@ -536,7 +536,7 @@ class RIG_CONTROL():
 
             # Read radio and set spin box accordingly
             print('\tSET_VFO_MODE: Reading radio vfo ...')
-            mode = self.sock.get_mode(VFO=vfo)
+            mode,bw = self.sock.get_mode(VFO=vfo)
             #####idx  = self.MODE_LIST.index(mode)
             print('\tCurrent mode=',mode)
             if vfo=='A':

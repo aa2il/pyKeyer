@@ -100,7 +100,7 @@ class WatchDog:
             print('Watch Dog - reading radio status ...', P.sock.connection,flush=True)
 
             P.FREQ = P.sock.get_freq()
-            P.MODE = P.sock.get_mode()
+            P.MODE,bw = P.sock.get_mode()
             P.BAND = freq2band(1e-6*P.FREQ)
             
             # Let user adjust WPM from radio knob
