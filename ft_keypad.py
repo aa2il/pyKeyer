@@ -47,17 +47,20 @@ def GetKeyerMemory(self):
             buf=s.get_response(cmd)
             if buf and len(buf)>0:
                 break
-            
-        print("GetKeyerMemory: buf=",buf,len(buf))
-        if buf and len(buf)>0:
-            if i<5:
-                j=buf.index('}')
-                self.Keyer[i]=buf[3:j]
-            else:
-                j=buf.index(';')
-                self.Keyer[i]=buf[5:j]
 
-        print("Done.")
+        # Not sure what the rational is for the } and ; - set this up a long time ago!
+        print("GetKeyerMemory: buf=",buf,len(buf))
+        j=len(buf)
+        if buf and j>0:
+            if i<5:
+                if '}' in buf:
+                    j=buf.index('}')
+            else:
+                if ';' in buf:
+                    j=buf.index(';')
+            self.Keyer[i]=buf[5:j]
+
+        print("\tKeyer=",self.Keyer[i])
 
 
 
