@@ -1,7 +1,7 @@
 ################################################################################
 #
 # Params.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Command line param parser for pyKeyer.
 #
@@ -127,6 +127,8 @@ class PARAMS:
         arg_proc.add_argument('-cqp', action='store_true',
                               help='California QP')
         arg_proc.add_argument('-state', help='State QP',
+                              type=str,default=None)
+        arg_proc.add_argument('-ses', help='Special Event Station',
                               type=str,default=None,nargs='*')
         arg_proc.add_argument('-aa', action='store_true',
                               help='All Asia DX')
@@ -208,6 +210,8 @@ class PARAMS:
                               help='Use Sidetone Osc')
         arg_proc.add_argument('-split', action='store_true',
                               help='Split Text Window')
+        arg_proc.add_argument('-broadcast', action='store_true',
+                              help='Enable UDP Broadcasting')
         arg_proc.add_argument('-hints', action='store_true',
                               help='Show hints')
         arg_proc.add_argument('-capture', action='store_true',
@@ -332,6 +336,7 @@ class PARAMS:
         self.PRACTICE_MODE = args.practice or args.rig[0]=="NONE"
         self.ADJUST_SPEED  = args.adjust and args.practice
         self.NO_HINTS      = not args.hints
+        self.BROADCASTING  = args.broadcast
         self.CA_ONLY       = args.ca_only
         
         self.WPM           = args.wpm
@@ -421,6 +426,10 @@ class PARAMS:
         if args.state!=None:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
+
+        self.SES=args.ses
+        if args.ses!=None:
+            self.CONTEST_LIST.append('Special-Event')
 
         self.SHOW_TEXT_BOX2=args.split
 

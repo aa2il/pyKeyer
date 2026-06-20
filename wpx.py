@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # wpx.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for CQ World Prefix contest
 #
@@ -55,14 +55,14 @@ class WPX_KEYING(DEFAULT_KEYING):
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ WPX [MYCALL] [MYCALL] '}
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 599 [SERIAL] [SERIAL] [CALL] '}
             MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] DIT DIT [MYCALL] [LOG]'}
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL 73 [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] DIT DIT [MYCALL] [LOG]'}
         else:
             # CW
             MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ TEST [MYCALL] '}
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [SERIAL] '}
             MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL 73 [MYCALL] [LOG]'}
+            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] 73 [MYCALL] [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] GL [NAME] EE [LOG]'}
             
         MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}

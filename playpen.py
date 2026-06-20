@@ -2,7 +2,7 @@
 ############################################################################################
 #
 # playpen.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Work area to get various components up and running.
 #

@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # gui.py - Rev 1.1
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # GUI for CW keyer.
 #
@@ -38,6 +38,7 @@ from datetime import datetime, date, tzinfo
 import time
 import cw_keyer
 import hint
+import audio_capture
 from dx import Station
 from pprint import pprint
 from rig_io import ClarReset,SetTXSplit
@@ -77,6 +78,7 @@ from utilities import cut_numbers,freq2band,Oh_Canada,error_trap, \
 
 import pyautogui
 from widgets_tk import StatusBar,SPLASH_SCREEN
+from udp import contact_info_packet
 
 ############################################################################################
 
@@ -1170,6 +1172,12 @@ class GUI():
             # Turn off VFO splits
             self.Select_VFO('A')            
         
+    # Callback to toggle Special Event Station mode
+    def Toggle_SES(self,iop=None):
+        if iop==None:
+            self.P.SES = not self.P.SES
+        print('TOOGLE SES:',self.P.SES,iop)
+        
     # Callback to toggle DXSplit mode
     def Toggle_DXSplit(self,iop=None):
         if iop==None:
@@ -1183,16 +1191,22 @@ class GUI():
                                       relief='sunken')                          
             self.P.udp_server.Broadcast('SPLIT:ON')
 
-            # Set TX clarifier (XIT split) to 1 KHz UP by default
-            SetTXSplit(self.P,1,True)
+            # Set TX or RX clarifier (XIT/RIT split) to 1 KHz UP by default
+            if self.SES:
+                SetRXSplit(self.P,1,True)
+            else:
+                SetTXSplit(self.P,1,True)
         else:
             self.DXSplitBtn.configure(background='Green',
                                       highlightbackground= 'Green',
                                       relief='raised')                   
             self.P.udp_server.Broadcast('SPLIT:OFF')
 
-            # Turn off TX clarifier (XIT split)
-            SetTXSplit(self.P,0,False)
+            # Turn off TX or RX clarifier (XIT/RIT split)
+            if self.SES:
+                SetRXSplit(self.P,0,False)
+            else:
+                SetTXSplit(self.P,0,False)
         
     # Callback to toggle filter width
     def Toggle_FilterWidth(self,iopt=None):
@@ -1553,9 +1567,10 @@ class GUI():
             else:
                 stn1 = Station(call)
                 try:
-                    prefix1 = stn1.call_prefix+stn1.call_number
-                    suffix1 = stn1.call_suffix
-                    print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
+                    if stn1:
+                        prefix1 = stn1.call_prefix+stn1.call_number
+                        suffix1 = stn1.call_suffix
+                        print('STN1:',stn1.call_prefix,stn1.call_number,stn1.call_suffix)
                 except:
                     error_trap('PATCH MACRO2 - Problem getting prefix for STN1')
                     print('call  =',call)
@@ -1739,7 +1754,7 @@ class GUI():
             print('\tinfo=',info)
             try:
                 call=self.get_call().upper()
-                if len(info[0])>0:
+                if len(info)>0:
                     name2=info[0]
                 elif call in self.P.MASTER:
                     name2=self.P.MASTER[call]['name']
@@ -1856,7 +1871,8 @@ class GUI():
         elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
                                       'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
                                       'IOTA','MARAC','SAC','OCDX','SOLAR',
-                                      'SPDX','POTA','YURI','MMC','AWT']:
+                                      'SPDX','POTA','YURI','MMC','AWT',
+                                      'Special-Event']:
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P,val)
@@ -2230,7 +2246,7 @@ class GUI():
 
         # Immediately stop sending
         try:
-            self.keyer.abort()     
+            self.keyer.abort('GUI - QUIT: Stopping keyer ...')
             if not self.q.empty():
                 self.q.get(False)
                 self.q.task_done()
@@ -2274,6 +2290,7 @@ class GUI():
     def log_qso(self):
 
         # Check for minimal fields
+        P=self.P
         call=self.get_call().upper()
         valid = len(call)>=3
         name=self.get_name().upper()
@@ -2283,13 +2300,13 @@ class GUI():
         qso2 = {}
         srx=0
 
-        MY_NAME     = self.P.SETTINGS['MY_NAME']
-        MY_STATE    = self.P.SETTINGS['MY_STATE']
+        MY_NAME     = P.SETTINGS['MY_NAME']
+        MY_STATE    = P.SETTINGS['MY_STATE']
         
         if self.contest:
             rst='5NN'
-            #exch,valid,self.exch_out,qso2 = self.P.KEYING.logging()
-            x = self.P.KEYING.logging()
+            #exch,valid,self.exch_out,qso2 = P.KEYING.logging()
+            x = P.KEYING.logging()
             exch = x[0]
             valid = x[1]
             self.exch_out = x[2]
@@ -2307,15 +2324,15 @@ class GUI():
 
         # Make sure a satellite is selected if needed - MOVE THIS TO LOGGING() IN SATS.PY
         satellite = self.get_satellite()
-        if self.P.contest_name=='SATELLITES' and satellite=='None':
+        if P.contest_name=='SATELLITES' and satellite=='None':
             errmsg='Need to Select a Satellite!'
             valid=False
         else:
             errmsg='Missing one or more fields!'
             
         if valid:
-            print('LOG IT! contest=',self.contest,self.P.contest_name,\
-                  '\nP.sock=',self.P.sock,self.P.sock.rig_type2)
+            print('LOG IT! contest=',self.contest,P.contest_name,\
+                  '\nP.sock=',P.sock,P.sock.rig_type2)
             #print(self.sock.run_macro(-1))
         
             # Get time stamp, freq, mode, etc.
@@ -2325,7 +2342,7 @@ class GUI():
             date_off  = now.strftime('%Y%m%d')
             time_off  = now.strftime('%H%M%S')
 
-            if self.P.contest_name=='Ragchew' or True:
+            if P.contest_name=='Ragchew' or True:
                 print('LOG IT! TIME_ON B=',self.time_on.strftime('%H%M%S'))
                 if self.time_on:
                     date_on = self.time_on.strftime('%Y%m%d')
@@ -2341,10 +2358,10 @@ class GUI():
             # Read the radio 
             freq_kHz = 1e-3*self.sock.get_freq()
             freq     = int( freq_kHz )
-            if self.P.DIGI:
-                mode,bw  = self.P.sock_xml.get_mode()
+            if P.DIGI:
+                mode,bw  = P.sock_xml.get_mode()
             else:
-                mode,bw  = self.P.sock.get_mode()
+                mode,bw  = P.sock.get_mode()
             if mode in ['CW-U']:
                 mode='CW'
             elif mode=='FMN':
@@ -2359,7 +2376,7 @@ class GUI():
                 band='160m'
 
             # For satellites, read vfo B also  - MOVE THIS TO LOGGING() IN SATS.PY
-            if self.P.contest_name=='SATELLITES':
+            if P.contest_name=='SATELLITES':
                 freq_kHz_rx = freq_kHz
                 band_rx     = band
 
@@ -2401,43 +2418,43 @@ class GUI():
                                   satellite,
                                   str( round(1e-3*freq_kHz_rx,4)),
                                   band_rx,notes,str(int(self.RUNNING)),
-                                  self.P.sock.rig_type2,
-                                  self.P.CONTEST_ID] )))
-            if self.MY_CALL != self.P.SETTINGS['MY_OPERATOR']:
-                qso['OPERATOR'] = self.P.SETTINGS['MY_OPERATOR']
+                                  P.sock.rig_type2,
+                                  P.CONTEST_ID] )))
+            if self.MY_CALL != P.SETTINGS['MY_OPERATOR']:
+                qso['OPERATOR'] = P.SETTINGS['MY_OPERATOR']
             qso.update(qso2)
 
             # Send spot to bandmap - only do if S&P
-            if self.P.udp_server:
+            if P.udp_server:
                 # LOG:CALL:BAND:FREQ:MODE:DATE_OFF:TIME_OFF:QTH
                 msg  = 'LOG:'+call+':'+band+':'+str(freq_kHz)+':'+mode+':'+date_off+':'+time_off+':'+qth
                 print('LOG QSO: Broadcasting spot:',msg)
-                self.P.udp_server.Broadcast(msg)
+                P.udp_server.Broadcast(msg)
                 
                 if not self.RUNNING:
                     msg  = 'SPOT:'+call+':'+str(freq_kHz)+':'+mode
                     print('LOG QSO: Broadcasting spot:',msg)
-                    self.P.udp_server.Broadcast(msg)
+                    P.udp_server.Broadcast(msg)
 
             # Log contact using FLLOG
-            if self.P.sock_log.connection=='FLLOG':
+            if P.sock_log.connection=='FLLOG':
                 print('GUI->LOG_QSO: via FLLOG ...')
-                self.P.sock_log.Add_QSO(qso)
+                P.sock_log.Add_QSO(qso)
 
             # Log contact using FLDIGI - dont use if in RTTY mode - This path needs work!!!
-            elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not self.P.PRACTICE_MODE and False:
+            elif self.sock.connection=='FLDIGI' and self.sock.fldigi_active and not P.PRACTICE_MODE and False:
                 print('GUI->LOG_QSO: FLDIGI ...')
                 fields = {'Call':call,'Name':name,'RST_out':rstout,'QTH':qth,'Exchange':exch}
-                if not self.P.WF_ONLY:
+                if not P.WF_ONLY:
                     self.sock.set_log_fields(fields)
                 self.sock.set_mode('CW')
                 self.sock.run_macro(47)
 
             # Reset clarifier
-            ClarReset(self,self.P.RX_Clar_On)
+            ClarReset(self,P.RX_Clar_On)
 
             # Make sure practice exec gets what it needs
-            if self.P.PRACTICE_MODE:
+            if P.PRACTICE_MODE:
                 print('GUI->LOG_QSO - PRACTICE MODE: Waiting for handshake ... EVT2=',\
                       self.keyer.evt2.isSet(),\
                       '\nIf you want to log an actual contact, exit PRACTICE_MODE and try again',flush=True)
@@ -2470,7 +2487,7 @@ class GUI():
             
             self.rstin.delete(0,END)
             self.rstout.delete(0,END)
-            if self.P.contest_name=='SATELLITES':
+            if P.contest_name=='SATELLITES':
                 self.rstin.insert(0,'5')
                 self.rstout.insert(0,'5nn')
                 self.exch.configure(background=self.default_color)
@@ -2491,10 +2508,10 @@ class GUI():
             #print self.log_book
 
             # Update ADIF file
-            if not self.P.PRACTICE_MODE:
+            if not P.PRACTICE_MODE:
                 qso2 =  {key.upper(): val for key, val in list(qso.items())}
                 print("GUI: ADIF writing QSO=",qso2)
-                write_adif_record(self.fp_adif,qso2,self.P)
+                write_adif_record(self.fp_adif,qso2,P)
                 print(' ')
                 self.prev_qso=qso2
 
@@ -2506,12 +2523,18 @@ class GUI():
                 except: 
                     error_trap('GUI->LOG QSO: ERROR writing logged info to big text box')
                     
-            self.P.gui.status_bar.setText('Contact with '+call+' Logged!!!')
-                    
+            P.gui.status_bar.setText('Contact with '+call+' Logged!!!')
+
+            # Broadcast logged contact - if HamConnect is running, it will receive it
+            if P.BROADCASTING:
+                pkt=contact_info_packet(P,qso2)
+                print('pkt=',pkt)
+                P.udp_bcast_server.Broadcast(pkt,DEBUG=True)
+
             # On the fly scoring
             try:
-                if self.P.SCORING:
-                    self.P.SCORING.otf_scoring(qso)
+                if P.SCORING:
+                    P.SCORING.otf_scoring(qso)
                 else:
                     stack_trace('OOOOPs - no scoring routine')
             except: 
@@ -2554,13 +2577,13 @@ class GUI():
         #print '%%% Exchange saved ***'
 
         # Increment QSO counter
-        self.P.MY_CNTR += 1
+        P.MY_CNTR += 1
         self.counter.delete(0, END)
-        self.counter.insert(0,str(self.P.MY_CNTR))
-        self.P.DIRTY = True
+        self.counter.insert(0,str(P.MY_CNTR))
+        P.DIRTY = True
 
         # Make sure we're on VFO A
-        if self.P.SO2V:
+        if P.SO2V:
             try:
                 self.Select_VFO('A')
             except: 
@@ -3215,7 +3238,7 @@ class GUI():
             self.fp_txt.write('ESCAPE!!!!!\n')
             self.fp_txt.flush()
             
-            self.keyer.abort()     
+            self.keyer.abort('GUI - ESCAPE: Stopping keyer ...')
             if not self.q.empty():
                 self.q.get(False)
                 self.q.task_done()
@@ -3539,15 +3562,24 @@ class GUI():
             if self.P.SideTone.started and self.P.SideTone.enabled:
                 self.P.SideTone.pause()
 
+    # Callback to turn UDP Broadcasting on and off
+    def BroadcastCB(self):
+        print("Toggling UDP Broadcasting ...")
+        P=self.P
+        P.BROADCASTING = not self.P.BROADCASTING
+        
     # Callback to turn capture on and off
     def CaptureCB(self):
         print("Toggling Audio Capture ...")
-        self.P.CAPTURE = not self.P.CAPTURE
-        if self.P.CAPTURE:
-            if self.P.capture.started:
-                self.P.capture.resume()
+        P=self.P
+        P.CAPTURE = not self.P.CAPTURE
+        if P.CAPTURE:
+            if not hasattr(P,'capture'):
+                P.capture=self.start_audio_capture()
+            if P.capture.started:
+                P.capture.resume()
             else:
-                self.P.capture.start()
+                P.capture.start()
         else:
             if self.P.capture.started and self.P.capture.enabled:
                 self.P.capture.pause()
@@ -3671,7 +3703,20 @@ class GUI():
         self.MY_CALL = self.P.SETTINGS['MY_CALL']
         self.set_macros()
         print('... Done.')
-            
+
+    # Routine to initiate audio capture thread
+    def start_audio_capture(self):
+        print('Creating thread to Capture Audio ...')
+        P=self.P
+        P.MEM.take_snapshot()
+        capture = audio_capture.AUDIO_CAPTURE(P)
+        worker = threading.Thread(target=capture.run, args=(), name='Capture Exec' )
+        worker.daemon=True
+        worker.start()
+        P.threads.append(worker)
+
+        return capture
+        
 ############################################################################################
     
     # Function to create menu bar
@@ -3699,12 +3744,28 @@ class GUI():
             command=self.SetCWModeCB
         )
         
+        self.SES = BooleanVar(value=self.P.SES)
+        Menu1.add_checkbutton(
+            label="Special Event",
+            underline=0,
+            variable=self.SES,
+            command=self.Toggle_SES
+        )
+        
         self.Capturing = BooleanVar(value=self.P.CAPTURE)
         Menu1.add_checkbutton(
             label="Capture Audio",
             underline=0,
             variable=self.Capturing,
             command=self.CaptureCB
+        )
+        
+        self.Broadcasting = BooleanVar(value=self.P.BROADCASTING)
+        Menu1.add_checkbutton(
+            label="UDP Broadcasting",
+            underline=0,
+            variable=self.Broadcasting,
+            command=self.BroadcastCB
         )
         
         self.Farnsworth = BooleanVar(value=self.P.FARNSWORTH)

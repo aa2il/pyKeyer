@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # audio_capture.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Functions related audio capturing.
 #
@@ -50,15 +50,20 @@ class AUDIO_CAPTURE():
         # Need to make this adaptive???
         if P.sock.rig_type2=='FT991a':
             gain=[2,1]            # was 4
+            nchan=1
         elif P.sock.rig_type2=='FTdx3000':
             gain=[1,1]
-            #gain=[1.,1.]
-            #gain=[.5,.5]
+            #gain=[.1,.1]
+            gain=[.5,.5]
+            nchan=1
+        elif P.sock.rig_type2=='IC9700':
+            gain=[1,1]
+            nchan=2
         else:
             gain=[1,1]
+            nchan=1
             
         WAVE_RATE=8000
-        nchan=1
         P.rec = WaveRecorder(P.wave_file, 'wb',
                              channels=nchan,
                              wav_rate=WAVE_RATE,

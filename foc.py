@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # foc.py - Rev 1.0
-# Copyright (C) 2024-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2024-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for FOC BW.
 #

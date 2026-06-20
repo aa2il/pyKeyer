@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # nano_io.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Functions related to the nano IO interface
 #
@@ -116,6 +116,7 @@ from utilities import find_serial_device,list_all_serial_devices,show_hex,error_
 NANO_BAUD=3*38400
 NULL_CMD=chr(0x13)
 ADMIN_OPEN_CMD=chr(0x00)+chr(0x02)
+ADMIN_CLOSE_CMD=chr(0x00)+chr(0x03)
 ECHO_CMD=chr(0x00)+chr(0x04)
 STATUS_CMD=chr(0x15)
 TIMEOUT=1    # was 0.1 , 1
@@ -354,7 +355,7 @@ class KEYING_DEVICE():
                     print('\t\tSending ADMIN OPEN command ...',t2)
                     self.send_command(ADMIN_OPEN_CMD)
                     time.sleep(t2)
-                print('\t\t... 0x02: in_waiting=',self.ser.in_waiting,'\tout_waiting=',self.ser.out_waiting)
+                    print('\t\t... 0x02: in_waiting=',self.ser.in_waiting,'\tout_waiting=',self.ser.out_waiting)
 
                 if self.ser.in_waiting:
                     print('\tWAIT4IT: WINKEYER appears to be opened ...')
@@ -571,7 +572,15 @@ class KEYING_DEVICE():
     # Close the keying device
     def close(self):
         if self.ser:
+            if self.protocol=='WINKEYER':
+                print('NANO_IO->CLOSE: Sending ADMIN OPEN command ...')
+                self.send_command(ADMIN_CLOSE_CMD)
+                time.sleep(1)
+
+            print('NANO_IO->CLOSE: CLOSING KEYING DEVICE ...')
             self.ser.close()
-            print('KEYING DEVICE CLOSED.')
+            # time.sleep(10)
+            print('NANO_IO->CLOSE: KEYING DEVICE CLOSED.')
             self.ser=None
+            # time.sleep(10)
 

@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # default.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Keying routines for default qsos, most state QSO parties and some other contests.
 #
@@ -183,11 +183,18 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
+            elif self.contest_name in ['Special-Event']:
+
+                CONTEST = self.P.SES
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=CONTEST
+                
             elif self.contest_name in ['IDQP','WIQP']:
 
                 # State only - but they seem to send 5NN also so go with it
-                #LAB1  = 'QTH'
-                #EXCH1 = '[MYSTATE]'
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
@@ -370,11 +377,14 @@ class DEFAULT_KEYING():
             self.EXCH3=EXCH3
             print('self.LAB2=',self.LAB2,'\tEXCH2=',EXCH2)
 
-            MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] '}
-            #MACROS[0+12]  = {'Label' : 'QRS '      , 'Text' : 'QRS PSE QRS '}
-            MACROS[0+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
+            if self.P.SES!=None and self.P.DXSPLIT:
+                MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] UP'}
+                MACROS[0+12]  = {'Label' : 'CQ'        , 'Text' : 'CQ CQ '+CONTEST+'[MYCALL] [MYCALL] UP'}
+            else:
+                MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] '}
+                MACROS[0+12]  = {'Label' : 'CQ'        , 'Text' : 'CQ CQ '+CONTEST+'[MYCALL] [MYCALL]'}
+                #MACROS[0+12]  = {'Label' : 'NIL'       , 'Text' : 'NIL '}
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU '+EXCH1+' '+EXCH2+' '}
-            #MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] [+2]73 EE [-2] [LOG]'}
             MACROS[1+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] TNX AGN [NAME] EE [LOG]'}
 
             # Check date for any special greetings
@@ -393,7 +403,10 @@ class DEFAULT_KEYING():
                 GREETING2="GL"
                 GREETING3="TU"
                 
-            MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING1+' [MYCALL] [LOG]'}
+            if self.P.SES!=None and self.P.DXSPLIT:
+                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING1+' [MYCALL] UP [LOG]'}
+            else:
+                MACROS[2]     = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING1+' [MYCALL] [LOG]'}
             MACROS[2+12]  = {'Label' : 'TU/QRZ?'   , 'Text' : '[CALL_CHANGED] '+GREETING2+' [NAME] EE [LOG]'}
             MACROS[3]     = {'Label' : 'Call?'     , 'Text' : '[CALL]? '}
             MACROS[3+12]  = {'Label' : 'Call?'     , 'Text' : 'CALL? '}

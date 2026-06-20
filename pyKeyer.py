@@ -7,7 +7,7 @@
 ################################################################################
 #
 # pyKeyer.py - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 #    Main program for CW Keyer and server.
 #
@@ -33,7 +33,6 @@ import sys
 import re
 import serial
 import practice 
-import audio_capture
 from rig_io import socket_io 
 from rig_io import hamlibserver as rigctl
 import threading
@@ -253,13 +252,7 @@ if False:
 
 # Set up a thread for audio capture
 if P.CAPTURE:
-    print('Creating thread to Capture Audio ...')
-    P.MEM.take_snapshot()
-    P.capture = audio_capture.AUDIO_CAPTURE(P)
-    worker = threading.Thread(target=P.capture.run, args=(), name='Capture Exec' )
-    worker.daemon=True
-    worker.start()
-    P.threads.append(worker)
+    P.capture=P.gui.start_audio_capture()
 
 # Create sidetone oscillator & start in a separate thread
 print('Creating Sidetone ...')
@@ -310,6 +303,11 @@ if P.UDP_SERVER:
     #P.udp_client2 = False
     #P.udp_ntries2 = 0
     #P.Last_BM_Check = 0
+
+    P.udp_bcast_server = UDP_Broadcast_Server(P,None,BROADCAST_UDP_PORT,
+                                              Server=True,
+                                              Handler=UDP_msg_handler)
+    
 
 # WatchDog - runs in its own thread so it doesnt clog up the gui
 P.WATCHDOG = True

@@ -2,7 +2,7 @@
 ################################################################################
 #
 # paddling.py - Rev. 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Gui for sending and headcopy practice (i.e. fun with paddles)
 #
@@ -414,11 +414,15 @@ class PADDLING_GUI():
     # Callback to either hide or quit the paddling practice
     def Quit(self):
         P=self.P
+        print('PADDLING->QUIT: ...')
+        #time.sleep(10)
         if not P.gui:
             if P.keyer_device:
                 print('PADDLING: Closing keyer ...')
                 P.keyer_device.close()
+                #time.sleep(10)
             print('PADDLING: Exiting ...')
+            #time.sleep(10)
             sys.exit(0)
         else:
             print('PADDLING: Hiding ...')
@@ -523,7 +527,7 @@ class PADDLING_GUI():
             if P.SIDETONE:
                 self.P.SideTone.abort()
             else:
-                self.P.keyer_device.abort()
+                self.P.keyer_device.abort('PADDLING - KEYPRESS: Stopping keyer ...')
 
         elif key in ['h','H'] and (alt or control):
 
