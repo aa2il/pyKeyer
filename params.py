@@ -59,7 +59,7 @@ CONTESTS['TEN-TEN']      = {'Months' : [],      'Duration' : 48}
 CONTESTS['WINTER-FD']    = {'Months' : [1],     'Duration' : 30}
 CONTESTS['WAG']          = {'Months' : [10],    'Duration' : 24}
 CONTESTS['SAC']          = {'Months' : [9],     'Duration' : 24}
-CONTESTS['RAC']          = {'Months' : [6,12],  'Duration' : 24}
+CONTESTS['RAC']          = {'Months' : [6,7,12],  'Duration' : 24}
 CONTESTS['BERU']         = {'Months' : [],      'Duration' : 48}
 CONTESTS['CQP']          = {'Months' : [10],    'Duration' : 30}
 CONTESTS['IARU-HF']      = {'Months' : [7],     'Duration' : 48}
@@ -86,6 +86,7 @@ CONTESTS['MARAC']        = {'Months' : [7],     'Duration' : 48}
 CONTESTS['SOLAR']        = {'Months' : [],      'Duration' : 10}
 CONTESTS['OCDX']         = {'Months' : [10],    'Duration' : 24}
 CONTESTS['MARCONI']      = {'Months' : [7],     'Duration' : 24}
+CONTESTS['WWA']          = {'Months' : [1,6,7], 'Duration' : 24}
                    
 # Structure to contain processing params
 class PARAMS:
@@ -128,8 +129,10 @@ class PARAMS:
                               help='California QP')
         arg_proc.add_argument('-state', help='State QP',
                               type=str,default=None)
-        arg_proc.add_argument('-ses', help='Special Event Station',
-                              type=str,default=None,nargs='*')
+        #arg_proc.add_argument('-ses', help='Special Event Station',
+        #                      type=str,default=None,nargs='*')
+        arg_proc.add_argument('-wwa', action='store_true',
+                              help='World Wide Award')
         arg_proc.add_argument('-aa', action='store_true',
                               help='All Asia DX')
         arg_proc.add_argument('-wfd', action='store_true',
@@ -427,9 +430,14 @@ class PARAMS:
             for state in args.state:
                 self.CONTEST_LIST.append(state+'QP')
 
-        self.SES=args.ses
-        if args.ses!=None:
-            self.CONTEST_LIST.append('Special-Event')
+        #self.SES=args.ses
+        #if args.ses!=None:
+        #    self.CONTEST_LIST.append('Special-Event')
+        self.WWA=args.wwa
+        if self.WWA:
+            self.SES=['WWA']
+        else:
+            self.SES=None
 
         self.SHOW_TEXT_BOX2=args.split
 
@@ -516,6 +524,8 @@ class PARAMS:
             self.contest_name='IARU-HF'
         elif args.cqww:
             self.contest_name='CQWW'
+        elif args.wwa:
+            self.contest_name='WWA'
         elif args.wpx:
             if self.DIGI:
                 self.contest_name = 'CQ-WPX-RTTY'

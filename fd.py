@@ -47,7 +47,7 @@ class FD_KEYING(DEFAULT_KEYING):
         DEFAULT_KEYING.__init__(self,P,EVENT+'-FD','FD_202*.txt')
         P.CONTEST_ID=EVENT+'-FIELD-DAY'
 
-        # On-the-fly scoring - NEW!
+        # On-the-fly scoring 
         P.SCORING    = FIELD_DAY_SCORING(P,False)
 
         

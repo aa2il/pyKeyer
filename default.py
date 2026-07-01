@@ -183,9 +183,18 @@ class DEFAULT_KEYING():
                 EXCH2 = '[MYSTATE]'
                 self.P.CONTEST_ID=self.contest_name[0:2]+'-QSO-PARTY'
                 
+            elif self.contest_name in ['WWA']:
+
+                CONTEST = self.contest_name
+                LAB1  = 'RST'
+                EXCH1 = '5NN'
+                LAB2  = 'QTH'
+                EXCH2 = '[MYSTATE]'
+                self.P.CONTEST_ID=CONTEST
+                
             elif self.contest_name in ['Special-Event']:
 
-                CONTEST = self.P.SES
+                CONTEST = self.P.SES[0]
                 LAB1  = 'RST'
                 EXCH1 = '5NN'
                 LAB2  = 'QTH'
@@ -375,7 +384,9 @@ class DEFAULT_KEYING():
             self.EXCH1=EXCH1
             self.EXCH2=EXCH2
             self.EXCH3=EXCH3
-            print('self.LAB2=',self.LAB2,'\tEXCH2=',EXCH2)
+            print('self.LAB2=',self.LAB2,
+                  '\tEXCH2=',EXCH2,
+                  '\tCONTEST=',CONTEST)
 
             if self.P.SES!=None and self.P.DXSPLIT:
                 MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ '+CONTEST+' [MYCALL] UP'}

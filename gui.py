@@ -695,6 +695,8 @@ class GUI():
                 spot['FreqA']   = None
                 spot['FreqB']   = None
                 spot['Mode']    = None
+                spot['RIT']     = None
+                spot['XIT']     = None
                 spot['Split']   = None
                 spot['Ant']     = None
                 spot['Fields']  = None
@@ -1174,9 +1176,9 @@ class GUI():
         
     # Callback to toggle Special Event Station mode
     def Toggle_SES(self,iop=None):
-        if iop==None:
-            self.P.SES = not self.P.SES
-        print('TOOGLE SES:',self.P.SES,iop)
+        #if iop==None:
+        #    self.P.SES = not self.P.SES
+        print('TOOGLE SES:',self.SES,self.P.SES,iop)
         
     # Callback to toggle DXSplit mode
     def Toggle_DXSplit(self,iop=None):
@@ -1261,6 +1263,22 @@ class GUI():
         else:
             print('CALL_LOOKUP: Need a valid call first! ',call)
             self.status_bar.setText('QRZ? - Need a valid call first!')
+
+    # Post a spot to dx cluster via bandmap
+    def post_spot(self):
+        call = self.get_call()
+        print('POST SPOT: call from box=',call,
+              '\tlast_logged=',self.last_logged,
+              '\n\tlast qso=',self.last_qso)
+        if len(call)<3 and self.last_logged!=None:
+            call = self.last_logged
+
+        frqA  = 0.001*self.sock.get_freq(VFO='A') 
+        mode,bw  = self.sock.get_mode()
+        msg  = 'POST:'+call+':'+str(frqA)+':'+mode
+        print('POST SPOT: Broadcasting spot:',msg)
+        self.P.udp_server.Broadcast(msg)
+
             
     # Callback to flag last QSO
     def Flag_It(self):
@@ -1323,6 +1341,9 @@ class GUI():
                 mode,bw  = self.sock.get_mode()
                 split = self.sock.split_mode(-1)
                 ant = self.sock.get_ant()
+                rit = self.sock.rit(-1)
+                xit = self.sock.xit(-1)
+                print('SPOTS CB: rit=',rit,'\txit=',xit)
                 if split:
                     spot['Button']['text'] = "{:,.1f}".format(frqB)
                 else:
@@ -1332,6 +1353,8 @@ class GUI():
                 spot['Mode']=mode
                 spot['Split']=split
                 spot['Ant']=ant
+                spot['RIT']     = rit
+                spot['XIT']     = xit
                 spot['Fields'] = self.Read_Log_Fields()
             else:
                 frqA  = spot['FreqA']
@@ -1339,10 +1362,20 @@ class GUI():
                 mode  = spot['Mode']
                 split = spot['Split']
                 ant   = spot['Ant']
+                
+                rit   = spot['RIT']   
+                xit   = spot['XIT']   
+                if rit and rit[0] and True:
+                    frqA  -= .001*rit[1]                
+                    frqB  -= .001*rit[1]                
+
                 self.sock.set_freq(frqA,VFO='A')
                 self.sock.set_freq(frqB,VFO='B')
                 self.sock.set_mode(mode)
                 self.sock.set_ant(ant)
+                if len(rit)==2 and True:
+                    self.sock.rit(rit[0],rit[1])
+                    self.sock.xit(xit[0],xit[1])
                 spot['Button']['text']='--'
                 self.Set_Log_Fields(spot['Fields'])
 
@@ -1355,18 +1388,23 @@ class GUI():
             spot['Mode']    = None
             spot['Split']   = None
             spot['Ant']     = None
+            spot['RIT']     = None
+            spot['XIT']     = None
             spot['Fields']  = None
             self.P.DIRTY    = True
 
         elif idir==1:
             
             # Save
-            call  = self.get_call().upper()
-            frqA  = 1e-3*self.sock.get_freq(VFO='A') 
-            frqB  = 1e-3*self.sock.get_freq(VFO='B') 
-            mode,bw  = self.sock.get_mode()
-            split = self.sock.split_mode(-1)
-            ant   = self.sock.get_ant()
+            call    = self.get_call().upper()
+            frqA    = 1e-3*self.sock.get_freq(VFO='A') 
+            frqB    = 1e-3*self.sock.get_freq(VFO='B') 
+            mode,bw = self.sock.get_mode()
+            split   = self.sock.split_mode(-1)
+            ant     = self.sock.get_ant()
+            rit = self.sock.rit(-1)
+            xit = self.sock.xit(-1)
+            print('SPOTS CB: rit=',rit,'\txit=',xit)
             if split:
                 spot['Button']['text'] = call+" {:,.1f} ".format(frqB)
             else:
@@ -1376,6 +1414,8 @@ class GUI():
             spot['Mode']   = mode
             spot['Split']  = split
             spot['Ant']    = ant
+            spot['RIT']    = rit
+            spot['XIT']    = xit
             spot['Fields'] = self.Read_Log_Fields()
             self.P.DIRTY   = True
 
@@ -1399,14 +1439,25 @@ class GUI():
                 split = spot['Split']
                 ant   = spot['Ant']
 
+                rit   = spot['RIT']   
+                xit   = spot['XIT']
+
                 print('\tRestore SPOT: frqA/B=',frqA,frqB,'\tmode=',mode,
                       '\n\t\tsplit=',split,'\tant=',ant,
+                      '\n\t\trit=',rit,'\txit=',xit,
                       '\n\t\tFields=',spot['Fields'])
                 
+                if rit and rit[0] and True:
+                    frqA  -= .001*rit[1]                
+                    frqB  -= .001*rit[1]                
                 self.sock.set_freq(frqA,VFO='A')
                 self.sock.set_freq(frqB,VFO='B')
+                
                 self.sock.set_mode(mode)
                 self.sock.set_ant(ant)
+                if len(rit)==2 and True:
+                    self.sock.rit(rit[0],rit[1],VERBOSITY=1)
+                    self.sock.xit(xit[0],xit[1],VERBOSITY=1)
                 self.Set_Log_Fields(spot['Fields'])
                 call=self.get_call().upper()
                 self.dup_check(call)
@@ -1872,7 +1923,8 @@ class GUI():
                                       'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
                                       'IOTA','MARAC','SAC','OCDX','SOLAR',
                                       'SPDX','POTA','YURI','MMC','AWT',
-                                      'Special-Event']:
+                                      'WWA','Special-Event']:
+            print('YIPPIE! ',val)
             self.P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
             self.P.KEYING=NAQP_KEYING(self.P,val)
@@ -2111,6 +2163,8 @@ class GUI():
         modes  = []
         splits = []
         ants   = []
+        rits   = []
+        xits   = []
         flds   = []
         for spot in self.spots:
             spots.append( spot['Button']['text'] )
@@ -2118,6 +2172,8 @@ class GUI():
             frqsB.append( spot['FreqB'] )
             modes.append( spot['Mode'] )
             ants.append( spot['Ant'] )
+            rits.append( spot['RIT'] )
+            xits.append( spot['XIT'] )
             splits.append( spot['Split'] )
             flds.append( spot['Fields'] )
         now = datetime.utcnow().replace(tzinfo=UTC)
@@ -2132,10 +2188,12 @@ class GUI():
                'modes'      : modes,
                'splits'     : splits,
                'ants'       : ants,
+               'rits'       : rits,
+               'xits'       : xits,
                'fields'     : flds }
         print('STATE=',STATE)
         with open(self.P.WORK_DIR+'state.json', "w") as outfile:
-            json.dump(STATE, outfile)
+            json.dump(STATE, outfile, indent=4)
         if False:
             with open('keyer.log', "a") as outfile2:
                 outfile2.write('Save State:    \t'+now.strftime('%Y-%m-%d %H:%M:%S')+'\t')
@@ -2209,6 +2267,8 @@ class GUI():
             modes  = STATE['modes']
             splits = STATE['splits']
             ants   = STATE['ants']
+            rits   = STATE['rits']
+            xits   = STATE['xits']
             flds   = STATE['fields']
             for i in range(len(spots)):
                 print(i,len(spots),len(self.spots))
@@ -2218,6 +2278,8 @@ class GUI():
                 self.spots[i]['Mode']   = modes[i]
                 self.spots[i]['Split']  = splits[i]
                 self.spots[i]['Ant']    = ants[i]
+                self.spots[i]['RIT']    = rits[i]
+                self.spots[i]['XIT']    = xits[i]
                 self.spots[i]['Fields'] = flds[i]
                 
         self.P.DIRTY=False
@@ -2388,6 +2450,18 @@ class GUI():
                 freq_kHz_rx = freq_kHz
                 band_rx     = band
 
+                #rit,xit=self.sock.read_clarifier(VERBOSITY=1)
+                rit = self.sock.rit(-1)
+                rit = rit[0]*rit[1]
+                xit = self.sock.xit(-1)
+                xit = xit[0]*xit[1]
+                print('LOG QSO: Clarifier shifts: rit=',rit,'\txit=',xit)
+
+                print('freq=',freq_kHz)
+                freq_kHz    += .001*(xit-rit)
+                #freq_kHz_rx += .001*rit
+                print('freq=',freq_kHz,freq_kHz_rx)
+                
             # Do some error checking                    
             if mode!=self.sock.mode and self.sock.connection!='NONE' and False:
                 txt='##### WARNING ##### Mode mismatch in gui - radio:'+mode+'\tWoof:'+self.sock.mode
@@ -3075,13 +3149,13 @@ class GUI():
             
             # Up arrow
             print('RIT Up',DF)
-            self.sock.rit(1,DF)
+            self.sock.rit(1,DF,RELATIVE=True)
                 
         elif key=='Down':
             
             # Down arrow
             print('RIT Down',-DF)
-            self.sock.rit(1,-DF)
+            self.sock.rit(1,-DF,RELATIVE=True)
 
         elif key=='KP_Decimal':
             
@@ -3135,6 +3209,11 @@ class GUI():
 
             # Update bandmap spots
             self.UpdateBandmap()
+    
+        elif key in ['s','S'] and (alt or control):
+
+            # Post a spot to the dx cluster via bandmap
+            self.post_spot()
     
         elif key=='Left':
             
@@ -3744,7 +3823,7 @@ class GUI():
             command=self.SetCWModeCB
         )
         
-        self.SES = BooleanVar(value=self.P.SES)
+        self.SES = BooleanVar(value=(self.P.SES!=None))
         Menu1.add_checkbutton(
             label="Special Event",
             underline=0,
