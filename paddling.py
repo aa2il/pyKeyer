@@ -420,9 +420,7 @@ class PADDLING_GUI():
             if P.keyer_device:
                 print('PADDLING: Closing keyer ...')
                 P.keyer_device.close()
-                #time.sleep(10)
             print('PADDLING: Exiting ...')
-            #time.sleep(10)
             sys.exit(0)
         else:
             print('PADDLING: Hiding ...')

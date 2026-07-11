@@ -120,6 +120,7 @@ class GUI():
         self.SAT_TXT = StringVar()
         self.qsl_rcvd=tk.IntVar()
         self.txt=None
+        self.fp_adif=None
 
         # Over-ride default-font with custom settings
         # Not necesary but I'm leaving this code here fore later reference
@@ -148,7 +149,6 @@ class GUI():
         self.rig=None
         self.pounced=False
         self.searching=False
-        self.MY_CALL = P.SETTINGS['MY_CALL']
         
         # Create spash screen
         self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
@@ -223,7 +223,7 @@ class GUI():
         # Read adif log - why is this stuff in here???? Its not gui, move it elsewhere!!!!
         self.log_book = []
         if P.LOG_FILE==None:
-            P.LOG_FILE = P.WORK_DIR+self.MY_CALL.replace('/','_')+".adif"
+            P.LOG_FILE = P.WORK_DIR+P.MY_CALL.replace('/','_')+".adif"
         print('Opening log file',P.LOG_FILE,'...')
         P.MEM.take_snapshot()
         self.status_bar.setText("Reading log book "+P.LOG_FILE+" ...")
@@ -239,20 +239,11 @@ class GUI():
         #sys.exit(0)
 
         # Keep an ADIF copy of the log as well
-        if os.path.exists(P.LOG_FILE):
-            self.fp_adif = open(P.LOG_FILE,"a+")
-        else:
-            self.fp_adif = open(P.LOG_FILE,"w")
-            #self.fp_adif.write('Simple Log Export<eoh>\n')
-            self.fp_adif.write('Created by pyKeyer by AA2IL\n')
-            self.fp_adif.write('<USERDEF1:13>RUNNING,{1,0}\n')
-            self.fp_adif.write('<eoh>\n')
-            self.fp_adif.flush()
-        print("GUI: ADIF file name=",P.LOG_FILE) 
+        self.OpenLogFile()
         P.MEM.take_snapshot()
 
         # Also save all sent text to a file
-        self.fp_txt = open(P.WORK_DIR+self.MY_CALL.replace('/','_')+".TXT","a+")
+        self.fp_txt = open(P.WORK_DIR+P.MY_CALL.replace('/','_')+".TXT","a+")
 
         # Add a check file
         if P.PLATFORM=='Linux':
@@ -1478,7 +1469,7 @@ class GUI():
 
     # Routine to substitute various keyer commands that are stable in macro text
     def Patch_Macro(self,txt):
-        txt = txt.replace('[MYCALL]',self.MY_CALL )
+        txt = txt.replace('[MYCALL]',self.P.MY_CALL )
         if '[MYSTATE]' in txt:
             self.qth_out = self.P.SETTINGS['MY_STATE']
             txt = txt.replace('[MYSTATE]',self.qth_out)
@@ -1566,12 +1557,12 @@ class GUI():
 
             # Yes - Modify macro text
             if alt or control or shift:
-                if self.MY_CALL in txt:
+                if P.MY_CALL in txt:
                     # Shorten response by eliminating my call
-                    txt = txt.replace(self.MY_CALL,'')
+                    txt = txt.replace(P.MY_CALL,'')
                 elif 'QRL?' in txt:
                     # Send TEST so we get spotted on RBN
-                    txt = 'TEST '+self.MY_CALL
+                    txt = 'TEST '+P.MY_CALL
 
         # Greeting might depend on local time of day
         if '[GDAY]' in txt:
@@ -1745,7 +1736,7 @@ class GUI():
         elif 'S&P' in label:
             self.RUNNING = False
             self.pounced=True
-        elif self.MY_CALL in label:
+        elif P.MY_CALL in label:
            self.searching==True
  
         if arg in [1,4,5]:
@@ -1885,69 +1876,71 @@ class GUI():
     # Callback for Macro list spinner
     def set_macros(self,val=None):
 
+        P=self.P
+
         #print('SET_MACROS: val=',val)
         if not val:
-            val=self.P.contest_name
+            val=P.contest_name
             self.MACRO_TXT.set(val)
         print('SET_MACROS: val=',val)
 
-        #idx = self.P.CONTEST_LIST.index(val)
+        #idx = P.CONTEST_LIST.index(val)
         #print('SET_MACROS: val=',val,'\tidx=',idx,'\t)
 
         # Initiate keying module for this contest
         if val=='CWT':
-            self.P.KEYING=CWOPS_KEYING(self.P)
+            P.KEYING=CWOPS_KEYING(P)
         elif val=='FOC-BW':
-            self.P.KEYING=FOCBW_KEYING(self.P)
+            P.KEYING=FOCBW_KEYING(P)
         elif val in ['SST','SSTOPEN']:
-            self.P.KEYING=SST_KEYING(self.P)
+            P.KEYING=SST_KEYING(P)
         elif val=='MST':
-            self.P.KEYING=MST_KEYING(self.P)
+            P.KEYING=MST_KEYING(P)
         elif val=='WRT':
-            self.P.KEYING=WRT_KEYING(self.P)
+            P.KEYING=WRT_KEYING(P)
         elif val=='NS':
-            self.P.KEYING=SPRINT_KEYING(self.P)
+            P.KEYING=SPRINT_KEYING(P)
         elif val=='SKCC':
-            self.P.KEYING=SKCC_KEYING(self.P)
+            P.KEYING=SKCC_KEYING(P)
         elif val=='CALLS':
-            self.P.KEYING=CALLS_KEYING(self.P)
+            P.KEYING=CALLS_KEYING(P)
         elif val=='CW Open':
-            self.P.KEYING=CWOPEN_KEYING(self.P)
+            P.KEYING=CWOPEN_KEYING(P)
         elif val=='SATELLITES':
-            self.P.KEYING=SAT_KEYING(self.P)
+            P.KEYING=SAT_KEYING(P)
         elif val in ['ARRL-VHF','CQ-VHF','STEW PERRY','MAKROTHEN']:
-            self.P.KEYING=VHF_KEYING(self.P,val)
+            P.KEYING=VHF_KEYING(self.P,val)
         elif val=='CQP':
-            self.P.KEYING=CQP_KEYING(self.P)
-        elif val in self.P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
-                                      'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
-                                      'IOTA','MARAC','SAC','OCDX','SOLAR',
-                                      'SPDX','POTA','YURI','MMC','AWT',
-                                      'WWA','Special-Event']:
+            P.KEYING=CQP_KEYING(P)
+        elif val in P.STATE_QPs+['TEN-TEN','WAG','ARRL-160M','RAC','BERU',
+                                 'FOC-BW99','JIDX','CQMM','HOLYLAND','AADX',
+                                 'IOTA','MARAC','SAC','OCDX','SOLAR',
+                                 'SPDX','POTA','YURI','MMC','AWT',
+                                 'WWA','Special-Event']:
             print('YIPPIE! ',val)
-            self.P.KEYING=DEFAULT_KEYING(self.P,val)
+            P.KEYING=DEFAULT_KEYING(self.P,val)
         elif val.find('NAQP')>=0:
-            self.P.KEYING=NAQP_KEYING(self.P,val)
+            P.KEYING=NAQP_KEYING(self.P,val)
         elif val=='IARU-HF':
-            self.P.KEYING=IARU_KEYING(self.P)
+            P.KEYING=IARU_KEYING(P)
         elif val=='CQWW':
-            self.P.KEYING=CQWW_KEYING(self.P)
+            P.KEYING=CQWW_KEYING(P)
         elif val=='ARRL-SS-CW':
-            self.P.KEYING=SS_KEYING(self.P)
+            P.KEYING=SS_KEYING(P)
         elif val=='ARRL-FD' or val=='WINTER-FD':
-            self.P.KEYING=FD_KEYING(self.P)
+            P.KEYING=FD_KEYING(P)
         elif val.find('CQ-WPX')>=0:
-            self.P.KEYING=WPX_KEYING(self.P,val)
+            P.KEYING=WPX_KEYING(self.P,val)
         elif val=='ARRL-10M' or val=='ARRL-DX' or val=='CQ-160M':
-            self.P.KEYING=TEN_METER_KEYING(self.P,val)
+            P.KEYING=TEN_METER_KEYING(self.P,val)
         elif val=='Ragchew':
-            self.P.KEYING=RAGCHEW_KEYING(self.P,val)
+            P.KEYING=RAGCHEW_KEYING(self.P,val)
         elif val=='DX-QSO':
-            self.P.KEYING=DX_KEYING(self.P,val)
+            P.KEYING=DX_KEYING(self.P,val)
         elif val=='Default':
-            self.P.KEYING=DEFAULT_KEYING(self.P)
+            P.KEYING=DEFAULT_KEYING(P)
         elif val=='RANDOM CALLS':
-            self.P.KEYING=RANDOM_CALLS_KEYING(self.P)
+            P.KEYING=RANDOM_CALLS_KEYING(P)
         else:
             txt='SET_MACROS: *** ERROR *** Cant figure which contest !'
             txt+='\nval='+val
@@ -1957,12 +1950,12 @@ class GUI():
             return
             #sys.exit(0)
             
-        self.P.contest_name  = self.P.KEYING.contest_name
-        self.macros = self.P.KEYING.macros()
+        P.contest_name  = P.KEYING.contest_name
+        self.macros = P.KEYING.macros()
         
         for i in range(12):
             if i in self.macros:
-                lab = self.macros[i]["Label"].replace('[MYCALL]',self.MY_CALL )
+                lab = self.macros[i]["Label"].replace('[MYCALL]',P.MY_CALL )
                 self.btns1[i].configure( text=lab )
 
                 txt = self.Patch_Macro( self.macros[i]["Text"] )
@@ -1970,7 +1963,7 @@ class GUI():
                 tip = ToolTip(self.btns1[i], ' '+txt+' ' )
 
             if i+12 in self.macros:
-                lab = self.macros[i+12]["Label"].replace('[MYCALL]',self.MY_CALL )
+                lab = self.macros[i+12]["Label"].replace('[MYCALL]',P.MY_CALL )
                 self.btns2[i].configure( text=lab )
                 txt = self.Patch_Macro( self.macros[i+12]["Text"] )
                 self.macros[i+12]["Text"] = txt
@@ -1979,14 +1972,8 @@ class GUI():
             else:
                 self.btns2[i].grid_remove()
 
-        #print( self.P.CONTEST)
-        #for key in self.P.CONTEST.keys():
-        #    self.P.CONTEST[key]=False
-        #self.P.CONTEST[val] = True
-        #print( self.P.CONTEST)
-                
         # Enable the specific input boxes
-        self.P.KEYING.enable_boxes(self)
+        P.KEYING.enable_boxes(self)
 
         # Check pre-fills
         call = self.call.get()
@@ -2494,7 +2481,7 @@ class GUI():
                                   band_rx,notes,str(int(self.RUNNING)),
                                   P.sock.rig_type2,
                                   P.CONTEST_ID] )))
-            if self.MY_CALL != P.SETTINGS['MY_OPERATOR']:
+            if P.MY_CALL != P.SETTINGS['MY_OPERATOR']:
                 qso['OPERATOR'] = P.SETTINGS['MY_OPERATOR']
             qso.update(qso2)
 
@@ -3774,12 +3761,33 @@ class GUI():
         self.P.gui.txt.insert(END, txt, ('highlight'))
         self.P.gui.txt.see(END)
         print('Done.')
-            
+
+
+    def OpenLogFile(self):
+        P=self.P
+        
+        if os.path.exists(P.LOG_FILE):
+            self.fp_adif = open(P.LOG_FILE,"a+")
+        else:
+            self.fp_adif = open(P.LOG_FILE,"w")
+            self.fp_adif.write('Created by pyKeyer by AA2IL\n')
+            self.fp_adif.write('<USERDEF1:13>RUNNING,{1,0}\n')
+            self.fp_adif.write('<eoh>\n')
+            self.fp_adif.flush()
+        print("GUI: ADIF file name=",P.LOG_FILE) 
+        
     # Callback to update settings changes
     def RefreshSettings(self):
 
+        P=self.P
+
         print('Refreshing Settings ...')
-        self.MY_CALL = self.P.SETTINGS['MY_CALL']
+        P.MY_CALL = P.SETTINGS['MY_CALL']
+        P.LOG_FILE = P.WORK_DIR+P.MY_CALL.replace('/','_')+".adif"
+        if self.fp_adif:
+            self.fp_adif.close()
+        self.OpenLogFile()
+        
         self.set_macros()
         print('... Done.')
 

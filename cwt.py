@@ -95,8 +95,8 @@ class CWOPS_KEYING(DEFAULT_KEYING):
             GREETING  = "HNY"
             GREETING1 = "HNY"
             GREETING2 = "HNY"
-        elif now.month==7 and now.day<=7:
-            GREETING  = "GBA"
+        elif now.month==7 and now.day<=7 and False:
+            GREETING  = "TU GBA"
             GREETING1 = "[HOWDY]"
             GREETING2 = "[GDAY]"
         else:            

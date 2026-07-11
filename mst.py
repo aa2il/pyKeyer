@@ -55,7 +55,6 @@ class MST_KEYING(DEFAULT_KEYING):
         # Info for practice routine
         self.cqtest   = 'MST'
         self.exch_out = [ self.P.SETTINGS['MY_NAME'] , 'SERIAL' ]
-        self.MY_CALL=self.P.SETTINGS['MY_CALL']
 
     # Routient to set macros for this contest
     def macros(self):
@@ -63,7 +62,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS = OrderedDict()
         MACROS[0]     = {'Label' : 'CQ'        , 'Text' : 'CQ MST [MYCALL] '}
         MACROS[0+12]  = {'Label' : 'QRZ? '     , 'Text' : 'QRZ? '}
-        if self.MY_CALL in ['N6W']:
+        if self.P.MY_CALL in ['N6W']:
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU 5NN [MYNAME] [SERIAL] '}
         else:
             MACROS[1]     = {'Label' : 'Reply'     , 'Text' : '[CALL] TU [MYNAME] [SERIAL] '}
@@ -94,7 +93,7 @@ class MST_KEYING(DEFAULT_KEYING):
         MACROS[4]     = {'Label' : '[MYCALL]'  , 'Text' : '[MYCALL] '}
         MACROS[4+12]  = {'Label' : 'His Call'  , 'Text' : '[CALL] '}
 
-        if self.MY_CALL in ['N6W']:
+        if self.P.MY_CALL in ['N6W']:
             MACROS[5]     = {'Label' : 'S&P Reply' , 'Text' : GREETING+' 5NN [MYNAME] [SERIAL] '}
             MACROS[5+12]  = {'Label' : 'S&P Reply' , 'Text' : GREETING+' 5NN [NAME] [MYNAME] [SERIAL] '}
         else:

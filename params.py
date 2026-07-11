@@ -566,6 +566,7 @@ class PARAMS:
 
         # Read config file
         self.read_config_file()
+        self.MY_CALL=self.SETTINGS['MY_CALL']
 
         # Where to find/put data files
         self.PLATFORM=platform.system()
