@@ -21,6 +21,10 @@
 #
 #     setenv PYTHONPATH $HOME/Python/libs
 #
+# Notes:
+#     If we get an error involving not being able to find portaudio.h, use the
+#     software manager to install the development files for portaudio.
+#
 ###############################################################################
 #
 
