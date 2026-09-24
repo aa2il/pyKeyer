@@ -184,6 +184,23 @@ class GUI():
             print('font2=',self.font2.actual())
             sys.exit(0)
 
+        # Bind event handler for gui updates from other threads
+        self.root.bind("<<pushBigTxt>>", self.guiEventHandler) 
+            
+    # Function to handle gui updates from non-main threads
+    def guiEventHandler(self,evt):
+        P=self.P
+        print('Event Thread',threading.get_ident())   # event thread id (same as main)
+        print('state=',evt.state)  # 123, data from event
+        #print(dir(evt))
+        #print(vars(evt))
+        #print(evt.state=='<<event1>>')
+        if evt.state==123:
+            P.gui.txt.insert(END, P.txtbuf)
+            #P.gui.txt.insert(END, evt.data)    # Doesnt work
+            P.gui.txt.see(END)
+            #P.gui.root.update_idletasks()
+
     # Function to actually construct the gui
     def construct_gui(self):
         P=self.P
@@ -703,7 +720,7 @@ class GUI():
         print('CONSTRUCT GUI - Final inits ...')
         self.PaddlingWin.final_inits()
         self.set_macros()
-        self.RestoreState()
+        self.RestoreState()        
 
         # Kick-off gui updater
         print('CONSTRUCT GUI - Starting Updater ...')

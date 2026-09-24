@@ -1,7 +1,7 @@
 ############################################################################################
 #
 # Rig Control GUI - Tk version - Rev 1.0
-# Copyright (C) 2021-5 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
+# Copyright (C) 2021-6 by Joseph B. Attili, joe DOT aa2il AT gmail DOT com
 #
 # Portion of GUI related to rig controls - Tk version
 #
@@ -22,12 +22,8 @@
 ############################################################################################
 
 import sys
-if sys.version_info[0]==3:
-    from tkinter import *
-    import tkinter.ttk as ttk
-else:
-    from Tkinter import *
-    import ttk
+from tkinter import *
+import tkinter.ttk as ttk
 from rig_io.socket_io import *
 from rig_io import bands,modes,CONTEST_BANDS,NON_CONTEST_BANDS
 from ft_keypad import *
@@ -135,7 +131,8 @@ class RIG_CONTROL():
                              label="TX Power",
                              command=self.Slider0CB )
         self.slider0.pack()
-        read_tx_pwr(self)
+        #read_tx_pwr(self)
+        self.tx_pwr=self.P.sock.tx_power(-1,VERBOSITY=1) 
         print(("POWER: %d" % self.tx_pwr))
         self.slider0.set(self.tx_pwr)
 
@@ -148,6 +145,7 @@ class RIG_CONTROL():
                              command=self.Slider1CB )
         self.slider1.pack()
         read_mic_gain(self)
+        #self.gain = self.P.sock.mic_setting(None,0)   # Need hamlib version
         print(("GAIN: %d" % self.gain))
         self.slider1.set(self.gain)
 
@@ -626,7 +624,8 @@ class RIG_CONTROL():
     def Slider0CB(self,arg):
         print('\nSlider 0 CallBack: ...')
         self.tx_pwr=arg
-        set_tx_pwr(self)
+        #set_tx_pwr(self)
+        self.P.sock.tx_power(int(self.tx_pwr),99,VERBOSITY=1)
         print('... Slider 0 CallBack Done.\n')
 
     def Slider1CB(self,arg):

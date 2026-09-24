@@ -133,13 +133,15 @@ def process_chars(P):
                             if P.NANO_IO and txt[0]=='~' and txt[-1] in ['u','s']:
                                 txt+='\n'
 
-                            # Put it in the big text box also
+                            # Put it in the big text box also ...
                             if P.gui.txt:
-                                P.gui.txt.insert(END, txt)
-                                P.gui.txt.see(END)
-                                P.gui.root.update_idletasks()
+                                P.txtbuf=txt
+                                P.gui.root.event_generate("<<pushBigTxt>>",
+                                                          when="tail",
+                                                          state=123)
+                                # data=txt) Dosent work
 
-                            # and save a copy to disk
+                            # ... and save a copy to disk
                             if '\n' in txt and True:
                                 #print('NANO: ',P.nano_txt.strip())
                                 P.gui.fp_txt.write('NANO: %s\n' % (P.nano_txt).strip() )

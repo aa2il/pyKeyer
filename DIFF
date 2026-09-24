@@ -18,7 +18,7 @@
 #set ROOT="/mnt/Sproul"
 set ROOT="/mnt/Calvin"
 #set ROOT="/mnt/Luther"
-#set ROOT="/mnt/marconi"
+set ROOT="/mnt/marconi"
 #set ROOT="/media/${USER}/3D76-ECB1/xfer"
 #set ROOT="/media/${USER}/acer"
 #set ROOT="../clone"
