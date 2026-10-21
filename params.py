@@ -415,7 +415,6 @@ class PARAMS:
         self.HIST          = {}
         self.PTT           = False
 
-        self.STATE_LIST=args.state
         self.STATE_QPs = ['BCQP','ONQP','QCQP','W1QP','W7QP','CPQP','ACQP']
         for state in STATES:
             self.STATE_QPs.append(state+'QP')
@@ -427,8 +426,12 @@ class PARAMS:
                 self.CONTEST_LIST.append(contest)
             
         if args.state!=None:
-            for state in args.state:
-                self.CONTEST_LIST.append(state+'QP')
+            if isinstance(args.state,str):
+                STATE_LIST=[args.state]
+            else:
+                STATE_LIST=args.state
+            for state in STATE_LIST:
+                self.CONTEST_LIST.append(state.upper()+'QP')
 
         #self.SES=args.ses
         #if args.ses!=None:
@@ -511,7 +514,7 @@ class PARAMS:
         elif args.cqp:
             self.contest_name='CQP'
         elif args.state!=None:
-            self.contest_name=args.state[0].upper()+'QP'
+            self.contest_name=STATE_LIST[0].upper()+'QP'
         elif args.cwopen:
             self.contest_name='CW Open'
         elif args.wfd:

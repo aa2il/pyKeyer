@@ -151,7 +151,8 @@ class GUI():
         self.searching=False
         
         # Create spash screen
-        self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png')
+        self.splash  = SPLASH_SCREEN(self.root,'keyer_splash.png',
+                                     TITLE='pyKeyer Splash Screen')
         self.status_bar = self.splash.status_bar
         
         # More inits

@@ -1,4 +1,4 @@
-#! /usr/bin/python3 -u
+#!/usr/bin/env -S uv run --script
 
 from fileio import read_csv_file
 from datetime import datetime
