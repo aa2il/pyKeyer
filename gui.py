@@ -1193,7 +1193,8 @@ class GUI():
     def Toggle_DXSplit(self,iop=None):
         if iop==None:
             self.P.DXSPLIT = not self.P.DXSPLIT
-        print('TOOGLE DXSplit:',self.P.DXSPLIT,iop)
+        print('TOOGLE DXSplit: DXSPLIT=',self.P.DXSPLIT,
+              '\tiop=',iop,'\tSES=',self.SES)
         
         # Manage button appearance
         if self.P.DXSPLIT:
@@ -1203,7 +1204,7 @@ class GUI():
             self.P.udp_server.Broadcast('SPLIT:ON')
 
             # Set TX or RX clarifier (XIT/RIT split) to 1 KHz UP by default
-            if self.SES:
+            if self.P.SES:
                 SetRXSplit(self.P,1,True)
             else:
                 SetTXSplit(self.P,1,True)
@@ -1214,7 +1215,7 @@ class GUI():
             self.P.udp_server.Broadcast('SPLIT:OFF')
 
             # Turn off TX or RX clarifier (XIT/RIT split)
-            if self.SES:
+            if self.P.SES:
                 SetRXSplit(self.P,0,False)
             else:
                 SetTXSplit(self.P,0,False)
